@@ -1,0 +1,39 @@
+table,
+th,
+td {
+  border-collapse: collapse;
+  border: solid 1px #ccc;
+  padding: 10px 25px;
+  text-align: center;
+}
+
+td {
+  font-size: 16px;
+  color: white;
+  background: #0f0d35;
+  vertical-align:middle;
+}
+
+.productos {
+  min-width: 250px;
+}
+
+.precio {
+  min-width: 130px;
+}
+
+th {
+  height: 50px;
+  background: #192435;
+  color: white;
+  font-size: 16px;
+  resize: horizontal;
+  overflow: auto;
+}
+
+td[contenteditable="true"]
+{
+    &:hover,&:focus{
+        background: #67abb1;
+    }
+}

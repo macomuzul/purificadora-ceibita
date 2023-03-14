@@ -1,0 +1,172 @@
+@use "./partials/fondo";
+@use "./partials/paginacion";
+@use "./partials/tablacompleta";
+@use "./partials/titulorespaldos";
+@use "./partials/tabs";
+@use "./partials/botonsubir";
+@use "./partials/flecha";
+@use "./partials/flecharotada";
+
+html {
+  scroll-behavior: smooth;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.checkbox:focus {
+  box-shadow: 0 0 0 2px rgb(13 110 253 / 25%);
+}
+
+.checkabsolute {
+  display: inline-block;
+  margin-right: auto;
+}
+
+article {
+  padding: 20px;
+  margin-top: 15px;
+  width: fit-content;
+  margin-right: 20px;
+}
+
+body {
+  color: white;
+}
+
+.fechaDelRegistro {
+  display: inline-block;
+}
+.fechaDelRegistro::first-letter {
+  text-transform: uppercase;
+}
+
+.svgrestaurar {
+  fill: transparent;
+  width: 40px;
+  height: 40px;
+}
+.svgrestaurar path {
+  stroke: #fff;
+  stroke-width: 1.2;
+}
+.contenedoracciones {
+  display: flex;
+  align-items: center;
+}
+.contenedorbotones {
+  justify-content: center;
+  align-items: center;
+  width: 240px;
+  height: 50px;
+  padding: 10px;
+  font-family: "Poppins", sans-serif;
+  border-radius: 7px;
+  margin-bottom: 10px;
+}
+
+.contenedorrestaurarinterior {
+  transform: translateY(-4px);
+}
+
+.contenedorrestaurar {
+  justify-content: center;
+  background: rgb(1, 1, 94);
+  border: 1.5px solid rgb(12, 0, 63);
+}
+
+.contenedoreliminar {
+  background: rgb(216, 12, 12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 20px;
+  border: 1.5px solid rgb(159, 7, 7);
+}
+
+.contenedoreliminar:hover {
+  background: rgb(159, 7, 7);
+  cursor: pointer;
+}
+.contenedorrestaurar:hover {
+  background: rgb(12, 0, 63);
+  cursor: pointer;
+}
+
+.restaurarsoloestatabla {
+  width: 230px;
+  border-radius: 30px;
+  margin-left: auto;
+  margin-top: 10px;
+}
+
+.eliminartodos {
+  width: 230px;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.textoeliminar {
+  display: flex;
+  flex-direction: column;
+  margin-left: 5px;
+  align-items: center;
+  justify-content: center;
+}
+
+.contenedoreliminarinterior {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contenedorsuperior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 50px;
+  flex-wrap: wrap;
+}
+
+.flechaatras svg {
+  background-color: transparent;
+  transform: scale(2);
+  margin-left: 0px;
+  margin-right: 10px;
+  transform: rotate(180deg) scale(2);
+  display: inline-block;
+}
+
+.botonazul{
+  margin-top: 15px;
+}
+
+
+.margenbotonswal {
+  margin-left: 40;
+  width: 120;
+}
+
+.esconderboton .restaurarsoloestatabla {
+  display: none;
+}
+
+.btn {
+  color: white;
+}
+
+hr {
+  min-width: calc(100vw - 11rem);
+}
+
+.contenedoreliminarseleccionados {
+  display: flex;
+  flex-direction: column;
+}
+
+#seleccionarTodos {
+  margin-bottom: 20px;
+}

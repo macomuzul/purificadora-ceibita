@@ -1,0 +1,99 @@
+<html>
+
+<head>
+  <title>prueba</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+  <link rel="stylesheet" href="/vistarespaldos.min.css">
+
+  <script>
+    let page = parseInt(`<%= pagina %>`);
+    let totalPages = parseInt(`<%= totalPaginas %>`);
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.7/locale/es.min.js"></script>
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="/vistarespaldos.js"></script>
+  <script defer src="/paginacion.js"></script>
+</head>
+
+<body>
+  <%- include("layouts/navbar") %>
+  <button id="back-to-top-btn"><i class="fas fa-angle-double-up"></i></button>
+  <main>
+    <div class="contenedorsuperior">
+      <a href="/respaldos" class="flechaatras">
+        <button class="btn btn-primary botonazul">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white"><path d="M20 0zm-8.344 14.709-1.41-1.418L12.547 11H4V9h8.673l-2.38-2.379 1.414-1.414 4.737 4.736z" /></svg>
+          Volver al menú de respaldos
+        </button>
+      </a>
+      <button class="button-85" role="button">Restaura o elimina definitivamente tablas borradas</button>
+      <div></div>
+      <div></div>
+    </div>
+
+    <div class="contenedoreliminarseleccionados">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="seleccionarTodos">
+        <label class="form-check-label" for="seleccionarTodos">Seleccionar todos los registros en la página</label>
+      </div>
+      <div class="contenedorbotones contenedoreliminar eliminartodos">
+        <div class="contenedoreliminarinterior">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /></svg>
+          <span class="textoeliminar">
+            <div>Eliminar todos los</div>
+            <div>registros seleccionados</div>
+          </span>
+        </div>
+      </div>
+    </div>
+    <% for(var i=0; i<datostablas.length; i++) { %>
+    <hr>
+    <article name="<%=datostablas[i]._id%>">
+      <div class="contenedoracciones">
+        <div class="form-check checkabsolute">
+          <input class="form-check-input check" type="checkbox" id="check<%=i%>">
+          <label class="form-check-label" for="check<%=i%>">Seleccionar</label>
+        </div>
+        <div class="contenedorbotones contenedorrestaurar btnrestaurar">
+          <div class="contenedorrestaurarinterior">
+            <svg xmlns="http://www.w3.org/2000/svg" class="svgrestaurar" viewBox="0 0 25 25"><path d="M5.88468 17C7.32466 19.1128 9.75033 20.5 12.5 20.5C16.9183 20.5 20.5 16.9183 20.5 12.5C20.5 8.08172 16.9183 4.5 12.5 4.5C8.08172 4.5 4.5 8.08172 4.5 12.5V13.5M12.5 8V12.5L15.5 15.5" /><path d="M7 11L4.5 13.5L2 11" /></svg>
+            <span>Restaurar este registro</span>
+          </div>
+        </div>
+        <div class="contenedorbotones contenedoreliminar btneliminar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+          <span>Eliminar este registro</span>
+        </div>
+      </div>
+      <h2>Fecha del registro: <span class="fechaDelRegistro" data-fecha="<%=i%>"><%=  DateTime.fromJSDate(datostablas[i].ventaspordia.fecha, {zone: "utc"}).toFormat("d/M/y")%></span></h2>
+      <span>Se eliminó el <span class="fechaDelRegistro" data-fecha="<%=i%>a"><%= DateTime.fromJSDate(datostablas[i].fechaeliminacion, {zone: "America/Guatemala"}).toFormat("d/M/y") %></span> a las <%= DateTime.fromJSDate(datostablas[i].fechaeliminacion, {zone: "America/Guatemala"}).toFormat("H:mm 'con' ss 'segundos'") %></span>
+      <div class="tabs">
+        <% for (let j=0; j < datostablas[i].ventaspordia.camiones.length; j++){ %>
+        <input type="radio" class="tabs__radio" name="<%=i%>tab" id="<%=i%>tab<%=j%>" <% if (j===0) { %> checked <% } %> />
+        <label for="<%=i%>tab<%=j%>" class="tabs__label">Camión <%= (j+1) %></label>
+        <div class="tabs__content">
+          <%- include("layouts/tablas", {j, ventaspordia: datostablas[i].ventaspordia}) %>
+          <div class="contenedorrestaurar restaurarsoloestatabla" name="t<%=j%>">
+            <svg xmlns="http://www.w3.org/2000/svg" class="svgrestaurar" viewBox="0 0 25 25"> <path d="M5.88468 17C7.32466 19.1128 9.75033 20.5 12.5 20.5C16.9183 20.5 20.5 16.9183 20.5 12.5C20.5 8.08172 16.9183 4.5 12.5 4.5C8.08172 4.5 4.5 8.08172 4.5 12.5V13.5M12.5 8V12.5L15.5 15.5" /><path d="M7 11L4.5 13.5L2 11" /></svg>
+            <span>Restaurar solo esta tabla</span>
+          </div>
+        </div>
+        <% } %>
+
+    </article>
+
+    <% } %>
+    <hr>
+    <div class="contenedorpaginacion">
+      <div class="pagination">
+        <ul></ul>
+      </div>
+    </div>
+  </main>
+
+</body>
+
+</html>

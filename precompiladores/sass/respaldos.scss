@@ -1,0 +1,99 @@
+@use "./partials/dropdown";
+@use "./partials/titulorespaldos";
+@use "./partials/calendariobootstrap";
+
+.dropdown-menu {
+  color: white;
+  background: linear-gradient(35deg, #012249, #09234b, #012249);
+  border: none;
+}
+
+.divseparador {
+  display: none;
+  font-size: 30px;
+  margin: 0 10px 12px 10px;
+}
+.contenedorentre {
+  display: inline-block;
+}
+
+.contenedorentreflex {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+body {
+  background: #191d31;
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+
+.contenedorsuperior {
+  display: flex;
+  justify-content: center;
+}
+
+.dropdown {
+  width: 250px;
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.botonazul {
+  margin-left: 20px;
+  margin-top: -5px;
+}
+
+.botoncrearplantillas:focus,
+.botoncrearplantillas:hover {
+  outline: none;
+  box-shadow: none;
+  background-color: #0b2346 !important;
+  border-color: #010a18;
+}
+
+#divdatepickerescondido {
+  display: none;
+}
+
+.form-control:read-only {
+  background: white !important;
+}
+
+input:focus {
+  box-shadow: none !important;
+}
+.form-control {
+  height: 50px;
+}
+
+.form-control:focus {
+  box-shadow: none !important;
+  border: 1px solid #ced4da !important;
+}
+
+#lel {
+  background: linear-gradient(
+      rgba(255, 0, 0, 1) 0%,
+      rgba(255, 154, 0, 1) 10%,
+      rgba(208, 222, 33, 1) 20%,
+      rgba(79, 220, 74, 1) 30%,
+      rgba(63, 218, 216, 1) 40%,
+      rgba(47, 201, 226, 1) 50%,
+      rgba(28, 127, 238, 1) 60%,
+      rgba(95, 21, 242, 1) 70%,
+      rgba(186, 12, 248, 1) 80%,
+      rgba(251, 7, 217, 1) 90%,
+      rgba(255, 0, 0, 1) 100%
+    )
+    0 0/100% 200%;
+  animation: a 2s linear infinite !important;
+}
+
+@keyframes a {
+  to {
+    background-position: 0 -200%;
+  }
+}

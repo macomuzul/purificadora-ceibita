@@ -1,0 +1,48 @@
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  font-family: sans-serif;
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.tabs__label {
+  padding: 10px 16px;
+  cursor: pointer;
+  background-color: #0f0924;
+  font-size: 15;
+  color: white;
+  margin-bottom: 10px;
+}
+
+hr {
+  min-width: calc(100vw - 9rem);
+}
+
+html,
+body,
+main {
+  width: fit-content;
+}
+
+.tabs__radio {
+  display: none;
+}
+
+.tabs__content {
+  order: 1;
+  display: none;
+  width: 100%;
+}
+
+.tabs__radio:checked + .tabs__label {
+  font-weight: bold;
+  color: white;
+  font-size: 15;
+  background-color: #009578;
+  border-bottom: 2px solid #009578;
+}
+
+.tabs__radio:checked + .tabs__label + .tabs__content {
+  display: initial;
+}

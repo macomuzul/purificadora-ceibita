@@ -1,0 +1,79 @@
+<html>
+
+<head>
+  <title>prueba</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/registrarventas.min.css" />
+
+  <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="/tableToExcel.js"></script>
+  <script defer src="/validartablateclado.js"></script>
+  <script defer src="/registrarventas.js"></script>
+  <script defer src="/dropdown.js"></script>
+</head>
+
+<body>
+  <%- include("layouts/navbar") %>
+  <main>
+    <div class="contenedor">
+      <div class="calendario">
+        <span class="columnas"><svg id="diaanterior" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
+          </svg>
+        </span>
+        <div class="fecha columnas esconder fechanum"><%=fecha%></div>
+        <div class="fecha columnas fechastr"><%=fechastr%></div>
+        <span class="columnas">
+          <svg id="diasiguiente" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" /></svg>
+        </span>
+      </div>
+      <article>
+        <br><br>
+        <div class="contenedorsuperior">
+          <button class="btn btn-success botonexcel" type="button" id="exportarexcel"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 32 32"><title>file_type_excel2</title><path d="M28.781,4.405H18.651V2.018L2,4.588V27.115l16.651,2.868V26.445H28.781A1.162,1.162,0,0,0,30,25.349V5.5A1.162,1.162,0,0,0,28.781,4.405Zm.16,21.126H18.617L18.6,23.642h2.487v-2.2H18.581l-.012-1.3h2.518v-2.2H18.55l-.012-1.3h2.549v-2.2H18.53v-1.3h2.557v-2.2H18.53v-1.3h2.557v-2.2H18.53v-2H28.941Z" style="fill:#20744a;fill-rule:evenodd"/><rect x="22.487" y="7.439" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="10.94" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="14.441" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="17.942" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="21.443" width="4.323" height="2.2" style="fill:#20744a"/><polygon points="6.347 10.673 8.493 10.55 9.842 14.259 11.436 10.397 13.582 10.274 10.976 15.54 13.582 20.819 11.313 20.666 9.781 16.642 8.248 20.513 6.163 20.329 8.585 15.666 6.347 10.673" style="fill:#fff;fill-rule:evenodd"/></svg> Exportar a Excel</button>
+          <div class="dropdown" id="selector">
+            <div class="select">
+              <span class="selected">Selecciona una plantilla aquí (opcional)</span>
+              <div class="caret"></div>
+            </div>
+          <ul class="menu">
+            <% plantillas.forEach(function(plantilla){ %>
+              <li><%= plantilla.nombreplantilla %></li>
+              <% }); %>
+          </ul></div>
+          <input type="button" value="Añadir producto" id="añadirProducto" class=" añadirproductoyviaje" />
+          <input type="button" value="Añadir viaje" id="añadirViaje" class="añadirproductoyviaje" />
+      </div>
+        <div class="grupotabs">
+          <div class="tabs" id="tabs">
+              <% for (let j=0; j < ventaspordia.camiones.length; j++){ %>
+            <div class="tab">
+              <input data-tabid="<%=j%>" type="radio" class="tabs__radio" name="tab" id="tab<%=j%>" <% if (j===0) { %>checked<% } %> />
+              <label for="tab<%=j%>" class="tabs__label">Camión <%= (j+1) %></label>
+            </div>
+            <% } %>
+            <span class="agregarcamion"><span class="mas">+</span></span> 
+          </div>
+            <div class="contenidotabs">
+              <% for (let j=0; j < ventaspordia.camiones.length; j++){ %>
+              <div data-tabid="<%=j%>" class="tabs__content">
+                  <div>
+                    <input type="text" class="form-control" id="trabajador<%=j%>" placeholder="Escribe el nombre del trabajador"
+                    <% if (ventaspordia) { %> value= <%= ventaspordia.camiones[0].nombretrabajador %> <% } %>/>
+                  </div>
+                  <%- include("layouts/tablasregistrodias", {j, ventaspordia}) %>
+              </div>
+              <% } %>
+            </div>
+        </div>
+      </article>
+
+      <input class="btn btn-primary añadirproductoyviaje" type="button" value="Guardar" id="guardar" />
+  </main>
+</body>
+</html>

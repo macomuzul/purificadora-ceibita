@@ -1,0 +1,25 @@
+#back-to-top-btn {
+  color: white;
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 26px;
+  min-width: 50px;
+  width: 4%;
+  aspect-ratio: 1/1;
+  font-size: clamp(30px, 0.01vw, 200px);
+  background: #0a0644;
+  cursor: pointer;
+  outline: none;
+  border: 3px solid rgb(16, 3, 54);
+  border-radius: 50%;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+  transition-property: background-color, color;
+
+  &:hover,
+  &:focus{
+    background: #120c6e;
+  }
+}

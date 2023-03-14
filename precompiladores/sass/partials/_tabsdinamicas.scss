@@ -1,0 +1,57 @@
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  font-family: sans-serif;
+  margin-top: 10px;
+  justify-content: center;
+  gap: 1px;
+}
+
+.tabs__label, .agregarcamion {
+  padding: 10px 16px;
+  cursor: pointer;
+  background-color: #0f0924;
+  font-size: 15px;
+  color: white;
+  height: 50px;
+  display: grid;
+  align-items: center;
+  border-radius: 5px;
+
+}
+
+.agregarcamion{
+    width: 60px;
+}
+
+hr {
+  min-width: calc(100vw - 9rem);
+}
+
+html,
+body,
+main {
+  width: fit-content;
+}
+
+.tabs__radio {
+  display: none;
+}
+
+.tabs__content:not(:first-child) {
+  order: 1;
+  display: none;
+  width: 100%;
+}
+
+.tabs__radio:checked + .tabs__label {
+  font-weight: bold;
+  color: white;
+  font-size: 16px;
+}
+
+.mas {
+  font-size: 35px;
+  translate: 0 -10px;
+  text-align: center;
+}

@@ -1,0 +1,11 @@
+.botonazul {
+  background: #0b2346;
+  border-color: #010a18;
+  padding: 15px 25px;
+
+  &:focus {
+    outline: none;
+    box-shadow: none;
+    background-color: #0b2346;
+  }
+}

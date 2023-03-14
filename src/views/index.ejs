@@ -1,0 +1,66 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Poppins" />
+  <link rel="stylesheet" href="login.css" />
+</head>
+
+<body>
+  <div class="box">
+    <form action="/iniciarSesion" method="POST">
+      <div class="form">
+        <h2>Iniciar sesión</h2>
+        <div class="inputBox">
+          <label for="usuario">
+            <h3>usuario</h3>
+          </label>
+          <input type="text" required="required" name="usuario" id="usuario" />
+          <i></i>
+        </div>
+        <div class="inputBox">
+          <label for="contraseña">
+            <h3>contraseña</h3>
+          </label>
+          <input type="password" required="required" name="contraseña" id="contraseña" />
+          <i></i>
+        </div>
+        <input type="submit" value="Ingresar" />
+      </div>
+    </form>
+  </div>
+
+  <%if (signinMessage.length > 0 && String(signinMessage) === "El usuario al que desea acceder no existe") {%>
+  <script>
+    var fname = document.getElementById("usuario");
+
+    window.addEventListener("load", (event) => {
+
+      fname.setCustomValidity('El usuario al que desea acceder no existe');
+      fname.reportValidity();
+    });
+
+    fname.addEventListener("keydown", (event) => {
+
+      fname.setCustomValidity('');
+    });
+  </script>
+  <% } %>
+  <%if (signinMessage.length > 0 && String(signinMessage) === 'Contraseña incorrecta') {%>
+  <script>
+    var fname = document.getElementById("contraseña");
+    window.addEventListener("load", (event) => {
+      fname.setCustomValidity('Contraseña incorrecta');
+      fname.reportValidity();
+    });
+
+    fname.addEventListener("keydown", (event) => {
+      fname.setCustomValidity('');
+    });
+  </script>
+  <% } %>
+</body>
+</html>

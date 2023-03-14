@@ -1,0 +1,171 @@
+@use "./partials/dropdown";
+@use "./partials/tablacompleta";
+@use "./partials/fondo";
+@use "./partials/tabsdinamicas";
+@use "./partials/tabsauxiliar";
+@use "./partials/swal";
+
+input {
+  width: 100%;
+  border: none;
+  max-width: 200px;
+}
+
+.enfocar {
+  background: #24c2ce !important;
+}
+
+#mostrartabla {
+  margin: 0 auto;
+}
+
+.añadirproductoyviaje {
+  background-color: #112438;
+  border: 1px solid #036891;
+  stroke: #009578;
+  height: 40px;
+  margin-top: 20px;
+  color: white;
+  &:focus{
+    background-color: #244569;
+  }
+}
+
+@media (hover: hover) {
+  .añadirproductoyviaje:hover {
+    background-color: #244569;
+  }
+  .botonexcel:hover {
+    background: #165a35;
+  }
+}
+
+
+.form-switch,
+.form-check-label {
+  font-size: 16px;
+}
+
+.form-control {
+  font-size: 12;
+}
+
+h4 {
+  font-size: 18px;
+}
+.contenedor {
+  margin-top: 15px;
+}
+
+.sweet-alert {
+  position: absolute !important;
+}
+
+.contenedor {
+  min-width: calc(100vw - 15rem);
+}
+
+.calendario {
+  background: #23242a;
+  height: 50px;
+  color: #45f3ff;
+  display: flex;
+}
+
+.columnas {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 35px;
+  justify-content: center;
+  align-items: center;
+  flex-basis: 0;
+}
+
+.esconder {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.fecha {
+  transform: translateY(-3px);
+  cursor: pointer;
+}
+
+.fechastr {
+  flex-basis: 400px;
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.botonexcel {
+  padding: 10px;
+  background: #064723;
+  border-color: #116d3a;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.contenedorsuperior {
+  position: relative;
+}
+
+svg {
+  width: 40px;
+  height: inherit;
+  fill: #45f3ff;
+}
+svg:hover {
+  fill: #00adb5;
+  cursor: pointer;
+}
+
+.margenbotonswal {
+  margin-left: 40;
+  width: 120;
+}
+
+.botonconfirm {
+  background: #157347;
+  width: 200px;
+  height: 60px;
+  margin-right: 10px;
+}
+
+.botondeny {
+  background: #0f0924;
+  width: 200px;
+  height: 60px;
+  margin-right: 10px;
+}
+
+.botoncancel {
+  background: #be0000;
+  width: 200px;
+  height: 60px;
+  margin-right: 10px;
+}
+
+.btn-primary.disabled,
+.btn-primary:disabled {
+  background-color: #112438;
+}
+.btn-success.disabled,
+.btn-success:disabled {
+  background: #064723;
+}
+
+.divtrabajadorrevisar {
+  display: flex;
+  justify-content: center;
+}
+
+*:disabled {
+  opacity: 0.5;
+}
+
+th{
+  resize: horizontal;
+  overflow: auto;
+}
