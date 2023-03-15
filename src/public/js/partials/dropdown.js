@@ -12,11 +12,9 @@ dropdowns.forEach((dropdown) => {
   const options = dropdown.querySelectorAll(".menu li");
   const selected = dropdown.querySelector(".selected");
   select.addEventListener("click", e => {
-    console.log("aaa")
     if(menuseleccionado === menu && menuseleccionado.classList.contains("menu-open") ) 
        return;
     e.stopPropagation()
-    console.log("bbb")
     select.classList.toggle("select-clicked");
     caret.classList.toggle("caret-rotate");
     menu.classList.toggle("menu-open");

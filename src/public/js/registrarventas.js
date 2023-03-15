@@ -5,6 +5,7 @@ let fecha = document.querySelector(".fechanum").textContent.split("/");
 let hoy = dayjs(fecha[2] + "-" + fecha[1] + "-" + fecha[0]).utc(true);
 let timer;
 let touchduration = 600;
+let listaplantillas = [];
 
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
@@ -565,7 +566,9 @@ async function verificardatostabla(tabla, numtabla) {
   return verificacion;
 }
 
-document.getElementById("exportarexcel").addEventListener("click", function () {
+document.getElementById("exportarexcel").addEventListener("click", async function () {
+  if (typeof TableToExcel === "undefined")
+    await $.getScript('/tableToExcel.js');
   let fechastr = hoy.format("D-M-YYYY");
   let nombre = `registro ventas ${fechastr} ${document.querySelector(".tabs__radio:checked + label").innerText}.xlsx`;
   TableToExcel.convert(_tabla(),
@@ -575,134 +578,145 @@ document.getElementById("exportarexcel").addEventListener("click", function () {
         name: fechastr
       }
     });
+
 })
 
-function metododropdown(option) {
-  let mandar = `{ "nombreplantilla": "${option.innerHTML}" }`
-  $.ajax({
-    url: "/plantillas/datostabla",
-    method: "POST",
-    contentType: "application/json",
-    data: mandar,
-    success: async function (res) {
-      let formatotabla = `<table id="mostrartabla">
-        <thead>
-          <tr>
-            <th class="prod">Productos</th>
-            <th class="tr">Precio</th>
-          </tr>
-        </thead>
-        <tbody>`;
+async function metododropdown(option) {
+  let nombreplantilla = option.innerHTML;
+  let plantilla = listaplantillas.find(el => el.nombre === nombreplantilla)
+  let mandar = `{ "nombreplantilla": "${nombreplantilla}" }`
+  if (!plantilla) {
+    await $.ajax({
+      url: "/plantillas/datostabla",
+      method: "POST",
+      contentType: "application/json",
+      data: mandar,
+      success: async function (res) {
+        plantilla = { nombre: nombreplantilla, plantilla: res };
+        listaplantillas.push(plantilla);
+      },
+      error: function (res) {
+        Swal.fire({
+          icon: "error",
+          title: "Ups...",
+          text: "Ha habido un error",
+        });
+        return;
+      },
+    });
+  }
+
+  let res = plantilla.plantilla;
+  let formatotabla = `<table id="mostrartabla">
+  <thead>
+    <tr>
+      <th class="prod">Productos</th>
+      <th class="tr">Precio</th>
+    </tr>
+  </thead>
+  <tbody>`;
+  for (let i = 0; i < res.productos.length; i++) {
+    formatotabla += `<tr>
+      <td>${res.productos[i].producto}</td>
+      <td>${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>
+      </tr>`;
+  }
+  formatotabla += `</tbody></table>`;
+
+  let result = await swalWithBootstrapButtons.fire({
+    title: "Estás seguro que deseas utilizar esta plantilla?",
+    icon: "warning",
+    html: formatotabla,
+    showCancelButton: true,
+    confirmButtonText: "Sí",
+    cancelButtonText: "No",
+  })
+  if (result.isConfirmed) {
+    result = await swalWithBootstrapButtons3.fire({
+      width: (window.innerWidth * 3) / 4,
+      focusConfirm: false,
+      title: 'Deseas crear una plantilla vacia o deseas guardar los elementos que coincidan con esta plantilla?',
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Crear plantilla vacia',
+      denyButtonText: `Conservar elementos que coincidan`,
+      cancelButtonText: `Cancelar`,
+    })
+    if (result.isConfirmed) {
+      let formatotablavacia = `<table>
+            <thead>
+              <col><col>
+              <colgroup class="pintarcolumnas">
+                <col span="2">
+              </colgroup>
+              <col><col>
+              <tr>
+                <th rowspan="2"class="prod">Productos</th>
+                <th rowspan="2" class="tr">Precio</th>
+                <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+                <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
+                <th rowspan="2" class="tr">Ingresos</th>
+              </tr>
+              <tr class="saleYEntra">
+                <th scope="col">Sale</th>
+                <th scope="col">Entra</th>
+              </tr>
+            </thead>
+            <tbody class="cuerpo">`;
       for (let i = 0; i < res.productos.length; i++) {
-        formatotabla += `<tr>
-            <td>${res.productos[i].producto}</td>
-            <td>${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>
-            </tr>`;
+        formatotablavacia += `<tr>
+                          <td contenteditable="true">${res.productos[i].producto}</td>
+                          <td contenteditable="true">${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>
+                          <td contenteditable="true"></td>
+                          <td contenteditable="true"></td>
+                          <td></td>
+                          <td class="borrarfilas"></td>
+                          </tr>`
       }
-      formatotabla += `</tbody></table>`;
+      formatotablavacia += `</tbody>
+                          <tfoot>
+                          <tr>
+                            <td colspan="4">Total:</td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                          </tfoot>
+                        </table>`;
 
-      let result = await swalWithBootstrapButtons.fire({
-        title: "Estás seguro que deseas utilizar esta plantilla?",
-        icon: "warning",
-        html: formatotabla,
-        showCancelButton: true,
-        confirmButtonText: "Sí",
-        cancelButtonText: "No",
-      })
-      if (result.isConfirmed) {
-        result = await swalWithBootstrapButtons3.fire({
-          width: (window.innerWidth * 3) / 4,
-          focusConfirm: false,
-          title: 'Deseas crear una plantilla vacia o deseas guardar los elementos que coincidan con esta plantilla?',
-          showDenyButton: true,
-          showCancelButton: true,
-          confirmButtonText: 'Crear plantilla vacia',
-          denyButtonText: `Conservar elementos que coincidan`,
-          cancelButtonText: `Cancelar`,
-        })
-        if (result.isConfirmed) {
-          let formatotablavacia = `<table>
-                  <thead>
-                    <col><col>
-                    <colgroup class="pintarcolumnas">
-                      <col span="2">
-                    </colgroup>
-                    <col><col>
-                    <tr>
-                      <th rowspan="2"class="prod">Productos</th>
-                      <th rowspan="2" class="tr">Precio</th>
-                      <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
-                      <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
-                      <th rowspan="2" class="tr">Ingresos</th>
-                    </tr>
-                    <tr class="saleYEntra">
-                      <th scope="col">Sale</th>
-                      <th scope="col">Entra</th>
-                    </tr>
-                  </thead>
-                  <tbody class="cuerpo">`;
-          for (let i = 0; i < res.productos.length; i++) {
-            formatotablavacia += `<tr>
-                                <td contenteditable="true">${res.productos[i].producto}</td>
-                                <td contenteditable="true">${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>
-                                <td contenteditable="true"></td>
-                                <td contenteditable="true"></td>
-                                <td></td>
-                                <td class="borrarfilas"></td>
-                                </tr>`
+      _tabla().outerHTML = formatotablavacia;
+    }
+    else if (result.isDenied) {
+      let filas = _cuerpo().rows;
+      let cantidadcolumnas = _cantidadSaleYEntra();
+      let formatotablallena = "";
+
+      for (let i = 0; i < res.productos.length; i++) {
+        let siestaba = false;
+        for (let j = 0; j < filas.length - 1; j++) {
+          if (filas[j].cells[0].innerHTML.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "") === res.productos[i].producto.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "")) {
+            filas[j].cells[0].innerHTML = res.productos[i].producto;
+            filas[j].cells[1].innerHTML = res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "");
+            formatotablallena += filas[j].outerHTML;
+            siestaba = true;
+            break;
           }
-          formatotablavacia += `</tbody>
-                                <tfoot>
-                                <tr>
-                                  <td colspan="4">Total:</td>
-                                  <td></td>
-                                  <td></td>
-                                </tr>
-                                </tfoot>
-                              </table>`;
-
-          _tabla().outerHTML = formatotablavacia;
         }
-        else if (result.isDenied) {
-          let filas = _cuerpo().rows;
-          let cantidadcolumnas = _cantidadSaleYEntra();
-          let formatotablallena = "";
-
-          for (let i = 0; i < res.productos.length; i++) {
-            let siestaba = false;
-            for (let j = 0; j < filas.length - 1; j++) {
-              if (filas[j].cells[0].innerHTML.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "") === res.productos[i].producto.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "")) {
-                filas[j].cells[0].innerHTML = res.productos[i].producto;
-                filas[j].cells[1].innerHTML = res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "");
-                formatotablallena += filas[j].outerHTML;
-                siestaba = true;
-                break;
-              }
-            }
-            if (!siestaba) {
-              formatotablallena += `<tr>`;
-              formatotablallena += `<td contenteditable="true">${res.productos[i].producto}</td>
-                                <td contenteditable="true">${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>`
-              for (let i = 0; i < cantidadcolumnas - 4; i++) {
-                formatotablallena += `<td contenteditable="true"></td>`
-              }
-              formatotablallena += `<td></td><td class="borrarfilas"></td></tr>`
-            }
+        if (!siestaba) {
+          formatotablallena += `<tr>`;
+          formatotablallena += `<td contenteditable="true">${res.productos[i].producto}</td>
+                          <td contenteditable="true">${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>`
+          for (let i = 0; i < cantidadcolumnas - 4; i++) {
+            formatotablallena += `<td contenteditable="true"></td>`
           }
-          _cuerpo().innerHTML = formatotablallena;
-          calcularvendidoseingresostotal(_cuerpo());
-          console.log(cuerpo)
+          formatotablallena += `<td></td><td class="borrarfilas"></td></tr>`
         }
       }
-    },
-    error: function (res) {
-      Swal.fire({
-        icon: "error",
-        title: "Ups...",
-        text: "Ha habido un error, por favor recarga la página",
-      });
-    },
-  });
+      _cuerpo().innerHTML = formatotablallena;
+      calcularvendidoseingresostotal(_cuerpo());
+      console.log(cuerpo)
+    }
+  }
+
 }
 
 document.querySelectorAll(".fecha").forEach(fecha => {

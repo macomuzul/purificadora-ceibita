@@ -23,31 +23,43 @@ input {
   background-color: #112438;
   border: 1px solid #036891;
   stroke: #009578;
-  height: 40px;
+  height: 45px;
+  width: 190px;
   margin-top: 20px;
   color: white;
-  &:focus{
+  &:focus, &:active, &:hover {
     background-color: #244569;
+    box-shadow: 0 0 0 0.1rem rgb(49 132 253 / 50%) !important;
   }
 }
 
-@media (hover: hover) {
-  .añadirproductoyviaje:hover {
-    background-color: #244569;
-  }
-  .botonexcel:hover {
-    background: #165a35;
-  }
+.ultima-modificacion{
+  color: white;
+  font-weight: 600;
+  margin-left: auto;
 }
-
 
 .form-switch,
 .form-check-label {
   font-size: 16px;
 }
 
-.form-control {
-  font-size: 12;
+.trabajador {
+  font-size: 15px;
+  display: inline-block;
+  padding: 6px 10px;
+}
+
+.label-trabajador{
+  color: white;
+  font-size: 18px;
+}
+
+.contenedor-trabajador {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
 }
 
 h4 {
@@ -106,6 +118,10 @@ h4 {
   position: absolute;
   top: 0;
   right: 0;
+  &:hover, &:focus, &:active  {
+    background: #165a35;
+    box-shadow: 0 0 0 0.1rem rgb(60 153 110 / 50%) !important;
+  }
 }
 .contenedorsuperior {
   position: relative;
@@ -147,11 +163,9 @@ svg:hover {
   margin-right: 10px;
 }
 
-.btn-primary.disabled,
 .btn-primary:disabled {
   background-color: #112438;
 }
-.btn-success.disabled,
 .btn-success:disabled {
   background: #064723;
 }
@@ -165,7 +179,7 @@ svg:hover {
   opacity: 0.5;
 }
 
-th{
+th {
   resize: horizontal;
   overflow: auto;
 }
