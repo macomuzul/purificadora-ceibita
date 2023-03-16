@@ -1,15 +1,9 @@
-const express = require("express");
-const router = express.Router();
-const path = require("path");
+const router = require("express").Router();
 const ventaspordia = require("../models/registroventaspordia");
 const plantilla = require("../models/plantillas");
 const Respaldo = require("../models/respaldo");
-const estaAutenticado = require("../passport/autenticado");
 const { DateTime } = require("luxon");
 
-router.use(express.static(path.join(__dirname, "../public")));
-
-//TODO colocar ultima modificacion de la tabla en la vista ventaspordia
 router.post("/guardar", async (req, res) => {
   try {
     let ventas = new ventaspordia(req.body);

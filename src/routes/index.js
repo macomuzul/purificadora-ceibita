@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const passport = require('passport');
-const estaAutenticado = require("../passport/autenticado");
 
 router.get('/', (req, res) => {
   res.render('index');
@@ -10,9 +9,9 @@ router.get('/signin', (req, res) => {
   res.render('index');
 });
 
-router.get('/calendario', estaAutenticado, (req, res) => {
-    res.render('calendario');
-  });
+router.get('/calendario', (req, res) => {
+  res.render('calendario');
+});
 
 router.post('/iniciarSesion', passport.authenticate('iniciarSesion', {
   successRedirect: '/calendario',
@@ -22,7 +21,7 @@ router.post('/iniciarSesion', passport.authenticate('iniciarSesion', {
 
 
 router.get('/logout', (req, res, next) => {
-  req.logout(function(err) {
+  req.logout(function (err) {
     if (err) { return next(err); }
     res.redirect('/');
   });

@@ -5,6 +5,8 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
 const morgan = require('morgan');
+const estaAutenticado = require("./passport/autenticado");
+
 
 // initializations
 const app = express();
@@ -42,6 +44,8 @@ app.use((req, res, next) => {
   app.locals.user = req.user;
   next();
 });
+
+app.use(estaAutenticado);
 
 // routes
 app.use('/', require('./routes/index'));

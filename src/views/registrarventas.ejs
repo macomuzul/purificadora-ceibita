@@ -33,7 +33,7 @@
       </div>
       <article>        
         <div class="grupotabs">
-          <div class="tabs" id="tabs">
+          <div class="tabs">
               <% for (let j=0; j < ventaspordia.camiones.length; j++){ %>
             <div class="tab">
               <input data-tabid="<%=j%>" type="radio" class="tabs__radio" name="tab" id="tab<%=j%>" <% if (j===0) { %>checked<% } %> />
@@ -54,6 +54,9 @@
                 <li><%= plantilla.nombreplantilla %></li>
                 <% }); %>
             </ul></div>
+            <script>
+              let plantillaDefault = "<%= plantillas[0].nombreplantilla %>";
+            </script>
             <input type="button" value="Añadir producto" id="añadirProducto" class=" añadirproductoyviaje" />
             <input type="button" value="Añadir viaje" id="añadirViaje" class="añadirproductoyviaje" />
         </div>
@@ -68,8 +71,8 @@
                   <%- include("layouts/tablasregistrodias", {j, ventaspordia}) %>
               </div>
               <% } %>
-              <span class="ultima-modificacion">Fecha de última modificación: <span class="ultima-modificacion-fecha"><%=DateTime.fromJSDate(ventaspordia.fechaultimocambio, {zone: "America/Guatemala"}).toFormat("d/M/y")%></span><span> a las <%= DateTime.fromJSDate(ventaspordia.fechaultimocambio, {zone: "America/Guatemala"}).toFormat("H:mm 'con' ss 'segundos'") %></span></span>
             </div>
+            <span class="ultima-modificacion">Fecha de última modificación: <span class="ultima-modificacion-fecha"><%=DateTime.fromJSDate(ventaspordia.fechaultimocambio, {zone: "America/Guatemala"}).toFormat("d/M/y")%></span><span> a las <%= DateTime.fromJSDate(ventaspordia.fechaultimocambio, {zone: "America/Guatemala"}).toFormat("H:mm 'con' ss 'segundos'") %></span></span>
         </div>
       </article>
 

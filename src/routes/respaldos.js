@@ -1,10 +1,7 @@
 const router = require("express").Router();
 const Respaldo = require("../models/respaldo");
 const ventaspordia = require("../models/registroventaspordia");
-const estaAutenticado = require("../passport/autenticado");
 const { DateTime } = require("luxon");
-
-router.use(estaAutenticado);
 
 router.get("/", async (req, res) => {
   res.render("respaldos");

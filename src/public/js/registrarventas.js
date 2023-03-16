@@ -29,9 +29,9 @@ const swalWithBootstrapButtons3 = Swal.mixin({
   buttonsStyling: false,
 });
 
-$("#tabs").sortable({
+$(".tabs").sortable({
   axis: "x", stop: function () {
-    let tabs = document.querySelectorAll("#tabs label");
+    let tabs = document.querySelectorAll(".tabs label");
     for (let i = 0; i < tabs.length; i++) {
       tabs[i].innerText = `Camion ${i + 1}`;
     }
@@ -46,15 +46,13 @@ document.querySelectorAll("tbody td:last-child").forEach(el => {
   el.classList.add("borrarfilas");
 });
 
-document.querySelectorAll("#tabs input").forEach(el => {
-  el.addEventListener("click", e => {
-    document.querySelectorAll(".tabs__content").forEach(el => {
-      el.style.display = "none";
-    });
-    let contenido = document.querySelector(`.contenidotabs [data-tabid="${e.currentTarget.dataset.tabid}"]`)
-    contenido.style.display = "initial"
+$("body").on("click", ".tabs input", function (e) {
+  document.querySelectorAll(".tabs__content").forEach(el => {
+    el.style.display = "none";
   });
-});
+  let contenido = document.querySelector(`.contenidotabs [data-tabid="${e.currentTarget.dataset.tabid}"]`)
+  contenido.style.display = "initial"
+})
 
 $("body").on("keyup", "tr td", function (e) {
   let keycode = event.keyCode || event.which;
@@ -135,6 +133,7 @@ function calcularvendidoseingresostotal(cuerpo) {
 }
 
 
+function _cantidadTabs() { return document.querySelector(".contenidotabs").children.length; }
 function _idTab() { return document.querySelector(".tabs__radio:checked").dataset.tabid; }
 function _tabla() { return document.querySelector(`.contenidotabs [data-tabid="${_idTab()}"] table`); }
 function _cabeza() { return _tabla().querySelectorAll("tbody")[0]; }
@@ -581,8 +580,7 @@ document.getElementById("exportarexcel").addEventListener("click", async functio
 
 })
 
-async function metododropdown(option) {
-  let nombreplantilla = option.innerHTML;
+async function pidePlantilla(nombreplantilla) {
   let plantilla = listaplantillas.find(el => el.nombre === nombreplantilla)
   let mandar = `{ "nombreplantilla": "${nombreplantilla}" }`
   if (!plantilla) {
@@ -605,8 +603,14 @@ async function metododropdown(option) {
       },
     });
   }
+  return plantilla.plantilla;
+}
 
-  let res = plantilla.plantilla;
+async function metododropdown(option) {
+  let nombreplantilla = option.innerHTML;
+  let res = await pidePlantilla(nombreplantilla);
+  if (!res)
+    return;
   let formatotabla = `<table id="mostrartabla">
   <thead>
     <tr>
@@ -643,46 +647,7 @@ async function metododropdown(option) {
       cancelButtonText: `Cancelar`,
     })
     if (result.isConfirmed) {
-      let formatotablavacia = `<table>
-            <thead>
-              <col><col>
-              <colgroup class="pintarcolumnas">
-                <col span="2">
-              </colgroup>
-              <col><col>
-              <tr>
-                <th rowspan="2"class="prod">Productos</th>
-                <th rowspan="2" class="tr">Precio</th>
-                <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
-                <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
-                <th rowspan="2" class="tr">Ingresos</th>
-              </tr>
-              <tr class="saleYEntra">
-                <th scope="col">Sale</th>
-                <th scope="col">Entra</th>
-              </tr>
-            </thead>
-            <tbody class="cuerpo">`;
-      for (let i = 0; i < res.productos.length; i++) {
-        formatotablavacia += `<tr>
-                          <td contenteditable="true">${res.productos[i].producto}</td>
-                          <td contenteditable="true">${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>
-                          <td contenteditable="true"></td>
-                          <td contenteditable="true"></td>
-                          <td></td>
-                          <td class="borrarfilas"></td>
-                          </tr>`
-      }
-      formatotablavacia += `</tbody>
-                          <tfoot>
-                          <tr>
-                            <td colspan="4">Total:</td>
-                            <td></td>
-                            <td></td>
-                          </tr>
-                          </tfoot>
-                        </table>`;
-
+      let formatotablavacia = creaTablaVacia(res);
       _tabla().outerHTML = formatotablavacia;
     }
     else if (result.isDenied) {
@@ -719,8 +684,68 @@ async function metododropdown(option) {
 
 }
 
+function creaTablaVacia(res) {
+  let formatotablavacia = `<table>
+            <thead>
+              <col><col>
+              <colgroup class="pintarcolumnas">
+                <col span="2">
+              </colgroup>
+              <col><col>
+              <tr>
+                <th rowspan="2"class="prod">Productos</th>
+                <th rowspan="2" class="tr">Precio</th>
+                <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+                <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
+                <th rowspan="2" class="tr">Ingresos</th>
+              </tr>
+              <tr class="saleYEntra">
+                <th scope="col">Sale</th>
+                <th scope="col">Entra</th>
+              </tr>
+            </thead>
+            <tbody class="cuerpo">`;
+  for (let i = 0; i < res.productos.length; i++) {
+    formatotablavacia += `<tr>
+                          <td contenteditable="true">${res.productos[i].producto}</td>
+                          <td contenteditable="true">${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>
+                          <td contenteditable="true"></td>
+                          <td contenteditable="true"></td>
+                          <td></td>
+                          <td class="borrarfilas"></td>
+                          </tr>`
+  }
+  formatotablavacia += `</tbody>
+                          <tfoot>
+                          <tr>
+                            <td colspan="4">Total:</td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                          </tfoot>
+                        </table>`;
+  return formatotablavacia
+}
+
 document.querySelectorAll(".fecha").forEach(fecha => {
   fecha.addEventListener("dblclick", () => {
     document.querySelectorAll(".fecha").forEach(el => el.classList.toggle("esconder"));
   });
+});
+
+document.querySelector(".agregarcamion").addEventListener("click", async () => {
+  let cantidadTabs = _cantidadTabs();
+  let res = await pidePlantilla(plantillaDefault);
+  let formatotablavacia = creaTablaVacia(res);
+  let nuevoCamion = `<div data-tabid="${cantidadTabs}" class="tabs__content">
+  <div class="contenedor-trabajador">
+  <label class="label-trabajador" for="trabajador${cantidadTabs}">Nombre del trabajador:</label>
+  <input type="text" class="form-control trabajador" id="trabajador${cantidadTabs}"></div>`
+  nuevoCamion += formatotablavacia + "</div>";
+  let nuevaTab = `<div class="tab">
+  <input data-tabid="${cantidadTabs}" type="radio" class="tabs__radio" name="tab" id="tab${cantidadTabs}"/>
+  <label for="tab${cantidadTabs}" class="tabs__label">Camión ${(cantidadTabs+1)}</label>
+</div>`
+  $(".agregarcamion").before(nuevaTab);
+  $(".contenidoTabs").append(nuevoCamion);
 });

@@ -1,11 +1,5 @@
-const express = require('express')
-const router = express.Router();
-const path = require('path')
+const router = require('express').Router();
 const plantilla = require('../models/plantillas');
-const estaAutenticado = require("../passport/autenticado");
-
-router.use(express.static(path.join(__dirname, "../public")));
-router.use(estaAutenticado);
 
 router.get('/', async (req, res) => {
   const plantillas = await plantilla.find().sort("orden");
