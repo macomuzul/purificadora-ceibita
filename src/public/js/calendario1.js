@@ -1082,5 +1082,5 @@ var fechaseleccionada;
      
 
 function mifuncion() { 
-    window.location = "/registrarventas/" + fechaseleccionada.getDate() + "-" + (fechaseleccionada.getMonth()+1) + "-" + fechaseleccionada.getFullYear();
+    window.location = `/registrarventas/${fechaseleccionada.getDate()}-${(fechaseleccionada.getMonth()+1)}-${fechaseleccionada.getFullYear()}`;
 }

@@ -154,14 +154,7 @@ $(document).on('click', "#guardar",async function(){
             "El archivo se ha almacenado en la base de datos",
             "success"
           ).then(() => {
-            const prueba = String("/plantillas/"+document.getElementById("nombreplantilla").value.trim());
-
-            const form = document.createElement("form");
-            form.method = "GET";
-            form.action = prueba;
-          
-            document.body.appendChild(form);
-            form.submit();  
+            window.location = ("/plantillas/"+document.getElementById("nombreplantilla").value.trim());  
           });
         },
         error: function (res) {

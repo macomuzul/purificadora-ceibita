@@ -27,13 +27,15 @@ input {
   width: 190px;
   margin-top: 20px;
   color: white;
-  &:focus, &:active, &:hover {
+  &:focus,
+  &:active,
+  &:hover {
     background-color: #244569;
     box-shadow: 0 0 0 0.1rem rgb(49 132 253 / 50%) !important;
   }
 }
 
-.ultima-modificacion{
+.ultima-modificacion {
   color: white;
   font-weight: 600;
   margin-left: auto;
@@ -50,7 +52,7 @@ input {
   padding: 6px 10px;
 }
 
-.label-trabajador{
+.label-trabajador {
   color: white;
   font-size: 18px;
 }
@@ -118,7 +120,9 @@ h4 {
   position: absolute;
   top: 0;
   right: 0;
-  &:hover, &:focus, &:active  {
+  &:hover,
+  &:focus,
+  &:active {
     background: #165a35;
     box-shadow: 0 0 0 0.1rem rgb(60 153 110 / 50%) !important;
   }
@@ -182,4 +186,17 @@ svg:hover {
 th {
   resize: horizontal;
   overflow: auto;
+}
+
+.borrarfilas, .borrarcolumnas {
+  position: relative;
+  &::after {
+    content: "❌";
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: red;
+    cursor: pointer;
+    font-weight: bold;
+  }
 }

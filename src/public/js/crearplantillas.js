@@ -82,10 +82,6 @@ $('#añadirproducto').on('click', function () {
 
 });
 
-$("#botonvolver").on('click', function () {
-  window.location = "/plantillas"
-});
-
 function metododropdown(option) {
   let mandar = `{ "nombreplantilla": "${option.innerHTML}" }`
   $.ajax({

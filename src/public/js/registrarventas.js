@@ -281,11 +281,11 @@ async function borrarfilas() {
 };
 
 
-$("#diaanterior").click(function () {
+$("#diaanterior").on("click", function () {
   window.location = `/registrarventas/${hoy.subtract("1", "day").format("D-M-YYYY")}`;
 });
 
-$("#diasiguiente").click(function () {
+$("#diasiguiente").on("click",function () {
   window.location = `/registrarventas/${hoy.add("1", "day").format("D-M-YYYY")}`;
 });
 
@@ -293,7 +293,7 @@ function añadirceros(tabla) {
   tabla.querySelectorAll("td:not(:nth-child(1),:nth-child(2))").forEach(celda => celda.innerText = celda.innerText || 0);
 }
 
-$("#guardar").click(async function () {
+$("#guardar").on("click", async function () {
   let tabscontenido = document.querySelectorAll(".tabs__content");
   for (let i = 0; i < tabscontenido.length; i++) {
     let respuesta = await verificartrabajador(tabscontenido[i].querySelector("input"), i + 1);
