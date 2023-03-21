@@ -7,6 +7,10 @@ let timer;
 let touchduration = 600;
 let listaplantillas = [];
 
+document.querySelectorAll("tbody td:not(:nth-last-child(1), :nth-last-child(2))").forEach(el => el.setAttribute("contentEditable", true));
+document.querySelectorAll("tbody td:last-child").forEach(el => el.classList.add("borrarfilas"));
+$(document).on("dblclick", ".fecha", () => document.querySelectorAll(".fecha").forEach(el => el.classList.toggle("esconder")));
+
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
     confirmButton: "btn btn-success margenbotonswal",
@@ -39,17 +43,8 @@ $(".tabs").sortable({
   items: "> div:not(:last-child)"
 });
 
-document.querySelectorAll("tbody td:not(:nth-last-child(1), :nth-last-child(2))").forEach(el => {
-  el.setAttribute("contentEditable", true);
-});
-document.querySelectorAll("tbody td:last-child").forEach(el => {
-  el.classList.add("borrarfilas");
-});
-
 $("body").on("click", ".tabs input", function (e) {
-  document.querySelectorAll(".tabs__content").forEach(el => {
-    el.style.display = "none";
-  });
+  document.querySelectorAll(".tabs__content").forEach(el => el.style.display = "none");
   let contenido = document.querySelector(`.contenidotabs [data-tabid="${e.currentTarget.dataset.tabid}"]`)
   contenido.style.display = "initial"
 })
@@ -102,14 +97,14 @@ function calcularvendidoseingresos(tabla, indiceFila) {
 function calcularvendidoseingresostotal(cuerpo) {
   let sumaVendidos = 0;
   cuerpo.querySelectorAll("td:nth-last-child(2)").forEach(el => {
-    let contenido = parseFloat(el.innerText)
+    let contenido = parseFloat(el.innerText);
     if (!isNaN(contenido))
       sumaVendidos += contenido;
   });
 
   let sumaIngresos = 0;
   cuerpo.querySelectorAll("td:nth-last-child(1)").forEach(el => {
-    let contenido = parseFloat(el.innerText)
+    let contenido = parseFloat(el.innerText);
     if (!isNaN(contenido))
       sumaIngresos += contenido;
   });
@@ -146,11 +141,11 @@ function _cantidadSaleYEntra() { return (_pintarColumnas().children.length * 2 +
 function _cantidadProductos() { return _cuerpo().children.length; }
 
 document.getElementById("añadirProducto").addEventListener("click", () => {
-  let fila = '<tr>';
+  let fila = "<tr>";
   for (i = 0; i < _cantidadSaleYEntra() - 2; i++) {
-    fila += "<td contenteditable='true'></td>";
+    fila += `<td contenteditable="true"></td>`;
   }
-  fila += `<td></td><td class="borrarfilas"></td>`;
+  fila += `<td></td><td class="borrarfilas"></td></tr>`;
   $(_cuerpo()).append(fila);
 });
 
@@ -230,12 +225,7 @@ async function borrarcolumnas() {
     $(tabla).find(".saleYEntra").children().last().remove();
     $(tabla).find(".pintarcolumnas").children().last().remove();
     let columnaborrartexto = tabla.querySelectorAll(".borrarcolumnas");
-    let contador = 1;
-    columnaborrartexto.forEach(function (columnaborrartxt) {
-      columnaborrartxt.innerHTML = "<div>Viaje No. " + contador + "</div>";
-      contador++;
-    });
-
+    columnaborrartexto.forEach((columnaborrartxt, index) => columnaborrartxt.innerHTML = "<div>Viaje No. " + (index+1) + "</div>");
     for (let i = 0; i < cuerpo.rows.length; i++) {
       calcularvendidoseingresos(cuerpo, i)
     }
@@ -256,13 +246,12 @@ $(document).on("pointerdown", ".borrarfilas", function () {
   }
 });
 
-
 async function borrarfilas() {
   timer = null;
 
   let textoborrar = `<div class="contenedormensajeborrar"><table><tbody style="background: #0f0d35;">${filaborrar.cloneNode(true).outerHTML}</tbody></table></div>`
   let result = await swalWithBootstrapButtons.fire({
-    title: "Estás seguro que deseas borrar esta fila y todos sus contenidos?",
+    title: "Estás seguro que deseas borrar este producto de la tabla?",
     icon: "warning",
     width: (window.innerWidth * 3) / 4,
     html: textoborrar,
@@ -284,8 +273,8 @@ async function borrarfilas() {
     cuerpo.removeChild(filaborrar);
     calcularvendidoseingresostotal(cuerpo)
     Swal.fire(
-      "Se ha eliminado la fila",
-      "Se ha eliminado la fila y todos sus contenidos exitosamente",
+      "Se ha eliminado el producto",
+      "Se ha eliminado el producto y su contenido exitosamente",
       "success"
     );
   }
@@ -726,12 +715,6 @@ function creaTablaVacia(res) {
                         </table>`;
   return formatotablavacia
 }
-
-document.querySelectorAll(".fecha").forEach(fecha => {
-  fecha.addEventListener("dblclick", () => {
-    document.querySelectorAll(".fecha").forEach(el => el.classList.toggle("esconder"));
-  });
-});
 
 document.querySelector(".agregarcamion").addEventListener("click", async () => {
   let cantidadTabs = _cantidadTabs();

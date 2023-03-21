@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --ignore ./src/public/ src/index.js"
+    "dev": "nodemon --ignore ./src/public/ src/index.js",
+    "e2e": "open cypress",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +23,8 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "cypress": "^12.8.1",
+    "jest": "^29.5.0",
     "nodemon": "^2.0.21"
   }
 }

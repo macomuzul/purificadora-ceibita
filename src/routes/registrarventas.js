@@ -39,8 +39,8 @@ router.get("/:id", async (req, res) => {
     const fecha = DateTime.fromFormat(id, "d-M-y",{zone: "utc"}).setLocale("es");
     const datostablas = await ventaspordia.findOne({ fecha });
     const plantillas = await plantilla.find().sort("orden");
-    const datosplantilla = await plantilla.findOne({ esdefault: true });
-    res.render("registrarventas", { fecha: fecha.toFormat("d/M/y"), ventaspordia: datostablas, plantillas, datosplantilla, fechastr: fecha.weekdayLong + ", " + fecha.toLocaleString(DateTime.DATE_FULL), DateTime});
+    const plantillaDefault = await plantilla.findOne({ esdefault: true });
+    res.render("registrarventas", { fecha: fecha.toFormat("d/M/y"), ventaspordia: datostablas, plantillas, plantillaDefault, fechastr: fecha.weekdayLong + ", " + fecha.toLocaleString(DateTime.DATE_FULL), DateTime});
   } catch (e) {
     res.send("página inválida");
   }
