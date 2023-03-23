@@ -1,7 +1,7 @@
 
-$("#guardar").click(async function () {
+$("#guardar").on("click", async function () {
 
-  let valido = await validarcrear();
+  let valido = await validarPlantillas();
   if (valido) {
     let tabla = $("tbody")[0];
     let filas = tabla.rows.length;

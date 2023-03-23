@@ -131,7 +131,6 @@ function calcularvendidoseingresostotal(cuerpo) {
 function _cantidadTabs() { return document.querySelector(".contenidotabs").children.length; }
 function _idTab() { return document.querySelector(".tabs__radio:checked").dataset.tabid; }
 function _tabla() { return document.querySelector(`.contenidotabs [data-tabid="${_idTab()}"] table`); }
-function _cabeza() { return _tabla().querySelectorAll("tbody")[0]; }
 function _cuerpo() { return _tabla().querySelector(".cuerpo"); }
 function _pie() { return _tabla().querySelector("tfoot"); }
 function _pintarColumnas() { return _tabla().querySelector(".pintarcolumnas") }
@@ -225,7 +224,7 @@ async function borrarcolumnas() {
     $(tabla).find(".saleYEntra").children().last().remove();
     $(tabla).find(".pintarcolumnas").children().last().remove();
     let columnaborrartexto = tabla.querySelectorAll(".borrarcolumnas");
-    columnaborrartexto.forEach((columnaborrartxt, index) => columnaborrartxt.innerHTML = "<div>Viaje No. " + (index+1) + "</div>");
+    columnaborrartexto.forEach((columnaborrartxt, index) => columnaborrartxt.innerHTML = "<div>Viaje No. " + (index + 1) + "</div>");
     for (let i = 0; i < cuerpo.rows.length; i++) {
       calcularvendidoseingresos(cuerpo, i)
     }
@@ -285,7 +284,7 @@ $("#diaanterior").on("click", function () {
   window.location = `/registrarventas/${hoy.subtract("1", "day").format("D-M-YYYY")}`;
 });
 
-$("#diasiguiente").on("click",function () {
+$("#diasiguiente").on("click", function () {
   window.location = `/registrarventas/${hoy.add("1", "day").format("D-M-YYYY")}`;
 });
 
@@ -294,14 +293,15 @@ function añadirceros(tabla) {
 }
 
 $("#guardar").on("click", async function () {
+  alert("hola")
   let tabscontenido = document.querySelectorAll(".tabs__content");
   for (let i = 0; i < tabscontenido.length; i++) {
-    let respuesta = await verificartrabajador(tabscontenido[i].querySelector("input"), i + 1);
+    let respuesta = await validarTrabajador(tabscontenido[i].querySelector("input"), i + 1);
     if (!respuesta)
       return;
   }
   for (let i = 0; i < tabscontenido.length; i++) {
-    let respuesta = await verificardatostabla(tabscontenido[i].querySelector("table"), i + 1);
+    let respuesta = await validarDatosTabla(tabscontenido[i].querySelector("table"), i + 1);
     if (!respuesta)
       return;
   }
@@ -480,19 +480,63 @@ async function entramasdeloquesale(tabla, numtabla) {
     return true;
 
   else {
-    await swalWithBootstrapButtons2.fire({
+    await swalWithBootstrapButtons.fire({
       title: `<h3>Se ha detectado filas en la tabla ${numtabla} donde lo que sale es mayor que lo que entra, por favor corrígelos para poder guardar los datos</h3>`,
       icon: "error",
       width: (window.innerWidth * 3) / 4,
       html: tablacopia,
-      confirmButtonText: "Continuar",
+      showCancelButton: true,
+      confirmButtonText: "Ya lo arreglé",
+      cancelButtonText: "Volver",
     })
 
     return false;
   }
 }
 
-async function verificarprecios(tabla, numtabla) {
+let arreglado;
+
+async function validarProductos(tabla, numtabla) {
+  let tablacopia = tabla.cloneNode(true);
+  let cuerpocopia = $(tablacopia).find("tbody")[1];
+  let verificacion = true;
+  for (let i = 0; i < cuerpocopia.rows.length; i++) {
+    if (cuerpocopia.rows[i].cells[0].innerHTML === "") {
+      cuerpocopia.rows[i].cells[0].classList.add("enfocar");
+      verificacion = false;
+    }
+  }
+
+  if (verificacion) {
+    for (let i = 0; i < cuerpocopia.rows.length; i++) {
+      if(cuerpocopia.rows[i].cells[0].classList.contains("enfocar"))
+        cuerpocopia.rows[i].cells[0].removeAttribute("class");
+    }
+    arreglado = tablacopia;
+    return true;
+  }
+  else {
+    let result = await swalWithBootstrapButtons.fire({
+      title: `<h3>Se ha detectado valores vacíos en la columna productos de la tabla ${numtabla}
+        <br>
+        Por favor corrígelos para poder guardar los datos</h3>`,
+      icon: "error",
+      width: (window.innerWidth * 3) / 4,
+      html: tablacopia,
+      showCancelButton: true,
+      confirmButtonText: "Ya lo arreglé",
+      cancelButtonText: "Volver",
+    })
+    if (result.isConfirmed) {
+      let verif = await validarProductos(tablacopia, numtabla);
+      return verif;
+    }
+    else
+      return false;
+  }
+}
+
+async function validarPrecios(tabla, numtabla) {
   let tablacopia = tabla.cloneNode(true);
   let cuerpocopia = $(tablacopia).find("tbody")[1];
   let verificacion = true;
@@ -502,24 +546,36 @@ async function verificarprecios(tabla, numtabla) {
       verificacion = false;
     }
   }
-
-  if (verificacion)
+  if (verificacion) {
+    for (let i = 0; i < cuerpocopia.rows.length; i++) {
+      if(cuerpocopia.rows[i].cells[0].classList.contains("enfocar"))
+        cuerpocopia.rows[i].cells[0].removeAttribute("class");
+    }
+    arreglado = tablacopia;
     return true;
+  }
   else {
-    await swalWithBootstrapButtons2.fire({
+    let result = await swalWithBootstrapButtons.fire({
       title: `<h3>Se ha detectado valores vacíos en la columna precios de la tabla ${numtabla}
     <br>
     Por favor corrígelos para poder guardar los datos</h3>`,
       icon: "error",
       width: (window.innerWidth * 3) / 4,
       html: tablacopia,
-      confirmButtonText: "Continuar",
+      showCancelButton: true,
+      confirmButtonText: "Ya lo arreglé",
+      cancelButtonText: "Volver",
     })
-    return false;
+    if (result.isConfirmed) {
+      let verif = await validarProductos(tablacopia, numtabla);
+      return verif;
+    }
+    else
+      return false;
   }
 }
 
-async function verificartrabajador(textbox, numerotabla) {
+async function validarTrabajador(textbox, numerotabla) {
   if (textbox.value !== "")
     return true;
 
@@ -544,9 +600,15 @@ async function verificartrabajador(textbox, numerotabla) {
     return false;
 }
 
-async function verificardatostabla(tabla, numtabla) {
-  let verificacion = await verificarprecios(tabla, numtabla);
-  if (verificacion === false)
+async function validarDatosTabla(tabla, numtabla) {
+  let verificacion = await validarProductos(tabla, numtabla);
+  if (!verificacion)
+    return false;
+
+  tabla.outerHTML = arreglado.outerHTML;
+
+  verificacion = await validarPrecios(tabla, numtabla);
+  if (!verificacion)
     return false;
 
   añadirceros(tabla.querySelector(".cuerpo"));
@@ -727,8 +789,10 @@ document.querySelector(".agregarcamion").addEventListener("click", async () => {
   nuevoCamion += formatotablavacia + "</div>";
   let nuevaTab = `<div class="tab">
   <input data-tabid="${cantidadTabs}" type="radio" class="tabs__radio" name="tab" id="tab${cantidadTabs}"/>
-  <label for="tab${cantidadTabs}" class="tabs__label">Camión ${(cantidadTabs+1)}</label>
+  <label for="tab${cantidadTabs}" class="tabs__label">Camión ${(cantidadTabs + 1)}</label>
 </div>`
   $(".agregarcamion").before(nuevaTab);
   $(".contenidoTabs").append(nuevoCamion);
 });
+
+colocarDatosTabla()

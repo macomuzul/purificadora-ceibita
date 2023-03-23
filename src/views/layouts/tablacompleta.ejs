@@ -55,7 +55,7 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="<%= (ventaspordia ? (ventaspordia.camiones[j].filas[0].viajes.length*2 + 2) : 4) %>"> Total:</td>
+        <td colspan="<%= (ventaspordia ? (ventaspordia.camiones[j].filas[0].viajes.length*2 + 2) : 4) %>">Total:</td>
         <td><%= ventaspordia?.camiones[j].totalvendidos ?? "" %></td>
         <td><%= ventaspordia?.camiones[j].totalingresos.toFixed(2).replace(/[.,]00$/, "") ?? "" %></td>
       </tr>

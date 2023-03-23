@@ -188,11 +188,12 @@ th {
   overflow: auto;
 }
 
-.borrarfilas, .borrarcolumnas {
+.borrarfilas.cerrarconboton, .borrarcolumnas.cerrarconboton {
   position: relative;
   &::after {
     content: "❌";
     position: absolute;
+    text-shadow: 0, 0, 5, white;
     top: 0;
     right: 0;
     color: red;
