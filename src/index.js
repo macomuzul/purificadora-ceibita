@@ -29,6 +29,7 @@ app.use(express.static(path.join(__dirname, "public/js")));
 app.use(express.static(path.join(__dirname, "public/js/partials")));
 app.use(express.static(path.join(__dirname, "public/js/utilities")));
 app.use(express.static(path.join(__dirname, "../cypress/utilidades")));
+app.use(express.static(path.join(__dirname, "../plugins")));
 
 app.use(session({
   secret: 'llavedeautenticacionparaelusuario',

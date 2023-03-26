@@ -6,6 +6,7 @@ let hoy = dayjs(fecha[2] + "-" + fecha[1] + "-" + fecha[0]).utc(true);
 let timer;
 let touchduration = 600;
 let listaplantillas = [];
+let arreglado;
 
 document.querySelectorAll("tbody td:not(:nth-last-child(1), :nth-last-child(2))").forEach(el => el.setAttribute("contentEditable", true));
 document.querySelectorAll("tbody td:last-child").forEach(el => el.classList.add("borrarfilas"));
@@ -52,10 +53,10 @@ $("body").on("click", ".tabs input", function (e) {
 $("body").on("keyup", "tr td", function (e) {
   let keycode = event.keyCode || event.which;
   if ((keycode >= 48 && keycode <= 57) || keycode === 229 || keycode === 8) {
-    let tabla = $(this).closest("tbody")[0];
+    let cuerpo = $(this).closest("tbody")[0];
     let indiceFila = $(this).parent().index();
-    calcularvendidoseingresos(tabla, indiceFila);
-    calcularvendidoseingresostotal(tabla);
+    calcularvendidoseingresos(cuerpo, indiceFila);
+    calcularvendidoseingresostotal(cuerpo);
   }
 });
 
@@ -74,7 +75,6 @@ function calcularvendidoseingresos(tabla, indiceFila) {
         sumafila -= contenido;
     }
   }
-
   if (sumafila === 0 && !hayunnumero)
     fila.cells[y].innerText = "";
   else
@@ -83,12 +83,11 @@ function calcularvendidoseingresos(tabla, indiceFila) {
   y++;
   let totalingresos = sumafila * parseFloat(fila.cells[1].innerText);
 
-  let totalajustado = totalingresos.toFixed(2).replace(/[.,]00$/, "");
-  if (!isNaN(totalingresos)) {
-    if (totalingresos === 0 && !hayunnumero)
-      fila.cells[y].innerText = "";
-    else
-      fila.cells[y].innerText = totalajustado;
+  if (isNaN(totalingresos) || (sumafila === 0 && !hayunnumero))
+    fila.cells[y].innerText = "";
+  else {
+    let totalajustado = totalingresos.toFixed(2).replace(/[.,]00$/, "");
+    fila.cells[y].innerText = totalajustado;
   }
 }
 
@@ -96,10 +95,13 @@ function calcularvendidoseingresos(tabla, indiceFila) {
 
 function calcularvendidoseingresostotal(cuerpo) {
   let sumaVendidos = 0;
+  let hayUnNumero = false;
   cuerpo.querySelectorAll("td:nth-last-child(2)").forEach(el => {
     let contenido = parseFloat(el.innerText);
-    if (!isNaN(contenido))
+    if (!isNaN(contenido)) {
+      hayUnNumero = true;
       sumaVendidos += contenido;
+    }
   });
 
   let sumaIngresos = 0;
@@ -111,7 +113,7 @@ function calcularvendidoseingresostotal(cuerpo) {
 
   let celdaVendidos = $(cuerpo).parent().find("tfoot td")[1]
   if (!isNaN(sumaVendidos)) {
-    if (sumaVendidos === 0)
+    if (sumaVendidos === 0 && !hayUnNumero)
       celdaVendidos.innerText = "";
     else
       celdaVendidos.innerText = sumaVendidos;
@@ -119,7 +121,7 @@ function calcularvendidoseingresostotal(cuerpo) {
 
   let celdaIngresos = $(cuerpo).parent().find("tfoot td")[2]
   if (!isNaN(sumaIngresos)) {
-    if (sumaIngresos === 0)
+    if (sumaIngresos === 0 && !hayUnNumero)
       celdaIngresos.innerText = "";
     else
       celdaIngresos.innerText = sumaIngresos.toFixed(2).replace(/[.,]00$/, "");
@@ -185,17 +187,18 @@ async function borrarcolumnas() {
   timer = null;
   let numCol = $(colborrar).index();
   let tabla = $(colborrar).closest("table")[0]
-  let textoborrarcolumnas = `<div class="contenedormensajeborrar"><table><thead><tr>  `;
-  textoborrarcolumnas += `${tabla.rows[0].cells[numCol].outerHTML}</tr> <tr>${tabla.rows[1].cells[(numCol - 2) * 2].outerHTML} ${tabla.rows[1].cells[(numCol - 2) * 2 + 1].outerHTML} </tr></thead><tbody  style="background: #0f0d35;">`;
+  let celdaViajeABorrarSale = (numCol - colscomienzo) * 2 + colscomienzo;
+  let textoBorrarColumnas = `<div class="contenedormensajeborrar"><table><thead><tr>`;
+  textoBorrarColumnas += `${colborrar.outerHTML}</tr><tr><th scope="col">Sale</th><th scope="col">Entra</th></tr></thead><tbody style="background: #0f0d35;">`;
   for (let i = 2; i < tabla.rows.length - 1; i++) {
-    textoborrarcolumnas += `<tr>${tabla.rows[i].cells[(numCol - 2) * 2 + 2].outerHTML} ${tabla.rows[i].cells[(numCol - 2) * 2 + 3].outerHTML}</tr>`
+    textoBorrarColumnas += `<tr>${tabla.rows[i].cells[celdaViajeABorrarSale].outerHTML} ${tabla.rows[i].cells[celdaViajeABorrarSale + 1].outerHTML}</tr>`
   }
-  textoborrarcolumnas += "</tbody></table></div>";
+  textoBorrarColumnas += "</tbody></table></div>";
   let result = await swalWithBootstrapButtons.fire({
     title: "Estás seguro que deseas borrar esta columna y todos sus contenidos?",
     icon: "warning",
     width: (window.innerWidth * 3) / 4,
-    html: textoborrarcolumnas,
+    html: textoBorrarColumnas,
     showCancelButton: true,
     confirmButtonText: "Sí",
     cancelButtonText: "No",
@@ -212,8 +215,8 @@ async function borrarcolumnas() {
 
     let cuerpo = tabla.querySelector(".cuerpo");
     for (let i = 0; i < cuerpo.rows.length; i++) {
-      cuerpo.rows[i].deleteCell((numCol - colsfinal) * 2 + colscomienzo);
-      cuerpo.rows[i].deleteCell((numCol - colsfinal) * 2 + colscomienzo);
+      cuerpo.rows[i].deleteCell(celdaViajeABorrarSale);
+      cuerpo.rows[i].deleteCell(celdaViajeABorrarSale);
     }
     let celdatotal = $(tabla).find("tfoot td").first()[0];
     let colspan = parseInt(celdatotal.getAttribute("colspan"));
@@ -288,12 +291,15 @@ $("#diasiguiente").on("click", function () {
   window.location = `/registrarventas/${hoy.add("1", "day").format("D-M-YYYY")}`;
 });
 
-function añadirceros(tabla) {
-  tabla.querySelectorAll("td:not(:nth-child(1),:nth-child(2))").forEach(celda => celda.innerText = celda.innerText || 0);
+function añadirceros(cuerpo) {
+  cuerpo.querySelectorAll("td:not(:nth-child(1),:nth-child(2))").forEach(celda => {
+    if (celda.innerText === "")
+      celda.innerText = 0
+  });
+  calcularvendidoseingresostotal(cuerpo)
 }
 
 $("#guardar").on("click", async function () {
-  alert("hola")
   let tabscontenido = document.querySelectorAll(".tabs__content");
   for (let i = 0; i < tabscontenido.length; i++) {
     let respuesta = await validarTrabajador(tabscontenido[i].querySelector("input"), i + 1);
@@ -304,9 +310,7 @@ $("#guardar").on("click", async function () {
     let respuesta = await validarDatosTabla(tabscontenido[i].querySelector("table"), i + 1);
     if (!respuesta)
       return;
-  }
-  for (let i = 0; i < tabscontenido.length; i++) {
-    let respuesta = await borrarceros(tabscontenido[i].querySelector("table"), i + 1);
+    respuesta = await borrarFilasVacias(tabscontenido[i].querySelector("table"), i + 1);
     if (!respuesta)
       return;
   }
@@ -377,49 +381,26 @@ $("#guardar").on("click", async function () {
   // });
 });
 
-async function borrarceros(tabla, numtabla) {
-  let tablacopia = tabla.cloneNode(true);
-  let cuerpocopia = tabla.querySelector(".cuerpo");
-  let todobien = true;
-  let seVaABorrar = true;
-  for (let i = 0; i < cuerpocopia.rows.length; i++) {
-    for (let j = 2; j < cuerpocopia.rows[i].cells.length - 2; j++) {
-      let contenido = parseFloat(cuerpocopia.rows[i].cells[j].innerHTML);
-      if (contenido !== 0) {
-        seVaABorrar = false;
-        break;
-      }
+async function borrarFilasVacias(tabla, numtabla) {
+  let tablaCopia = tabla.cloneNode(true);
+  let cuerpoCopia = tablaCopia.querySelector(".cuerpo");
+  let filasCopia = Array.from(cuerpoCopia.rows)
+  let filasQueNoEstanVacias = filasCopia.filter(fila => {
+    let celdasEspecificas = Array.from(fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))"))
+    let res = celdasEspecificas.every(celda => celda.innerText === "0")
+    if (res) {
+      let todasLasCeldas = Array.from(fila.querySelectorAll("td"))
+      todasLasCeldas.forEach(celda => celda.classList.add("enfocar"))
     }
-    if (seVaABorrar) {
-      todobien = false;
-      for (let j = 0; j < cuerpocopia.rows[i].cells.length; j++) {
-        cuerpocopia.rows[i].cells[j].classList.add("enfocar");
-      }
-    }
-    seVaABorrar = true;
-  }
-
-  if (todobien)
+    return !res;
+  });
+  if (filasQueNoEstanVacias.length === cuerpoCopia.rows.length)
     return true;
 
-  tablacopia = tabla.cloneNode(true);
-  cuerpocopia = $(tablacopia).find("tbody")[1];
-
-  seVaABorrar = true;
-  for (let i = 0; i < cuerpocopia.rows.length; i++) {
-    for (let j = 2; j < cuerpocopia.rows[i].cells.length - 2; j++) {
-      let contenido = parseFloat(cuerpocopia.rows[i].cells[j].innerHTML);
-      if (contenido !== 0) {
-        seVaABorrar = false;
-        break;
-      }
-    }
-    if (seVaABorrar) {
-      cuerpocopia.removeChild(cuerpocopia.rows[i]);
-      i--;
-    }
-    seVaABorrar = true;
-  }
+  let tablaCopiaSinFilasVacias = tabla.cloneNode(true);
+  let tablaSinFilasVacias = ""
+  filasQueNoEstanVacias.forEach(el => tablaSinFilasVacias += el.outerHTML)
+  tablaCopiaSinFilasVacias.querySelector(".cuerpo").innerHTML = tablaSinFilasVacias
 
   let result = await swalWithBootstrapButtons.fire({
     title: "Se han detectado filas vacias",
@@ -432,9 +413,9 @@ async function borrarceros(tabla, numtabla) {
             <label for="tab10">Ver filas vacías</label>
             <input type="radio" class="radiotab" name="tabs" id="tab11" />
             <label for="tab11">Vista previa del resultado</label>    
-            <div class="tab content1">${tablacopia.outerHTML}
+            <div class="tab content1">${tablaCopia.outerHTML}
           </div>
-            <div class="tab content2">${nuevatablacopia.outerHTML}</div>
+            <div class="tab content2">${tablaCopiaSinFilasVacias.outerHTML}</div>
             </div>
             <br>
             <div class="textovista">Desea continuar?</div>
@@ -445,134 +426,139 @@ async function borrarceros(tabla, numtabla) {
     cancelButtonText: "No continuar",
   })
   if (result.isConfirmed) {
-    if ($(_tabla()).find("#totalvendidos")[0].innerHTML === "0") {
+    if (filasQueNoEstanVacias.length === 0) {
       Swal.fire({
         icon: "error",
         title: "Error",
         text: `No se puede guardar la tabla ${numtabla} porque está vacía`,
       });
-      return;
+      return false;
     }
-    _tabla().outerHTML = nuevatablacopia.outerHTML;
+    let cuerpoOriginal = tabla.querySelector(".cuerpo");
+    let filasOriginal = cuerpoOriginal.rows;
+    let i = 0;
+    for (; i < filasQueNoEstanVacias.length; i++) {
+      if (filasOriginal[i].cells[0].innerText !== filasQueNoEstanVacias[i].cells[0].innerText) {
+        cuerpoOriginal.removeChild(filasOriginal[i]);
+        i--;
+      }
+    }
+    for (; i < filasOriginal.length; i++) {
+      cuerpoOriginal.removeChild(filasOriginal[i]);
+      i--;
+    }
+
     return true;
   }
   return false;
 }
 
-async function entramasdeloquesale(tabla, numtabla) {
+async function entraMasDeLoQueSale(tabla, numtabla) {
   let tablacopia = tabla.cloneNode(true);
   let cuerpocopia = $(tablacopia).find("tbody")[1];
 
   let verificacion = true;
   for (let i = 0; i < cuerpocopia.rows.length; i++) {
     for (let j = colscomienzo; j < cuerpocopia.rows[i].cells.length - colsfinal; j += 2) {
-      let valor1 = cuerpocopia.rows[i].cells[j].innerHTML;
-      let valor2 = cuerpocopia.rows[i].cells[j + 1].innerHTML;
+      let entra = cuerpocopia.rows[i].cells[j];
+      let sale = cuerpocopia.rows[i].cells[j + 1];
+      let valor1 = entra.innerText;
+      let valor2 = sale.innerText;
       if (parseInt(valor2) > parseInt(valor1)) {
-        cuerpocopia.rows[i].cells[j].classList.add("enfocar");
-        cuerpocopia.rows[i].cells[j + 1].classList.add("enfocar");
+        entra.classList.add("enfocar");
+        sale.classList.add("enfocar");
         verificacion = false;
+      }
+      else {
+        if (entra.classList.contains("enfocar")) {
+          entra.removeAttribute("class");
+          sale.removeAttribute("class");
+        }
       }
     }
   }
 
-  if (verificacion)
+  if (verificacion) {
+    arreglado = tablacopia;
     return true;
+  }
 
-  else {
-    await swalWithBootstrapButtons.fire({
-      title: `<h3>Se ha detectado filas en la tabla ${numtabla} donde lo que sale es mayor que lo que entra, por favor corrígelos para poder guardar los datos</h3>`,
-      icon: "error",
-      width: (window.innerWidth * 3) / 4,
-      html: tablacopia,
-      showCancelButton: true,
-      confirmButtonText: "Ya lo arreglé",
-      cancelButtonText: "Volver",
-    })
+  let result = await swalWithBootstrapButtons.fire({
+    title: `<h3>Se ha detectado filas en la tabla ${numtabla} donde lo que sale es mayor que lo que entra, por favor corrígelos para poder guardar los datos</h3>`,
+    icon: "error",
+    width: (window.innerWidth * 3) / 4,
+    html: tablacopia,
+    showCancelButton: true,
+    confirmButtonText: "Ya lo arreglé",
+    cancelButtonText: "Volver",
+  })
 
+  if (result.isConfirmed) {
+    let verif = await entraMasDeLoQueSale(tablacopia, numtabla);
+    return verif;
+  }
+  else
     return false;
-  }
 }
 
-let arreglado;
-
-async function validarProductos(tabla, numtabla) {
+async function validarProductosYPrecios(tabla, numtabla) {
   let tablacopia = tabla.cloneNode(true);
   let cuerpocopia = $(tablacopia).find("tbody")[1];
-  let verificacion = true;
+  let verificacionProductos = true;
+  let verificacionPrecios = true;
   for (let i = 0; i < cuerpocopia.rows.length; i++) {
-    if (cuerpocopia.rows[i].cells[0].innerHTML === "") {
-      cuerpocopia.rows[i].cells[0].classList.add("enfocar");
-      verificacion = false;
+    let celdaProductos = cuerpocopia.rows[i].cells[0];
+    let celdaPrecios = cuerpocopia.rows[i].cells[1];
+    if (celdaProductos.innerHTML === "") {
+      celdaProductos.classList.add("enfocar");
+      verificacionProductos = false;
     }
+    else {
+      if (celdaProductos.classList.contains("enfocar"))
+        celdaProductos.removeAttribute("class");
+    }
+    if (celdaPrecios.innerHTML === "") {
+      celdaPrecios.classList.add("enfocar");
+      verificacionPrecios = false;
+    }
+    else {
+      if (celdaPrecios.classList.contains("enfocar"))
+        celdaPrecios.removeAttribute("class");
+    }
+
   }
 
-  if (verificacion) {
-    for (let i = 0; i < cuerpocopia.rows.length; i++) {
-      if(cuerpocopia.rows[i].cells[0].classList.contains("enfocar"))
-        cuerpocopia.rows[i].cells[0].removeAttribute("class");
-    }
+  if (verificacionProductos && verificacionPrecios) {
     arreglado = tablacopia;
     return true;
   }
-  else {
-    let result = await swalWithBootstrapButtons.fire({
-      title: `<h3>Se ha detectado valores vacíos en la columna productos de la tabla ${numtabla}
-        <br>
-        Por favor corrígelos para poder guardar los datos</h3>`,
-      icon: "error",
-      width: (window.innerWidth * 3) / 4,
-      html: tablacopia,
-      showCancelButton: true,
-      confirmButtonText: "Ya lo arreglé",
-      cancelButtonText: "Volver",
-    })
-    if (result.isConfirmed) {
-      let verif = await validarProductos(tablacopia, numtabla);
-      return verif;
-    }
-    else
-      return false;
-  }
-}
 
-async function validarPrecios(tabla, numtabla) {
-  let tablacopia = tabla.cloneNode(true);
-  let cuerpocopia = $(tablacopia).find("tbody")[1];
-  let verificacion = true;
-  for (let i = 0; i < cuerpocopia.rows.length; i++) {
-    if (cuerpocopia.rows[i].cells[1].innerHTML === "") {
-      cuerpocopia.rows[i].cells[1].classList.add("enfocar");
-      verificacion = false;
-    }
+  let titulo = "<h3>Se ha detectado valores vacíos en la columna ";
+  if (!verificacionProductos && !verificacionPrecios)
+    titulo += "productos y la columna precios"
+  else if (!verificacionProductos)
+    titulo += "productos"
+  else
+    titulo += "precios"
+
+  titulo += ` de la tabla ${numtabla}
+  <br>
+  Por favor corrígelos para poder guardar los datos</h3>`
+  let result = await swalWithBootstrapButtons.fire({
+    title: titulo,
+    icon: "error",
+    width: (window.innerWidth * 3) / 4,
+    html: tablacopia,
+    showCancelButton: true,
+    confirmButtonText: "Ya lo arreglé",
+    cancelButtonText: "Volver",
+  })
+  if (result.isConfirmed) {
+    let verif = await validarProductosYPrecios(tablacopia, numtabla);
+    return verif;
   }
-  if (verificacion) {
-    for (let i = 0; i < cuerpocopia.rows.length; i++) {
-      if(cuerpocopia.rows[i].cells[0].classList.contains("enfocar"))
-        cuerpocopia.rows[i].cells[0].removeAttribute("class");
-    }
-    arreglado = tablacopia;
-    return true;
-  }
-  else {
-    let result = await swalWithBootstrapButtons.fire({
-      title: `<h3>Se ha detectado valores vacíos en la columna precios de la tabla ${numtabla}
-    <br>
-    Por favor corrígelos para poder guardar los datos</h3>`,
-      icon: "error",
-      width: (window.innerWidth * 3) / 4,
-      html: tablacopia,
-      showCancelButton: true,
-      confirmButtonText: "Ya lo arreglé",
-      cancelButtonText: "Volver",
-    })
-    if (result.isConfirmed) {
-      let verif = await validarProductos(tablacopia, numtabla);
-      return verif;
-    }
-    else
-      return false;
-  }
+  else
+    return false;
 }
 
 async function validarTrabajador(textbox, numerotabla) {
@@ -601,21 +587,31 @@ async function validarTrabajador(textbox, numerotabla) {
 }
 
 async function validarDatosTabla(tabla, numtabla) {
-  let verificacion = await validarProductos(tabla, numtabla);
+  let verificacion = await validarProductosYPrecios(tabla, numtabla);
   if (!verificacion)
     return false;
-
-  tabla.outerHTML = arreglado.outerHTML;
-
-  verificacion = await validarPrecios(tabla, numtabla);
-  if (!verificacion)
-    return false;
-
+  clonaValores(tabla)
   añadirceros(tabla.querySelector(".cuerpo"));
-  verificacion = await entramasdeloquesale(tabla, numtabla);
+  verificacion = await entraMasDeLoQueSale(tabla, numtabla);
+  clonaValores(tabla)
   return verificacion;
 }
 
+function clonaValores(tabla) {
+  let filasCuerpo = $(tabla).find(".cuerpo tr");
+  let filasCuerpoCopia = $(arreglado).find(".cuerpo tr");
+  let filasPie = $(tabla).find("tfoot tr");
+  let filasPieCopia = $(arreglado).find("tfoot tr");
+  for (let i = 0; i < filasCuerpo.length; i++) {
+    for (let j = 0; j < filasCuerpo[i].cells.length; j++) {
+      filasCuerpo[i].cells[j].innerHTML = filasCuerpoCopia[i].cells[j].innerHTML
+    }
+  }
+  filasPie[0].cells[1].innerHTML = filasPieCopia[0].cells[1].innerHTML
+  filasPie[0].cells[2].innerHTML = filasPieCopia[0].cells[2].innerHTML
+}
+
+//TODO cambiar las librerias de plugins a las desargadas de internet
 document.getElementById("exportarexcel").addEventListener("click", async function () {
   if (typeof TableToExcel === "undefined")
     await $.getScript('/tableToExcel.js');
@@ -708,7 +704,7 @@ async function metododropdown(option) {
 
       for (let i = 0; i < res.productos.length; i++) {
         let siestaba = false;
-        for (let j = 0; j < filas.length - 1; j++) {
+        for (let j = 0; j < filas.length; j++) {
           if (filas[j].cells[0].innerHTML.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "") === res.productos[i].producto.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "")) {
             filas[j].cells[0].innerHTML = res.productos[i].producto;
             filas[j].cells[1].innerHTML = res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "");
@@ -758,12 +754,12 @@ function creaTablaVacia(res) {
             <tbody class="cuerpo">`;
   for (let i = 0; i < res.productos.length; i++) {
     formatotablavacia += `<tr>
-                          <td contenteditable="true">${res.productos[i].producto}</td>
-                          <td contenteditable="true">${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>
-                          <td contenteditable="true"></td>
-                          <td contenteditable="true"></td>
-                          <td></td>
-                          <td class="borrarfilas"></td>
+    <td contenteditable="true">${res.productos[i].producto}</td>
+    <td contenteditable="true">${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>
+    <td contenteditable="true"></td>
+    <td contenteditable="true"></td>
+    <td></td>
+    <td class="borrarfilas"></td>
                           </tr>`
   }
   formatotablavacia += `</tbody>
@@ -775,7 +771,7 @@ function creaTablaVacia(res) {
                           </tr>
                           </tfoot>
                         </table>`;
-  return formatotablavacia
+  return formatotablavacia;
 }
 
 document.querySelector(".agregarcamion").addEventListener("click", async () => {
