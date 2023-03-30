@@ -1,4 +1,4 @@
-.tabs {
+.tabs, .tabs-swal {
   display: flex;
   flex-wrap: wrap;
   font-family: sans-serif;
@@ -53,4 +53,8 @@ main {
   font-size: 35px;
   translate: 0 -10px;
   text-align: center;
+}
+
+.tabs__radio:checked + .tabs__label + .tabs__content {
+  display: initial;
 }

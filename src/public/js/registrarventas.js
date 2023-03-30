@@ -8,9 +8,194 @@ let touchduration = 600;
 let listaplantillas = [];
 let arreglado;
 
+const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
+function _cantidadTabs() { return document.querySelector(".contenidotabs").children.length; }
+function _idTab() { return document.querySelector(".tabs__radio:checked").dataset.tabid; }
+function _tabla() { return document.querySelector(`.contenidotabs [data-tabid="${_idTab()}"] table`); }
+function _cuerpo() { return _tabla().querySelector(".cuerpo"); }
+function _pie() { return _tabla().querySelector("tfoot"); }
+function _pintarColumnas() { return _tabla().querySelector(".pintarcolumnas") }
+function _cantidadViajes() { return _pintarColumnas().children.length; }
+function _saleYEntra() { return _tabla().querySelector(".saleYEntra"); }
+function _cantidadSaleYEntra() { return (_pintarColumnas().children.length * 2 + colscomienzo + colsfinal); }
+function _cantidadProductos() { return _cuerpo().children.length; }
+
 document.querySelectorAll("tbody td:not(:nth-last-child(1), :nth-last-child(2))").forEach(el => el.setAttribute("contentEditable", true));
 document.querySelectorAll("tbody td:last-child").forEach(el => el.classList.add("borrarfilas"));
+document.querySelectorAll(".tabs__label").forEach(el => el.classList.add("borrarcamiones"));
+
 $(document).on("dblclick", ".fecha", () => document.querySelectorAll(".fecha").forEach(el => el.classList.toggle("esconder")));
+let opcionBorrarFilasYColumnas = -1;
+let opcionBorrarCamiones = -1;
+let switchOrdenarCamiones = -1;
+let switchOrdenarOrdenAlfabetico = -1;
+
+$(document).ready(() => {
+  colocarValoresConfig();
+  guardarValoresConfig();
+})
+
+function guardarValoresConfig() {
+  if (opcionBorrarFilasYColumnas === 1)
+    document.querySelectorAll(".contenidotabs").forEach(el => el.classList.add("cerrarconboton"));
+  else
+    document.querySelectorAll(".contenidotabs").forEach(el => el.classList.remove("cerrarconboton"));
+
+  if (opcionBorrarCamiones === 1)
+    document.querySelectorAll(".tabs").forEach(el => el.classList.add("cerrarconboton"));
+  else
+    document.querySelectorAll(".tabs").forEach(el => el.classList.remove("cerrarconboton"));
+
+  if (switchOrdenarOrdenAlfabetico) {
+    document.querySelectorAll('.contenidotabs').forEach(el => el.classList.add("ordenarAlfabeticamente"));
+  }
+  else
+    document.querySelectorAll('.contenidotabs').forEach(el => el.classList.remove("ordenarAlfabeticamente"));
+
+  $(".tabs").sortable({
+    axis: "x", stop: function () {
+      let tabs = document.querySelectorAll(".tabs label");
+      for (let i = 0; i < tabs.length; i++) {
+        tabs[i].innerText = `Camion ${i + 1}`;
+      }
+    },
+    items: "> div:not(:last-child)",
+    disabled: !switchOrdenarCamiones
+  });
+}
+
+$(document).on("click", ".guardarconfig", () => {
+  colocarValoresConfig();
+  guardarValoresConfig();
+})
+
+function colocarValoresConfig() {
+  opcionBorrarFilasYColumnasNuevo = $('[name="borrarfilasycolumnas"]:checked').parent().index() - 1;
+  opcionBorrarCamionesNuevo = $('[name="borrarcamiones"]:checked').parent().index() - 1;
+  switchOrdenarCamionesNuevo = $("#switchreordenarcamiones")[0].checked;
+  switchOrdenarOrdenAlfabeticoNuevo = $("#switchreordenalfabetico")[0].checked;
+
+  if (opcionBorrarFilasYColumnasNuevo !== opcionBorrarFilasYColumnas) {
+    if (opcionBorrarFilasYColumnasNuevo === 0) {
+      $(document).on("pointerdown", ".borrarcolumnas", borrarColumnasHandler);
+      $(document).on("pointerdown", ".borrarfilas", borrarFilasHandler);
+      if (opcionBorrarFilasYColumnas === 1) {
+        $(document).off("click", ".borrarcolumnas", borrarColumnasHandler);
+        $(document).off("click", ".borrarfilas", borrarFilasHandler);
+      }
+    }
+    if (opcionBorrarFilasYColumnasNuevo === 1) {
+      $(document).on("click", ".borrarcolumnas", borrarColumnasHandler);
+      $(document).on("click", ".borrarfilas", borrarFilasHandler);
+      if (opcionBorrarFilasYColumnas === 0) {
+        $(document).off("pointerdown", ".borrarcolumnas", borrarColumnasHandler);
+        $(document).off("pointerdown", ".borrarfilas", borrarFilasHandler);
+      }
+    }
+    if (opcionBorrarFilasYColumnasNuevo === 2) {
+      if (opcionBorrarFilasYColumnas === 0) {
+        $(document).off("pointerdown", ".borrarcolumnas", borrarColumnasHandler);
+        $(document).off("pointerdown", ".borrarfilas", borrarFilasHandler);
+      } else if (opcionBorrarFilasYColumnas === 1) {
+        $(document).off("click", ".borrarcolumnas", borrarColumnasHandler);
+        $(document).off("click", ".borrarfilas", borrarFilasHandler);
+      }
+    }
+  }
+
+  if (opcionBorrarCamionesNuevo !== opcionBorrarCamiones) {
+    if (opcionBorrarCamionesNuevo === 0) {
+      $(document).on("pointerdown", ".borrarcamiones", borrarCamionesHandler);
+      if (opcionBorrarCamiones === 1)
+        $(document).off("click", ".borrarcamiones", borrarCamionesHandler);
+    }
+    if (opcionBorrarCamionesNuevo === 1) {
+      $(document).on("click", ".borrarcamiones", borrarCamionesHandler);
+      if (opcionBorrarCamiones === 0)
+        $(document).off("pointerdown", ".borrarcamiones", borrarCamionesHandler);
+    }
+    if (opcionBorrarCamionesNuevo === 2) {
+      if (opcionBorrarCamiones === 0)
+        $(document).off("pointerdown", ".borrarcamiones", borrarCamionesHandler);
+      else if (opcionBorrarCamiones === 1) {
+        $(document).off("click", ".borrarcamiones", borrarCamionesHandler);
+      }
+    }
+  }
+
+  opcionBorrarFilasYColumnas = opcionBorrarFilasYColumnasNuevo;
+  opcionBorrarCamiones = opcionBorrarCamionesNuevo;
+  switchOrdenarCamiones = switchOrdenarCamionesNuevo;
+  switchOrdenarOrdenAlfabetico = switchOrdenarOrdenAlfabeticoNuevo;
+}
+
+function reseteaValoresConfig() {
+  $('[name="borrarfilasycolumnas"]:checked')[0].checked = false;
+  $(`[name="borrarfilasycolumnas"]`)[opcionBorrarFilasYColumnas].checked = true;
+  $('[name="borrarcamiones"]:checked')[0].checked = false;
+  $(`[name="borrarcamiones"]`)[opcionBorrarCamiones].checked = true;
+  $("#switchreordenarcamiones")[0].checked = switchOrdenarCamiones;
+  $("#switchreordenalfabetico")[0].checked = switchOrdenarOrdenAlfabetico;
+}
+
+document.getElementById('configs').addEventListener('hidden.bs.modal', () => {
+  reseteaValoresConfig();
+})
+
+$(document).on("click", 'th:not([colspan="2"])', function () {
+  if (switchOrdenarOrdenAlfabetico) {
+    let table = this.closest("table");
+    let flecha = window.getComputedStyle(this, ':after').content;
+    let order = (flecha === '"↓"') ? "asc" : "desc";
+    let separador = "-----";
+
+    let objValores = {};
+    let listaIdentifObjValores = [];
+
+    let cuerpo = table.querySelector(".cuerpo");
+    let indiceColumna = this.cellIndex;
+    let nombreColumna = this.innerText;
+    if (nombreColumna === "Vendidos")
+      indiceColumna = cuerpo.rows[0].cells.length - 2;
+    else if (nombreColumna === "Ingresos")
+      indiceColumna = cuerpo.rows[0].cells.length - 1;
+    else if (nombreColumna === "Sale" || nombreColumna === "Entra")
+      indiceColumna += colscomienzo;
+    cuerpo.querySelectorAll("tr").forEach((fila, indice) => { // <tbody> rows
+      let textoCelda = fila.children[indiceColumna].textContent.toUpperCase();
+      objValores[textoCelda + separador + indice] = fila.outerHTML.replace(/(\t)|(\n)/g, '');
+      listaIdentifObjValores.push(textoCelda + separador + indice);
+    });
+
+    let listaElementosColumna = Array.from(cuerpo.querySelectorAll(`td:nth-child(${(indiceColumna + 1)})`))
+    let todosSonNumeros = listaElementosColumna.every(el => !isNaN(parseFloat(el.innerText)))
+    if (todosSonNumeros) {
+      listaIdentifObjValores.sort(function (a, b) {
+        let aa = a.split(separador);
+        let bb = b.split(separador);
+        if (aa[0] != bb[0])
+          return aa[0] - bb[0];
+        return cuerpo.rows[parseInt(aa[1])].cells[0].innerText.localeCompare(cuerpo.rows[parseInt(bb[1])].cells[0].innerText)
+      });
+    }
+    else {
+      listaIdentifObjValores.sort();
+    }
+
+    if (order === "desc") {
+      listaIdentifObjValores.reverse();
+      this.style.setProperty("--flecha", '"↓"')
+    }
+    else
+      this.style.setProperty("--flecha", '"↑"')
+
+    let html = "";
+    listaIdentifObjValores.forEach(chave => html += objValores[chave]);
+    table.getElementsByTagName("tbody")[1].innerHTML = html;
+  }
+});
 
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
@@ -33,16 +218,7 @@ const swalWithBootstrapButtons3 = Swal.mixin({
   },
   buttonsStyling: false,
 });
-
-$(".tabs").sortable({
-  axis: "x", stop: function () {
-    let tabs = document.querySelectorAll(".tabs label");
-    for (let i = 0; i < tabs.length; i++) {
-      tabs[i].innerText = `Camion ${i + 1}`;
-    }
-  },
-  items: "> div:not(:last-child)"
-});
+//TODO borrar filas vacias --- conservar filas vacias ---- volver
 
 $("body").on("click", ".tabs input", function (e) {
   document.querySelectorAll(".tabs__content").forEach(el => el.style.display = "none");
@@ -91,8 +267,6 @@ function calcularvendidoseingresos(tabla, indiceFila) {
   }
 }
 
-
-
 function calcularvendidoseingresostotal(cuerpo) {
   let sumaVendidos = 0;
   let hayUnNumero = false;
@@ -129,19 +303,7 @@ function calcularvendidoseingresostotal(cuerpo) {
 
 }
 
-
-function _cantidadTabs() { return document.querySelector(".contenidotabs").children.length; }
-function _idTab() { return document.querySelector(".tabs__radio:checked").dataset.tabid; }
-function _tabla() { return document.querySelector(`.contenidotabs [data-tabid="${_idTab()}"] table`); }
-function _cuerpo() { return _tabla().querySelector(".cuerpo"); }
-function _pie() { return _tabla().querySelector("tfoot"); }
-function _pintarColumnas() { return _tabla().querySelector(".pintarcolumnas") }
-function _cantidadViajes() { return _pintarColumnas().children.length; }
-function _saleYEntra() { return _tabla().querySelector(".saleYEntra"); }
-function _cantidadSaleYEntra() { return (_pintarColumnas().children.length * 2 + colscomienzo + colsfinal); }
-function _cantidadProductos() { return _cuerpo().children.length; }
-
-document.getElementById("añadirProducto").addEventListener("click", () => {
+document.getElementById("añadirProducto").addEventListener("click", e => {
   let fila = "<tr>";
   for (i = 0; i < _cantidadSaleYEntra() - 2; i++) {
     fila += `<td contenteditable="true"></td>`;
@@ -168,23 +330,74 @@ document.getElementById("añadirViaje").addEventListener("click", () => {
   _pie().querySelector("td:first-child").setAttribute("colspan", (cantidadSaleYEntra - 2));
 });
 
-document.addEventListener("pointerup", function (event) {
+document.addEventListener("pointerup", e => {
   if (timer) {
     clearTimeout(timer);
     timer = null;
   }
 });
+//TODO hacer que las fechas de ultima actualizacion digan... hace 3 dias ...hace 5 horas... ayer 
 
-let colborrar;
-$(document).on("pointerdown", ".borrarcolumnas", function () {
-  if (!timer) {
-    timer = setTimeout(borrarcolumnas, touchduration);
-    colborrar = this;
+
+function borrarColumnasHandler(e) {
+  borrarElementos(e, opcionBorrarFilasYColumnas, borrarColumnas, this);
+}
+
+function borrarFilasHandler(e) {
+  borrarElementos(e, opcionBorrarFilasYColumnas, borrarFilas, this);
+}
+
+function borrarCamionesHandler(e) {
+  borrarElementos(e, opcionBorrarCamiones, borrarCamiones, this);
+}
+
+function borrarElementos(e, opcion, metodo, elementoSeleccionado) {
+  if (opcion === 0) {
+    if (!timer) {
+      timer = null;
+      timer = setTimeout(metodo, touchduration, elementoSeleccionado, e);
+    }
   }
-});
+  else if (opcion === 1) {
+    if ((elementoSeleccionado.clientWidth - e.offsetX) <= 21 && e.offsetY <= 21)
+      metodo(elementoSeleccionado, e)
+  }
+}
 
-async function borrarcolumnas() {
-  timer = null;
+async function borrarFilas(celda) {
+  let filaborrar = $(celda).parent()[0];
+  let textoborrar = `<div class="contenedormensajeborrar"><table><tbody style="background: #0f0d35;">${filaborrar.cloneNode(true).outerHTML}</tbody></table></div>`
+  let result = await swalWithBootstrapButtons.fire({
+    title: "Estás seguro que deseas borrar este producto de la tabla?",
+    icon: "warning",
+    width: (window.innerWidth * 3) / 4,
+    html: textoborrar,
+    showCancelButton: true,
+    confirmButtonText: "Sí",
+    cancelButtonText: "No",
+  })
+  if (result.isConfirmed) {
+    let cuerpo = $(filaborrar).parent()[0];
+    if (cuerpo.rows.length === 1) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: `No puedes borrar todos los productos, debe haber al menos uno`,
+      });
+      return;
+    }
+
+    cuerpo.removeChild(filaborrar);
+    calcularvendidoseingresostotal(cuerpo)
+    Swal.fire(
+      "Se ha eliminado el producto",
+      "Se ha eliminado el producto y su contenido exitosamente",
+      "success"
+    );
+  }
+};
+
+async function borrarColumnas(colborrar) {
   let numCol = $(colborrar).index();
   let tabla = $(colborrar).closest("table")[0]
   let celdaViajeABorrarSale = (numCol - colscomienzo) * 2 + colscomienzo;
@@ -241,48 +454,6 @@ async function borrarcolumnas() {
 
 };
 
-$(document).on("pointerdown", ".borrarfilas", function () {
-  if (!timer) {
-    timer = setTimeout(borrarfilas, touchduration);
-    filaborrar = $(this).parent()[0];
-  }
-});
-
-async function borrarfilas() {
-  timer = null;
-
-  let textoborrar = `<div class="contenedormensajeborrar"><table><tbody style="background: #0f0d35;">${filaborrar.cloneNode(true).outerHTML}</tbody></table></div>`
-  let result = await swalWithBootstrapButtons.fire({
-    title: "Estás seguro que deseas borrar este producto de la tabla?",
-    icon: "warning",
-    width: (window.innerWidth * 3) / 4,
-    html: textoborrar,
-    showCancelButton: true,
-    confirmButtonText: "Sí",
-    cancelButtonText: "No",
-  })
-  if (result.isConfirmed) {
-    let cuerpo = $(filaborrar).parent()[0];
-    if (cuerpo.rows.length === 1) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: `No puedes borrar todos los productos, debe haber al menos uno`,
-      });
-      return;
-    }
-
-    cuerpo.removeChild(filaborrar);
-    calcularvendidoseingresostotal(cuerpo)
-    Swal.fire(
-      "Se ha eliminado el producto",
-      "Se ha eliminado el producto y su contenido exitosamente",
-      "success"
-    );
-  }
-};
-
-
 $("#diaanterior").on("click", function () {
   window.location = `/registrarventas/${hoy.subtract("1", "day").format("D-M-YYYY")}`;
 });
@@ -300,9 +471,10 @@ function añadirceros(cuerpo) {
 }
 
 $("#guardar").on("click", async function () {
+  let respuesta = await borrarTablasVacias();
   let tabscontenido = document.querySelectorAll(".tabs__content");
   for (let i = 0; i < tabscontenido.length; i++) {
-    let respuesta = await validarTrabajador(tabscontenido[i].querySelector("input"), i + 1);
+    respuesta = await validarTrabajador(tabscontenido[i].querySelector("input"), i + 1);
     if (!respuesta)
       return;
   }
@@ -408,19 +580,18 @@ async function borrarFilasVacias(tabla, numtabla) {
     width: (window.innerWidth * 3) / 4,
     html: `<div class="textovista">Se han detectado filas vacias en la tabla ${numtabla} las cuales serán eliminadas</div>
           <br><br><br>
-              <div class="contenedortab">
-                  <input type="radio" class="radiotab" name="tabs" id="tab10" checked />
-            <label for="tab10">Ver filas vacías</label>
-            <input type="radio" class="radiotab" name="tabs" id="tab11" />
-            <label for="tab11">Vista previa del resultado</label>    
-            <div class="tab content1">${tablaCopia.outerHTML}
+          <div class="tabs-swal">
+            <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal0" checked>
+            <label for="tabswal0" class="tabs__label label-swal">Ver filas vacías</label>
+            <div class="tabs__content">${tablaCopia.outerHTML}</div>
+
+            <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal1">
+            <label for="tabswal1" class="tabs__label label-swal">Vista previa del resultado</label>
+            <div class="tabs__content">${tablaCopiaSinFilasVacias.outerHTML}</div>
           </div>
-            <div class="tab content2">${tablaCopiaSinFilasVacias.outerHTML}</div>
-            </div>
-            <br>
-            <div class="textovista">Desea continuar?</div>
-            <br>
-        <br>`,
+          <br>
+          <div class="textovista">Desea continuar?</div>
+          <br><br>`,
     showCancelButton: true,
     confirmButtonText: "Continuar",
     cancelButtonText: "No continuar",
@@ -434,20 +605,12 @@ async function borrarFilasVacias(tabla, numtabla) {
       });
       return false;
     }
-    let cuerpoOriginal = tabla.querySelector(".cuerpo");
-    let filasOriginal = cuerpoOriginal.rows;
-    let i = 0;
-    for (; i < filasQueNoEstanVacias.length; i++) {
-      if (filasOriginal[i].cells[0].innerText !== filasQueNoEstanVacias[i].cells[0].innerText) {
-        cuerpoOriginal.removeChild(filasOriginal[i]);
-        i--;
-      }
-    }
-    for (; i < filasOriginal.length; i++) {
-      cuerpoOriginal.removeChild(filasOriginal[i]);
-      i--;
-    }
-
+    let filasVacias = Array.from(tabla.querySelector(".cuerpo").rows).filter(fila => {
+      let celdasEspecificas = Array.from(fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))"))
+      let res = celdasEspecificas.every(celda => celda.innerText === "0")
+      return res;
+    });
+    filasVacias.forEach(fila => $(fila).remove());
     return true;
   }
   return false;
@@ -462,9 +625,7 @@ async function entraMasDeLoQueSale(tabla, numtabla) {
     for (let j = colscomienzo; j < cuerpocopia.rows[i].cells.length - colsfinal; j += 2) {
       let entra = cuerpocopia.rows[i].cells[j];
       let sale = cuerpocopia.rows[i].cells[j + 1];
-      let valor1 = entra.innerText;
-      let valor2 = sale.innerText;
-      if (parseInt(valor2) > parseInt(valor1)) {
+      if (parseInt(sale.innerText) > parseInt(entra.innerText)) {
         entra.classList.add("enfocar");
         sale.classList.add("enfocar");
         verificacion = false;
@@ -561,6 +722,110 @@ async function validarProductosYPrecios(tabla, numtabla) {
     return false;
 }
 
+async function borrarTablasVacias() {
+  let tablas = Array.from(document.querySelectorAll(".contenidotabs table"));
+  let tablasVacias = tablas.filter(tabla => tabla.querySelector("tfoot td:nth-child(3)").innerText === "");
+
+  if (tablasVacias.length === 0)
+    return true;
+
+  let htmlTablas = "";
+  if (tablasVacias.length === 1)
+    htmlTablas += `<div class="textovista">Se ha detectado que esta tabla está vacía así que será eliminada</div>`;
+  else
+    htmlTablas += `<div class="textovista">Se han detectado las siguientes tablas vacias las cuales serán eliminadas</div>`
+
+  htmlTablas += `<br><br><br><div class="tabs-swal">`;
+  tablasVacias.forEach((tabla, indice) => {
+    htmlTablas += `<input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal${indice}" checked />
+    <label for="tabswal${indice}" class="tabs__label label-swal">Camión ${parseInt(tabla.closest(".tabs__content").dataset.tabid) + 1}</label>
+    <div class="tabs__content">` + tabla.cloneNode(true).outerHTML + "</div>"
+  });
+  htmlTablas += `</div>
+            <br>
+            <div class="textovista">Desea continuar?</div>
+            <br><br>`
+
+  let result = await swalWithBootstrapButtons.fire({
+    title: "Se han detectado tablas vacias",
+    icon: "warning",
+    width: (window.innerWidth * 3) / 4,
+    html: htmlTablas,
+    showCancelButton: true,
+    confirmButtonText: "Continuar",
+    cancelButtonText: "No continuar",
+  })
+
+  if (result.isConfirmed) {
+    tablasVacias.forEach(tabla => {
+      let tabs__content = $(tabla).closest(".tabs__content");
+      let id = tabs__content[0].dataset.tabid;
+      $(tabs__content).remove();
+      $(`.tab:has([data-tabid=${id}])`).remove();
+    })
+
+    reacomodarCamiones();
+    Swal.fire(
+      "Se han eliminado las tablas vacías",
+      "Se han eliminado las tablas vacías exitosamente",
+      "success"
+    );
+    return true;
+  }
+  return false;
+}
+
+async function borrarCamiones(label, e) {
+  let id = label.previousElementSibling.dataset.tabid;
+  let tabla = document.querySelector(`.tabs__content[data-tabid="${id}"] table`)
+  let htmlTablas = `<div class="tabs-swal">`;
+  htmlTablas += `<input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal0" checked />
+  <label for="tabswal0" class="tabs__label label-swal">Camión ${(parseInt(id) + 1)}</label>
+    <div class="tabs__content" style="display:initial !important;">` + tabla.cloneNode(true).outerHTML + "</div>"
+    htmlTablas += `</div>
+    <br>
+    <div class="textovista">Desea continuar?</div>
+    <br><br>`
+    e.preventDefault();
+    e.stopPropagation();
+  let result = await swalWithBootstrapButtons.fire({
+    title: "Estás seguro que deseas eliminar este camión?",
+    icon: "warning",
+    width: (window.innerWidth * 3) / 4,
+    html: htmlTablas,
+    showCancelButton: true,
+    confirmButtonText: "Continuar",
+    cancelButtonText: "No continuar",
+  })
+
+  if (result.isConfirmed) {
+    $(label).parent().remove();
+    $(`.tabs__content[data-tabid=${id}]`).remove();
+    reacomodarCamiones();
+    Swal.fire(
+      "Se ha eliminado el camión",
+      "Se ha eliminado el camión exitosamente",
+      "success"
+    );
+    return true;
+  }
+  return false;
+}
+
+function reacomodarCamiones() {
+  document.querySelectorAll(".tab").forEach((tab, index) => {
+    let checkbox = tab.querySelector("input");
+    let id = checkbox.dataset.tabid;
+    document.querySelector(`.tabs__content[data-tabid="${id}"]`).dataset.tabid = index;
+    checkbox.dataset.tabid = index;
+    let idNuevo = `tab${index}`;
+    checkbox.id = idNuevo;
+    let label = tab.querySelector("label");
+    label.setAttribute("for", idNuevo)
+    label.innerText = `Camion ${(parseInt(index) + 1)}`;
+  })
+}
+
 async function validarTrabajador(textbox, numerotabla) {
   if (textbox.value !== "")
     return true;
@@ -569,10 +834,12 @@ async function validarTrabajador(textbox, numerotabla) {
     icon: "warning",
     width: (window.innerWidth * 3) / 4,
     html: `
-      <h3>El nombre del trabajador del camion ${numerotabla} esta vacio. Estas seguro que desesas dejarlo asi? </h3>
+      <h3>El nombre del trabajador del camión ${numerotabla} está vacío.
+      <br>
+      Estás seguro que desesas dejarlo asi? </h3>
       <br>
       <div class="divtrabajadorrevisar">
-      <input type="text" class="form-control" id="trabajadorrevisar" placeholder="Escribe el nombre del trabajador" />
+      <input type="text" class="form-control" id="trabajadorrevisar" style="width: 260px; max-width: 260px; text-align:center;" placeholder="Escribe el nombre del trabajador" />
       </div>
       <br>
       <h3>Puedes escribir un nombre aquí o dejarlo en blanco y continuar</h3>
@@ -780,15 +1047,15 @@ document.querySelector(".agregarcamion").addEventListener("click", async () => {
   let formatotablavacia = creaTablaVacia(res);
   let nuevoCamion = `<div data-tabid="${cantidadTabs}" class="tabs__content">
   <div class="contenedor-trabajador">
-  <label class="label-trabajador" for="trabajador${cantidadTabs}">Nombre del trabajador:</label>
-  <input type="text" class="form-control trabajador" id="trabajador${cantidadTabs}"></div>`
+  <label class="label-trabajador">Nombre del trabajador:</label>
+  <input type="text" class="form-control trabajador"></div>`
   nuevoCamion += formatotablavacia + "</div>";
   let nuevaTab = `<div class="tab">
   <input data-tabid="${cantidadTabs}" type="radio" class="tabs__radio" name="tab" id="tab${cantidadTabs}"/>
-  <label for="tab${cantidadTabs}" class="tabs__label">Camión ${(cantidadTabs + 1)}</label>
+  <label for="tab${cantidadTabs}" class="tabs__label borrarcamiones">Camión ${(cantidadTabs + 1)}</label>
 </div>`
   $(".agregarcamion").before(nuevaTab);
   $(".contenidoTabs").append(nuevoCamion);
 });
-
+//TODO ver por que exportar a excel no funciona
 colocarDatosTabla()

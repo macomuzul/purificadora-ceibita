@@ -48,11 +48,13 @@ body {
   fill: transparent;
   width: 40px;
   height: 40px;
+
+  path {
+    stroke: #fff;
+    stroke-width: 1.2;
+  }
 }
-.svgrestaurar path {
-  stroke: #fff;
-  stroke-width: 1.2;
-}
+
 .contenedoracciones {
   display: flex;
   align-items: center;
@@ -76,6 +78,10 @@ body {
   justify-content: center;
   background: rgb(1, 1, 94);
   border: 1.5px solid rgb(12, 0, 63);
+  &:hover {
+    background: rgb(12, 0, 63);
+    cursor: pointer;
+  }
 }
 
 .contenedoreliminar {
@@ -85,15 +91,11 @@ body {
   justify-content: center;
   margin-left: 20px;
   border: 1.5px solid rgb(159, 7, 7);
-}
 
-.contenedoreliminar:hover {
-  background: rgb(159, 7, 7);
-  cursor: pointer;
-}
-.contenedorrestaurar:hover {
-  background: rgb(12, 0, 63);
-  cursor: pointer;
+  &:hover {
+    background: rgb(159, 7, 7);
+    cursor: pointer;
+  }
 }
 
 .restaurarsoloestatabla {

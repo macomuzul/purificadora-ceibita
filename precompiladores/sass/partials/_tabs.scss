@@ -1,4 +1,4 @@
-.tabs {
+.tabs, .tabs-swal {
   display: flex;
   flex-wrap: wrap;
   font-family: sans-serif;
@@ -6,13 +6,22 @@
   justify-content: center;
 }
 
-.tabs__label {
-  padding: 10px 16px;
+.tabs__label, .agregarcamion {
+  padding: 12px 20px;
   cursor: pointer;
   background-color: #0f0924;
-  font-size: 15;
+  font-size: 15px;
   color: white;
-  margin-bottom: 10px;
+  height: 50px;
+  display: grid;
+  align-items: center;
+  transition: font-size 200ms;
+}
+
+.agregarcamion{
+    width: 60px;
+    margin-left: 1px;
+    padding: 10px 16px;
 }
 
 hr {
@@ -29,7 +38,7 @@ main {
   display: none;
 }
 
-.tabs__content {
+.tabs__content:not(:first-child) {
   order: 1;
   display: none;
   width: 100%;
@@ -38,11 +47,22 @@ main {
 .tabs__radio:checked + .tabs__label {
   font-weight: bold;
   color: white;
-  font-size: 15;
   background-color: #009578;
   border-bottom: 2px solid #009578;
 }
 
+.mas {
+  font-size: 35px;
+  translate: 0 -10px;
+  text-align: center;
+}
+
 .tabs__radio:checked + .tabs__label + .tabs__content {
   display: initial;
+}
+
+.label-swal{
+  margin-bottom: 10px;
+  width: 150px;
+  height: 56px;
 }

@@ -1,9 +1,18 @@
 @use "./partials/dropdown";
 @use "./partials/tablacompleta";
 @use "./partials/fondo";
-@use "./partials/tabsdinamicas";
-@use "./partials/tabsauxiliar";
+@use "./partials/tabs";
 @use "./partials/swal";
+
+@mixin botonRegistrarVentasHoverFocusActive {
+  &:focus,
+  &:active,
+  &:hover {
+    background-color: #244569;
+    box-shadow: 0 0 0 0.1rem rgb(49 132 253 / 50%) !important;
+    cursor: pointer;
+  }
+}
 
 input {
   width: 100%;
@@ -27,12 +36,7 @@ input {
   width: 190px;
   margin-top: 20px;
   color: white;
-  &:focus,
-  &:active,
-  &:hover {
-    background-color: #244569;
-    box-shadow: 0 0 0 0.1rem rgb(49 132 253 / 50%) !important;
-  }
+  @include botonRegistrarVentasHoverFocusActive;
 }
 
 .ultima-modificacion {
@@ -47,6 +51,7 @@ input {
 }
 
 .trabajador {
+  height: 33px;
   font-size: 15px;
   display: inline-block;
   padding: 6px 10px;
@@ -118,7 +123,7 @@ h4 {
   background: #064723;
   border-color: #116d3a;
   position: absolute;
-  top: 0;
+  bottom: 0;
   right: 0;
   &:hover,
   &:focus,
@@ -131,14 +136,14 @@ h4 {
   position: relative;
 }
 
-svg {
+.calendario svg {
   width: 40px;
   height: inherit;
   fill: #45f3ff;
-}
-svg:hover {
-  fill: #00adb5;
-  cursor: pointer;
+  &:hover {
+    fill: #00adb5;
+    cursor: pointer;
+  }
 }
 
 .margenbotonswal {
@@ -188,16 +193,81 @@ th {
   overflow: auto;
 }
 
-.borrarfilas.cerrarconboton, .borrarcolumnas.cerrarconboton {
-  position: relative;
-  &::after {
-    content: "❌";
-    position: absolute;
-    text-shadow: 0, 0, 5, white;
-    top: 0;
-    right: 0;
-    color: red;
-    cursor: pointer;
-    font-weight: bold;
+.contenedorrestaurar {
+  justify-content: center;
+  background: #09213a;
+  border: 1px solid #036891;
+  height: 45px;
+  stroke: #009578;
+  color: white;
+  @include botonRegistrarVentasHoverFocusActive;
+}
+
+.restaurarsoloestatabla {
+  width: 230px;
+  border-radius: 20px;
+  margin-left: auto;
+  margin-top: 10px;
+  text-align: center; //0b2540 09213a
+  vertical-align: -webkit-baseline-middle;
+  display: inline-block;
+}
+
+.svgrestaurar {
+  fill: white;
+  width: 23px;
+  height: 23px;
+
+  path {
+    stroke: #fff;
+    stroke-width: 1.2;
+  }
+}
+.svgrotado {
+  transform: scaleX(-1) translateX(4px);
+}
+
+.centrar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(8px);
+  gap: 6px;
+}
+
+.configuraciones {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #23242a;
+  border: 1px solid #38383a;
+  color: white;
+  width: 168px;
+  height: 50px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.btn-config {
+  width: 150px;
+  height: 50px;
+}
+
+.guardarconfig {
+  border-color: #010a18;
+  background: #072a5c;
+  &:hover {
+    outline: none;
+    box-shadow: none;
+    background-color: #09213a;
+  }
+}
+
+.cerrarconfig {
+  background: #c30012;
+  &:hover {
+    outline: none;
+    box-shadow: none;
+    background-color: #8b0a17;
   }
 }

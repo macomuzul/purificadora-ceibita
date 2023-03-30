@@ -4,20 +4,24 @@
   <title>prueba</title>
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" /> -->
-  <link rel="stylesheet" href="/bootstrap-5.0.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+
+  <!-- <link rel="stylesheet" href="/bootstrap-5.2.3.css"> -->
   <link rel="stylesheet" href="/jquery-ui-1.12.css">
   <link rel="stylesheet" href="/registrarventas.min.css" />
-
   <!-- <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
   <script defer src="https://code.jquery.com/jquery-3.6.0.js"></script>
   <script defer src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
-  <script src="/dayjs.js"></script>
-  <script src="/dayjs-plugin-utc.js"></script>
-  <script src="/jquery-3.6.js"></script>
-  <script src="/jquery-ui-1.13.js"></script>
-  <script src="/sweetalert-2.11.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- <script defer src="/bootstrap-5.2.3.js"></script> -->
+  <script defer src="/dayjs.js"></script>
+  <script defer src="/dayjs-plugin-utc.js"></script>
+  <script defer src="/jquery-3.6.js"></script>
+  <script defer src="/jquery-ui-1.13.js"></script>
+  <script defer src="/sweetalert-2.11.js"></script>
   <script defer src="/tecladoTabla.js"></script>
   <script defer src="/colocarDatosTablaTests.js"></script>
   <script defer src="/registrarventas.js"></script>
@@ -25,6 +29,7 @@
 </head>
 
 <body>
+  
   <%- include("layouts/navbar") %>
   <main>
     <div class="contenedor">
@@ -51,6 +56,7 @@
             <span class="agregarcamion"><span class="mas">+</span></span> 
           </div>
           <div class="contenedorsuperior">
+            <button class="configuraciones" data-bs-toggle="modal" data-bs-target="#configs"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ddd" width="30px" height="30px" viewBox="0 0 93.5 93.5" xml:space="preserve"><g><path d="M93.5,40.899c0-2.453-1.995-4.447-4.448-4.447H81.98c-0.74-2.545-1.756-5.001-3.035-7.331l4.998-5    c0.826-0.827,1.303-1.973,1.303-3.146c0-1.19-0.462-2.306-1.303-3.146L75.67,9.555c-1.613-1.615-4.673-1.618-6.29,0l-5,5    c-2.327-1.28-4.786-2.296-7.332-3.037v-7.07C57.048,1.995,55.053,0,52.602,0H40.899c-2.453,0-4.447,1.995-4.447,4.448v7.071    c-2.546,0.741-5.005,1.757-7.333,3.037l-5-5c-1.68-1.679-4.609-1.679-6.288,0L9.555,17.83c-1.734,1.734-1.734,4.555,0,6.289    l4.999,5c-1.279,2.33-2.295,4.788-3.036,7.333h-7.07C1.995,36.452,0,38.447,0,40.899V52.6c0,2.453,1.995,4.447,4.448,4.447h7.071    c0.74,2.545,1.757,5.003,3.036,7.332l-4.998,4.999c-0.827,0.827-1.303,1.974-1.303,3.146c0,1.189,0.462,2.307,1.302,3.146    l8.274,8.273c1.614,1.615,4.674,1.619,6.29,0l5-5c2.328,1.279,4.786,2.297,7.333,3.037v7.071c0,2.453,1.995,4.448,4.447,4.448    h11.702c2.453,0,4.446-1.995,4.446-4.448V81.98c2.546-0.74,5.005-1.756,7.332-3.037l5,5c1.681,1.68,4.608,1.68,6.288,0    l8.275-8.273c1.734-1.734,1.734-4.555,0-6.289l-4.998-5.001c1.279-2.329,2.295-4.787,3.035-7.332h7.071    c2.453,0,4.448-1.995,4.448-4.446V40.899z M62.947,46.75c0,8.932-7.266,16.197-16.197,16.197c-8.931,0-16.197-7.266-16.197-16.197    c0-8.931,7.266-16.197,16.197-16.197C55.682,30.553,62.947,37.819,62.947,46.75z"/></g></svg> Configuraciones</button>
             <button class="btn btn-success botonexcel" id="exportarexcel"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 32 32"><title>file_type_excel2</title><path d="M28.781,4.405H18.651V2.018L2,4.588V27.115l16.651,2.868V26.445H28.781A1.162,1.162,0,0,0,30,25.349V5.5A1.162,1.162,0,0,0,28.781,4.405Zm.16,21.126H18.617L18.6,23.642h2.487v-2.2H18.581l-.012-1.3h2.518v-2.2H18.55l-.012-1.3h2.549v-2.2H18.53v-1.3h2.557v-2.2H18.53v-1.3h2.557v-2.2H18.53v-2H28.941Z" style="fill:#20744a;fill-rule:evenodd"/><rect x="22.487" y="7.439" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="10.94" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="14.441" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="17.942" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="21.443" width="4.323" height="2.2" style="fill:#20744a"/><polygon points="6.347 10.673 8.493 10.55 9.842 14.259 11.436 10.397 13.582 10.274 10.976 15.54 13.582 20.819 11.313 20.666 9.781 16.642 8.248 20.513 6.163 20.329 8.585 15.666 6.347 10.673" style="fill:#fff;fill-rule:evenodd"/></svg> Exportar a Excel</button>
             <div class="dropdown" id="selector">
               <div class="select">
@@ -72,8 +78,8 @@
               <% for (let j=0; j < (ventaspordia?.camiones.length ?? 1); j++){ %>
               <div data-tabid="<%=j%>" class="tabs__content">
                   <div class="contenedor-trabajador">
-                    <label class="label-trabajador" for="trabajador<%=j%>">Nombre del trabajador:</label>
-                    <input type="text" class="form-control trabajador" id="trabajador<%=j%>"
+                    <label class="label-trabajador">Nombre del trabajador:</label>
+                    <input type="text" class="form-control trabajador"
                     <% if (ventaspordia) { %> value= <%= ventaspordia.camiones[0].nombretrabajador %> <% } %>/>
                   </div>
                     <%- include("layouts/tablacompleta", {j, ventaspordia, plantillaDefault}) %>
@@ -85,8 +91,78 @@
             <% } %>
         </div>
       </article>
+      <input class="btn btn-primary añadirproductoyviaje" type="button" value="Guardar" id="guardar">
+      <div class="contenedorrestaurar restaurarsoloestatabla">
+        <div class="centrar">
+          <svg class="svgrestaurar" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M32.5 224H24c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L82.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L169 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H32.5z"/></svg>
+          <span>Deshacer última acción</span>
+        </div>
+      </div>  
+      <div class="contenedorrestaurar restaurarsoloestatabla">
+        <div class="centrar">
+          <svg class="svgrestaurar svgrotado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M32.5 224H24c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L82.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L169 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H32.5z"/></svg>
+          <span>Rehacer última acción</span>
+        </div>
+      </div>      
+    </main>
 
-      <input class="btn btn-primary añadirproductoyviaje" type="button" value="Guardar" id="guardar" />
-  </main>
+
+
+    <div class="modal fade" id="configs" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Configuraciones</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <article>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="switchreordenalfabetico">
+                <label class="form-check-label" for="switchreordenalfabetico">Agregar ícono para ordenar por orden alfabético</label>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="switchreordenarcamiones">
+                <label class="form-check-label" for="switchreordenarcamiones">Cambiar el orden de los camiones</label>
+              </div>
+            </article>
+            <article>
+              <div class="titulosecundarioconfiguraciones">¿Cómo prefiere borrar los camiones?</div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="borrarcamiones" id="camionespresionar1segundo">
+                <label class="form-check-label" for="camionespresionar1segundo">Presionando la pestaña por 1 segundo</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="borrarcamiones" id="camionespresionarx" checked>
+                <label class="form-check-label" for="camionespresionarx">Presionando un botón con una X</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="borrarcamiones" id="camionesdesactivar">
+                <label class="form-check-label" for="camionesdesactivar">Desactivar</label>
+              </div>
+            </article>
+            <article>
+              <div class="titulosecundarioconfiguraciones">¿Cómo prefiere borrar filas y columnas en las tablas?</div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="borrarfilasycolumnas" id="filasycolumnaspresionar1segundo" >
+                <label class="form-check-label" for="filasycolumnaspresionar1segundo">Presionando una celda por 1 segundo</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="borrarfilasycolumnas" id="filasycolumnaspresionarx" checked>
+                <label class="form-check-label" for="filasycolumnaspresionarx">Presionando un botón con una X</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="borrarfilasycolumnas" id="filasycolumnasdesactivar">
+                <label class="form-check-label" for="filasycolumnasdesactivar">Desactivar</label>
+              </div>
+            </article>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-config guardarconfig" data-bs-dismiss="modal">Guardar cambios</button>
+            <button type="button" class="btn btn-danger btn-config cerrarconfig" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </body>
 </html>
