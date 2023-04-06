@@ -1,5 +1,6 @@
 let click_disabled = false;
-const switchmodoseguro = document.querySelector("#flexSwitchModoSeguro");
+let url = "/plantillas/editar/";
+const switchModoSeguro = document.querySelector("#switchModoSeguro");
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
     confirmButton: "btn btn-success margenboton",
@@ -8,29 +9,10 @@ const swalWithBootstrapButtons = Swal.mixin({
   buttonsStyling: false,
 });
 
-$('.fave').on("click", function () {
-  if (click_disabled) return;
-
-  $(this).toggleClass('faved');
-  let label = $(this).attr('aria-label');
-  if (label == 'Favourite')
-    label = 'Unfavourite';
-  else
-    label = 'Favourite';
-
-  $(this).attr('aria-label', label);
-
-  click_disabled = true;
-  setTimeout(function () {
-    click_disabled = false;
-  }, 1000);
-
-});
-
 $(document).on('click', ".botoneliminar", async function () {
   if (switchbtn.checked) return;
 
-  if (!switchmodoseguro.checked) {
+  if (!switchModoSeguro.checked) {
     var tablaborrar = $(this).closest("tbody")[0];
     var filaborrar = $(this).parent().parent()[0];
     tablaborrar.removeChild(filaborrar);
@@ -51,9 +33,6 @@ $(document).on('click', ".botoneliminar", async function () {
   }
 });
 
-
-
-
 $('#añadirproducto').on('click', function () {
   let fila =
     `<tr>
@@ -64,10 +43,6 @@ $('#añadirproducto').on('click', function () {
   $("#cuerpotabla").append(fila);
 });
 
-
-
-
-
 $(".contenedoreliminar").on('click', async function () {
   let result = await swalWithBootstrapButtons.fire({
     icon: "warning",
@@ -77,15 +52,12 @@ $(".contenedoreliminar").on('click', async function () {
     cancelButtonText: "No continuar",
   })
   if (result.isConfirmed) {
-    var param = window.location.pathname.replace("/plantillas/", '');
-    var borrar = `{ "nombreplantilla": "${param}" }`;
-    console.log(borrar);
+    var param = window.location.pathname.replace(url, '');
     $.ajax({
-      url: `/plantillas/borrar`,
+      url: `/plantillas/${param}`,
       method: "DELETE",
       contentType: "application/json",
-      data: borrar,
-      success: async function (res) {
+      success: async res => {
         await Swal.fire(
           "Se ha borrado la plantilla exitosamente",
           "Ahora será redireccionado al menú de plantillas",
@@ -93,21 +65,19 @@ $(".contenedoreliminar").on('click', async function () {
         )
         window.location = "/plantillas"
       },
-      error: function (res) {
+      error: res => {
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: "No se pudo eliminar la plantilla",
+          text: res.responseText,
         });
       },
     });
   }
 })
 
-
-
 $(document).on('click', "#guardar", async function () {
-  var param = window.location.pathname.replace("/plantillas/", '');
+  var param = window.location.pathname.replace(url, '');
   var valido = await validarPlantillas();
   if (valido) {
     var tabla = $("tbody")[0];
@@ -125,35 +95,26 @@ $(document).on('click', "#guardar", async function () {
       }
     }
     guardar += " ] }"
-
     $.ajax({
       url: `/plantillas/${param}`,
       method: "PATCH",
       contentType: "application/json",
       data: guardar,
-      success: async function (res) {
+      success: async res => {
         await Swal.fire(
           "Se ha guardado exitosamente",
           "El archivo se ha almacenado en la base de datos",
           "success"
         )
-        window.location = ("/plantillas/" + document.getElementById("nombreplantilla").value.trim());
+        window.location = (url + document.getElementById("nombreplantilla").value.trim());
       },
-      error: function (res) {
-        if (res.responseText === "El usuario ya existe")
-          Swal.fire({
-            icon: "error",
-            title: "Ups...",
-            text: "Ya existe una plantilla con ese nombre",
-          });
-        else
-          Swal.fire({
-            icon: "error",
-            title: "Ups...",
-            text: "No se pudo guardar en la base de datos",
-          });
+      error: res => {
+        Swal.fire({
+          icon: "error",
+          title: "Ups...",
+          text: res.responseText,
+        });
       },
     });
   }
-
 });

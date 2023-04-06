@@ -7,16 +7,15 @@ const { DateTime } = require("luxon");
 router.post("/guardar", async (req, res) => {
   try {
     let ventas = new ventaspordia(req.body);
-    if (req.user) {
-      ventas.usuario = req.user.usuario;
-    }
+    ventas.usuario = req.user?.usuario ?? "";
+
     let registroanterior = await ventaspordia.findOne({fecha: ventas.fecha});
     if (registroanterior) { //si ya existe un registro anterior lo guarda en la parte de respaldos
       let respaldo = new Respaldo();
       respaldo.ventaspordia = registroanterior;
       respaldo.fechaeliminacion = new Date();
       await respaldo.save();
-      await registroanterior.delete();
+      await registroanterior.deleteOne();
     }
     await ventas.save();
     

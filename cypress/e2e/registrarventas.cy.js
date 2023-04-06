@@ -1,6 +1,8 @@
 /// <reference types="cypress" />
 
 import * as tablas from "../utilidades/tablasParaTests.js"
+import * as json from "../utilidades/jsonParaTests.js"
+
 beforeEach(() => {
   cy.visit('http://localhost:3000/registrarventas/1-3-2023');
 })
@@ -91,12 +93,19 @@ describe('validaciones antes de guardar', () => {
 
 describe("configuraciones", () => {
   it("hay x en filas y columnas", async () => {
-      let resultado = await muestraXBorrarFilasYColumnas();
-      expect(resultado).to.be.true;
+    cy.get('.configuraciones').click();
+    cy.wait(300)
+    cy.contains("Guardar cambios").should("be.visible");
+    cy.get(':nth-child(3) > :nth-child(3) > .form-check-label').click();
+    cy.get('#filasycolumnaspresionarx').check();
+    cy.get('.modal-footer .guardarconfig').click();
+    cy.wait(300)
+    cy.contains("Guardar cambios").should("not.be.visible");
+    cy.get('.contenidotabs').should("have.class", "cerrarconboton")
   });
   it("esconde x en filas y columnas", async () => {
     cy.get('.configuraciones').click();
-    cy.wait(300)
+    cy.wait(500)
     cy.contains("Guardar cambios").should("be.visible");
     cy.get(':nth-child(3) > :nth-child(4) > .form-check-label').click();
     cy.get('#filasycolumnaspresionarx').check();
@@ -124,6 +133,24 @@ describe("configuraciones", () => {
 // })
 
 
+// describe("JSON al guardar", () => {
+//   it("guarda bien una tabla", async () => {
+//     cy.get("#guardar").click();
+//     cy.window().then(win => {
+//       let a = win.console.log
+//       debugger
+//       expect(a).to.contain(json.jsonGuardar);
+//     });
+//   });
+// });
+
+function contiene(t1, t2) {
+  t1 = t1.replaceAll(/\n| /g, "")
+  t2 = t2.replaceAll(/\n| /g, "")
+  expect(t1).to.contain(t2);
+  return (t1.contains(t2));
+}
+
 function comparar(t1, t2) {
   t1 = t1.replaceAll(/\n| /g, "")
   t2 = t2.replaceAll(/\n| /g, "")
@@ -131,30 +158,6 @@ function comparar(t1, t2) {
   return (t1 === t2);
 }
 
-function muestraXBorrarFilasYColumnas() {
-  return new Promise((resolve, reject) => {
-    try {
-      cy.get('.configuraciones').click();
-      cy.wait(300)
-      cy.contains("Guardar cambios").should("be.visible");
-      cy.get(':nth-child(3) > :nth-child(3) > .form-check-label').click();
-      cy.get('#filasycolumnaspresionarx').check();
-      cy.get('.modal-footer .guardarconfig').click();
-      cy.wait(300)
-      cy.contains("Guardar cambios").should("not.be.visible");
-      cy.get('[data-tabid="0"] > table > :nth-child(5) > :nth-child(1) > .borrarcolumnas').then(el => {
-        const win = el[0].ownerDocument.defaultView
-        const after = win.getComputedStyle(el[0], 'after')
-        const contenidoAfter = after.getPropertyValue('content')
-        expect(contenidoAfter).to.equal('"❌"');
-        expect(contenidoAfter).to.be.visible();
-        resolve(true);
-      })
-    } catch {
-      reject(false);
-    } 
-  });
-}
 function borrarFilasVacias() {
   return new Promise(resolve => {
     cy.get('[data-tabid="0"] > table > .cuerpo > tr:nth-child(2) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}");
@@ -278,6 +281,7 @@ function validarPreciosYProductosVariasVeces() {
     })
   });
 }
+
 function validarPreciosYProductosUnaVez() {
   return new Promise(resolve => {
     cy.get('[data-tabid="0"] > table > .cuerpo > tr:nth-child(1) > td:nth-child(1)').clear();

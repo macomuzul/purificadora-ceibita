@@ -19,7 +19,7 @@ async function validarPlantillas() {
     return false;
   }
   for (let i = 0; i < filas.length; i++) {
-    if (filas[i].cells[0].innerHTML === "") {
+    if (filas[i].cells[0].innerText === "") {
       await Swal.fire({
         icon: "error",
         title: "Error",
@@ -29,7 +29,7 @@ async function validarPlantillas() {
     }
   }
   for (let i = 0; i < filas.length; i++) {
-    if (filas[i].cells[1].innerHTML === "") {
+    if (filas[i].cells[1].innerText === "") {
       await Swal.fire({
         icon: "error",
         title: "Error",
@@ -37,6 +37,11 @@ async function validarPlantillas() {
       });
       return false;
     }
+  }
+  for (let i = 0; i < filas.length; i++) {
+    let precio = filas[i].cells[1].innerText;
+    if (precio.endsWith("."))
+      filas[i].cells[1].innerText = precio.replace(".", "")
   }
   return true;
 }

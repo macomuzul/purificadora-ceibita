@@ -8,7 +8,7 @@ const swalWithBootstrapButtons = Swal.mixin({
   buttonsStyling: false,
 });
 
-$('.fave').click(function () {
+$('.fave').on("click", function () {
   if (click_disabled)
     return;
 
@@ -26,12 +26,13 @@ $('.fave').click(function () {
   }, 300);
 });
 
-$(".svgeliminar").on('click', function () {
+$(".svgeliminar").on('click', async function () {
   let tablaborrar = document.getElementById("cuerpotabla");
   let filaborrar = $(this).closest("tr")[0];
-  let result = swalWithBootstrapButtons.fire({
+  let plantillaborrar = filaborrar.cells[0].innerText;
+  let result = await swalWithBootstrapButtons.fire({
     icon: "warning",
-    text: `Estas seguro que deseas borrar la plantilla ${$(this).closest("tr")[0].cells[0].innerHTML}?`,
+    text: `Estas seguro que deseas borrar la plantilla ${plantillaborrar}?`,
     showCancelButton: true,
     confirmButtonText: "Continuar",
     cancelButtonText: "No continuar",
@@ -45,32 +46,26 @@ $(".svgeliminar").on('click', function () {
       });
       return;
     }
-    else {
-      let esdefault = $(".faved").closest("tr")[0].cells[0].innerHTML;
-      let borrar = `{ "nombreplantilla": "${$(this).closest("tr")[0].cells[0].innerHTML}" }`;
-      console.log(borrar);
-      $.ajax({
-        url: `/plantillas/borrar/${esdefault}`,
-        method: "DELETE",
-        contentType: "application/json",
-        data: borrar,
-        success: function (res) {
-          Swal.fire(
-            "Se ha borrado la plantilla exitosamente",
-            "La plantilla ya ha sido borrada del sistema",
-            "success"
-          );
-          tablaborrar.removeChild(filaborrar);
-        },
-        error: function (res) {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "No se pudo eliminar la plantilla",
-          });
-        },
-      });
-    }
+    $.ajax({
+      url: `/plantillas/${plantillaborrar}`,
+      method: "DELETE",
+      contentType: "application/json",
+      success: res => {
+        Swal.fire(
+          "Se ha borrado la plantilla exitosamente",
+          "La plantilla ya ha sido borrada del sistema",
+          "success"
+        );
+        tablaborrar.removeChild(filaborrar);
+      },
+      error: res => {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: res.responseText,
+        });
+      },
+    });
   }
 })
 
@@ -94,11 +89,11 @@ $(".svgver").each(function (e, btn) {
       instance._isFetching = true;
       let mandar = `{ "nombreplantilla": "${nombreplantilla}" }`
       $.ajax({
-        url: "/plantillas/datostabla",
+        url: "/plantillas/devuelveplantilla",
         method: "POST",
         contentType: "application/json",
         data: mandar,
-        success: function (res) {
+        success: res => {
           plantilla = `<table>
                   <thead>
                     <tr>
@@ -117,11 +112,11 @@ $(".svgver").each(function (e, btn) {
           instance._src = plantilla;
           instance.setContent(plantilla);
         },
-        error: function (res) {
+        error: res => {
           instance._error = "Error al cargar la plantilla";
           instance.setContent("Error al cargar la plantilla");
         },
-        complete: function (res) {
+        complete: res => {
           instance._isFetching = false;
         }
       });
@@ -131,43 +126,39 @@ $(".svgver").each(function (e, btn) {
 
 $("#guardar").on('click', function () {
   let guardar = `{
-    "plantilladefault": "${$(".faved").closest("tr")[0].cells[0].innerHTML}",
+    "plantilladefault": "${$(".faved").closest("tr")[0].cells[0].innerText}",
     "plantillasorden": [ `
   let tabla = document.getElementById("cuerpotabla");
   let filas = tabla.rows.length;
   for (let i = 0; i < filas; i++) {
-    guardar += ` { 
-         "nombreplantilla": "${tabla.rows[i].cells[0].innerHTML}"
-        }`;
+    guardar += ` { "nombreplantilla": "${tabla.rows[i].cells[0].innerText}" }`;
     if (i + 1 < filas)
       guardar += ",";
   }
 
   guardar += `] }`
-
-  console.log(guardar);
   $.ajax({
-    url: "/plantillas/actualizarorden",
+    url: "/plantillas/actualizarverplantillas",
     method: "PATCH",
     contentType: "application/json",
     data: guardar,
-    success: function (res) {
+    success: res => {
       Swal.fire(
         "Se ha guardado exitosamente",
         "Se ha guardado el orden",
         "success"
       );
     },
-    error: function (res) {
+    error: res => {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "No se pudo guardar el orden",
+        text: res.responseText,
       });
     },
   });
 });
 
 $(".svgeditar").on('click', function () {
-  window.location = "/plantillas/" + $(this).closest("tr")[0].cells[0].innerText;
+  window.location = "/plantillas/editar/" + $(this).closest("tr")[0].cells[0].innerText;
 });

@@ -5,8 +5,8 @@ const { Schema } = mongoose;
 const viajesSchema = new Schema({
     sale: Number,
     entra: Number,
-    _id : false
-  });
+    _id: false
+});
 
 const filasSchema = new Schema({
     nombreproducto: String,
@@ -14,9 +14,8 @@ const filasSchema = new Schema({
     viajes: [viajesSchema],
     vendidos: Number,
     ingresos: Number,
-    _id : false 
+    _id: false
 });
-
 
 //hay que cambiar el id a false despues
 const camionesSchema = new Schema({
@@ -24,20 +23,16 @@ const camionesSchema = new Schema({
     filas: [filasSchema],
     totalvendidos: Number,
     totalingresos: Number,
-    _id : false 
+    _id: false
 });
-
 
 const ventaspordiaSchema = new Schema({
     fecha: Date,
     usuario: String,
-	fechacreacion: {type: Date, inmutable: true },
-	fechaultimocambio: Date,
+    fechacreacion: { type: Date, inmutable: true },
+    fechaultimocambio: Date,
     nombretrabajador: String,
     camiones: [camionesSchema]
 });
 
-
 module.exports = mongoose.model('ventaspordia', ventaspordiaSchema);
-
-

@@ -1,9 +1,7 @@
-let sortable = true;
-const switchbtn = document.querySelector("#flexSwitchOrdenarFilas");
+let sortable = false;
+const switchbtn = document.querySelector("#switchOrdenarFilas");
 
 function switchprendidometodo() {
-  if (switchbtn.checked) {
-    sortable = !sortable;
-    $("tbody").sortable({axis: "y", disabled: false});
-  }
+  $("tbody").sortable({ axis: "y", disabled: sortable });
+  sortable = !sortable;
 };

@@ -7,7 +7,7 @@ window.addEventListener("click", (e) => {
 
 function metododropdown(option, menu) {
   if (menu.id === "fechasdropdown") {
-    if (option.textContent === "Fecha entre") {
+    if (option.innerText === "Fecha entre") {
       $("#divdatepickerescondido").css("display", "inline-block");
       $(".divseparador").css("display", "inline-block");
     } else {
@@ -35,8 +35,8 @@ jQuery.expr.filters.offscreen = function (el) {
 
 var btnbuscar = document.getElementById("btnbuscar")
 btnbuscar.addEventListener("click", () => {
-  let buscarpor = $("#buscarpor")[0].textContent;
-  let rango = $("#rangofecha")[0].textContent;
+  let buscarpor = $("#buscarpor")[0].innerText;
+  let rango = $("#rangofecha")[0].innerText;
   let fecha = $("#calendario1")[0].value;
 
   if (buscarpor === "Buscar por" || rango === "Elige un rango" || fecha === "") {

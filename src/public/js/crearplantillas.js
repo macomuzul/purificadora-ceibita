@@ -1,6 +1,4 @@
-
 $("#guardar").on("click", async function () {
-
   let valido = await validarPlantillas();
   if (valido) {
     let tabla = $("tbody")[0];
@@ -16,19 +14,17 @@ $("#guardar").on("click", async function () {
         "producto": "${tabla.rows[i].cells[0].innerText.trim()}", 
         "precio": ${tabla.rows[i].cells[1].innerText} 
        }`;
-      if (i + 1 < filas) {
+      if (i + 1 < filas)
         guardar += ",";
-      }
     }
     guardar += " ] }"
-
     guardar = guardar.replace(/\&nbsp/g, '')
     $.ajax({
-      url: "/plantillas/guardarnuevo",
+      url: "/plantillas/guardar",
       method: "POST",
       contentType: "application/json",
       data: guardar,
-      success: function (res) {
+      success: res => {
         $("body").scrollTop(0);
         Swal.fire(
           "Se ha guardado exitosamente",
@@ -36,29 +32,17 @@ $("#guardar").on("click", async function () {
           "success"
         );
       },
-      error: function (res) {
-        if (res.responseText === "La plantilla ya existe") {
-          $("body").scrollTop(0);
-          Swal.fire({
-            icon: "error",
-            title: "Ups...",
-            text: "Ya existe una plantilla con ese nombre",
-          });
-        }
-        else {
-          $("body").scrollTop(0);
-          Swal.fire({
-            icon: "error",
-            title: "Ups...",
-            text: "No se pudo guardar en la base de datos",
-          });
-        }
-
+      error: res => {
+        $("body").scrollTop(0);
+        Swal.fire({
+          icon: "error",
+          title: "Ups...",
+          text: res.responseText
+        });
       },
     });
   }
 });
-
 
 $(document).on('click', ".botoneliminar", function () {
   if (switchbtn.checked)
@@ -83,13 +67,13 @@ $('#añadirproducto').on('click', function () {
 });
 
 function metododropdown(option) {
-  let mandar = `{ "nombreplantilla": "${option.innerHTML}" }`
+  let mandar = `{ "nombreplantilla": "${option.textContent}" }`
   $.ajax({
-    url: "/plantillas/datostabla",
+    url: "/plantillas/devuelveplantilla",
     method: "POST",
     contentType: "application/json",
     data: mandar,
-    success: function (res) {
+    success: res => {
       let formatotabla = "";
       for (let i = 0; i < res.productos.length; i++) {
         formatotabla += `<tr>
@@ -103,7 +87,7 @@ function metododropdown(option) {
           </tr>`}
       $("tbody")[0].innerHTML = formatotabla;
     },
-    error: function (res) {
+    error: res => {
       Swal.fire({
         icon: "error",
         title: "Ups...",

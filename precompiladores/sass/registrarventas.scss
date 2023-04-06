@@ -31,11 +31,11 @@ input {
 .añadirproductoyviaje {
   background-color: #112438;
   border: 1px solid #036891;
-  stroke: #009578;
   height: 45px;
   width: 190px;
   margin-top: 20px;
   color: white;
+  border-radius: 5px;
   @include botonRegistrarVentasHoverFocusActive;
 }
 
@@ -152,24 +152,27 @@ h4 {
 }
 
 .botonconfirm {
-  background: #157347;
-  width: 200px;
-  height: 60px;
-  margin-right: 10px;
+  background: #037841;
 }
 
 .botondeny {
   background: #0f0924;
-  width: 200px;
-  height: 60px;
-  margin-right: 10px;
 }
 
 .botoncancel {
   background: #be0000;
+}
+
+.botonswal3 {
   width: 200px;
   height: 60px;
   margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+
+  &:hover {
+    opacity: 0.80;
+  }
 }
 
 .btn-primary:disabled {
@@ -208,7 +211,7 @@ th {
   border-radius: 20px;
   margin-left: auto;
   margin-top: 10px;
-  text-align: center; //0b2540 09213a
+  text-align: center;
   vertical-align: -webkit-baseline-middle;
   display: inline-block;
 }

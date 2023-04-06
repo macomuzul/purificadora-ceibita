@@ -61,10 +61,9 @@ function enfocarCelda(elem, e) {
 function setEndOfContenteditable(elem) {
   var range = document.createRange()
   var sel = window.getSelection()
-  if (elem.innerHTML == "") {
+  if (elem.innerText == "")
     return;
-  }
-  range.setStart(elem.childNodes[0], elem.innerHTML.length)
+  range.setStart(elem.childNodes[0], elem.innerText.length)
   range.collapse(false)
 
   sel.removeAllRanges()
@@ -83,7 +82,7 @@ $("body").on("beforeinput", "tr td", function (e) {
 
 
   if (colindex == 1) {
-    let el = $(this)[0].innerHTML;
+    let el = $(this)[0].innerText;
     var number = el.split(".");
     if (isNaN(letra) && letra != ".") {
       e.preventDefault();
@@ -100,9 +99,8 @@ $("body").on("beforeinput", "tr td", function (e) {
     }
   }
 
-  if (this.innerHTML === "0") {
-    this.innerHTML = "";
-  }
+  if (this.innerText === "0")
+    this.innerText = "";
 });
 
 

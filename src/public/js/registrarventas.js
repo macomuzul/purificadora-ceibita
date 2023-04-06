@@ -1,7 +1,7 @@
 dayjs.extend(window.dayjs_plugin_utc);
 let colscomienzo = 2;
 let colsfinal = 2;
-let fecha = document.querySelector(".fechanum").textContent.split("/");
+let fecha = document.querySelector(".fechanum").innerText.split("/");
 let hoy = dayjs(fecha[2] + "-" + fecha[1] + "-" + fecha[0]).utc(true);
 let timer;
 let touchduration = 600;
@@ -20,7 +20,7 @@ function _pintarColumnas() { return _tabla().querySelector(".pintarcolumnas") }
 function _cantidadViajes() { return _pintarColumnas().children.length; }
 function _saleYEntra() { return _tabla().querySelector(".saleYEntra"); }
 function _cantidadSaleYEntra() { return (_pintarColumnas().children.length * 2 + colscomienzo + colsfinal); }
-function _cantidadProductos() { return _cuerpo().children.length; }
+function _cantidadProductos() { return _cuerpo().rows.length; }
 
 document.querySelectorAll("tbody td:not(:nth-last-child(1), :nth-last-child(2))").forEach(el => el.setAttribute("contentEditable", true));
 document.querySelectorAll("tbody td:last-child").forEach(el => el.classList.add("borrarfilas"));
@@ -164,7 +164,7 @@ $(document).on("click", 'th:not([colspan="2"])', function () {
     else if (nombreColumna === "Sale" || nombreColumna === "Entra")
       indiceColumna += colscomienzo;
     cuerpo.querySelectorAll("tr").forEach((fila, indice) => { // <tbody> rows
-      let textoCelda = fila.children[indiceColumna].textContent.toUpperCase();
+      let textoCelda = fila.children[indiceColumna].innerText.toUpperCase();
       objValores[textoCelda + separador + indice] = fila.outerHTML.replace(/(\t)|(\n)/g, '');
       listaIdentifObjValores.push(textoCelda + separador + indice);
     });
@@ -212,13 +212,12 @@ const swalWithBootstrapButtons2 = Swal.mixin({
 });
 const swalWithBootstrapButtons3 = Swal.mixin({
   customClass: {
-    confirmButton: "botonconfirm",
-    denyButton: "botondeny",
-    cancelButton: "botoncancel",
+    confirmButton: "botonswal3 botonconfirm",
+    denyButton: "botonswal3 botondeny",
+    cancelButton: "botonswal3 botoncancel",
   },
   buttonsStyling: false,
 });
-//TODO borrar filas vacias --- conservar filas vacias ---- volver
 
 $("body").on("click", ".tabs input", function (e) {
   document.querySelectorAll(".tabs__content").forEach(el => el.style.display = "none");
@@ -493,40 +492,47 @@ $("#guardar").on("click", async function () {
   "fechaultimocambio": ${Date.now()},
   "camiones": [`;
 
-  let tablas = document.querySelectorAll("table")
-  for (let i = 0; i < tablas.length; i++) {
-    let cuerpo = tablas[i].querySelector(".cuerpo");
-    let filapie = tablas[i].querySelector("tfoot tr");
+  let listaTablas = Array.from(document.querySelectorAll("table"));
+  let cantidadTablas = listaTablas.length;
+  listaTablas.forEach((tabla, indice) => {
+    let cuerpo = tabla.querySelector(".cuerpo");
+    let filapie = tabla.querySelector("tfoot tr");
+    let cantidadProductos = cuerpo.rows.length;
     // guardar += `{ "nombretrabajador": "${document.getElementById("trabajador").value.trim()}",
     //             "filas": [`;
     guardar += `{ "nombretrabajador": "",
                 "filas": [`;
-    for (let i = 0; i < _cantidadProductos(); i++) {
-      row = cuerpo.rows[i];
-      guardar += `{ "nombreproducto": "${row.cells[0].innerText.trim()}", 
-                    "precioproducto": ${row.cells[1].innerText},
+    for (let i = 0; i < cantidadProductos; i++) {
+      let fila = cuerpo.rows[i];
+      let cantidadSaleYEntra = tabla.querySelector(".pintarColumnas").children.length * 2 + colscomienzo + colsfinal;
+      guardar += `{ "nombreproducto": "${fila.cells[0].innerText.trim()}", 
+                    "precioproducto": ${fila.cells[1].innerText},
                     "viajes": [`
-      for (let j = 0; j < _cantidadSaleYEntra() - 4; j += 2) {
-        guardar += `{ "sale": ${row.cells[j + colscomienzo].innerText}, 
-                      "entra": ${row.cells[j + colscomienzo + 1].innerText}`;
-        if (j + 2 >= _cantidadSaleYEntra() - 4)
+      for (let j = 0; j < cantidadSaleYEntra; j += 2) {
+        guardar += `{ "sale": ${fila.cells[j + colscomienzo].innerText}, 
+                      "entra": ${fila.cells[j + colscomienzo + 1].innerText}`;
+        if (j + 2 >= cantidadSaleYEntra)
           guardar += "} ";
         else
           guardar += "}, ";
       }
       guardar += "],";
-      guardar += `"vendidos": ${row.querySelector("td:nth-last-child(2)").innerText}, 
-                  "ingresos": ${row.querySelector("td:nth-last-child(1)").innerText}`
-      if (i + 1 >= cuerpo.rows.length)
+      guardar += `"vendidos": ${fila.querySelector("td:nth-last-child(2)").innerText}, 
+                  "ingresos": ${fila.querySelector("td:nth-last-child(1)").innerText}`
+      if (i + 1 >= cantidadProductos)
         guardar += "} ";
       else
-        guardar += "},";
+        guardar += "}, ";
     }
     guardar += `], 
                 "totalvendidos": ${filapie.cells[1].innerText},
-                "totalingresos": ${filapie.cells[2].innerText} } ] }`;
+                "totalingresos": ${filapie.cells[2].innerText} } ]`
 
-  }
+    if (indice + 1 >= cantidadTablas)
+      guardar += ` } `;
+    else
+      guardar += ` }, `;
+  })
 
 
   console.log(guardar);
@@ -574,11 +580,11 @@ async function borrarFilasVacias(tabla, numtabla) {
   filasQueNoEstanVacias.forEach(el => tablaSinFilasVacias += el.outerHTML)
   tablaCopiaSinFilasVacias.querySelector(".cuerpo").innerHTML = tablaSinFilasVacias
 
-  let result = await swalWithBootstrapButtons.fire({
+  let result = await swalWithBootstrapButtons3.fire({
     title: "Se han detectado filas vacias",
     icon: "warning",
     width: (window.innerWidth * 3) / 4,
-    html: `<div class="textovista">Se han detectado filas vacias en la tabla ${numtabla} las cuales serán eliminadas</div>
+    html: `<div class="textovista">Se han detectado filas vacias en la tabla ${numtabla}</div>
           <br><br><br>
           <div class="tabs-swal">
             <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal0" checked>
@@ -590,12 +596,15 @@ async function borrarFilasVacias(tabla, numtabla) {
             <div class="tabs__content">${tablaCopiaSinFilasVacias.outerHTML}</div>
           </div>
           <br>
-          <div class="textovista">Desea continuar?</div>
+          <div class="textovista">Desea eliminarlas?</div>
           <br><br>`,
     showCancelButton: true,
-    confirmButtonText: "Continuar",
-    cancelButtonText: "No continuar",
+    showDenyButton: true,
+    confirmButtonText: "Borrar las filas vacías",
+    denyButtonText: `Conservar las filas vacías`,
+    cancelButtonText: "Volver",
   })
+
   if (result.isConfirmed) {
     if (filasQueNoEstanVacias.length === 0) {
       Swal.fire({
@@ -613,6 +622,9 @@ async function borrarFilasVacias(tabla, numtabla) {
     filasVacias.forEach(fila => $(fila).remove());
     return true;
   }
+  else if (result.isDenied)
+    return true;
+
   return false;
 }
 
@@ -782,12 +794,12 @@ async function borrarCamiones(label, e) {
   htmlTablas += `<input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal0" checked />
   <label for="tabswal0" class="tabs__label label-swal">Camión ${(parseInt(id) + 1)}</label>
     <div class="tabs__content" style="display:initial !important;">` + tabla.cloneNode(true).outerHTML + "</div>"
-    htmlTablas += `</div>
+  htmlTablas += `</div>
     <br>
     <div class="textovista">Desea continuar?</div>
     <br><br>`
-    e.preventDefault();
-    e.stopPropagation();
+  e.preventDefault();
+  e.stopPropagation();
   let result = await swalWithBootstrapButtons.fire({
     title: "Estás seguro que deseas eliminar este camión?",
     icon: "warning",
@@ -921,7 +933,7 @@ async function pidePlantilla(nombreplantilla) {
 }
 
 async function metododropdown(option) {
-  let nombreplantilla = option.innerHTML;
+  let nombreplantilla = option.textContent;
   let res = await pidePlantilla(nombreplantilla);
   if (!res)
     return;
