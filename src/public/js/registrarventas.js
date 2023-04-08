@@ -32,6 +32,7 @@ document.querySelectorAll(".tabs__label").forEach(el => el.classList.add("borrar
 $(document).on("dblclick", ".fecha", () => document.querySelectorAll(".fecha").forEach(el => el.classList.toggle("esconder")));
 let opcionBorrarFilasYColumnas = -1;
 let opcionBorrarCamiones = -1;
+let opcionExportarPDF = -1;
 let switchOrdenarCamiones = -1;
 let switchOrdenarOrdenAlfabetico = -1;
 
@@ -62,11 +63,19 @@ function guardarValoresConfig() {
     axis: "x", stop: function () {
       let tabs = document.querySelectorAll(".tabs label");
       for (let i = 0; i < tabs.length; i++) {
-        tabs[i].innerText = `Camion ${i + 1}`;
+        tabs[i].innerText = `Camión ${i + 1}`;
       }
     },
     items: "> div:not(:last-child)",
-    disabled: !switchOrdenarCamiones
+    disabled: !switchOrdenarCamiones,
+    stop: function(){
+      reacomodarCamiones();
+      Swal.fire(
+        "Se ha cambiado el orden",
+        "Se ha cambiado el orden de los camiones exitosamente",
+        "success"
+      );
+    }
   });
 }
 
@@ -78,6 +87,7 @@ $(document).on("click", ".guardarconfig", () => {
 function colocarValoresConfig() {
   opcionBorrarFilasYColumnasNuevo = $('[name="borrarfilasycolumnas"]:checked').parent().index() - 1;
   opcionBorrarCamionesNuevo = $('[name="borrarcamiones"]:checked').parent().index() - 1;
+  opcionExportarPDFNuevo = $('[name="exportarpdf"]:checked').parent().index() - 1;
   switchOrdenarCamionesNuevo = $("#switchreordenarcamiones")[0].checked;
   switchOrdenarOrdenAlfabeticoNuevo = $("#switchreordenalfabetico")[0].checked;
 
@@ -131,6 +141,7 @@ function colocarValoresConfig() {
 
   opcionBorrarFilasYColumnas = opcionBorrarFilasYColumnasNuevo;
   opcionBorrarCamiones = opcionBorrarCamionesNuevo;
+  opcionExportarPDF = opcionExportarPDFNuevo;
   switchOrdenarCamiones = switchOrdenarCamionesNuevo;
   switchOrdenarOrdenAlfabetico = switchOrdenarOrdenAlfabeticoNuevo;
 }
@@ -140,6 +151,8 @@ function reseteaValoresConfig() {
   $(`[name="borrarfilasycolumnas"]`)[opcionBorrarFilasYColumnas].checked = true;
   $('[name="borrarcamiones"]:checked')[0].checked = false;
   $(`[name="borrarcamiones"]`)[opcionBorrarCamiones].checked = true;
+  $('[name="exportarpdf"]:checked')[0].checked = false;
+  $(`[name="exportarpdf"]`)[opcionExportarPDF].checked = true;
   $("#switchreordenarcamiones")[0].checked = switchOrdenarCamiones;
   $("#switchreordenalfabetico")[0].checked = switchOrdenarOrdenAlfabetico;
 }
@@ -239,14 +252,13 @@ $("body").on("keyup", "tr td", function (e) {
   if ((keycode >= 48 && keycode <= 57) || keycode === 229 || keycode === 8) {
     let cuerpo = $(this).closest("tbody")[0];
     let indiceFila = $(this).parent().index();
-    calcularvendidoseingresos(cuerpo, indiceFila);
+    calcularvendidoseingresos(cuerpo.rows[parseInt(indiceFila)]);
     calcularvendidoseingresostotal(cuerpo);
   }
 });
 
-function calcularvendidoseingresos(tabla, indiceFila) {
+function calcularvendidoseingresos(fila) {
   let sumafila = 0;
-  let fila = tabla.rows[parseInt(indiceFila)];
   let y = colscomienzo;
   let hayunnumero = false;
   for (; y < fila.cells.length - colsfinal; y++) {
@@ -456,7 +468,7 @@ async function borrarColumnas(colborrar) {
     let columnaborrartexto = tabla.querySelectorAll(".borrarcolumnas");
     columnaborrartexto.forEach((columnaborrartxt, index) => columnaborrartxt.innerHTML = "<div>Viaje No. " + (index + 1) + "</div>");
     for (let i = 0; i < cuerpo.rows.length; i++) {
-      calcularvendidoseingresos(cuerpo, i)
+      calcularvendidoseingresos(cuerpo.rows[i])
     }
     calcularvendidoseingresostotal(cuerpo);
     Swal.fire(
@@ -484,6 +496,16 @@ function añadirceros(cuerpo) {
   calcularvendidoseingresostotal(cuerpo)
 }
 
+function devuelveListaTablas() {
+  let listaCamiones = Array.from(document.querySelectorAll(".tabs__radio"));
+  let listaTablas = [];
+  listaCamiones.forEach(el => {
+    let tabla = document.querySelector(`.contenidotabs [data-tabid="${el.dataset.tabid}"] table`)
+    listaTablas.push(tabla)
+  })
+  return listaTablas;
+}
+
 $("#guardar").on("click", async function () {
   let respuesta = await borrarTablasVacias();
   let tabscontenido = document.querySelectorAll(".tabs__content");
@@ -506,7 +528,7 @@ $("#guardar").on("click", async function () {
   "fechaultimocambio": ${Date.now()},
   "camiones": [`;
 
-  let listaTablas = Array.from(document.querySelectorAll("table"));
+  let listaTablas = devuelveListaTablas();
   let cantidadTablas = listaTablas.length;
   listaTablas.forEach((tabla, indice) => {
     let cuerpo = tabla.querySelector(".cuerpo");
@@ -847,7 +869,7 @@ function reacomodarCamiones() {
     checkbox.id = idNuevo;
     let label = tab.querySelector("label");
     label.setAttribute("for", idNuevo)
-    label.innerText = `Camion ${(parseInt(index) + 1)}`;
+    label.innerText = `Camión ${(parseInt(index) + 1)}`;
   })
 }
 
@@ -917,11 +939,64 @@ document.getElementById("exportarexcel").addEventListener("click", async functio
       }
     });
 })
+
+//TODO cambiar estos tambien
 document.getElementById("exportarpdf").addEventListener("click", async function () {
-  // if (typeof TableToExcel === "undefined")
-  //   await $.getScript('/tableToExcel.js');
-
-
+  if (typeof jsPDF === "undefined") {
+    // await $.getScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js');
+    // await $.getScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.js');
+    await $.getScript('/jspdf-1.5.3.js');
+    await $.getScript('/html2canvas-1.3.2.js');
+  }
+  let doc = new jsPDF('p', 'pt', 'letter')
+  let margin = 20;
+  let scale = (doc.internal.pageSize.width - margin * 2) / document.body.scrollWidth;
+  let listaTablas = [];
+  if (opcionExportarPDF === 0)
+    listaTablas.push(_tabla());
+  else
+    listaTablas = devuelveListaTablas();
+  let html = ``;
+  listaTablas.forEach((tabla, indice) => {
+    let copiaTabla = tabla.cloneNode(true);
+    let medirTabla = copiaTabla.cloneNode(true);
+    $(document.body).append(medirTabla)
+    $(medirTabla).css({ position: "absolute", visibility: "hidden", display: "table" });
+    html += `<div class="titulopdf" style="margin-left: ${(medirTabla.clientWidth / 2 - 55)}px">Camión ${(opcionExportarPDF === 0) ? parseInt(tabla.closest(".tabs__content").dataset.tabid) + 1 : indice + 1}</div>`;
+    debugger
+    $(document.body).remove(medirTabla)
+    copiaTabla.querySelector(".pintarcolumnas").innerHTML = "";
+    let copiaCuerpo = copiaTabla.querySelector(".cuerpo");
+    let filas = Array.from(copiaCuerpo.rows)
+    filas.forEach(fila => {
+      let celdas = fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))");
+      let impar = true;
+      for (let i = 0; i < celdas.length; i += 2) {
+        if (impar) {
+          celdas[i].style.background = "#024649";
+          celdas[i + 1].style.background = "#024649";
+        }
+        else {
+          celdas[i].style.background = "#192435";
+          celdas[i + 1].style.background = "#192435";
+        }
+        impar = !impar;
+      }
+    });
+    html += `${copiaTabla.outerHTML}<br><br>`
+  });
+  doc.html(html, {
+    x: margin,
+    y: margin,
+    html2canvas: {
+      scale
+    },
+    callback: doc => {
+      doc.output("dataurlnewwindow", {
+        filename: "archivohtml2pdf.pdf"
+      })
+    }
+  })
 })
 
 async function pidePlantilla(nombreplantilla) {
@@ -1020,12 +1095,12 @@ function tabsTexto(tablaOriginal, tablaNueva) {
 }
 
 async function mezclarEliminandoHandler() {
-  await mezclarHandler(mezclarEliminandoOrdenPlantilla);
+  await mezclarHandler(mezclarEliminandoOrdenTabla, mezclarEliminandoOrdenPlantilla);
 }
 
 
 async function mezclarSinEliminarHandler() {
-  await mezclarHandler(mezclarSinEliminarOrdenPlantilla);
+  await mezclarHandler(mezclarSinEliminarOrdenTabla, mezclarSinEliminarOrdenPlantilla);
 }
 
 
@@ -1036,7 +1111,7 @@ async function mezclarHandler(callbackConfirmado, callbackDenegado) {
     width: window.innerWidth / 2,
     showCancelButton: true,
     showDenyButton: true,
-    confirmButtonText: "Usar orden de la plantilla en la tabla",
+    confirmButtonText: "Usar orden de la tabla",
     denyButtonText: `Usar orden de la plantilla seleccionada`,
     cancelButtonText: "Volver",
   });
@@ -1052,9 +1127,10 @@ async function ordenPlantillaHandler(callback, callbackConfirmado, callbackDeneg
   let res = resPlantillas;
   let formatoTablaLlena = callback(res);
   let tabla = _tabla();
-  let cuerpo = tabla.querySelector(".cuerpo");
   let tablaCopia = tabla.cloneNode(true);
-  tablaCopia.querySelector(".cuerpo").innerHTML = formatoTablaLlena;
+  let cuerpoCopia = tablaCopia.querySelector(".cuerpo");
+  cuerpoCopia.innerHTML = formatoTablaLlena;
+  calcularvendidoseingresostotal(cuerpoCopia)
 
   let result = await swalWithBootstrapButtons.fire({
     title: "Aquí puedes ver las diferencias entre la tabla original y el resultado final",
@@ -1065,36 +1141,39 @@ async function ordenPlantillaHandler(callback, callbackConfirmado, callbackDeneg
     confirmButtonText: "Conservar",
     cancelButtonText: "Volver",
   })
-  if (result.isConfirmed) {
-    cuerpo.innerHTML = formatoTablaLlena;
-    calcularvendidoseingresostotal(cuerpo);
-  }
+  if (result.isConfirmed)
+    tabla.outerHTML = tablaCopia.outerHTML;
   else if (result.dismiss === Swal.DismissReason.cancel)
     mezclarHandler(callbackConfirmado, callbackDenegado);
 }
 
 function mezclarEliminandoOrdenPlantilla(res) {
   let cuerpo = _cuerpo();
-  let filas = cuerpo.rows;
+  let filas = Array.from(cuerpo.rows);
   let cantidadcolumnas = _cantidadSaleYEntra();
   let formatoTablaLlena = "";
 
+  listaOriginal = [];
+  listaSeleccionada = [];
+  filas.forEach(el => listaOriginal.push(normalizar(el.cells[0].innerText)));
+  res.productos.forEach(el => listaSeleccionada.push(normalizar(el.producto)));
+
   for (let i = 0; i < res.productos.length; i++) {
     let siEsta = false;
-    let celdaNormalizada = normalizar(filas[j].cells[0].innerText);
     for (let j = 0; j < filas.length; j++) {
-      if (celdaNormalizada === normalizar(res.productos[i].producto)) {
-        filas[j].cells[0].innerHTML = res.productos[i].producto;
-        filas[j].cells[1].innerHTML = normalizarPrecio(res.productos[i].precio);
-        formatoTablaLlena += filas[j].outerHTML;
+      if (listaSeleccionada[i] === listaOriginal[j]) {
+        let filaCopia = filas[j].cloneNode(true);
+        filaCopia.cells[0].innerHTML = res.productos[i].producto;
+        filaCopia.cells[1].innerHTML = normalizarPrecio(res.productos[i].precio);
+        calcularvendidoseingresos(filaCopia);
+        debugger
+        formatoTablaLlena += filaCopia.outerHTML;
         siEsta = true;
         break;
       }
     }
     if (!siEsta) {
-      formatoTablaLlena += `<tr>`;
-      formatoTablaLlena += `<td contenteditable="true">${res.productos[i].producto}</td>
-                          <td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
+      formatoTablaLlena += `<tr><td contenteditable="true">${res.productos[i].producto}</td><td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
       for (let i = 0; i < cantidadcolumnas - 4; i++) {
         formatoTablaLlena += `<td contenteditable="true"></td>`
       }
@@ -1107,26 +1186,30 @@ function mezclarEliminandoOrdenPlantilla(res) {
 
 function mezclarSinEliminarOrdenPlantilla(res) {
   let cuerpo = _cuerpo();
-  let filas = cuerpo.rows;
+  let filas = Array.from(cuerpo.rows);
   let cantidadcolumnas = _cantidadSaleYEntra();
   let formatoTablaLlena = "";
 
+  listaOriginal = [];
+  listaSeleccionada = []; debugger;
+  filas.forEach(el => listaOriginal.push(normalizar(el.cells[0].innerText)));
+  res.productos.forEach(el => listaSeleccionada.push(normalizar(el.producto)));
+
   for (let i = 0; i < res.productos.length; i++) {
     let siEsta = false;
-    let celdaNormalizada = normalizar(filas[j].cells[0].innerText);
     for (let j = 0; j < filas.length; j++) {
-      if (celdaNormalizada === normalizar(res.productos[i].producto)) {
-        filas[j].cells[0].innerText = res.productos[i].producto;
-        filas[j].cells[1].innerText = normalizarPrecio(res.productos[i].precio);
-        formatoTablaLlena += filas[j].outerHTML;
+      if (listaSeleccionada[i] === listaOriginal[j]) {
+        let filaCopia = filas[j].cloneNode(true);
+        filaCopia.cells[0].innerHTML = res.productos[i].producto;
+        filaCopia.cells[1].innerHTML = normalizarPrecio(res.productos[i].precio);
+        calcularvendidoseingresos(filaCopia);
+        formatoTablaLlena += filaCopia.outerHTML;
         siEsta = true;
         break;
       }
     }
     if (!siEsta) {
-      formatoTablaLlena += `<tr>`;
-      formatoTablaLlena += `<td contenteditable="true">${res.productos[i].producto}</td>
-                          <td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
+      formatoTablaLlena += `<tr><td contenteditable="true">${res.productos[i].producto}</td><td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
       for (let i = 0; i < cantidadcolumnas - 4; i++) {
         formatoTablaLlena += `<td contenteditable="true"></td>`
       }
@@ -1137,7 +1220,7 @@ function mezclarSinEliminarOrdenPlantilla(res) {
   for (let i = 0; i < filas.length; i++) {
     let siEsta = false;
     for (let j = 0; j < res.productos.length; j++) {
-      if (normalizar(filas[i].cells[0].innerText) === normalizar(res.productos[j].producto)) {
+      if (listaSeleccionada[j] === listaOriginal[i]) {
         siEsta = true;
         break;
       }
@@ -1148,9 +1231,100 @@ function mezclarSinEliminarOrdenPlantilla(res) {
   return formatoTablaLlena;
 }
 
+function mezclarEliminandoOrdenTabla(res) {
+  let cuerpo = _cuerpo();
+  let filas = Array.from(cuerpo.rows);
+  let cantidadcolumnas = _cantidadSaleYEntra();
+  let formatoTablaLlena = "";
+
+  listaOriginal = [];
+  listaSeleccionada = [];
+  filas.forEach(el => listaOriginal.push(normalizar(el.cells[0].innerText)));
+  res.productos.forEach(el => listaSeleccionada.push(normalizar(el.producto)));
+
+  for (let i = 0; i < filas.length; i++) {
+    for (let j = 0; j < res.productos.length; j++) {
+      if (listaSeleccionada[j] === listaOriginal[i]) {
+        let filaCopia = filas[i].cloneNode(true);
+        filaCopia.cells[0].innerHTML = res.productos[j].producto;
+        filaCopia.cells[1].innerHTML = normalizarPrecio(res.productos[j].precio);
+        calcularvendidoseingresos(filaCopia);
+        formatoTablaLlena += filaCopia.outerHTML;
+        break;
+      }
+    }
+  }
+
+  for (let i = 0; i < res.productos.length; i++) {
+    let siEsta = false;
+    for (let j = 0; j < filas.length; j++) {
+      if (listaSeleccionada[i] === listaOriginal[j]) {
+        siEsta = true;
+        break;
+      }
+    }
+    if (!siEsta) {
+      formatoTablaLlena += `<tr><td contenteditable="true">${res.productos[i].producto}</td><td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
+      for (let i = 0; i < cantidadcolumnas - 4; i++) {
+        formatoTablaLlena += `<td contenteditable="true"></td>`
+      }
+      formatoTablaLlena += `<td></td><td class="borrarfilas"></td></tr>`
+    }
+  }
+  return formatoTablaLlena;
+}
+
+function mezclarSinEliminarOrdenTabla(res) {
+  let cuerpo = _cuerpo();
+  let filas = Array.from(cuerpo.rows);
+  let cantidadcolumnas = _cantidadSaleYEntra();
+  let formatoTablaLlena = "";
+
+  listaOriginal = [];
+  listaSeleccionada = [];
+  filas.forEach(el => listaOriginal.push(normalizar(el.cells[0].innerText)));
+  res.productos.forEach(el => listaSeleccionada.push(normalizar(el.producto)));
+
+  for (let i = 0; i < filas.length; i++) {
+    let siEsta = false;
+    for (let j = 0; j < res.productos.length; j++) {
+      if (listaSeleccionada[j] === listaOriginal[i]) {
+        let filaCopia = filas[i].cloneNode(true);
+        filaCopia.cells[0].innerHTML = res.productos[i].producto;
+        filaCopia.cells[1].innerHTML = normalizarPrecio(res.productos[i].precio);
+        calcularvendidoseingresos(filaCopia);
+        formatoTablaLlena += filaCopia.outerHTML;
+        siEsta = true;
+        break;
+      }
+    }
+    if (!siEsta)
+      formatoTablaLlena += filas[i].outerHTML;
+  }
+
+  for (let i = 0; i < res.productos.length; i++) {
+    let siEsta = false;
+    for (let j = 0; j < filas.length; j++) {
+      if (listaSeleccionada[i] === listaOriginal[j]) {
+        siEsta = true;
+        break;
+      }
+    }
+    if (!siEsta) {
+      formatoTablaLlena += `<tr><td contenteditable="true">${res.productos[i].producto}</td><td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
+      for (let i = 0; i < cantidadcolumnas - 4; i++) {
+        formatoTablaLlena += `<td contenteditable="true"></td>`
+      }
+      formatoTablaLlena += `<td></td><td class="borrarfilas"></td></tr>`
+    }
+  }
+  return formatoTablaLlena;
+}
+
 function normalizar(texto) {
   return texto.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
 }
+
 function normalizarPrecio(precio) {
   return precio.toFixed(2).replace(/[.,]00$/, "");
 }
@@ -1158,7 +1332,6 @@ function normalizarPrecio(precio) {
 function cancelarSwal() {
   Swal.close();
 }
-
 
 function creaTablaVacia(res) {
   let formatotablavacia = `<table>
