@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon --ignore ./src/public/ src/index.js",
     "e2e": "cypress open",
-    "test": "jest"
+    "test": "jest",
+    "grabar": "playwright codegen --viewport-size \"1366, 657\""
   },
   "keywords": [],
   "author": "",

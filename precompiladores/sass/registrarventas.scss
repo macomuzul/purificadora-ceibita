@@ -81,7 +81,7 @@ h4 {
 }
 
 .contenedor {
-  min-width: calc(100vw - 15rem);
+  min-width: 1126px;
 }
 
 .calendario {
@@ -125,11 +125,30 @@ h4 {
   position: absolute;
   bottom: 0;
   right: 0;
+  width: 172px;
+  height: 52px;
   &:hover,
   &:focus,
   &:active {
     background: #165a35;
     box-shadow: 0 0 0 0.1rem rgb(60 153 110 / 50%) !important;
+  }
+}
+
+.botonpdf {
+  padding: 10px;
+  background: #871a08;
+  border-color: #b31616;
+  position: absolute;
+  bottom: 0;
+  right: 180;
+  width: 168;
+  height: 52;
+  &:hover,
+  &:focus,
+  &:active {
+    background: #950303;
+    box-shadow: 0 0 0 0.2rem rgba(156, 44, 44, 0.5) !important;
   }
 }
 .contenedorsuperior {
@@ -149,6 +168,7 @@ h4 {
 .margenbotonswal {
   margin-left: 40;
   width: 120;
+  font-weight: 500;
 }
 
 .botonconfirm {
@@ -163,16 +183,24 @@ h4 {
   background: #be0000;
 }
 
-.botonswal3 {
+.botonswal3,
+.botonswal4 {
   width: 200px;
   height: 60px;
   margin-right: 10px;
   border: none;
   border-radius: 5px;
-
+  color: white;
   &:hover {
-    opacity: 0.80;
+    opacity: 0.8;
   }
+}
+
+.botonswal4 {
+  width: 250px;
+  font-family: sans-serif;
+  font-size: 18px;
+  height: 90px;
 }
 
 .btn-primary:disabled {
@@ -254,6 +282,7 @@ th {
 .btn-config {
   width: 150px;
   height: 50px;
+  font-family: sans-serif;
 }
 
 .guardarconfig {
@@ -273,4 +302,36 @@ th {
     box-shadow: none;
     background-color: #8b0a17;
   }
+}
+
+.contenedorinferior {
+  position: relative;
+}
+
+.resumen {
+  border-radius: 10px;
+  position: absolute;
+  right: 0;
+}
+
+.restaurarplantilla {
+  width: 262px;
+}
+
+.modal-backdrop {
+  width: 100%;
+  height: 100%;
+}
+
+.contenedorbotones {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+  justify-items: center;
+  row-gap: 50px;
+}
+
+.cuartaopcion {
+  background: #0b3787;
 }

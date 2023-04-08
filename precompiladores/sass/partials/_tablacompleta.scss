@@ -97,8 +97,8 @@ th {
     }
     
     th.activo:not([colspan="2"])::after {
-      background-color: #2929a5;
-      box-shadow: 0 0 20px 1px #3737e5;
+      --colorActivo: white;
+      text-shadow: 3px 3px 10px var(--colorActivo),  -3px 3px 10px var(--colorActivo),  3px -3px 10px var(--colorActivo),  -3px -3px 10px var(--colorActivo);
     }
   }
 }

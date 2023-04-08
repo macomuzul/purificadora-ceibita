@@ -1,14 +1,17 @@
 dayjs.extend(window.dayjs_plugin_utc);
 let colscomienzo = 2;
 let colsfinal = 2;
-let fecha = document.querySelector(".fechanum").innerText.split("/");
+let fecha = document.querySelector(".fechanum").textContent.split("/"); //este hay que ponerle textcontent porque si esta escondido con innertext no lo agarra
 let hoy = dayjs(fecha[2] + "-" + fecha[1] + "-" + fecha[0]).utc(true);
 let timer;
 let touchduration = 600;
 let listaplantillas = [];
 let arreglado;
+let resPlantillas = {};
+if (/Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent))
+  document.querySelector(".modal-dialog").classList.remove("modal-dialog-centered", "modal-lg")
 
-const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]') //estos son para el bootstrap
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
 function _cantidadTabs() { return document.querySelector(".contenidotabs").children.length; }
@@ -38,6 +41,7 @@ $(document).ready(() => {
 })
 
 function guardarValoresConfig() {
+  //estos son solo para visualizar los iconos
   if (opcionBorrarFilasYColumnas === 1)
     document.querySelectorAll(".contenidotabs").forEach(el => el.classList.add("cerrarconboton"));
   else
@@ -144,8 +148,11 @@ document.getElementById('configs').addEventListener('hidden.bs.modal', () => {
   reseteaValoresConfig();
 })
 
+//ordenar alfabeticamente
 $(document).on("click", 'th:not([colspan="2"])', function () {
   if (switchOrdenarOrdenAlfabetico) {
+    if (this.closest(".swal2-html-container"))
+      return
     let table = this.closest("table");
     let flecha = window.getComputedStyle(this, ':after').content;
     let order = (flecha === '"↓"') ? "asc" : "desc";
@@ -191,8 +198,10 @@ $(document).on("click", 'th:not([colspan="2"])', function () {
     else
       this.style.setProperty("--flecha", '"↑"')
 
+    table.querySelector('.activo')?.classList.remove("activo");
+    this.classList.add("activo")
     let html = "";
-    listaIdentifObjValores.forEach(chave => html += objValores[chave]);
+    listaIdentifObjValores.forEach(key => html += objValores[key]);
     table.getElementsByTagName("tbody")[1].innerHTML = html;
   }
 });
@@ -261,7 +270,7 @@ function calcularvendidoseingresos(tabla, indiceFila) {
   if (isNaN(totalingresos) || (sumafila === 0 && !hayunnumero))
     fila.cells[y].innerText = "";
   else {
-    let totalajustado = totalingresos.toFixed(2).replace(/[.,]00$/, "");
+    let totalajustado = normalizarPrecio(totalingresos);
     fila.cells[y].innerText = totalajustado;
   }
 }
@@ -297,7 +306,7 @@ function calcularvendidoseingresostotal(cuerpo) {
     if (sumaIngresos === 0 && !hayUnNumero)
       celdaIngresos.innerText = "";
     else
-      celdaIngresos.innerText = sumaIngresos.toFixed(2).replace(/[.,]00$/, "");
+      celdaIngresos.innerText = normalizarPrecio(sumaIngresos);
   }
 
 }
@@ -339,14 +348,20 @@ document.addEventListener("pointerup", e => {
 
 
 function borrarColumnasHandler(e) {
+  if (this.closest(".swal2-html-container"))
+    return
   borrarElementos(e, opcionBorrarFilasYColumnas, borrarColumnas, this);
 }
 
 function borrarFilasHandler(e) {
+  if (this.closest(".swal2-html-container"))
+    return
   borrarElementos(e, opcionBorrarFilasYColumnas, borrarFilas, this);
 }
 
 function borrarCamionesHandler(e) {
+  if (this.closest(".swal2-html-container"))
+    return
   borrarElementos(e, opcionBorrarCamiones, borrarCamiones, this);
 }
 
@@ -369,7 +384,7 @@ async function borrarFilas(celda) {
   let result = await swalWithBootstrapButtons.fire({
     title: "Estás seguro que deseas borrar este producto de la tabla?",
     icon: "warning",
-    width: (window.innerWidth * 3) / 4,
+    width: window.innerWidth * 3 / 4,
     html: textoborrar,
     showCancelButton: true,
     confirmButtonText: "Sí",
@@ -409,7 +424,7 @@ async function borrarColumnas(colborrar) {
   let result = await swalWithBootstrapButtons.fire({
     title: "Estás seguro que deseas borrar esta columna y todos sus contenidos?",
     icon: "warning",
-    width: (window.innerWidth * 3) / 4,
+    width: window.innerWidth * 3 / 4,
     html: textoBorrarColumnas,
     showCancelButton: true,
     confirmButtonText: "Sí",
@@ -485,7 +500,6 @@ $("#guardar").on("click", async function () {
     if (!respuesta)
       return;
   }
-
   let guardar = `{ "fecha": ${hoy.valueOf()},
   "usuario": "",
   "fechacreacion": ${Date.now()},
@@ -504,21 +518,19 @@ $("#guardar").on("click", async function () {
                 "filas": [`;
     for (let i = 0; i < cantidadProductos; i++) {
       let fila = cuerpo.rows[i];
-      let cantidadSaleYEntra = tabla.querySelector(".pintarColumnas").children.length * 2 + colscomienzo + colsfinal;
+      let cantidadViajesMasComienzo = tabla.querySelector(".pintarColumnas").children.length * 2 + colscomienzo;
       guardar += `{ "nombreproducto": "${fila.cells[0].innerText.trim()}", 
-                    "precioproducto": ${fila.cells[1].innerText},
-                    "viajes": [`
-      for (let j = 0; j < cantidadSaleYEntra; j += 2) {
-        guardar += `{ "sale": ${fila.cells[j + colscomienzo].innerText}, 
-                      "entra": ${fila.cells[j + colscomienzo + 1].innerText}`;
-        if (j + 2 >= cantidadSaleYEntra)
+      "precioproducto": ${fila.cells[1].innerText},
+      "viajes": [`
+      for (let j = colscomienzo; j < cantidadViajesMasComienzo; j += 2) {
+        guardar += `{ "sale": ${fila.cells[j].innerText}, "entra": ${fila.cells[j + 1].innerText}`;
+        if (j + 2 >= cantidadViajesMasComienzo)
           guardar += "} ";
         else
           guardar += "}, ";
       }
       guardar += "],";
-      guardar += `"vendidos": ${fila.querySelector("td:nth-last-child(2)").innerText}, 
-                  "ingresos": ${fila.querySelector("td:nth-last-child(1)").innerText}`
+      guardar += `"vendidos": ${fila.querySelector("td:nth-last-child(2)").innerText}, "ingresos": ${fila.querySelector("td:nth-last-child(1)").innerText}`
       if (i + 1 >= cantidadProductos)
         guardar += "} ";
       else
@@ -526,15 +538,16 @@ $("#guardar").on("click", async function () {
     }
     guardar += `], 
                 "totalvendidos": ${filapie.cells[1].innerText},
-                "totalingresos": ${filapie.cells[2].innerText} } ]`
+                "totalingresos": ${filapie.cells[2].innerText}`
 
     if (indice + 1 >= cantidadTablas)
       guardar += ` } `;
     else
       guardar += ` }, `;
   })
+  guardar += `]} `;
 
-
+  //TODO agregar ver resumen del dia
   console.log(guardar);
 
   // $.ajax({
@@ -583,7 +596,7 @@ async function borrarFilasVacias(tabla, numtabla) {
   let result = await swalWithBootstrapButtons3.fire({
     title: "Se han detectado filas vacias",
     icon: "warning",
-    width: (window.innerWidth * 3) / 4,
+    width: window.innerWidth * 3 / 4,
     html: `<div class="textovista">Se han detectado filas vacias en la tabla ${numtabla}</div>
           <br><br><br>
           <div class="tabs-swal">
@@ -659,7 +672,7 @@ async function entraMasDeLoQueSale(tabla, numtabla) {
   let result = await swalWithBootstrapButtons.fire({
     title: `<h3>Se ha detectado filas en la tabla ${numtabla} donde lo que sale es mayor que lo que entra, por favor corrígelos para poder guardar los datos</h3>`,
     icon: "error",
-    width: (window.innerWidth * 3) / 4,
+    width: window.innerWidth * 3 / 4,
     html: tablacopia,
     showCancelButton: true,
     confirmButtonText: "Ya lo arreglé",
@@ -720,7 +733,7 @@ async function validarProductosYPrecios(tabla, numtabla) {
   let result = await swalWithBootstrapButtons.fire({
     title: titulo,
     icon: "error",
-    width: (window.innerWidth * 3) / 4,
+    width: window.innerWidth * 3 / 4,
     html: tablacopia,
     showCancelButton: true,
     confirmButtonText: "Ya lo arreglé",
@@ -761,7 +774,7 @@ async function borrarTablasVacias() {
   let result = await swalWithBootstrapButtons.fire({
     title: "Se han detectado tablas vacias",
     icon: "warning",
-    width: (window.innerWidth * 3) / 4,
+    width: window.innerWidth * 3 / 4,
     html: htmlTablas,
     showCancelButton: true,
     confirmButtonText: "Continuar",
@@ -803,7 +816,7 @@ async function borrarCamiones(label, e) {
   let result = await swalWithBootstrapButtons.fire({
     title: "Estás seguro que deseas eliminar este camión?",
     icon: "warning",
-    width: (window.innerWidth * 3) / 4,
+    width: window.innerWidth * 3 / 4,
     html: htmlTablas,
     showCancelButton: true,
     confirmButtonText: "Continuar",
@@ -844,7 +857,7 @@ async function validarTrabajador(textbox, numerotabla) {
 
   let result = await swalWithBootstrapButtons2.fire({
     icon: "warning",
-    width: (window.innerWidth * 3) / 4,
+    width: window.innerWidth * 3 / 4,
     html: `
       <h3>El nombre del trabajador del camión ${numerotabla} está vacío.
       <br>
@@ -903,6 +916,11 @@ document.getElementById("exportarexcel").addEventListener("click", async functio
         name: fechastr
       }
     });
+})
+document.getElementById("exportarpdf").addEventListener("click", async function () {
+  // if (typeof TableToExcel === "undefined")
+  //   await $.getScript('/tableToExcel.js');
+
 
 })
 
@@ -911,7 +929,7 @@ async function pidePlantilla(nombreplantilla) {
   let mandar = `{ "nombreplantilla": "${nombreplantilla}" }`
   if (!plantilla) {
     await $.ajax({
-      url: "/plantillas/datostabla",
+      url: "/plantillas/devuelveplantilla",
       method: "POST",
       contentType: "application/json",
       data: mandar,
@@ -948,11 +966,11 @@ async function metododropdown(option) {
   for (let i = 0; i < res.productos.length; i++) {
     formatotabla += `<tr>
       <td>${res.productos[i].producto}</td>
-      <td>${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>
+      <td>${normalizarPrecio(res.productos[i].precio)}</td>
       </tr>`;
   }
   formatotabla += `</tbody></table>`;
-
+  resPlantillas = res;
   let result = await swalWithBootstrapButtons.fire({
     title: "Estás seguro que deseas utilizar esta plantilla?",
     icon: "warning",
@@ -962,94 +980,221 @@ async function metododropdown(option) {
     cancelButtonText: "No",
   })
   if (result.isConfirmed) {
-    result = await swalWithBootstrapButtons3.fire({
-      width: (window.innerWidth * 3) / 4,
-      focusConfirm: false,
-      title: 'Deseas crear una plantilla vacia o deseas guardar los elementos que coincidan con esta plantilla?',
-      showDenyButton: true,
-      showCancelButton: true,
-      confirmButtonText: 'Crear plantilla vacia',
-      denyButtonText: `Conservar elementos que coincidan`,
-      cancelButtonText: `Cancelar`,
-    })
-    if (result.isConfirmed) {
-      let formatotablavacia = creaTablaVacia(res);
-      _tabla().outerHTML = formatotablavacia;
-    }
-    else if (result.isDenied) {
-      let filas = _cuerpo().rows;
-      let cantidadcolumnas = _cantidadSaleYEntra();
-      let formatotablallena = "";
+    await opcionesPlantilla();
+  }
+}
 
-      for (let i = 0; i < res.productos.length; i++) {
-        let siestaba = false;
-        for (let j = 0; j < filas.length; j++) {
-          if (filas[j].cells[0].innerHTML.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "") === res.productos[i].producto.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "")) {
-            filas[j].cells[0].innerHTML = res.productos[i].producto;
-            filas[j].cells[1].innerHTML = res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "");
-            formatotablallena += filas[j].outerHTML;
-            siestaba = true;
-            break;
-          }
-        }
-        if (!siestaba) {
-          formatotablallena += `<tr>`;
-          formatotablallena += `<td contenteditable="true">${res.productos[i].producto}</td>
-                          <td contenteditable="true">${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>`
-          for (let i = 0; i < cantidadcolumnas - 4; i++) {
-            formatotablallena += `<td contenteditable="true"></td>`
-          }
-          formatotablallena += `<td></td><td class="borrarfilas"></td></tr>`
-        }
+async function opcionesPlantilla() {
+  let html = `<div class="contenedorbotones">
+      <button class="botonswal4 botonconfirm" onclick="crearPlantillaVacia()">Crear plantilla vacía</button>
+      <button class="botonswal4 botondeny" onclick="mezclarEliminandoHandler()">Mezclar y eliminar los productos que no estén en ambas plantillas</button>
+      <button class="botonswal4 cuartaopcion" onclick="mezclarSinEliminarHandler()">Mezclar ambas plantillas sin eliminar productos</button>
+      <button class="botonswal4 botoncancel" onclick="cancelarSwal()">Cancelar</button>
+    </div>`
+  await swal.fire({
+    width: window.innerWidth / 2,
+    focusConfirm: false,
+    icon: "question",
+    title: 'Qué deseas hacer con esta plantilla?',
+    showConfirmButton: false,
+    html
+  })
+}
+
+function crearPlantillaVacia() {
+  let formatotablavacia = creaTablaVacia(resPlantillas);
+  _tabla().outerHTML = formatotablavacia;
+  Swal.close();
+}
+
+function tabsTexto(tablaOriginal, tablaNueva) {
+  return `<div class="tabs-swal">
+  <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal0" checked>
+  <label for="tabswal0" class="tabs__label label-swal">Ver tabla original</label>
+  <div class="tabs__content">${tablaOriginal.outerHTML}</div>
+
+  <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal1">
+  <label for="tabswal1" class="tabs__label label-swal">Vista previa del resultado</label>
+  <div class="tabs__content">${tablaNueva.outerHTML}</div>
+</div>`
+}
+
+async function mezclarEliminandoHandler() {
+  await mezclarHandler(mezclarEliminandoOrdenPlantilla);
+}
+
+
+async function mezclarSinEliminarHandler() {
+  await mezclarHandler(mezclarSinEliminarOrdenPlantilla);
+}
+
+
+async function mezclarHandler(callbackConfirmado, callbackDenegado) {
+  let result = await swalWithBootstrapButtons3.fire({
+    title: "Qué orden desea utilizar?",
+    icon: "question",
+    width: window.innerWidth / 2,
+    showCancelButton: true,
+    showDenyButton: true,
+    confirmButtonText: "Usar orden de la plantilla en la tabla",
+    denyButtonText: `Usar orden de la plantilla seleccionada`,
+    cancelButtonText: "Volver",
+  });
+  if (result.isConfirmed)
+    await ordenPlantillaHandler(callbackConfirmado, callbackConfirmado, callbackDenegado);
+  else if (result.isDenied)
+    await ordenPlantillaHandler(callbackDenegado, callbackConfirmado, callbackDenegado);
+  else if (result.dismiss === Swal.DismissReason.cancel)
+    opcionesPlantilla();
+}
+
+async function ordenPlantillaHandler(callback, callbackConfirmado, callbackDenegado) {
+  let res = resPlantillas;
+  let formatoTablaLlena = callback(res);
+  let tabla = _tabla();
+  let cuerpo = tabla.querySelector(".cuerpo");
+  let tablaCopia = tabla.cloneNode(true);
+  tablaCopia.querySelector(".cuerpo").innerHTML = formatoTablaLlena;
+
+  let result = await swalWithBootstrapButtons.fire({
+    title: "Aquí puedes ver las diferencias entre la tabla original y el resultado final",
+    icon: "warning",
+    width: window.innerWidth * 3 / 4,
+    html: tabsTexto(tabla, tablaCopia) + `<br><br><h2>Deseas conservar los cambios?</h2>`,
+    showCancelButton: true,
+    confirmButtonText: "Conservar",
+    cancelButtonText: "Volver",
+  })
+  if (result.isConfirmed) {
+    cuerpo.innerHTML = formatoTablaLlena;
+    calcularvendidoseingresostotal(cuerpo);
+  }
+  else if (result.dismiss === Swal.DismissReason.cancel)
+    mezclarHandler(callbackConfirmado, callbackDenegado);
+}
+
+function mezclarEliminandoOrdenPlantilla(res) {
+  let cuerpo = _cuerpo();
+  let filas = cuerpo.rows;
+  let cantidadcolumnas = _cantidadSaleYEntra();
+  let formatoTablaLlena = "";
+
+  for (let i = 0; i < res.productos.length; i++) {
+    let siEsta = false;
+    let celdaNormalizada = normalizar(filas[j].cells[0].innerText);
+    for (let j = 0; j < filas.length; j++) {
+      if (celdaNormalizada === normalizar(res.productos[i].producto)) {
+        filas[j].cells[0].innerHTML = res.productos[i].producto;
+        filas[j].cells[1].innerHTML = normalizarPrecio(res.productos[i].precio);
+        formatoTablaLlena += filas[j].outerHTML;
+        siEsta = true;
+        break;
       }
-      _cuerpo().innerHTML = formatotablallena;
-      calcularvendidoseingresostotal(_cuerpo());
-      console.log(cuerpo)
+    }
+    if (!siEsta) {
+      formatoTablaLlena += `<tr>`;
+      formatoTablaLlena += `<td contenteditable="true">${res.productos[i].producto}</td>
+                          <td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
+      for (let i = 0; i < cantidadcolumnas - 4; i++) {
+        formatoTablaLlena += `<td contenteditable="true"></td>`
+      }
+      formatoTablaLlena += `<td></td><td class="borrarfilas"></td></tr>`
+    }
+  }
+  return formatoTablaLlena;
+}
+
+
+function mezclarSinEliminarOrdenPlantilla(res) {
+  let cuerpo = _cuerpo();
+  let filas = cuerpo.rows;
+  let cantidadcolumnas = _cantidadSaleYEntra();
+  let formatoTablaLlena = "";
+
+  for (let i = 0; i < res.productos.length; i++) {
+    let siEsta = false;
+    let celdaNormalizada = normalizar(filas[j].cells[0].innerText);
+    for (let j = 0; j < filas.length; j++) {
+      if (celdaNormalizada === normalizar(res.productos[i].producto)) {
+        filas[j].cells[0].innerText = res.productos[i].producto;
+        filas[j].cells[1].innerText = normalizarPrecio(res.productos[i].precio);
+        formatoTablaLlena += filas[j].outerHTML;
+        siEsta = true;
+        break;
+      }
+    }
+    if (!siEsta) {
+      formatoTablaLlena += `<tr>`;
+      formatoTablaLlena += `<td contenteditable="true">${res.productos[i].producto}</td>
+                          <td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
+      for (let i = 0; i < cantidadcolumnas - 4; i++) {
+        formatoTablaLlena += `<td contenteditable="true"></td>`
+      }
+      formatoTablaLlena += `<td></td><td class="borrarfilas"></td></tr>`
     }
   }
 
+  for (let i = 0; i < filas.length; i++) {
+    let siEsta = false;
+    for (let j = 0; j < res.productos.length; j++) {
+      if (normalizar(filas[i].cells[0].innerText) === normalizar(res.productos[j].producto)) {
+        siEsta = true;
+        break;
+      }
+    }
+    if (!siEsta)
+      formatoTablaLlena += filas[i].outerHTML;
+  }
+  return formatoTablaLlena;
 }
+
+function normalizar(texto) {
+  return texto.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+}
+function normalizarPrecio(precio) {
+  return precio.toFixed(2).replace(/[.,]00$/, "");
+}
+
+function cancelarSwal() {
+  Swal.close();
+}
+
 
 function creaTablaVacia(res) {
   let formatotablavacia = `<table>
-            <thead>
-              <col><col>
-              <colgroup class="pintarcolumnas">
-                <col span="2">
-              </colgroup>
-              <col><col>
-              <tr>
-                <th rowspan="2"class="prod">Productos</th>
-                <th rowspan="2" class="tr">Precio</th>
-                <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
-                <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
-                <th rowspan="2" class="tr">Ingresos</th>
-              </tr>
-              <tr class="saleYEntra">
-                <th scope="col">Sale</th>
-                <th scope="col">Entra</th>
-              </tr>
-            </thead>
-            <tbody class="cuerpo">`;
+  <thead>
+    <col><col>
+    <colgroup class="pintarcolumnas">
+      <col span="2">
+    </colgroup>
+    <col><col>
+    <tr>
+      <th rowspan="2"class="prod">Productos</th>
+      <th rowspan="2" class="tr">Precio</th>
+      <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+      <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
+      <th rowspan="2" class="tr">Ingresos</th>
+    </tr>
+    <tr class="saleYEntra">
+      <th scope="col">Sale</th>
+      <th scope="col">Entra</th>
+    </tr>
+  </thead>
+  <tbody class="cuerpo">`;
   for (let i = 0; i < res.productos.length; i++) {
     formatotablavacia += `<tr>
     <td contenteditable="true">${res.productos[i].producto}</td>
-    <td contenteditable="true">${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>
+    <td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td></td>
-    <td class="borrarfilas"></td>
-                          </tr>`
+    <td class="borrarfilas"></td></tr>`
   }
   formatotablavacia += `</tbody>
-                          <tfoot>
-                          <tr>
-                            <td colspan="4">Total:</td>
-                            <td></td>
-                            <td></td>
-                          </tr>
-                          </tfoot>
-                        </table>`;
+    <tfoot>
+      <tr><td colspan="4">Total:</td><td></td><td></td></tr>
+    </tfoot>
+  </table>`;
   return formatotablavacia;
 }
 
@@ -1069,5 +1214,4 @@ document.querySelector(".agregarcamion").addEventListener("click", async () => {
   $(".agregarcamion").before(nuevaTab);
   $(".contenidoTabs").append(nuevoCamion);
 });
-//TODO ver por que exportar a excel no funciona
 colocarDatosTabla()
