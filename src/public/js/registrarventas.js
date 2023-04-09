@@ -8,7 +8,10 @@ let touchduration = 600;
 let listaplantillas = [];
 let arreglado;
 let resPlantillas = {};
-if (/Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent))
+
+let desdeElMobil = () => /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent)
+
+if (desdeElMobil())
   document.querySelector(".modal-dialog").classList.remove("modal-dialog-centered", "modal-lg")
 
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]') //estos son para el bootstrap
@@ -68,7 +71,7 @@ function guardarValoresConfig() {
     },
     items: "> div:not(:last-child)",
     disabled: !switchOrdenarCamiones,
-    stop: function(){
+    stop: function () {
       reacomodarCamiones();
       Swal.fire(
         "Se ha cambiado el orden",
@@ -228,7 +231,7 @@ const swalWithBootstrapButtons = Swal.mixin({
 });
 const swalWithBootstrapButtons2 = Swal.mixin({
   customClass: {
-    confirmButton: "btn btn-primary margenbotonswal",
+    confirmButton: "btn btn-primary margenbotonswal btncontinuar",
   },
   buttonsStyling: false,
 });
@@ -592,6 +595,82 @@ $("#guardar").on("click", async function () {
   //     });
   //   },
   // });
+});
+
+
+document.getElementById("resumen").addEventListener("click", async () => {
+  let listaTablas = devuelveListaTablas();
+  listaTablasValores = []
+  listaTablas.forEach(tabla => {
+    listaValores = [];
+    let productos = tabla.querySelectorAll(".cuerpo td:first-child");
+    let vendidos = tabla.querySelectorAll(".cuerpo td:nth-last-child(2)");
+    let ingresos = tabla.querySelectorAll(".cuerpo td:nth-last-child(1)");
+    for (let i = 0; i < productos.length; i++)
+    {
+      let valor = {producto: normalizar(productos[i].innerText), vendidos: parseInt(vendidos[i].innerText), ingresos: parseFloat(ingresos[i].innerText)}
+      listaValores.push(valor);
+    }
+    listaTablasValores.push(listaValores);
+  });
+
+  let result = listaTablasValores.reduce((acc, table) => {
+    table.forEach(fila => {
+      if (acc[fila.producto]) {
+        acc[fila.producto].vendidos += fila.vendidos;
+        acc[fila.producto].ingresos += fila.ingresos;
+      } else {
+        acc[fila.producto] = { vendidos: fila.vendidos, ingresos: fila.ingresos };
+      }
+    });
+    return acc;
+  }, {});
+  
+  console.log(result);
+
+  let listaDesnormalizados = [];
+  for (const key in result) {
+    listaTablas.find(tabla => {
+      let filas = Array.from(tabla.querySelectorAll(".cuerpo tr"));
+      let res = filas.find(fila => {
+        let producto = fila.cells[0].innerText;
+        if(normalizar(producto) === key)
+        {
+          listaDesnormalizados.push(producto)
+          return producto;
+        }
+      })
+      if(res)
+        return res;
+    })
+  }
+
+  let contador = 0;
+  let html = `<table id="tablaresumen" style="margin-left: auto; margin-right:auto"><thead><tr>
+    <th class="thresumenproducto">Productos</th>
+    <th class="thresumenvendidoseingresos">Vendidos</th>
+    <th class="thresumenvendidoseingresos">Ingresos</th>
+  </tr></thead><tbody>`;
+  for (const key in result) {
+    html += `<tr><td>${listaDesnormalizados[contador]}</td>
+    <td>${isNaN(result[key].vendidos) ? 0 : result[key].vendidos}</td>
+    <td>${isNaN(result[key].ingresos) ? 0 : result[key].ingresos}</td></tr>`
+    contador++;
+  }
+  html += `</tbody><tfoot><tr><td style="text-align: center">Total:</td>
+  <td class="totalresumen"></td><td class="totalresumen"></td></tr></tfoot></table>`
+
+  $(document.body).append(html)
+  calcularvendidoseingresostotal($("#tablaresumen tbody")[0]);
+  await swalWithBootstrapButtons2.fire({
+    title: "Aquí puedes ver todo lo que vendiste durante el día",
+    width: window.innerWidth * 0.6,
+    html: $("#tablaresumen")[0],
+    confirmButtonText: "Continuar",
+  })
+  // let resultList = Object.entries(result).map(([productName, total]) => ({ productName, total }));
+  
+
 });
 
 async function borrarFilasVacias(tabla, numtabla) {
@@ -963,7 +1042,6 @@ document.getElementById("exportarpdf").addEventListener("click", async function 
     $(document.body).append(medirTabla)
     $(medirTabla).css({ position: "absolute", visibility: "hidden", display: "table" });
     html += `<div class="titulopdf" style="margin-left: ${(medirTabla.clientWidth / 2 - 55)}px">Camión ${(opcionExportarPDF === 0) ? parseInt(tabla.closest(".tabs__content").dataset.tabid) + 1 : indice + 1}</div>`;
-    debugger
     $(document.body).remove(medirTabla)
     copiaTabla.querySelector(".pintarcolumnas").innerHTML = "";
     let copiaCuerpo = copiaTabla.querySelector(".cuerpo");
@@ -992,9 +1070,19 @@ document.getElementById("exportarpdf").addEventListener("click", async function 
       scale
     },
     callback: doc => {
-      doc.output("dataurlnewwindow", {
-        filename: "archivohtml2pdf.pdf"
-      })
+      // doc.output("dataurlnewwindow", {
+      //   filename: "archivohtml2pdf.pdf"
+      // })
+      let fechastr = hoy.format("D-M-YYYY");
+      let nombre = `registro ventas ${fechastr} ${document.querySelector(".tabs__radio:checked + label").innerText}.pdf`;
+      if (desdeElMobil()) {
+        var blob = doc.output("blob", { 
+          filename: nombre
+        });
+        window.open(URL.createObjectURL(blob));
+      }
+      // else
+      //   doc.save(nombre);
     }
   })
 })
@@ -1166,7 +1254,6 @@ function mezclarEliminandoOrdenPlantilla(res) {
         filaCopia.cells[0].innerHTML = res.productos[i].producto;
         filaCopia.cells[1].innerHTML = normalizarPrecio(res.productos[i].precio);
         calcularvendidoseingresos(filaCopia);
-        debugger
         formatoTablaLlena += filaCopia.outerHTML;
         siEsta = true;
         break;
@@ -1191,7 +1278,7 @@ function mezclarSinEliminarOrdenPlantilla(res) {
   let formatoTablaLlena = "";
 
   listaOriginal = [];
-  listaSeleccionada = []; debugger;
+  listaSeleccionada = [];
   filas.forEach(el => listaOriginal.push(normalizar(el.cells[0].innerText)));
   res.productos.forEach(el => listaSeleccionada.push(normalizar(el.producto)));
 

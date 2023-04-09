@@ -348,3 +348,32 @@ th {
   margin-bottom: 20px;
   font-weight: bold;
 }
+
+.thresumenproducto{
+  width: 200px;
+  height: 75px;
+}
+
+.thresumenvendidoseingresos{
+  width: 115px;
+  height: 75px;
+}
+
+.btncontinuar{
+  background-color: #0b5ed7;
+  &:hover{
+    background-color: #003f9d;
+  }
+}
+
+.totalresumen{
+  position: relative;
+  &::after{
+    content: "-";
+    height: 1px;
+    display: block;
+    background-color: white;
+    position: absolute;
+    width: 66%;
+  }
+}
