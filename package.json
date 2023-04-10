@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --ignore ./src/public/ src/index.js",
+    "dev": "nodemon --ignore ./src/public/ --ignore ./cypress --ignore ./e2e src/index.js",
     "e2e": "cypress open",
     "test": "jest",
     "grabar": "playwright codegen --viewport-size \"1366, 657\""

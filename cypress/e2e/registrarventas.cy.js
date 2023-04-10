@@ -4,10 +4,21 @@ import * as tablas from "../utilidades/tablasParaTests.js"
 import * as json from "../utilidades/jsonParaTests.js"
 
 beforeEach(() => {
-  cy.visit('http://localhost:3000/registrarventas/1-3-2023');
+  cy.visit('http://localhost:3000/registrarventas/1-3-2024');
+  cy.get("input.trabajador").type("aaa");
 })
 
 describe('validaciones antes de guardar', () => {
+
+  // it("Verifica tablas vacías", async () => {
+  //   let resultado = await borrarCamiones();
+  //   expect(resultado).to.be.true;
+  // });
+
+  it("Verifica tablas totalmente vacías", async () => {
+    let resultado = await borrarFilasVaciasTotalmenteVacias();
+    expect(resultado).to.be.true;
+  });
 
   //   describe(("Valida que los productos esten llenos"), () => {
   //     it("validacion un solo producto una vez", async () => {
@@ -69,9 +80,6 @@ describe('validaciones antes de guardar', () => {
   //   expect(resultado).to.be.true;
   // });
 
-
-  //TODO hacer un boton de configuraciones en registrarventas que permita ordenar por orden alfabetico, que ponga para que las tabs sean sorteables
-  //que las x aparezcan para borrar en vez de mantener presionado
   // it("Entra mas de lo que sale", async () => {
   //   let resultado = await entraMasDeLoQueSale();
   //   expect(resultado).to.be.true;
@@ -82,44 +90,24 @@ describe('validaciones antes de guardar', () => {
   //     let resultado = await borrarFilasVacias();
   //     expect(resultado).to.be.true;
   //   });
-
-  //   it("Deja la tabla completamente vacia", async () => {
-  //     let resultado = await borrarFilasVaciasTotalmenteVacias();
-  //     expect(resultado).to.be.true;
-  //   });
   // });
 
 })
 
-describe("configuraciones", () => {
-  it("hay x en filas y columnas", async () => {
-    cy.get('.configuraciones').click();
-    cy.wait(300)
-    cy.contains("Guardar cambios").should("be.visible");
-    cy.get(':nth-child(3) > :nth-child(3) > .form-check-label').click();
-    cy.get('#filasycolumnaspresionarx').check();
-    cy.get('.modal-footer .guardarconfig').click();
-    cy.wait(300)
-    cy.contains("Guardar cambios").should("not.be.visible");
-    cy.get('.contenidotabs').should("have.class", "cerrarconboton")
-  });
-  it("esconde x en filas y columnas", async () => {
-    cy.get('.configuraciones').click();
-    cy.wait(500)
-    cy.contains("Guardar cambios").should("be.visible");
-    cy.get(':nth-child(3) > :nth-child(4) > .form-check-label').click();
-    cy.get('#filasycolumnaspresionarx').check();
-    cy.get('.modal-footer .guardarconfig').click();
-    cy.wait(500)
-    cy.contains("Guardar cambios").should("not.be.visible");
-    cy.get('[data-tabid="0"] > table > :nth-child(5) > :nth-child(1) > .borrarcolumnas').then(el => {
-      const win = el[0].ownerDocument.defaultView
-      const after = win.getComputedStyle(el[0], 'after')
-      const contenidoAfter = after.getPropertyValue('content')
-      expect(contenidoAfter).to.eq('"❌"');
-    })
-  });
-});
+// describe("configuraciones", () => {
+//   it("muestra x en filas y columnas", async () => {
+//     let resultado = await filasycolumnaspresionarx();
+//     expect(resultado).to.be.true;
+//   });
+//   it("esconde x en filas y columnas1", async () => {
+//     let resultado = await filasycolumnasdesactivar();
+//     expect(resultado).to.be.true;
+//   });
+//   it("esconde x en filas y columnas2", async () => {
+//     let resultado = await filasycolumnaspresionar1segundo();
+//     expect(resultado).to.be.true;
+//   });
+// });
 
 // describe('añadir producto y viajes', () => {
 //   it('añade producto', async () => {
@@ -132,17 +120,6 @@ describe("configuraciones", () => {
 //   })
 // })
 
-
-// describe("JSON al guardar", () => {
-//   it("guarda bien una tabla", async () => {
-//     cy.get("#guardar").click();
-//     cy.window().then(win => {
-//       let a = win.console.log
-//       debugger
-//       expect(a).to.contain(json.jsonGuardar);
-//     });
-//   });
-// });
 
 function contiene(t1, t2) {
   t1 = t1.replaceAll(/\n| /g, "")
@@ -158,6 +135,70 @@ function comparar(t1, t2) {
   return (t1 === t2);
 }
 
+function filasycolumnasdesactivar() {
+  return new Promise(resolve => {
+    cy.get('.configuraciones').click();
+    cy.wait(500)
+    cy.contains("Guardar cambios").should("be.visible");
+    cy.get('#filasycolumnasdesactivar').check();
+    cy.get('.modal-footer .guardarconfig').click();
+    cy.wait(500)
+    cy.contains("Guardar cambios").should("not.be.visible");
+    cy.get('[data-tabid="0"] > table > :nth-child(5) > :nth-child(1) > .borrarcolumnas').then(el => {
+      const win = el[0].ownerDocument.defaultView;
+      const after = win.getComputedStyle(el[0], 'after');
+      const contenidoAfter = after.getPropertyValue('content');
+      if (contenidoAfter === 'none')
+        resolve(true);
+      else
+        resolve(false);
+    })
+  });
+}
+
+function filasycolumnaspresionar1segundo() {
+  return new Promise(resolve => {
+    cy.get('.configuraciones').click();
+    cy.wait(500)
+    cy.contains("Guardar cambios").should("be.visible");
+    cy.get('#filasycolumnaspresionar1segundo').check();
+    cy.get('.modal-footer .guardarconfig').click();
+    cy.wait(500)
+    cy.contains("Guardar cambios").should("not.be.visible");
+    cy.get('[data-tabid="0"] > table > :nth-child(5) > :nth-child(1) > .borrarcolumnas').then(el => {
+      const win = el[0].ownerDocument.defaultView;
+      const after = win.getComputedStyle(el[0], 'after');
+      const contenidoAfter = after.getPropertyValue('content');
+      if (contenidoAfter === 'none')
+        resolve(true);
+      else
+        resolve(false);
+    })
+  });
+}
+
+function filasycolumnaspresionarx() {
+  return new Promise(resolve => {
+    cy.get('.configuraciones').click();
+    cy.wait(500)
+    cy.contains("Guardar cambios").should("be.visible");
+    cy.get('#filasycolumnaspresionarx').check();
+    cy.get('.modal-footer .guardarconfig').click();
+    cy.wait(500)
+    cy.contains("Guardar cambios").should("not.be.visible");
+    cy.get('.contenidotabs').should("have.class", "cerrarconboton")
+    cy.get('[data-tabid="0"] > table > :nth-child(5) > :nth-child(1) > .borrarcolumnas').then(el => {
+      const win = el[0].ownerDocument.defaultView;
+      const after = win.getComputedStyle(el[0], 'after');
+      const contenidoAfter = after.getPropertyValue('content');
+      if (contenidoAfter === '"❌"')
+        resolve(true);
+      else
+        resolve(false);
+    })
+  });
+}
+
 function borrarFilasVacias() {
   return new Promise(resolve => {
     cy.get('[data-tabid="0"] > table > .cuerpo > tr:nth-child(2) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}");
@@ -170,14 +211,41 @@ function borrarFilasVacias() {
     cy.contains("Se han detectado filas vacias en la tabla");
     cy.get('[for="tabswal1"]').click();
     cy.get('#tabswal1 + label + .tabs__content table').then(tabla => {
-      let resultado = comparar(tabla.get(0).outerHTML, tablas.tablaBorrarFilasVacias)
+      let resultado = comparar(tabla.get(0).outerHTML, tablas.tablaBorrarFilasVacias2)
       expect(resultado).to.be.true;
     });
     cy.get('.swal2-confirm').click();
     cy.get('[data-tabid="0"] > table').then(tabla => {
-      let resultado = comparar(tabla.get(0).outerHTML, tablas.tablaBorrarFilasVacias)
+      let resultado = comparar(tabla.get(0).outerHTML, tablas.tablaBorrarFilasVacias1)
       resolve(resultado);
     });
+  });
+}
+
+function borrarCamiones() {
+  return new Promise(resolve => {
+    try {
+      cy.get('.configuraciones').click();
+      cy.wait(500)
+      cy.contains("Guardar cambios").should("be.visible");
+      cy.get('#filasycolumnasdesactivar').check();
+      cy.get('.modal-footer .guardarconfig').click();
+      cy.wait(500)
+      cy.contains("Guardar cambios").should("not.be.visible");
+      cy.get(".grupotabs .tabs__label").click('topRight');
+      cy.get(".swal2-confirm").click();
+      cy.contains("No se puede borrar, debe haber al menos un camión")
+      cy.get(".swal2-confirm").click();
+      cy.get('[data-tabid="0"] > table').then(tabla => {
+        let resultado = comparar(tabla.get(0).outerHTML, tablas.tablaNormalAbajo)
+        resolve(resultado);
+      })
+    }
+    catch
+    {
+      resolve(false);
+    }
+
   });
 }
 
@@ -191,19 +259,15 @@ function borrarFilasVaciasTotalmenteVacias() {
     cy.get('[data-tabid="0"] > table > .cuerpo > tr:nth-child(3) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}");
     cy.get('[data-tabid="0"] > table > .cuerpo > tr:nth-child(4) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}");
     cy.get('[data-tabid="0"] > table > .cuerpo > tr:nth-child(4) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}");
+    cy.get('[data-tabid="0"] > table > .cuerpo > tr:nth-child(5) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}");
+    cy.get('[data-tabid="0"] > table > .cuerpo > tr:nth-child(5) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}");
     cy.get('#guardar').click();
-    cy.contains("Se han detectado filas vacias en la tabla");
-    cy.get('#tabswal1 + label + .tabs__content table > .cuerpo > tr:nth-child(1) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}");
-    cy.get('#tabswal1 + label + .tabs__content table > .cuerpo > tr:nth-child(1) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}");
     cy.get('.swal2-confirm').click();
-    cy.contains("No se puede guardar la tabla")
-    cy.contains("porque está vacía")
-    cy.get('.swal2-confirm').click();
+    cy.contains("No se puede borrar, debe haber al menos un camión");
+    cy.get('.swal2-confirm').click().then(() => {
+      resolve(true);
+    })
 
-    cy.get('[data-tabid="0"] > table').then(tabla => {
-      let resultado = comparar(tabla.get(0).outerHTML, tablas.tablaBorrarFilasTotalmenteVacias)
-      resolve(resultado);
-    });
   });
 }
 

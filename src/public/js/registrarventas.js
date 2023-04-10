@@ -8,8 +8,9 @@ let touchduration = 600;
 let listaplantillas = [];
 let arreglado;
 let resPlantillas = {};
+let yaSeRecibioTouch = false;
 
-let desdeElMobil = () => /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent)
+let desdeElMobil = function () { return /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent) }
 
 if (desdeElMobil())
   document.querySelector(".modal-dialog").classList.remove("modal-dialog-centered", "modal-lg")
@@ -18,7 +19,7 @@ const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
 function _cantidadTabs() { return document.querySelector(".contenidotabs").children.length; }
-function _idTab() { return document.querySelector(".tabs__radio:checked").dataset.tabid; }
+function _idTab() { return document.querySelector(".grupotabs .tabs__radio:checked").dataset.tabid; }
 function _tabla() { return document.querySelector(`.contenidotabs [data-tabid="${_idTab()}"] table`); }
 function _cuerpo() { return _tabla().querySelector(".cuerpo"); }
 function _pie() { return _tabla().querySelector("tfoot"); }
@@ -36,15 +37,16 @@ $(document).on("dblclick", ".fecha", () => document.querySelectorAll(".fecha").f
 let opcionBorrarFilasYColumnas = -1;
 let opcionBorrarCamiones = -1;
 let opcionExportarPDF = -1;
+let switchOrdenarProductos = -1;
 let switchOrdenarCamiones = -1;
 let switchOrdenarOrdenAlfabetico = -1;
 
-$(document).ready(() => {
+$(function () {
   colocarValoresConfig();
   guardarValoresConfig();
 })
 
-function guardarValoresConfig() {
+async function guardarValoresConfig() {
   //estos son solo para visualizar los iconos
   if (opcionBorrarFilasYColumnas === 1)
     document.querySelectorAll(".contenidotabs").forEach(el => el.classList.add("cerrarconboton"));
@@ -62,24 +64,36 @@ function guardarValoresConfig() {
   else
     document.querySelectorAll('.contenidotabs').forEach(el => el.classList.remove("ordenarAlfabeticamente"));
 
-  $(".tabs").sortable({
-    axis: "x", stop: function () {
-      let tabs = document.querySelectorAll(".tabs label");
-      for (let i = 0; i < tabs.length; i++) {
-        tabs[i].innerText = `Camión ${i + 1}`;
-      }
-    },
-    items: "> div:not(:last-child)",
-    disabled: !switchOrdenarCamiones,
-    stop: function () {
-      reacomodarCamiones();
-      Swal.fire(
-        "Se ha cambiado el orden",
-        "Se ha cambiado el orden de los camiones exitosamente",
-        "success"
-      );
+  if (switchOrdenarCamiones && typeof $.Widget === "undefined") {
+    await $.getScript('/jquery-ui-1.13.js');
+    if (desdeElMobil() && !yaSeRecibioTouch)
+    {
+      await $.getScript('/touch.js');
+      yaSeRecibioTouch = true;
     }
-  });
+  }
+
+  if (typeof $.Widget !== "undefined") {
+    $(".tabs").sortable({
+      axis: "x", stop: function () {
+        let tabs = document.querySelectorAll(".tabs label");
+        for (let i = 0; i < tabs.length; i++) {
+          tabs[i].innerText = `Camión ${i + 1}`;
+        }
+      },
+      items: "> div:not(:last-child)",
+      disabled: !switchOrdenarCamiones,
+      stop: function () {
+        reacomodarCamiones();
+        Swal.fire(
+          "Se ha cambiado el orden",
+          "Se ha cambiado el orden de los camiones exitosamente",
+          "success"
+        );
+      }
+    });
+  }
+ 
 }
 
 $(document).on("click", ".guardarconfig", () => {
@@ -500,7 +514,7 @@ function añadirceros(cuerpo) {
 }
 
 function devuelveListaTablas() {
-  let listaCamiones = Array.from(document.querySelectorAll(".tabs__radio"));
+  let listaCamiones = Array.from(document.querySelectorAll(".grupotabs .tabs__radio"));
   let listaTablas = [];
   listaCamiones.forEach(el => {
     let tabla = document.querySelector(`.contenidotabs [data-tabid="${el.dataset.tabid}"] table`)
@@ -511,7 +525,9 @@ function devuelveListaTablas() {
 
 $("#guardar").on("click", async function () {
   let respuesta = await borrarTablasVacias();
-  let tabscontenido = document.querySelectorAll(".tabs__content");
+  if (!respuesta)
+    return;
+  let tabscontenido = document.querySelectorAll(".grupotabs .tabs__content");
   for (let i = 0; i < tabscontenido.length; i++) {
     respuesta = await validarTrabajador(tabscontenido[i].querySelector("input"), i + 1);
     if (!respuesta)
@@ -525,22 +541,21 @@ $("#guardar").on("click", async function () {
     if (!respuesta)
       return;
   }
+  let listaTablas = devuelveListaTablas();
+  let cantidadTablas = listaTablas.length;
+
   let guardar = `{ "fecha": ${hoy.valueOf()},
   "usuario": "",
   "fechacreacion": ${Date.now()},
   "fechaultimocambio": ${Date.now()},
   "camiones": [`;
 
-  let listaTablas = devuelveListaTablas();
-  let cantidadTablas = listaTablas.length;
   listaTablas.forEach((tabla, indice) => {
     let cuerpo = tabla.querySelector(".cuerpo");
     let filapie = tabla.querySelector("tfoot tr");
     let cantidadProductos = cuerpo.rows.length;
-    // guardar += `{ "nombretrabajador": "${document.getElementById("trabajador").value.trim()}",
-    //             "filas": [`;
-    guardar += `{ "nombretrabajador": "",
-                "filas": [`;
+    // TODO agregar este guardar += `{ "nombretrabajador": "${document.getElementById("trabajador").value.trim()}", "filas": [`;
+    guardar += `{ "nombretrabajador": "", "filas": [`;
     for (let i = 0; i < cantidadProductos; i++) {
       let fila = cuerpo.rows[i];
       let cantidadViajesMasComienzo = tabla.querySelector(".pintarColumnas").children.length * 2 + colscomienzo;
@@ -572,7 +587,6 @@ $("#guardar").on("click", async function () {
   })
   guardar += `]} `;
 
-  //TODO agregar ver resumen del dia
   console.log(guardar);
 
   // $.ajax({
@@ -606,9 +620,8 @@ document.getElementById("resumen").addEventListener("click", async () => {
     let productos = tabla.querySelectorAll(".cuerpo td:first-child");
     let vendidos = tabla.querySelectorAll(".cuerpo td:nth-last-child(2)");
     let ingresos = tabla.querySelectorAll(".cuerpo td:nth-last-child(1)");
-    for (let i = 0; i < productos.length; i++)
-    {
-      let valor = {producto: normalizar(productos[i].innerText), vendidos: parseInt(vendidos[i].innerText), ingresos: parseFloat(ingresos[i].innerText)}
+    for (let i = 0; i < productos.length; i++) {
+      let valor = { producto: normalizar(productos[i].innerText), vendidos: parseInt(vendidos[i].innerText), ingresos: parseFloat(ingresos[i].innerText), productoDesnormalizado: productos[i].innerText }
       listaValores.push(valor);
     }
     listaTablasValores.push(listaValores);
@@ -620,30 +633,13 @@ document.getElementById("resumen").addEventListener("click", async () => {
         acc[fila.producto].vendidos += fila.vendidos;
         acc[fila.producto].ingresos += fila.ingresos;
       } else {
-        acc[fila.producto] = { vendidos: fila.vendidos, ingresos: fila.ingresos };
+        acc[fila.producto] = { vendidos: fila.vendidos, ingresos: fila.ingresos, productoDesnormalizado: fila.productoDesnormalizado };
       }
     });
     return acc;
   }, {});
-  
-  console.log(result);
 
-  let listaDesnormalizados = [];
-  for (const key in result) {
-    listaTablas.find(tabla => {
-      let filas = Array.from(tabla.querySelectorAll(".cuerpo tr"));
-      let res = filas.find(fila => {
-        let producto = fila.cells[0].innerText;
-        if(normalizar(producto) === key)
-        {
-          listaDesnormalizados.push(producto)
-          return producto;
-        }
-      })
-      if(res)
-        return res;
-    })
-  }
+  console.log(result);
 
   let contador = 0;
   let html = `<table id="tablaresumen" style="margin-left: auto; margin-right:auto"><thead><tr>
@@ -652,7 +648,7 @@ document.getElementById("resumen").addEventListener("click", async () => {
     <th class="thresumenvendidoseingresos">Ingresos</th>
   </tr></thead><tbody>`;
   for (const key in result) {
-    html += `<tr><td>${listaDesnormalizados[contador]}</td>
+    html += `<tr><td>${result[key].productoDesnormalizado}</td>
     <td>${isNaN(result[key].vendidos) ? 0 : result[key].vendidos}</td>
     <td>${isNaN(result[key].ingresos) ? 0 : result[key].ingresos}</td></tr>`
     contador++;
@@ -668,9 +664,6 @@ document.getElementById("resumen").addEventListener("click", async () => {
     html: $("#tablaresumen")[0],
     confirmButtonText: "Continuar",
   })
-  // let resultList = Object.entries(result).map(([productName, total]) => ({ productName, total }));
-  
-
 });
 
 async function borrarFilasVacias(tabla, numtabla) {
@@ -694,24 +687,16 @@ async function borrarFilasVacias(tabla, numtabla) {
   filasQueNoEstanVacias.forEach(el => tablaSinFilasVacias += el.outerHTML)
   tablaCopiaSinFilasVacias.querySelector(".cuerpo").innerHTML = tablaSinFilasVacias
 
+  Array.from(tablaCopia.querySelectorAll(".cuerpo td")).forEach(el => el.setAttribute("contenteditable", false))
+  Array.from(tablaCopiaSinFilasVacias.querySelectorAll(".cuerpo td")).forEach(el => el.setAttribute("contenteditable", false))
+
   let result = await swalWithBootstrapButtons3.fire({
     title: "Se han detectado filas vacias",
     icon: "warning",
     width: window.innerWidth * 3 / 4,
     html: `<div class="textovista">Se han detectado filas vacias en la tabla ${numtabla}</div>
-          <br><br><br>
-          <div class="tabs-swal">
-            <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal0" checked>
-            <label for="tabswal0" class="tabs__label label-swal">Ver filas vacías</label>
-            <div class="tabs__content">${tablaCopia.outerHTML}</div>
-
-            <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal1">
-            <label for="tabswal1" class="tabs__label label-swal">Vista previa del resultado</label>
-            <div class="tabs__content">${tablaCopiaSinFilasVacias.outerHTML}</div>
-          </div>
-          <br>
-          <div class="textovista">Desea eliminarlas?</div>
-          <br><br>`,
+    <br><br><br> ${tabsTexto(tablaCopia, tablaCopiaSinFilasVacias, "Ver filas vacías")}
+    <br><div class="textovista">Desea eliminarlas?</div><br><br>`,
     showCancelButton: true,
     showDenyButton: true,
     confirmButtonText: "Borrar las filas vacías",
@@ -883,6 +868,10 @@ async function borrarTablasVacias() {
   })
 
   if (result.isConfirmed) {
+    let res = await soloHayUnCamion();
+    if (res)
+      return false;
+
     tablasVacias.forEach(tabla => {
       let tabs__content = $(tabla).closest(".tabs__content");
       let id = tabs__content[0].dataset.tabid;
@@ -903,7 +892,7 @@ async function borrarTablasVacias() {
 
 async function borrarCamiones(label, e) {
   let id = label.previousElementSibling.dataset.tabid;
-  let tabla = document.querySelector(`.tabs__content[data-tabid="${id}"] table`)
+  let tabla = document.querySelector(`.grupotabs .tabs__content[data-tabid="${id}"] table`)
   let htmlTablas = `<div class="tabs-swal">`;
   htmlTablas += `<input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal0" checked />
   <label for="tabswal0" class="tabs__label label-swal">Camión ${(parseInt(id) + 1)}</label>
@@ -925,8 +914,12 @@ async function borrarCamiones(label, e) {
   })
 
   if (result.isConfirmed) {
+    let res = await soloHayUnCamion();
+    if (res)
+      return false;
+
     $(label).parent().remove();
-    $(`.tabs__content[data-tabid=${id}]`).remove();
+    $(`.grupotabs .tabs__content[data-tabid=${id}]`).remove();
     reacomodarCamiones();
     Swal.fire(
       "Se ha eliminado el camión",
@@ -938,18 +931,32 @@ async function borrarCamiones(label, e) {
   return false;
 }
 
+async function soloHayUnCamion() {
+  if ($(".grupotabs table").length === 1) {
+    await Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: `No se puede borrar, debe haber al menos un camión`,
+    });
+    return true;
+  }
+  return false;
+}
+
 function reacomodarCamiones() {
-  document.querySelectorAll(".tab").forEach((tab, index) => {
+  document.querySelectorAll(".grupotabs .tab").forEach((tab, index) => {
     let checkbox = tab.querySelector("input");
     let id = checkbox.dataset.tabid;
-    document.querySelector(`.tabs__content[data-tabid="${id}"]`).dataset.tabid = index;
+    document.querySelector(`.grupotabs .tabs__content[data-tabid="${id}"]`).dataset.tabid = index;
     checkbox.dataset.tabid = index;
     let idNuevo = `tab${index}`;
     checkbox.id = idNuevo;
     let label = tab.querySelector("label");
     label.setAttribute("for", idNuevo)
     label.innerText = `Camión ${(parseInt(index) + 1)}`;
-  })
+  });
+  if ($(".grupotabs .tab .tabs__radio:checked").length === 0)
+    $(".grupotabs .tab:first-child .tabs__label")[0].click();
 }
 
 async function validarTrabajador(textbox, numerotabla) {
@@ -1009,7 +1016,7 @@ document.getElementById("exportarexcel").addEventListener("click", async functio
   if (typeof TableToExcel === "undefined")
     await $.getScript('/tableToExcel.js');
   let fechastr = hoy.format("D-M-YYYY");
-  let nombre = `registro ventas ${fechastr} ${document.querySelector(".tabs__radio:checked + label").innerText}.xlsx`;
+  let nombre = `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}.xlsx`;
   TableToExcel.convert(_tabla(),
     {
       name: nombre,
@@ -1074,9 +1081,9 @@ document.getElementById("exportarpdf").addEventListener("click", async function 
       //   filename: "archivohtml2pdf.pdf"
       // })
       let fechastr = hoy.format("D-M-YYYY");
-      let nombre = `registro ventas ${fechastr} ${document.querySelector(".tabs__radio:checked + label").innerText}.pdf`;
+      let nombre = `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}.pdf`;
       if (desdeElMobil()) {
-        var blob = doc.output("blob", { 
+        var blob = doc.output("blob", {
           filename: nombre
         });
         window.open(URL.createObjectURL(blob));
@@ -1170,10 +1177,10 @@ function crearPlantillaVacia() {
   Swal.close();
 }
 
-function tabsTexto(tablaOriginal, tablaNueva) {
+function tabsTexto(tablaOriginal, tablaNueva, texto) {
   return `<div class="tabs-swal">
   <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal0" checked>
-  <label for="tabswal0" class="tabs__label label-swal">Ver tabla original</label>
+  <label for="tabswal0" class="tabs__label label-swal">${texto}</label>
   <div class="tabs__content">${tablaOriginal.outerHTML}</div>
 
   <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal1">
@@ -1224,7 +1231,7 @@ async function ordenPlantillaHandler(callback, callbackConfirmado, callbackDeneg
     title: "Aquí puedes ver las diferencias entre la tabla original y el resultado final",
     icon: "warning",
     width: window.innerWidth * 3 / 4,
-    html: tabsTexto(tabla, tablaCopia) + `<br><br><h2>Deseas conservar los cambios?</h2>`,
+    html: tabsTexto(tabla, tablaCopia, "Ver tabla original") + `<br><br><h2>Deseas conservar los cambios?</h2>`,
     showCancelButton: true,
     confirmButtonText: "Conservar",
     cancelButtonText: "Volver",
