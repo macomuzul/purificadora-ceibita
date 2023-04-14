@@ -66,8 +66,7 @@ async function guardarValoresConfig() {
 
   if (switchOrdenarCamiones && typeof $.Widget === "undefined") {
     await $.getScript('/jquery-ui-1.13.js');
-    if (desdeElMobil() && !yaSeRecibioTouch)
-    {
+    if (desdeElMobil() && !yaSeRecibioTouch) {
       await $.getScript('/touch.js');
       yaSeRecibioTouch = true;
     }
@@ -93,7 +92,7 @@ async function guardarValoresConfig() {
       }
     });
   }
- 
+
 }
 
 $(document).on("click", ".guardarconfig", () => {
@@ -377,24 +376,20 @@ document.addEventListener("pointerup", e => {
 
 
 function borrarColumnasHandler(e) {
-  if (this.closest(".swal2-html-container"))
-    return
   borrarElementos(e, opcionBorrarFilasYColumnas, borrarColumnas, this);
 }
 
 function borrarFilasHandler(e) {
-  if (this.closest(".swal2-html-container"))
-    return
   borrarElementos(e, opcionBorrarFilasYColumnas, borrarFilas, this);
 }
 
 function borrarCamionesHandler(e) {
-  if (this.closest(".swal2-html-container"))
-    return
   borrarElementos(e, opcionBorrarCamiones, borrarCamiones, this);
 }
 
 function borrarElementos(e, opcion, metodo, elementoSeleccionado) {
+  if (elementoSeleccionado.closest(".swal2-html-container"))
+    return
   if (opcion === 0) {
     if (!timer) {
       timer = null;

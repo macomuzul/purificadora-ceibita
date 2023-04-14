@@ -27,12 +27,12 @@ router.get('/editar/:id', async (req, res) => {
 
 router.patch('/actualizarverplantillas', async (req, res) => {
   try {
-    var cuerpo = req.body;
+    var { plantilladefault, plantillasorden } = req.body;
     await mPlantilla.updateOne({ esdefault: true }, { esdefault: false });
-    await mPlantilla.updateOne({ nombreplantilla: cuerpo.plantilladefault }, { esdefault: true });
+    await mPlantilla.updateOne({ nombreplantilla: plantilladefault }, { esdefault: true });
 
-    for (let i = 0; i < cuerpo.plantillasorden.length; i++) {
-      await mPlantilla.updateOne(cuerpo.plantillasorden[i], { orden: i });
+    for (let i = 0; i < plantillasorden.length; i++) {
+      await mPlantilla.updateOne(plantillasorden[i], { orden: i });
     }
     res.send("Se ha actualizado con exito");
   }
@@ -85,8 +85,7 @@ router.patch('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    console.log(req.params.id)
-    var plantilla = await mPlantilla.findOne({nombreplantilla: req.params.id});
+    var plantilla = await mPlantilla.findOne({ nombreplantilla: req.params.id });
     if (!plantilla) {
       res.status(400).send("La plantilla no existe");
       return;
@@ -97,7 +96,7 @@ router.delete('/:id', async (req, res) => {
     }
     await plantilla.deleteOne();
     const plantillas = await mPlantilla.find().sort("orden");
-    plantillas.forEach(async(el, i) => {
+    plantillas.forEach(async (el, i) => {
       el.orden = i;
       await el.save();
     });

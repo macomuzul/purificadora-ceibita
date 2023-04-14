@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const path = require('path');
 const engine = require('ejs-mate');
@@ -6,7 +7,6 @@ const session = require('express-session');
 const passport = require('passport');
 const morgan = require('morgan');
 const estaAutenticado = require("./passport/autenticado");
-
 
 // initializations
 const app = express();
