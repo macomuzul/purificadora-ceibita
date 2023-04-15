@@ -6,6 +6,7 @@ let hoy = dayjs(fecha[2] + "-" + fecha[1] + "-" + fecha[0]).utc(true);
 let timer;
 let touchduration = 600;
 let listaplantillas = [];
+let objReordenarPlantillas = [];
 let arreglado;
 let resPlantillas = {};
 let yaSeRecibioTouch = false;
@@ -37,9 +38,50 @@ $(document).on("dblclick", ".fecha", () => document.querySelectorAll(".fecha").f
 let opcionBorrarFilasYColumnas = -1;
 let opcionBorrarCamiones = -1;
 let opcionExportarPDF = -1;
-let switchOrdenarProductos = -1;
-let switchOrdenarCamiones = -1;
+let switchReordenarProductos = -1;
+let switchReordenarCamiones = -1;
 let switchOrdenarOrdenAlfabetico = -1;
+
+$(document).on("click", ".tabs__label", function (e) {
+  if (this.closest(".swal2-html-container"))
+    return
+  let encontrado = objReordenarPlantillas[e.currentTarget.previousElementSibling.dataset.tabid];
+  if (encontrado)
+    $(".restaurarplantilla").css("display", "initial");
+  else
+    $(".restaurarplantilla").css("display", "none");
+})
+
+$(document).on("click", ".restaurarplantilla", function (e) {
+  let tabla = _tabla();
+  let cuerpo = $(tabla).find(".cuerpo")[0];
+  let id = _idTab();
+  let plantillaVieja = objReordenarPlantillas[id];
+  let html = restaurarOrdenPlantilla(plantillaVieja, cuerpo);
+  cuerpo.innerHTML = html;
+  $(tabla).find(`th:not([colspan="2"])`).each((i, el) => el.style.setProperty("--flecha", '"↓"'));
+  tabla.querySelector('.activo').classList.remove("activo");
+  $(".restaurarplantilla").css("display", "none");
+  delete objReordenarPlantillas[id];
+})
+
+function restaurarOrdenPlantilla(productos, cuerpo) {
+  let filas = Array.from(cuerpo.rows);
+  let formatoTablaLlena = "";
+  let listaOriginal = filas.map(el => el.cells[0].innerText.normalizar());
+  productos.forEach(producto => {
+    let indice = listaOriginal.findIndex(el => el === producto);
+    if (indice >= 0)
+      formatoTablaLlena += filas[indice].outerHTML;
+  });
+
+  listaOriginal.forEach((prod, i) => {
+    let indice = productos.findIndex(el => el === prod);
+    if (indice === -1)
+      formatoTablaLlena += prod[i].outerHTML;
+  });
+  return formatoTablaLlena;
+}
 
 $(function () {
   colocarValoresConfig();
@@ -64,7 +106,7 @@ async function guardarValoresConfig() {
   else
     document.querySelectorAll('.contenidotabs').forEach(el => el.classList.remove("ordenarAlfabeticamente"));
 
-  if (switchOrdenarCamiones && typeof $.Widget === "undefined") {
+  if ((switchReordenarCamiones || switchReordenarProductos) && typeof $.Widget === "undefined") {
     await $.getScript('/jquery-ui-1.13.js');
     if (desdeElMobil() && !yaSeRecibioTouch) {
       await $.getScript('/touch.js');
@@ -81,7 +123,7 @@ async function guardarValoresConfig() {
         }
       },
       items: "> div:not(:last-child)",
-      disabled: !switchOrdenarCamiones,
+      disabled: !switchReordenarCamiones,
       stop: function () {
         reacomodarCamiones();
         Swal.fire(
@@ -89,6 +131,14 @@ async function guardarValoresConfig() {
           "Se ha cambiado el orden de los camiones exitosamente",
           "success"
         );
+      }
+    });
+
+    $(".grupotabs table tbody").sortable({
+      axis: "y",
+      disabled: !switchReordenarProductos,
+      stop: function () {
+
       }
     });
   }
@@ -105,6 +155,7 @@ function colocarValoresConfig() {
   opcionBorrarCamionesNuevo = $('[name="borrarcamiones"]:checked').parent().index() - 1;
   opcionExportarPDFNuevo = $('[name="exportarpdf"]:checked').parent().index() - 1;
   switchOrdenarCamionesNuevo = $("#switchreordenarcamiones")[0].checked;
+  switchOrdenarProductosNuevo = $("#switchreordenarproductos")[0].checked;
   switchOrdenarOrdenAlfabeticoNuevo = $("#switchreordenalfabetico")[0].checked;
 
   if (opcionBorrarFilasYColumnasNuevo !== opcionBorrarFilasYColumnas) {
@@ -158,7 +209,8 @@ function colocarValoresConfig() {
   opcionBorrarFilasYColumnas = opcionBorrarFilasYColumnasNuevo;
   opcionBorrarCamiones = opcionBorrarCamionesNuevo;
   opcionExportarPDF = opcionExportarPDFNuevo;
-  switchOrdenarCamiones = switchOrdenarCamionesNuevo;
+  switchReordenarCamiones = switchOrdenarCamionesNuevo;
+  switchReordenarProductos = switchOrdenarProductosNuevo;
   switchOrdenarOrdenAlfabetico = switchOrdenarOrdenAlfabeticoNuevo;
 }
 
@@ -169,7 +221,7 @@ function reseteaValoresConfig() {
   $(`[name="borrarcamiones"]`)[opcionBorrarCamiones].checked = true;
   $('[name="exportarpdf"]:checked')[0].checked = false;
   $(`[name="exportarpdf"]`)[opcionExportarPDF].checked = true;
-  $("#switchreordenarcamiones")[0].checked = switchOrdenarCamiones;
+  $("#switchreordenarcamiones")[0].checked = switchReordenarCamiones;
   $("#switchreordenalfabetico")[0].checked = switchOrdenarOrdenAlfabetico;
 }
 
@@ -177,33 +229,39 @@ document.getElementById('configs').addEventListener('hidden.bs.modal', () => {
   reseteaValoresConfig();
 })
 
-//ordenar alfabeticamente
+//ordenar alfabeticamente ordenar por orden alfabetico
 $(document).on("click", 'th:not([colspan="2"])', function () {
   if (switchOrdenarOrdenAlfabetico) {
     if (this.closest(".swal2-html-container"))
       return
-    let table = this.closest("table");
+    $(".restaurarplantilla").css("display", "initial")
+
+    let tabla = this.closest("table");
     let flecha = window.getComputedStyle(this, ':after').content;
     let order = (flecha === '"↓"') ? "asc" : "desc";
     let separador = "-----";
-
     let objValores = {};
     let listaIdentifObjValores = [];
-
-    let cuerpo = table.querySelector(".cuerpo");
+    let cuerpo = tabla.querySelector(".cuerpo");
+    let listaReordenarPlantillasHelper = []
     let indiceColumna = this.cellIndex;
     let nombreColumna = this.innerText;
+
     if (nombreColumna === "Vendidos")
       indiceColumna = cuerpo.rows[0].cells.length - 2;
     else if (nombreColumna === "Ingresos")
       indiceColumna = cuerpo.rows[0].cells.length - 1;
     else if (nombreColumna === "Sale" || nombreColumna === "Entra")
       indiceColumna += colscomienzo;
-    cuerpo.querySelectorAll("tr").forEach((fila, indice) => { // <tbody> rows
-      let textoCelda = fila.children[indiceColumna].innerText.toUpperCase();
+    cuerpo.querySelectorAll("tr").forEach((fila, indice) => {
+      listaReordenarPlantillasHelper.push(fila.cells[0].innerText.normalizar())
+      let textoCelda = fila.cells[indiceColumna].innerText.toUpperCase();
       objValores[textoCelda + separador + indice] = fila.outerHTML.replace(/(\t)|(\n)/g, '');
       listaIdentifObjValores.push(textoCelda + separador + indice);
     });
+
+    if (!objReordenarPlantillas[tabla.closest(".tabs__content").dataset.tabid])
+      objReordenarPlantillas[tabla.closest(".tabs__content").dataset.tabid] = listaReordenarPlantillasHelper;
 
     let listaElementosColumna = Array.from(cuerpo.querySelectorAll(`td:nth-child(${(indiceColumna + 1)})`))
     let todosSonNumeros = listaElementosColumna.every(el => !isNaN(parseFloat(el.innerText)))
@@ -227,11 +285,11 @@ $(document).on("click", 'th:not([colspan="2"])', function () {
     else
       this.style.setProperty("--flecha", '"↑"')
 
-    table.querySelector('.activo')?.classList.remove("activo");
+    tabla.querySelector('.activo')?.classList.remove("activo");
     this.classList.add("activo")
     let html = "";
     listaIdentifObjValores.forEach(key => html += objValores[key]);
-    table.getElementsByTagName("tbody")[1].innerHTML = html;
+    tabla.getElementsByTagName("tbody")[1].innerHTML = html;
   }
 });
 
@@ -298,7 +356,7 @@ function calcularvendidoseingresos(fila) {
   if (isNaN(totalingresos) || (sumafila === 0 && !hayunnumero))
     fila.cells[y].innerText = "";
   else {
-    let totalajustado = normalizarPrecio(totalingresos);
+    let totalajustado = totalingresos.normalizarPrecio();
     fila.cells[y].innerText = totalajustado;
   }
 }
@@ -334,7 +392,7 @@ function calcularvendidoseingresostotal(cuerpo) {
     if (sumaIngresos === 0 && !hayUnNumero)
       celdaIngresos.innerText = "";
     else
-      celdaIngresos.innerText = normalizarPrecio(sumaIngresos);
+      celdaIngresos.innerText = sumaIngresos.normalizarPrecio();
   }
 
 }
@@ -478,7 +536,7 @@ async function borrarColumnas(colborrar) {
     $(tabla).find(".saleYEntra").children().last().remove();
     $(tabla).find(".pintarcolumnas").children().last().remove();
     let columnaborrartexto = tabla.querySelectorAll(".borrarcolumnas");
-    columnaborrartexto.forEach((columnaborrartxt, index) => columnaborrartxt.innerHTML = "<div>Viaje No. " + (index + 1) + "</div>");
+    columnaborrartexto.forEach((columnaborrartxt, index) => columnaborrartxt.textContent = "Viaje No. " + (index + 1));
     for (let i = 0; i < cuerpo.rows.length; i++) {
       calcularvendidoseingresos(cuerpo.rows[i])
     }
@@ -510,11 +568,7 @@ function añadirceros(cuerpo) {
 
 function devuelveListaTablas() {
   let listaCamiones = Array.from(document.querySelectorAll(".grupotabs .tabs__radio"));
-  let listaTablas = [];
-  listaCamiones.forEach(el => {
-    let tabla = document.querySelector(`.contenidotabs [data-tabid="${el.dataset.tabid}"] table`)
-    listaTablas.push(tabla)
-  })
+  let listaTablas = listaCamiones.map(el => document.querySelector(`.contenidotabs [data-tabid="${el.dataset.tabid}"] table`));
   return listaTablas;
 }
 
@@ -616,7 +670,7 @@ document.getElementById("resumen").addEventListener("click", async () => {
     let vendidos = tabla.querySelectorAll(".cuerpo td:nth-last-child(2)");
     let ingresos = tabla.querySelectorAll(".cuerpo td:nth-last-child(1)");
     for (let i = 0; i < productos.length; i++) {
-      let valor = { producto: normalizar(productos[i].innerText), vendidos: parseInt(vendidos[i].innerText), ingresos: parseFloat(ingresos[i].innerText), productoDesnormalizado: productos[i].innerText }
+      let valor = { producto: productos[i].innerText.normalizar(), vendidos: parseInt(vendidos[i].innerText), ingresos: parseFloat(ingresos[i].innerText), productoDesnormalizado: productos[i].innerText }
       listaValores.push(valor);
     }
     listaTablasValores.push(listaValores);
@@ -635,8 +689,6 @@ document.getElementById("resumen").addEventListener("click", async () => {
   }, {});
 
   console.log(result);
-
-  let contador = 0;
   let html = `<table id="tablaresumen" style="margin-left: auto; margin-right:auto"><thead><tr>
     <th class="thresumenproducto">Productos</th>
     <th class="thresumenvendidoseingresos">Vendidos</th>
@@ -646,7 +698,6 @@ document.getElementById("resumen").addEventListener("click", async () => {
     html += `<tr><td>${result[key].productoDesnormalizado}</td>
     <td>${isNaN(result[key].vendidos) ? 0 : result[key].vendidos}</td>
     <td>${isNaN(result[key].ingresos) ? 0 : result[key].ingresos}</td></tr>`
-    contador++;
   }
   html += `</tbody><tfoot><tr><td style="text-align: center">Total:</td>
   <td class="totalresumen"></td><td class="totalresumen"></td></tr></tfoot></table>`
@@ -668,10 +719,8 @@ async function borrarFilasVacias(tabla, numtabla) {
   let filasQueNoEstanVacias = filasCopia.filter(fila => {
     let celdasEspecificas = Array.from(fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))"))
     let res = celdasEspecificas.every(celda => celda.innerText === "0")
-    if (res) {
-      let todasLasCeldas = Array.from(fila.querySelectorAll("td"))
-      todasLasCeldas.forEach(celda => celda.classList.add("enfocar"))
-    }
+    if (res)
+      $(fila).find("td").each((i, celda) => celda.classList.add("enfocar"))
     return !res;
   });
   if (filasQueNoEstanVacias.length === cuerpoCopia.rows.length)
@@ -682,8 +731,8 @@ async function borrarFilasVacias(tabla, numtabla) {
   filasQueNoEstanVacias.forEach(el => tablaSinFilasVacias += el.outerHTML)
   tablaCopiaSinFilasVacias.querySelector(".cuerpo").innerHTML = tablaSinFilasVacias
 
-  Array.from(tablaCopia.querySelectorAll(".cuerpo td")).forEach(el => el.setAttribute("contenteditable", false))
-  Array.from(tablaCopiaSinFilasVacias.querySelectorAll(".cuerpo td")).forEach(el => el.setAttribute("contenteditable", false))
+  $(tablaCopia).find(".cuerpo td").each((i, el) => el.setAttribute("contenteditable", false))
+  $(tablaCopiaSinFilasVacias).find(".cuerpo td").each((i, el) => el.setAttribute("contenteditable", false))
 
   let result = await swalWithBootstrapButtons3.fire({
     title: "Se han detectado filas vacias",
@@ -1044,25 +1093,9 @@ document.getElementById("exportarpdf").addEventListener("click", async function 
     $(document.body).append(medirTabla)
     $(medirTabla).css({ position: "absolute", visibility: "hidden", display: "table" });
     html += `<div class="titulopdf" style="margin-left: ${(medirTabla.clientWidth / 2 - 55)}px">Camión ${(opcionExportarPDF === 0) ? parseInt(tabla.closest(".tabs__content").dataset.tabid) + 1 : indice + 1}</div>`;
-    $(document.body).remove(medirTabla)
+    $(medirTabla).remove()
     copiaTabla.querySelector(".pintarcolumnas").innerHTML = "";
-    let copiaCuerpo = copiaTabla.querySelector(".cuerpo");
-    let filas = Array.from(copiaCuerpo.rows)
-    filas.forEach(fila => {
-      let celdas = fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))");
-      let impar = true;
-      for (let i = 0; i < celdas.length; i += 2) {
-        if (impar) {
-          celdas[i].style.background = "#024649";
-          celdas[i + 1].style.background = "#024649";
-        }
-        else {
-          celdas[i].style.background = "#192435";
-          celdas[i + 1].style.background = "#192435";
-        }
-        impar = !impar;
-      }
-    });
+
     html += `${copiaTabla.outerHTML}<br><br>`
   });
   doc.html(html, {
@@ -1072,17 +1105,20 @@ document.getElementById("exportarpdf").addEventListener("click", async function 
       scale
     },
     callback: doc => {
+      let fechastr = hoy.format("D-M-YYYY");
+      let nombre = `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}.pdf`;
+      doc.save(nombre);
       // doc.output("dataurlnewwindow", {
       //   filename: "archivohtml2pdf.pdf"
       // })
-      let fechastr = hoy.format("D-M-YYYY");
-      let nombre = `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}.pdf`;
-      if (desdeElMobil()) {
-        var blob = doc.output("blob", {
-          filename: nombre
-        });
-        window.open(URL.createObjectURL(blob));
-      }
+      // let fechastr = hoy.format("D-M-YYYY");
+      // let nombre = `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}.pdf`;
+      // if (desdeElMobil()) {
+      //   var blob = doc.output("blob", {
+      //     filename: nombre
+      //   });
+      //   window.open(URL.createObjectURL(blob));
+      // }
       // else
       //   doc.save(nombre);
     }
@@ -1131,7 +1167,7 @@ async function metododropdown(option) {
   for (let i = 0; i < res.productos.length; i++) {
     formatotabla += `<tr>
       <td>${res.productos[i].producto}</td>
-      <td>${normalizarPrecio(res.productos[i].precio)}</td>
+      <td>${res.productos[i].precio.normalizarPrecio()}</td>
       </tr>`;
   }
   formatotabla += `</tbody></table>`;
@@ -1144,9 +1180,8 @@ async function metododropdown(option) {
     confirmButtonText: "Sí",
     cancelButtonText: "No",
   })
-  if (result.isConfirmed) {
+  if (result.isConfirmed)
     await opcionesPlantilla();
-  }
 }
 
 async function opcionesPlantilla() {
@@ -1172,27 +1207,12 @@ function crearPlantillaVacia() {
   Swal.close();
 }
 
-function tabsTexto(tablaOriginal, tablaNueva, texto) {
-  return `<div class="tabs-swal">
-  <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal0" checked>
-  <label for="tabswal0" class="tabs__label label-swal">${texto}</label>
-  <div class="tabs__content">${tablaOriginal.outerHTML}</div>
-
-  <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal1">
-  <label for="tabswal1" class="tabs__label label-swal">Vista previa del resultado</label>
-  <div class="tabs__content">${tablaNueva.outerHTML}</div>
-</div>`
-}
-
 async function mezclarEliminandoHandler() {
   await mezclarHandler(mezclarEliminandoOrdenTabla, mezclarEliminandoOrdenPlantilla);
 }
-
-
 async function mezclarSinEliminarHandler() {
   await mezclarHandler(mezclarSinEliminarOrdenTabla, mezclarSinEliminarOrdenPlantilla);
 }
-
 
 async function mezclarHandler(callbackConfirmado, callbackDenegado) {
   let result = await swalWithBootstrapButtons3.fire({
@@ -1214,8 +1234,8 @@ async function mezclarHandler(callbackConfirmado, callbackDenegado) {
 }
 
 async function ordenPlantillaHandler(callback, callbackConfirmado, callbackDenegado) {
-  let res = resPlantillas;
-  let formatoTablaLlena = callback(res);
+  let productos = resPlantillas.productos;
+  let formatoTablaLlena = callback(productos);
   let tabla = _tabla();
   let tablaCopia = tabla.cloneNode(true);
   let cuerpoCopia = tablaCopia.querySelector(".cuerpo");
@@ -1237,186 +1257,143 @@ async function ordenPlantillaHandler(callback, callbackConfirmado, callbackDeneg
     mezclarHandler(callbackConfirmado, callbackDenegado);
 }
 
-function mezclarEliminandoOrdenPlantilla(res) {
-  let cuerpo = _cuerpo();
-  let filas = Array.from(cuerpo.rows);
-  let cantidadcolumnas = _cantidadSaleYEntra();
-  let formatoTablaLlena = "";
+function tabsTexto(tablaOriginal, tablaNueva, texto) {
+  console.log(tablaNueva.outerHTML)
+  return `<div class="tabs-swal">
+  <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal0" checked>
+  <label for="tabswal0" class="tabs__label label-swal">${texto}</label>
+  <div class="tabs__content">${tablaOriginal.outerHTML}</div>
 
-  listaOriginal = [];
-  listaSeleccionada = [];
-  filas.forEach(el => listaOriginal.push(normalizar(el.cells[0].innerText)));
-  res.productos.forEach(el => listaSeleccionada.push(normalizar(el.producto)));
-
-  for (let i = 0; i < res.productos.length; i++) {
-    let siEsta = false;
-    for (let j = 0; j < filas.length; j++) {
-      if (listaSeleccionada[i] === listaOriginal[j]) {
-        let filaCopia = filas[j].cloneNode(true);
-        filaCopia.cells[0].innerHTML = res.productos[i].producto;
-        filaCopia.cells[1].innerHTML = normalizarPrecio(res.productos[i].precio);
-        calcularvendidoseingresos(filaCopia);
-        formatoTablaLlena += filaCopia.outerHTML;
-        siEsta = true;
-        break;
-      }
-    }
-    if (!siEsta) {
-      formatoTablaLlena += `<tr><td contenteditable="true">${res.productos[i].producto}</td><td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
-      for (let i = 0; i < cantidadcolumnas - 4; i++) {
-        formatoTablaLlena += `<td contenteditable="true"></td>`
-      }
-      formatoTablaLlena += `<td></td><td class="borrarfilas"></td></tr>`
-    }
-  }
-  return formatoTablaLlena;
+  <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal1">
+  <label for="tabswal1" class="tabs__label label-swal">Vista previa del resultado</label>
+  <div class="tabs__content">${tablaNueva.outerHTML}</div>
+</div>`
 }
 
 
-function mezclarSinEliminarOrdenPlantilla(res) {
-  let cuerpo = _cuerpo();
-  let filas = Array.from(cuerpo.rows);
+function devuelveProductoVacio(producto) {
   let cantidadcolumnas = _cantidadSaleYEntra();
-  let formatoTablaLlena = "";
-
-  listaOriginal = [];
-  listaSeleccionada = [];
-  filas.forEach(el => listaOriginal.push(normalizar(el.cells[0].innerText)));
-  res.productos.forEach(el => listaSeleccionada.push(normalizar(el.producto)));
-
-  for (let i = 0; i < res.productos.length; i++) {
-    let siEsta = false;
-    for (let j = 0; j < filas.length; j++) {
-      if (listaSeleccionada[i] === listaOriginal[j]) {
-        let filaCopia = filas[j].cloneNode(true);
-        filaCopia.cells[0].innerHTML = res.productos[i].producto;
-        filaCopia.cells[1].innerHTML = normalizarPrecio(res.productos[i].precio);
-        calcularvendidoseingresos(filaCopia);
-        formatoTablaLlena += filaCopia.outerHTML;
-        siEsta = true;
-        break;
-      }
-    }
-    if (!siEsta) {
-      formatoTablaLlena += `<tr><td contenteditable="true">${res.productos[i].producto}</td><td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
-      for (let i = 0; i < cantidadcolumnas - 4; i++) {
-        formatoTablaLlena += `<td contenteditable="true"></td>`
-      }
-      formatoTablaLlena += `<td></td><td class="borrarfilas"></td></tr>`
-    }
+  let formatoTablaLlena = `<tr><td contenteditable="true">${producto.producto}</td><td contenteditable="true">${producto.precio.normalizarPrecio()}</td>`
+  for (let i = 0; i < cantidadcolumnas - 4; i++) {
+    formatoTablaLlena += `<td contenteditable="true"></td>`
   }
+  formatoTablaLlena += `<td></td><td class="borrarfilas"></td></tr>`
+  return formatoTablaLlena;
+}
 
-  for (let i = 0; i < filas.length; i++) {
-    let siEsta = false;
-    for (let j = 0; j < res.productos.length; j++) {
-      if (listaSeleccionada[j] === listaOriginal[i]) {
-        siEsta = true;
-        break;
-      }
+//TODO optimizar estos que dicen mezclar
+function mezclarSinEliminarOrdenTabla(productos) {
+  let filas = Array.from(_cuerpo().rows);
+  let formatoTablaLlena = "";
+  let pTabla = filas.map(el => el.cells[0].innerText.normalizar());
+  let pSeleccionada = productos.map(el => el.producto.normalizar());
+
+  pTabla.forEach((el, i) => {
+    let indice = pSeleccionada.findIndex(el2 => el2 === el);
+    if (indice >= 0) {
+      let filaCopia = filas[i].cloneNode(true);
+      filaCopia.cells[0].textContent = productos[indice].producto;
+      filaCopia.cells[1].textContent = productos[indice].precio.normalizarPrecio();
+      calcularvendidoseingresos(filaCopia);
+      formatoTablaLlena += filaCopia.outerHTML;
     }
-    if (!siEsta)
+    else
       formatoTablaLlena += filas[i].outerHTML;
-  }
+  });
+
+  pSeleccionada.forEach((el, i) => {
+    let indice = pTabla.findIndex(el2 => el2 === el);
+    if (indice === -1)
+      formatoTablaLlena += devuelveProductoVacio(productos[i]);
+  });
   return formatoTablaLlena;
 }
 
-function mezclarEliminandoOrdenTabla(res) {
-  let cuerpo = _cuerpo();
-  let filas = Array.from(cuerpo.rows);
-  let cantidadcolumnas = _cantidadSaleYEntra();
+function mezclarSinEliminarOrdenPlantilla(productos) {
+  let filas = Array.from(_cuerpo().rows);
   let formatoTablaLlena = "";
+  let pTabla = filas.map(el => el.cells[0].innerText.normalizar());
+  let pSeleccionada = productos.map(el => el.producto.normalizar());
 
-  listaOriginal = [];
-  listaSeleccionada = [];
-  filas.forEach(el => listaOriginal.push(normalizar(el.cells[0].innerText)));
-  res.productos.forEach(el => listaSeleccionada.push(normalizar(el.producto)));
-
-  for (let i = 0; i < filas.length; i++) {
-    for (let j = 0; j < res.productos.length; j++) {
-      if (listaSeleccionada[j] === listaOriginal[i]) {
-        let filaCopia = filas[i].cloneNode(true);
-        filaCopia.cells[0].innerHTML = res.productos[j].producto;
-        filaCopia.cells[1].innerHTML = normalizarPrecio(res.productos[j].precio);
-        calcularvendidoseingresos(filaCopia);
-        formatoTablaLlena += filaCopia.outerHTML;
-        break;
-      }
+  pSeleccionada.forEach((el, i) => {
+    let j = pTabla.findIndex(el2 => el2 === el);
+    if (j >= 0) {
+      let filaCopia = filas[j].cloneNode(true);
+      filaCopia.cells[0].textContent = productos[i].producto;
+      filaCopia.cells[1].textContent = productos[i].precio.normalizarPrecio();
+      calcularvendidoseingresos(filaCopia);
+      formatoTablaLlena += filaCopia.outerHTML;
     }
-  }
+    else
+      formatoTablaLlena += devuelveProductoVacio(productos[i]);
+  });
 
-  for (let i = 0; i < res.productos.length; i++) {
-    let siEsta = false;
-    for (let j = 0; j < filas.length; j++) {
-      if (listaSeleccionada[i] === listaOriginal[j]) {
-        siEsta = true;
-        break;
-      }
-    }
-    if (!siEsta) {
-      formatoTablaLlena += `<tr><td contenteditable="true">${res.productos[i].producto}</td><td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
-      for (let i = 0; i < cantidadcolumnas - 4; i++) {
-        formatoTablaLlena += `<td contenteditable="true"></td>`
-      }
-      formatoTablaLlena += `<td></td><td class="borrarfilas"></td></tr>`
-    }
-  }
-  return formatoTablaLlena;
-}
-
-function mezclarSinEliminarOrdenTabla(res) {
-  let cuerpo = _cuerpo();
-  let filas = Array.from(cuerpo.rows);
-  let cantidadcolumnas = _cantidadSaleYEntra();
-  let formatoTablaLlena = "";
-
-  listaOriginal = [];
-  listaSeleccionada = [];
-  filas.forEach(el => listaOriginal.push(normalizar(el.cells[0].innerText)));
-  res.productos.forEach(el => listaSeleccionada.push(normalizar(el.producto)));
-
-  for (let i = 0; i < filas.length; i++) {
-    let siEsta = false;
-    for (let j = 0; j < res.productos.length; j++) {
-      if (listaSeleccionada[j] === listaOriginal[i]) {
-        let filaCopia = filas[i].cloneNode(true);
-        filaCopia.cells[0].innerHTML = res.productos[i].producto;
-        filaCopia.cells[1].innerHTML = normalizarPrecio(res.productos[i].precio);
-        calcularvendidoseingresos(filaCopia);
-        formatoTablaLlena += filaCopia.outerHTML;
-        siEsta = true;
-        break;
-      }
-    }
-    if (!siEsta)
+  pTabla.forEach((el, i) => {
+    let j = pSeleccionada.findIndex(el2 => el2 === el);
+    if (j === -1)
       formatoTablaLlena += filas[i].outerHTML;
-  }
+  });
 
-  for (let i = 0; i < res.productos.length; i++) {
-    let siEsta = false;
-    for (let j = 0; j < filas.length; j++) {
-      if (listaSeleccionada[i] === listaOriginal[j]) {
-        siEsta = true;
-        break;
-      }
-    }
-    if (!siEsta) {
-      formatoTablaLlena += `<tr><td contenteditable="true">${res.productos[i].producto}</td><td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>`
-      for (let i = 0; i < cantidadcolumnas - 4; i++) {
-        formatoTablaLlena += `<td contenteditable="true"></td>`
-      }
-      formatoTablaLlena += `<td></td><td class="borrarfilas"></td></tr>`
-    }
-  }
   return formatoTablaLlena;
 }
 
-function normalizar(texto) {
-  return texto.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+function mezclarEliminandoOrdenTabla(productos) {
+  let filas = Array.from(_cuerpo().rows);
+  let formatoTablaLlena = "";
+  let pTabla = filas.map(el => el.cells[0].innerText.normalizar());
+  let pSeleccionada = productos.map(el => el.producto.normalizar());
+
+  pTabla.forEach((el, i) => {
+    let j = pSeleccionada.findIndex(el2 => el2 === el);
+    if (j >= 0) {
+      let filaCopia = filas[i].cloneNode(true);
+      filaCopia.cells[0].textContent = productos[j].producto;
+      filaCopia.cells[1].textContent = productos[j].precio.normalizarPrecio();
+      calcularvendidoseingresos(filaCopia);
+      formatoTablaLlena += filaCopia.outerHTML;
+    }
+  });
+
+  pSeleccionada.forEach((el, i) => {
+    let j = pTabla.findIndex(el2 => el2 === el);
+    if (j === -1)
+      formatoTablaLlena += devuelveProductoVacio(productos[i]);
+  });
+
+  return formatoTablaLlena;
 }
 
-function normalizarPrecio(precio) {
-  return precio.toFixed(2).replace(/[.,]00$/, "");
+function mezclarEliminandoOrdenPlantilla(productos) {
+  let filas = Array.from(_cuerpo().rows);
+  let formatoTablaLlena = "";
+  let pTabla = filas.map(el => el.cells[0].innerText.normalizar());
+  let pSeleccionada = productos.map(el => el.producto.normalizar());
+
+  pSeleccionada.forEach((el, i) => {
+    let j = pTabla.findIndex(el2 => el2 === el);
+    if (j >= 0) {
+      let filaCopia = filas[j].cloneNode(true);
+      filaCopia.cells[0].textContent = productos[i].producto;
+      filaCopia.cells[1].textContent = productos[i].precio.normalizarPrecio();
+      calcularvendidoseingresos(filaCopia);
+      formatoTablaLlena += filaCopia.outerHTML;
+    }
+    else
+      formatoTablaLlena += devuelveProductoVacio(productos[i]);
+  });
+
+  return formatoTablaLlena;
 }
+String.prototype.normalizar = function () {
+  return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+}
+
+String.prototype.normalizarPrecio = fNormalizarPrecio;
+Number.prototype.normalizarPrecio = fNormalizarPrecio;
+function fNormalizarPrecio() {
+  return this.toFixed(2).replace(/[.,]00$/, "");
+}
+
 
 function cancelarSwal() {
   Swal.close();
@@ -1446,7 +1423,7 @@ function creaTablaVacia(res) {
   for (let i = 0; i < res.productos.length; i++) {
     formatotablavacia += `<tr>
     <td contenteditable="true">${res.productos[i].producto}</td>
-    <td contenteditable="true">${normalizarPrecio(res.productos[i].precio)}</td>
+    <td contenteditable="true">${res.productos[i].precio.normalizarPrecio()}</td>
     <td contenteditable="true"></td>
     <td contenteditable="true"></td>
     <td></td>
