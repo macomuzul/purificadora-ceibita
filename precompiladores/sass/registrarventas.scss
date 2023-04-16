@@ -49,12 +49,39 @@ input {
 .form-check-label {
   font-size: 16px;
 }
+.form-control{
+
+  &:focus{
+    box-shadow: none;
+  }
+}
 
 .trabajador {
   height: 33px;
   font-size: 15px;
   display: inline-block;
   padding: 6px 10px;
+  border-radius: 0;
+}
+
+.dropdown-toggle-split{
+  height: 35px;
+  transform: translateX(-14px);
+  border-radius: 0;
+  border: none;
+  font-size: 23px;
+  background: #00132e !important;
+  &:hover, &:active, &:focus{
+    background: #00132e !important;
+  }
+}
+
+.dropdown-item.active, .dropdown-item:active{
+  background: transparent !important;
+}
+
+.dropdown-menu-dark li{
+  cursor: pointer;
 }
 
 .label-trabajador {
@@ -123,7 +150,7 @@ h4 {
   background: #064723;
   border-color: #116d3a;
   position: absolute;
-  bottom: 0;
+  bottom: 10;
   right: 0;
   width: 172px;
   height: 52px;
@@ -140,7 +167,7 @@ h4 {
   background: #871a08;
   border-color: #b31616;
   position: absolute;
-  bottom: 0;
+  bottom: 10;
   right: 180;
   width: 168;
   height: 52;
@@ -318,11 +345,10 @@ th {
 .restaurarplantilla {
   width: 262px;
   position: absolute;
-  bottom: -60;
+  bottom: -50;
   right: 0;
   display: none;
 }
-
 .modal-backdrop {
   width: 100%;
   height: 100%;

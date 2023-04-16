@@ -1,3 +1,4 @@
+//TODO validar que las plantillas no tengan el mismo nombre
 async function validarPlantillas() {
   let tabla = $("tbody")[0];
   let filas = tabla.rows;
@@ -38,11 +39,28 @@ async function validarPlantillas() {
       return false;
     }
   }
+
   for (let i = 0; i < filas.length; i++) {
     let precio = filas[i].cells[1].innerText;
     if (precio.endsWith("."))
       filas[i].cells[1].innerText = precio.replace(".", "")
   }
+
+  for (let i = 0; i < filas.length; i++) {
+    let precio = filas[i].cells[1].innerText;
+    if (precio.startsWith("."))
+      filas[i].cells[1].innerText = precio.replace(".", "0.")
+  }
+
+  for (let i = 0; i < filas.length; i++) {
+    if (filas[i].cells[1].innerText === "0") {
+      await Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Hay un precio con valor 0",
+      });
+      return false;
+    }
+  }
   return true;
 }
-

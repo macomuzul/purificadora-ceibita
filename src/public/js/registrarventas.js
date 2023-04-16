@@ -991,6 +991,7 @@ function reacomodarCamiones() {
   document.querySelectorAll(".grupotabs .tab").forEach((tab, index) => {
     let checkbox = tab.querySelector("input");
     let id = checkbox.dataset.tabid;
+    document.querySelector(`[data-trab="${id}"]`).dataset.trab = index;
     document.querySelector(`.grupotabs .tabs__content[data-tabid="${id}"]`).dataset.tabid = index;
     checkbox.dataset.tabid = index;
     let idNuevo = `tab${index}`;
@@ -1437,6 +1438,7 @@ function creaTablaVacia(res) {
   return formatotablavacia;
 }
 
+//TODO agregar aqui los trabajadores
 document.querySelector(".agregarcamion").addEventListener("click", async () => {
   let cantidadTabs = _cantidadTabs();
   let res = await pidePlantilla(plantillaDefault);
@@ -1444,7 +1446,13 @@ document.querySelector(".agregarcamion").addEventListener("click", async () => {
   let nuevoCamion = `<div data-tabid="${cantidadTabs}" class="tabs__content">
   <div class="contenedor-trabajador">
   <label class="label-trabajador">Nombre del trabajador:</label>
-  <input type="text" class="form-control trabajador"></div>`
+  <input type="text" class="form-control trabajador" data-trab="${cantidadTabs}"><div class="btn-group dropend">
+  <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+    <span class="visually-hidden">Toggle Dropdown</span></button>
+  <ul class="dropdown-menu dropdown-menu-dark">
+    <li><a class="dropdown-item" href="#">Action</a></li>
+    <li><a class="dropdown-item" href="#">Another action</a></li>
+  </ul></div></div>`
   nuevoCamion += formatotablavacia + "</div>";
   let nuevaTab = `<div class="tab">
   <input data-tabid="${cantidadTabs}" type="radio" class="tabs__radio" name="tab" id="tab${cantidadTabs}"/>
@@ -1453,4 +1461,9 @@ document.querySelector(".agregarcamion").addEventListener("click", async () => {
   $(".agregarcamion").before(nuevaTab);
   $(".contenidoTabs").append(nuevoCamion);
 });
+//TODO agregar botones de exportar a excel y pdf en resumen
+$(document).on('click', '.dropdown-item', function () {
+  document.querySelector(`[data-trab="${_idTab()}"]`).value = this.innerText;
+});
+
 colocarDatosTabla()

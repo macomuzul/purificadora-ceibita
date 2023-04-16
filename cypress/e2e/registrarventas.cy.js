@@ -10,115 +10,115 @@ beforeEach(() => {
 
 describe('validaciones antes de guardar', () => {
 
-  // it("Verifica tablas vacías", async () => {
-  //   let resultado = await borrarCamiones();
-  //   expect(resultado).to.be.true;
-  // });
+  it("Verifica tablas vacías", async () => {
+    let resultado = await borrarCamiones();
+    expect(resultado).to.be.true;
+  });
 
   it("Verifica tablas totalmente vacías", async () => {
     let resultado = await borrarFilasVaciasTotalmenteVacias();
     expect(resultado).to.be.true;
   });
 
-  //   describe(("Valida que los productos esten llenos"), () => {
-  //     it("validacion un solo producto una vez", async () => {
-  //       let resultado = await validarUnSoloProducto(0);
-  //       expect(resultado).to.be.true;
-  //     })
+    describe(("Valida que los productos esten llenos"), () => {
+      it("validacion un solo producto una vez", async () => {
+        let resultado = await validarUnSoloProducto(0);
+        expect(resultado).to.be.true;
+      })
 
-  //     it("validacion varios productos una vez", async () => {
-  //       let resultado = await validarVariosProductos(0);
-  //       expect(resultado).to.be.true;
-  //     })
+      it("validacion varios productos una vez", async () => {
+        let resultado = await validarVariosProductos(0);
+        expect(resultado).to.be.true;
+      })
 
-  //     it("validacion un solo producto varias veces", async () => {
-  //       let resultado = await validarUnSoloProducto(4);
-  //       expect(resultado).to.be.true;
-  //     })
+      it("validacion un solo producto varias veces", async () => {
+        let resultado = await validarUnSoloProducto(4);
+        expect(resultado).to.be.true;
+      })
 
-  //     it("validacion varios productos varias veces", async () => {
-  //       let resultado = await validarVariosProductos(4);
-  //       expect(resultado).to.be.true;
-  //     })
-  //   })
+      it("validacion varios productos varias veces", async () => {
+        let resultado = await validarVariosProductos(4);
+        expect(resultado).to.be.true;
+      })
+    })
 
-  //   describe(("Valida que los precios esten llenos"), () => {
-  //     it("validacion un solo precio una vez", async () => {
-  //       let resultado = await validarUnSoloPrecio(0);
-  //       expect(resultado).to.be.true;
-  //     })
+    describe(("Valida que los precios esten llenos"), () => {
+      it("validacion un solo precio una vez", async () => {
+        let resultado = await validarUnSoloPrecio(0);
+        expect(resultado).to.be.true;
+      })
 
-  //     it("validacion varios precios una vez", async () => {
-  //       let resultado = await validarVariosPrecios(0);
-  //       expect(resultado).to.be.true;
-  //     })
+      it("validacion varios precios una vez", async () => {
+        let resultado = await validarVariosPrecios(0);
+        expect(resultado).to.be.true;
+      })
 
-  //     it("validacion un solo precio varias veces", async () => {
-  //       let resultado = await validarUnSoloPrecio(4);
-  //       expect(resultado).to.be.true;
-  //     })
+      it("validacion un solo precio varias veces", async () => {
+        let resultado = await validarUnSoloPrecio(4);
+        expect(resultado).to.be.true;
+      })
 
-  //     it("validacion varios precios varias veces", async () => {
-  //       let resultado = await validarVariosPrecios(4);
-  //       expect(resultado).to.be.true;
-  //     })
-  //   })
+      it("validacion varios precios varias veces", async () => {
+        let resultado = await validarVariosPrecios(4);
+        expect(resultado).to.be.true;
+      })
+    })
 
-  // describe("Mezcla validar productos y validar precios", () => {
-  //   it("Valida productos y precios una vez", async () => {
-  //     let resultado = await validarPreciosYProductosUnaVez();
-  //     expect(resultado).to.be.true;
-  //   });
-  //   it("Valida productos y precios varias veces", async () => {
-  //     let resultado = await validarPreciosYProductosVariasVeces();
-  //     expect(resultado).to.be.true;
-  //   });
-  // });
+  describe("Mezcla validar productos y validar precios", () => {
+    it("Valida productos y precios una vez", async () => {
+      let resultado = await validarPreciosYProductosUnaVez();
+      expect(resultado).to.be.true;
+    });
+    it("Valida productos y precios varias veces", async () => {
+      let resultado = await validarPreciosYProductosVariasVeces();
+      expect(resultado).to.be.true;
+    });
+  });
 
-  // it("Añade ceros", async () => {
-  //   let resultado = await añadeCeros();
-  //   expect(resultado).to.be.true;
-  // });
+  it("Añade ceros", async () => {
+    let resultado = await añadeCeros();
+    expect(resultado).to.be.true;
+  });
 
-  // it("Entra mas de lo que sale", async () => {
-  //   let resultado = await entraMasDeLoQueSale();
-  //   expect(resultado).to.be.true;
-  // });
+  it("Entra mas de lo que sale", async () => {
+    let resultado = await entraMasDeLoQueSale();
+    expect(resultado).to.be.true;
+  });
 
-  // describe("Borra filas vacias", () => {
-  //   it("Borra algunas filas", async () => {
-  //     let resultado = await borrarFilasVacias();
-  //     expect(resultado).to.be.true;
-  //   });
-  // });
+  describe("Borra filas vacias", () => {
+    it("Borra algunas filas", async () => {
+      let resultado = await borrarFilasVacias();
+      expect(resultado).to.be.true;
+    });
+  });
 
 })
 
-// describe("configuraciones", () => {
-//   it("muestra x en filas y columnas", async () => {
-//     let resultado = await filasycolumnaspresionarx();
-//     expect(resultado).to.be.true;
-//   });
-//   it("esconde x en filas y columnas1", async () => {
-//     let resultado = await filasycolumnasdesactivar();
-//     expect(resultado).to.be.true;
-//   });
-//   it("esconde x en filas y columnas2", async () => {
-//     let resultado = await filasycolumnaspresionar1segundo();
-//     expect(resultado).to.be.true;
-//   });
-// });
+describe("configuraciones", () => {
+  it("muestra x en filas y columnas", async () => {
+    let resultado = await filasycolumnaspresionarx();
+    expect(resultado).to.be.true;
+  });
+  it("esconde x en filas y columnas1", async () => {
+    let resultado = await filasycolumnasdesactivar();
+    expect(resultado).to.be.true;
+  });
+  it("esconde x en filas y columnas2", async () => {
+    let resultado = await filasycolumnaspresionar1segundo();
+    expect(resultado).to.be.true;
+  });
+});
 
-// describe('añadir producto y viajes', () => {
-//   it('añade producto', async () => {
-//     let resultado = await añadirProducto();
-//     expect(resultado).to.be.true;
-//   })
-//   it('añade viajes', async () => {
-//     let resultado = await añadirViaje();
-//     expect(resultado).to.be.true;
-//   })
-// })
+describe('añadir producto y viajes', () => {
+  it('añade producto', async () => {
+    let resultado = await añadirProducto();
+    expect(resultado).to.be.true;
+  })
+  it('añade viajes', async () => {
+    let resultado = await añadirViaje();
+    expect(resultado).to.be.true;
+  })
+})
 
 
 function contiene(t1, t2) {

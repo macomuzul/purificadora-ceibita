@@ -87,8 +87,17 @@
               <div data-tabid="<%=j%>" class="tabs__content">
                   <div class="contenedor-trabajador">
                     <label class="label-trabajador">Nombre del trabajador:</label>
-                    <input type="text" class="form-control trabajador"
+                    <input type="text" class="form-control trabajador" data-trab="<%=j%>"
                     <% if (ventaspordia) { %> value= <%= ventaspordia.camiones[0].nombretrabajador %> <% } %>/>
+                    <div class="btn-group dropend">
+                      <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                        <span class="visually-hidden">Toggle Dropdown</span>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-dark">
+                        <li class="dropdown-item">Action</li>
+                        <li class="dropdown-item">Another action</li>
+                      </ul>
+                    </div>
                   </div>
                     <%- include("layouts/tablacompleta", {j, ventaspordia, plantillaDefault}) %>
               </div>

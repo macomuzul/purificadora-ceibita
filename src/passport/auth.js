@@ -19,12 +19,10 @@ passport.use('iniciarSesion', new LocalStrategy({
   passReqToCallback: true
 }, async (req, usuario, contraseña, done) => {
   const user = await Usuarios.findOne({usuario: usuario});
-  if(!user) {
+  if(!user)
     return done(null, false, req.flash('signinMessage', 'El usuario al que desea acceder no existe'));
-  }
-  if(user.contraseña !== contraseña) {
+  if(user.contraseña !== contraseña)
     return done(null, false, req.flash('signinMessage', 'Contraseña incorrecta'));
-  }
 
   return done(null, user);
 }));

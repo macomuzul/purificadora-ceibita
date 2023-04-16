@@ -38,13 +38,11 @@
     var fname = document.getElementById("usuario");
 
     window.addEventListener("load", (event) => {
-
       fname.setCustomValidity('El usuario al que desea acceder no existe');
       fname.reportValidity();
     });
 
     fname.addEventListener("keydown", (event) => {
-
       fname.setCustomValidity('');
     });
   </script>

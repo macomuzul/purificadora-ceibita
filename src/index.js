@@ -22,6 +22,7 @@ app.set('view engine', 'ejs');
 
 // middlewares
 app.use(morgan('dev'));
+app.use(express.urlencoded({extended: false}));
 app.use(express.json()); 
 app.use(express.static(path.join(__dirname, "public/css")));
 app.use(express.static(path.join(__dirname, "public/images")));
@@ -47,10 +48,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(estaAutenticado);
 
 // routes
 app.use('/', require('./routes/index'));
+app.use(estaAutenticado);
 app.use('/registrarventas', require('./routes/registrarventas'));
 app.use('/plantillas', require('./routes/plantillas'));
 app.use('/respaldos', require('./routes/respaldos'));

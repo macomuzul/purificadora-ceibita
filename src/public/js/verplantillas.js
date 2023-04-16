@@ -73,7 +73,7 @@ $(".svgeliminar").on('click', async function () {
 $(".svgver").each(function (e, btn) {
   tippy(this, {
     trigger: 'click',
-    placement: 'bottom',
+    placement: 'right',
     arrow: false,
     content: "Cargando...",
     onCreate(instance) {
