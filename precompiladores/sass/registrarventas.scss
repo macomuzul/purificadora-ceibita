@@ -60,15 +60,15 @@ input {
   height: 33px;
   font-size: 15px;
   display: inline-block;
-  padding: 6px 10px;
+  padding: 6px;
   border-radius: 0;
 }
 
 .dropdown-toggle-split{
   height: 35px;
-  transform: translateX(-14px);
   border-radius: 0;
   border: none;
+  transform: translateX(-1px);
   font-size: 23px;
   background: #00132e !important;
   &:hover, &:active, &:focus{
@@ -87,6 +87,14 @@ input {
 .label-trabajador {
   color: white;
   font-size: 18px;
+}
+
+.contenedor-input-trabajador{
+  display: flex;
+
+  &:has(input:focus){
+    box-shadow: 0 0 0 0.18rem rgba(13,110,253,.25);
+  }
 }
 
 .contenedor-trabajador {

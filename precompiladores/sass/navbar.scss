@@ -1,3 +1,18 @@
+@mixin svgNavLinks {
+  width: 2rem;
+  min-width: 2rem;
+  margin: 0 1.5rem;
+  fill: #efefef;
+}
+
+@mixin nav-link {
+  display: flex;
+  align-items: center;
+  height: 5rem;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
 :root {
   font-family: "Open Sans";
   --text-primary: #efefef;
@@ -33,45 +48,41 @@ main {
   align-items: center;
   height: 100%;
   width: 100%;
-  overflow-y: auto;
 }
 
 .nav-item {
   user-select: none;
   width: 100%;
+
+  .submenu {
+    display: none;
+  }
 }
 
 .nav-link {
-  display: flex;
-  align-items: center;
-  height: 5rem;
-  color: var(--text-primary);
-  text-decoration: none;
+  @include nav-link;
   filter: grayscale(100%) opacity(1);
   transition: var(--transition-speed);
-}
 
-.nav-link:focus,
-.nav-link:hover {
-  color: var(--text-primary);
-}
+  &:focus,
+  &:hover {
+    color: var(--text-primary);
+  }
 
-.nav-link:hover {
-  filter: grayscale(0%) opacity(1);
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
+  &:hover {
+    filter: grayscale(0%) opacity(1);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+  }
+
+  svg {
+    @include svgNavLinks;
+  }
 }
 
 .link-text {
   display: none;
   margin-left: 1rem;
-}
-
-.nav-link svg {
-  width: 2rem;
-  min-width: 2rem;
-  margin: 0 1.5rem;
-  fill: #efefef;
 }
 
 .logo {
@@ -84,11 +95,11 @@ main {
   font-size: 1.5rem;
   letter-spacing: 0.3ch;
   width: 100%;
-}
 
-.logo svg {
-  transform: rotate(0deg);
-  transition: var(--transition-speed);
+  svg {
+    transform: rotate(0deg);
+    transition: var(--transition-speed);
+  }
 }
 
 .logo-text {
@@ -106,17 +117,68 @@ main {
 
 .navbar.presionado {
   width: 15rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  .link-text {
+    display: inline;
+  }
+
+  .logo svg {
+    margin-left: 11rem;
+    transform: rotate(-180deg) translateX(-10px);
+  }
+
+  .logo-text {
+    left: 0px;
+  }
 }
 
-.navbar.presionado .link-text {
-  display: inline;
+.submenu {
+  list-style: none;
+  height: auto;
+
+  .nav-item {
+    background: #2f2f3e;
+  }
+
+  .nav-item:hover {
+    filter: grayscale(0%) opacity(1);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    transition: var(--transition-speed);
+  }
+
+  .nav-link-submenu {
+    --margen: 10px;
+    margin-left: var(--margen);
+    width: calc(100% - var(--margen));
+    position: relative;
+    @include nav-link;
+    svg {
+      @include svgNavLinks;
+    }
+  }
+
+  .nav-link-submenu::before {
+    content: "‣";
+    font-size: 35px;
+    position: absolute;
+    margin-left: 3px;
+  }
+
+  @media (max-width: 1200px) {
+    .nav-link-submenu::before {
+      font-size: 20px;
+    }
+  }
+
+  .link-text {
+    margin-left: -5px;
+  }
 }
 
-.navbar.presionado .logo svg {
-  margin-left: 11rem;
-  transform: rotate(-180deg) translateX(-10px);
-}
-
-.navbar.presionado .logo-text {
-  left: 0px;
+.romperPalabra{
+  display: inline-block;
+  width: 30px;
 }

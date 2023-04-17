@@ -76,8 +76,7 @@ function restaurarOrdenPlantilla(productos, cuerpo) {
   });
 
   listaOriginal.forEach((prod, i) => {
-    let indice = productos.findIndex(el => el === prod);
-    if (indice === -1)
+    if (!productos.includes(el))
       formatoTablaLlena += prod[i].outerHTML;
   });
   return formatoTablaLlena;
@@ -1303,8 +1302,7 @@ function mezclarSinEliminarOrdenTabla(productos) {
   });
 
   pSeleccionada.forEach((el, i) => {
-    let indice = pTabla.findIndex(el2 => el2 === el);
-    if (indice === -1)
+    if (!pTabla.includes(el))
       formatoTablaLlena += devuelveProductoVacio(productos[i]);
   });
   return formatoTablaLlena;
@@ -1330,8 +1328,7 @@ function mezclarSinEliminarOrdenPlantilla(productos) {
   });
 
   pTabla.forEach((el, i) => {
-    let j = pSeleccionada.findIndex(el2 => el2 === el);
-    if (j === -1)
+    if (!pSeleccionada.includes(el))
       formatoTablaLlena += filas[i].outerHTML;
   });
 
@@ -1356,8 +1353,7 @@ function mezclarEliminandoOrdenTabla(productos) {
   });
 
   pSeleccionada.forEach((el, i) => {
-    let j = pTabla.findIndex(el2 => el2 === el);
-    if (j === -1)
+    if (!pTabla.includes(el))
       formatoTablaLlena += devuelveProductoVacio(productos[i]);
   });
 
@@ -1446,13 +1442,14 @@ document.querySelector(".agregarcamion").addEventListener("click", async () => {
   let nuevoCamion = `<div data-tabid="${cantidadTabs}" class="tabs__content">
   <div class="contenedor-trabajador">
   <label class="label-trabajador">Nombre del trabajador:</label>
+  <div class="contenedor-input-trabajador">
   <input type="text" class="form-control trabajador" data-trab="${cantidadTabs}"><div class="btn-group dropend">
   <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
     <span class="visually-hidden">Toggle Dropdown</span></button>
   <ul class="dropdown-menu dropdown-menu-dark">
     <li><a class="dropdown-item" href="#">Action</a></li>
     <li><a class="dropdown-item" href="#">Another action</a></li>
-  </ul></div></div>`
+  </ul></div></div></div>`
   nuevoCamion += formatotablavacia + "</div>";
   let nuevaTab = `<div class="tab">
   <input data-tabid="${cantidadTabs}" type="radio" class="tabs__radio" name="tab" id="tab${cantidadTabs}"/>

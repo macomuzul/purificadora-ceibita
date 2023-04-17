@@ -55,6 +55,9 @@ app.use(estaAutenticado);
 app.use('/registrarventas', require('./routes/registrarventas'));
 app.use('/plantillas', require('./routes/plantillas'));
 app.use('/respaldos', require('./routes/respaldos'));
+app.use('/empleados', require('./routes/empleados'));
+app.use('/configuraciones', require('./routes/configuraciones'));
+app.use('/analisis', require('./routes/analisis'));
 
 
 
