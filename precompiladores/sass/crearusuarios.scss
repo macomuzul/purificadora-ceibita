@@ -1,0 +1,102 @@
+@use "./partials/tituloplantillas";
+@use "./partials/botonazul";
+@use "./partials/flecha";
+@use "./partials/flecharotada";
+@use "./partials/menuConfirmacionIdentidad";
+
+body {
+  background: #191d31;
+  color: white;
+}
+
+main{
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.filasuperior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  margin-top: 5px;
+}
+
+.button2 {
+  transform: translateX(-70px);
+}
+
+form{
+  width: 300px;
+}
+
+.botontitulo{
+  width: 330px;
+}
+
+@media (max-width: 1200px) {
+  .button2{
+    transform: translateX(10px);
+  }
+}
+
+
+.form-control{
+  margin-bottom: 10px;
+}
+
+
+.contenedorinferior{
+    margin-top: 25px;
+}
+
+i{
+  font-size: 24px;
+  color: #c5c5c5;
+  position: absolute;
+  right: -38px;
+  top: 55%;
+  cursor: pointer;
+}
+
+.divcontraseña{
+  position: relative;
+}
+
+.escondido{
+  display: none;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+.dropdown-menu{
+  width: 300px;
+}
+
+.dropdown-toggle{
+  text-align: left;
+  background: white;
+  position: relative;
+
+  &::after{
+    position: absolute;
+    top: 45%;
+    right: 10px;
+    font-size: 19px;
+  }
+}
+
+.dropdown-item
+{
+  &.active, &:active{
+    background: white;
+    color: #212529;
+  }
+
+  &:hover{
+    background: #c5c5c5;
+  }
+}

@@ -5,18 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=0.35">
   <title>Document</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <%- include("layouts/bootstrap-4.3.1") %>
   <link rel="stylesheet" href="/empleados.min.css" />
 
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"></script>
-  <script defer src="/jquery-3.6.js"></script>
-  <!-- <script defer src="https://code.jquery.com/jquery-3.6.0.js"></script> -->
-  <script defer src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script defer src="/touch.js"></script>
   <script defer src="/empleados.js"></script>
   <script defer src="/tablasortable.js"></script>
 </head>
@@ -33,7 +25,7 @@
           <span></span>
           <span></span>
           <span></span>
-          <input style="width: 360px" class="botontitulo" type="button" value="Desde aquí puedes administrar los usuarios" />
+          <input class="botontitulo" type="button" value="Desde aquí puedes administrar los usuarios" />
         </div>
         <div>
           <a href="/plantillas/crear">
@@ -79,7 +71,7 @@
           <span></span>
           <span></span>
           <span></span>
-          <input style="width: 360px" class="botontitulo" type="button" value="Desde aquí puedes administrar los empleados" />
+          <input class="botontitulo" type="button" value="Desde aquí puedes administrar los empleados" />
         </div>
         <div>
           <a href="/plantillas/crear">

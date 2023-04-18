@@ -1,0 +1,75 @@
+<html>
+
+<head>
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <%- include("layouts/bootstrap-4.3.1.ejs") %>
+    <link rel="stylesheet" href="/crearusuarios.min.css" />
+    <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="/crearusuarios.js"></script>
+</head>
+
+<body>
+  <%- include("layouts/navbar.ejs") %>
+    <main>
+      <div class="filasuperior">
+        <div class="volver">
+          <a href="/empleados/usuarios">
+            <button type="button" type="button" class="btn btn-primary botonazul botoncrear">
+              <span class="flecha rotado">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white">
+                  <path d="M20 0zm-8.344 14.709-1.41-1.418L12.547 11H4V9h8.673l-2.38-2.379 1.414-1.414 4.737 4.736z" />
+                </svg>
+              </span>
+              Volver al menú de usuarios
+            </button>
+          </a>
+        </div>
+        <div class="button2">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <input class="botontitulo" type="button" value="Desde aquí puedes crear nuevos usuarios" />
+        </div>
+        <div></div>
+        <div></div>
+      </div>
+      <br>
+
+      <form>
+        <div class="formulario">
+          <div>
+            <label for="usuario">Usuario</label>
+            <input class="form-control" type="text" id="usuario">
+          </div>
+          <div class="divcontraseña">
+            <label for="contraseña">Contraseña</label>
+            <input class="form-control" type="password" id="contraseña">
+            <i class="fa-solid fa-eye escondido"></i>
+            <i class="fa-sharp fa-solid fa-eye-slash"></i>
+          </div>
+          <div class="divcontraseña">
+            <label for="confirmarContraseña">Confirmar contraseña</label>
+            <input class="form-control" type="password" id="confirmarContraseña">
+            <i class="fa-solid fa-eye escondido"></i>
+            <i class="fa-sharp fa-solid fa-eye-slash"></i>
+          </div>
+          <div>
+            <label for="rol">Rol</label>
+            <button class="btn dropdown-toggle form-control" type="button" id="rol" data-toggle="dropdown">Escoge un rol</button>
+            <div class="dropdown-menu">
+            <a class="dropdown-item" href="#">Administrador</a>
+            <a class="dropdown-item" href="#">Empleado</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="contenedorinferior">
+          <input class="btn btn-primary botonazul" type="button" value="Crear usuario" id="guardar" />
+        </div>
+      </form>
+    </main>
+</body>
+
+</html>

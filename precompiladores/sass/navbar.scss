@@ -150,9 +150,6 @@ main {
   }
 
   .nav-link-submenu {
-    --margen: 10px;
-    margin-left: var(--margen);
-    width: calc(100% - var(--margen));
     position: relative;
     @include nav-link;
     svg {
@@ -160,11 +157,18 @@ main {
     }
   }
 
+  .margen-submenu{
+    --margen: 10px;
+    margin-left: var(--margen);
+    width: calc(100% - var(--margen));
+    display: flex;
+  }
+
   .nav-link-submenu::before {
     content: "‣";
     font-size: 35px;
     position: absolute;
-    margin-left: 3px;
+    margin-left: 10px;
   }
 
   @media (max-width: 1200px) {
@@ -179,6 +183,6 @@ main {
 }
 
 .romperPalabra{
-  display: inline-block;
-  width: 30px;
+  display: flex;
+  flex-direction: column;
 }

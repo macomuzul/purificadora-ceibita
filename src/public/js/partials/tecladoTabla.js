@@ -1,4 +1,3 @@
-
 $("body").on("keydown", "tr td", function (e) {
   var textInput = this;
   var val = textInput.val;
@@ -80,15 +79,13 @@ $("body").on("beforeinput", "tr td", function (e) {
   if (colindex !== 0 && letra === " ")
     e.preventDefault();
 
-
   if (colindex == 1) {
     let el = $(this)[0].innerText;
     var number = el.split(".");
     if (isNaN(letra) && letra != ".") {
       e.preventDefault();
     }
-    //solo permite un punto
-    if (number.length > 1 && letra == ".") {
+    if (number.length > 1 && letra == ".") { //solo permite un punto
       e.preventDefault();
     }
 

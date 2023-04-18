@@ -292,20 +292,20 @@ $(document).on("click", 'th:not([colspan="2"])', function () {
   }
 });
 
-const swalWithBootstrapButtons = Swal.mixin({
+const swalConfirmarYCancelar = Swal.mixin({
   customClass: {
     confirmButton: "btn btn-success margenbotonswal",
     cancelButton: "btn btn-danger margenbotonswal",
   },
   buttonsStyling: false,
 });
-const swalWithBootstrapButtons2 = Swal.mixin({
+const swalContinuar = Swal.mixin({
   customClass: {
     confirmButton: "btn btn-primary margenbotonswal btncontinuar",
   },
   buttonsStyling: false,
 });
-const swalWithBootstrapButtons3 = Swal.mixin({
+const swal3Botones = Swal.mixin({
   customClass: {
     confirmButton: "botonswal3 botonconfirm",
     denyButton: "botonswal3 botondeny",
@@ -462,7 +462,7 @@ function borrarElementos(e, opcion, metodo, elementoSeleccionado) {
 async function borrarFilas(celda) {
   let filaborrar = $(celda).parent()[0];
   let textoborrar = `<div class="contenedormensajeborrar"><table><tbody style="background: #0f0d35;">${filaborrar.cloneNode(true).outerHTML}</tbody></table></div>`
-  let result = await swalWithBootstrapButtons.fire({
+  let result = await swalConfirmarYCancelar.fire({
     title: "Estás seguro que deseas borrar este producto de la tabla?",
     icon: "warning",
     width: window.innerWidth * 3 / 4,
@@ -502,7 +502,7 @@ async function borrarColumnas(colborrar) {
     textoBorrarColumnas += `<tr>${tabla.rows[i].cells[celdaViajeABorrarSale].outerHTML} ${tabla.rows[i].cells[celdaViajeABorrarSale + 1].outerHTML}</tr>`
   }
   textoBorrarColumnas += "</tbody></table></div>";
-  let result = await swalWithBootstrapButtons.fire({
+  let result = await swalConfirmarYCancelar.fire({
     title: "Estás seguro que deseas borrar esta columna y todos sus contenidos?",
     icon: "warning",
     width: window.innerWidth * 3 / 4,
@@ -703,7 +703,7 @@ document.getElementById("resumen").addEventListener("click", async () => {
 
   $(document.body).append(html)
   calcularvendidoseingresostotal($("#tablaresumen tbody")[0]);
-  await swalWithBootstrapButtons2.fire({
+  await swalContinuar.fire({
     title: "Aquí puedes ver todo lo que vendiste durante el día",
     width: window.innerWidth * 0.6,
     html: $("#tablaresumen")[0],
@@ -733,7 +733,7 @@ async function borrarFilasVacias(tabla, numtabla) {
   $(tablaCopia).find(".cuerpo td").each((i, el) => el.setAttribute("contenteditable", false))
   $(tablaCopiaSinFilasVacias).find(".cuerpo td").each((i, el) => el.setAttribute("contenteditable", false))
 
-  let result = await swalWithBootstrapButtons3.fire({
+  let result = await swal3Botones.fire({
     title: "Se han detectado filas vacias",
     icon: "warning",
     width: window.innerWidth * 3 / 4,
@@ -798,7 +798,7 @@ async function entraMasDeLoQueSale(tabla, numtabla) {
     return true;
   }
 
-  let result = await swalWithBootstrapButtons.fire({
+  let result = await swalConfirmarYCancelar.fire({
     title: `<h3>Se ha detectado filas en la tabla ${numtabla} donde lo que sale es mayor que lo que entra, por favor corrígelos para poder guardar los datos</h3>`,
     icon: "error",
     width: window.innerWidth * 3 / 4,
@@ -859,7 +859,7 @@ async function validarProductosYPrecios(tabla, numtabla) {
   titulo += ` de la tabla ${numtabla}
   <br>
   Por favor corrígelos para poder guardar los datos</h3>`
-  let result = await swalWithBootstrapButtons.fire({
+  let result = await swalConfirmarYCancelar.fire({
     title: titulo,
     icon: "error",
     width: window.innerWidth * 3 / 4,
@@ -900,7 +900,7 @@ async function borrarTablasVacias() {
             <div class="textovista">Desea continuar?</div>
             <br><br>`
 
-  let result = await swalWithBootstrapButtons.fire({
+  let result = await swalConfirmarYCancelar.fire({
     title: "Se han detectado tablas vacias",
     icon: "warning",
     width: window.innerWidth * 3 / 4,
@@ -946,7 +946,7 @@ async function borrarCamiones(label, e) {
     <br><br>`
   e.preventDefault();
   e.stopPropagation();
-  let result = await swalWithBootstrapButtons.fire({
+  let result = await swalConfirmarYCancelar.fire({
     title: "Estás seguro que deseas eliminar este camión?",
     icon: "warning",
     width: window.innerWidth * 3 / 4,
@@ -1007,7 +1007,7 @@ async function validarTrabajador(textbox, numerotabla) {
   if (textbox.value !== "")
     return true;
 
-  let result = await swalWithBootstrapButtons2.fire({
+  let result = await swalContinuar.fire({
     icon: "warning",
     width: window.innerWidth * 3 / 4,
     html: `
@@ -1172,7 +1172,7 @@ async function metododropdown(option) {
   }
   formatotabla += `</tbody></table>`;
   resPlantillas = res;
-  let result = await swalWithBootstrapButtons.fire({
+  let result = await swalConfirmarYCancelar.fire({
     title: "Estás seguro que deseas utilizar esta plantilla?",
     icon: "warning",
     html: formatotabla,
@@ -1215,7 +1215,7 @@ async function mezclarSinEliminarHandler() {
 }
 
 async function mezclarHandler(callbackConfirmado, callbackDenegado) {
-  let result = await swalWithBootstrapButtons3.fire({
+  let result = await swal3Botones.fire({
     title: "Qué orden desea utilizar?",
     icon: "question",
     width: window.innerWidth / 2,
@@ -1242,7 +1242,7 @@ async function ordenPlantillaHandler(callback, callbackConfirmado, callbackDeneg
   cuerpoCopia.innerHTML = formatoTablaLlena;
   calcularvendidoseingresostotal(cuerpoCopia)
 
-  let result = await swalWithBootstrapButtons.fire({
+  let result = await swalConfirmarYCancelar.fire({
     title: "Aquí puedes ver las diferencias entre la tabla original y el resultado final",
     icon: "warning",
     width: window.innerWidth * 3 / 4,
