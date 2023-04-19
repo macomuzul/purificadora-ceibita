@@ -1,0 +1,36 @@
+:root{
+  --minWidth: calc(100vw - 200px);
+}
+
+.fila{
+  display: grid;
+  width: var(--minWidth);
+  grid-template-columns: 1fr 1fr;
+}
+
+.divusuario, .divcontraseña{
+  width: 300px;
+}
+
+.botonenviar{
+  width: 200px;
+  height: 60px;
+  align-self: center;
+  justify-self: end;
+}
+
+.divrol{
+  width: 300px;
+}
+
+hr{
+  background: white;
+  height: 1px;
+  min-width: var(--minWidth);
+}
+
+.usuarioSeleccionado{
+  font-size: 30px;
+  width: var(--minWidth);
+  text-align: center;
+}

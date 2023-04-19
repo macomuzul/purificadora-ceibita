@@ -114,9 +114,12 @@ td {
 }
 
 .usuario,
-.contraseña,
-.rol {
+.contraseña{
   min-width: 200px;
+}
+
+.rol{
+  min-width: 170px;
 }
 
 .custom-switch .custom-control-label::before {

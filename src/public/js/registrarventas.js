@@ -45,7 +45,7 @@ let switchOrdenarOrdenAlfabetico = -1;
 $(document).on("click", ".tabs__label", function (e) {
   if (this.closest(".swal2-html-container"))
     return
-  let encontrado = objReordenarPlantillas[e.currentTarget.previousElementSibling.dataset.tabid];
+  let encontrado = objReordenarPlantillas[this.previousElementSibling.dataset.tabid];
   if (encontrado)
     $(".restaurarplantilla").css("display", "initial");
   else
@@ -316,7 +316,7 @@ const swal3Botones = Swal.mixin({
 
 $("body").on("click", ".tabs input", function (e) {
   document.querySelectorAll(".tabs__content").forEach(el => el.style.display = "none");
-  let contenido = document.querySelector(`.contenidotabs [data-tabid="${e.currentTarget.dataset.tabid}"]`)
+  let contenido = document.querySelector(`.contenidotabs [data-tabid="${this.dataset.tabid}"]`)
   contenido.style.display = "initial"
 })
 

@@ -86,8 +86,8 @@ function devuelveTabla(registro) {
 }
 
 document.querySelectorAll(".btnrestaurar").forEach((el) => {
-  el.addEventListener("click", async (e) => {
-    let registro = e.currentTarget.closest("article");
+  el.addEventListener("click", async function(e) {
+    let registro = this.closest("article");
     let resultado = devuelveTabla(registro);
 
     let result = await swalWithBootstrapButtons
@@ -136,8 +136,8 @@ document.querySelectorAll(".btnrestaurar").forEach((el) => {
 });
 
 document.querySelectorAll(".btneliminar").forEach((el) => {
-  el.addEventListener("click", async (e) => {
-    let registro = e.currentTarget.closest("article");
+  el.addEventListener("click", async function(e) {
+    let registro = this.closest("article");
     let resultado = devuelveTabla(registro);
 
     let result = await swalWithBootstrapButtons
@@ -180,9 +180,9 @@ document.querySelectorAll(".btneliminar").forEach((el) => {
 });
 
 document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
-  el.addEventListener("click", async (e) => {
-    let registro = e.currentTarget.closest("article");
-    let nombreTabla = e.currentTarget.getAttribute("name");
+  el.addEventListener("click", async function(e) {
+    let registro = this.closest("article");
+    let nombreTabla = this.getAttribute("name");
     let tabla = registro.querySelector(`[name=${nombreTabla}]`);
     let numTabla = nombreTabla.split("t")[1];
     let fecha = registro.querySelector(".fechaDelRegistro").innerText;
