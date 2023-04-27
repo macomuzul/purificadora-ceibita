@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const mUsuario = require('../models/usuario');
-const verificacionIdentidad = require("./../passport/verificacionIdentidad");
+const verificacionIdentidad = require("../security/verificacionIdentidad");
 
 router.get('/', async (req, res) => {
   const usuarios = await mUsuario.find();
@@ -10,6 +10,16 @@ router.get('/', async (req, res) => {
 router.get('/usuarios', async (req, res) => {
   const usuarios = await mUsuario.find();
   res.render('usuarios', { usuarios });
+});
+
+router.post('/usuarios/pedirContrase%C3%B1a', verificacionIdentidad, async (req, res) => {
+  try {
+    let  { usuario } = req.body;
+    let encontrado = await mUsuario.findOne({ usuario });
+    res.send(encontrado.contraseña);
+  } catch {
+    res.status(400).send("Error al realizar la petición")
+  }
 });
 
 router.route('/usuarios/crear')

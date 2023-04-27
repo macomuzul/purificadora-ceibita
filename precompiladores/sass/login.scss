@@ -5,6 +5,12 @@
   font-family: "Poppins", sans-serif;
 }
 
+:root{
+  --alturaCaja: 420px;
+  --longitudCaja: 380px;
+  --celeste: #45f3ff;
+}
+
 body {
   display: flex;
   justify-content: center;
@@ -14,44 +20,37 @@ body {
 }
 .box {
   position: relative;
-  width: 380px;
-  height: 420px;
+  width: var(--longitudCaja);
+  height: var(--alturaCaja);
   background: #1c1c1c;
   border-radius: 8px;
   overflow: hidden;
 }
 
-.box::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 380px;
-  height: 420px;
-  transform-origin: bottom right;
-  background: linear-gradient(0deg, transparent, #45f3ff, #45f3ff);
-  animation: animate 6s linear infinite;
-}
-
+.box::before,
 .box::after {
   content: "";
   position: absolute;
   top: -50%;
   left: -50%;
-  width: 380px;
-  height: 420px;
+  width: var(--longitudCaja);
+  height: var(--alturaCaja);
   transform-origin: bottom right;
-  background: linear-gradient(0deg, transparent, #45f3ff, #45f3ff);
+  background: linear-gradient(0deg, transparent, var(--celeste), var(--celeste));
   animation: animate 6s linear infinite;
+}
+
+.box::after {
   animation-delay: -3s;
 }
+
 .form {
   position: absolute;
   z-index: 10;
   background: #28292d;
   inset: 2px;
   border-radius: 8px;
-  padding: 50px 40px;
+  padding: 30px 40px 50px;
   display: flex;
   flex-direction: column;
 }
@@ -79,7 +78,7 @@ body {
   border: none;
   outline: none;
   color: #23242a;
-  background: #45f3ff;
+  background: var(--celeste);
 
   font-size: 1em;
   letter-spacing: 0.05em;
@@ -88,12 +87,13 @@ body {
 input[type="submit"] {
   border: none;
   outline: none;
-  background: #45f3ff;
+  background: var(--celeste);
   padding: 11px 25px;
   border-radius: 4px;
   font-weight: 600;
   cursor: pointer;
   margin-top: 45px;
+  color: #28292d;
 }
 
 .inputBox i {
@@ -102,7 +102,7 @@ input[type="submit"] {
   bottom: 0;
   width: 100%;
   height: 2px;
-  background: #45f3ff;
+  background: var(--celeste);
 }
 
 @keyframes animate {
@@ -112,4 +112,13 @@ input[type="submit"] {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.olvidemicontraseña{
+  line-height: 5;
+  transform: translateX(120px);
+  color: #00ffff;
+  cursor: pointer;
+  position: absolute;
+  user-select: none;
 }

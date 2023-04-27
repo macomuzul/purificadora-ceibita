@@ -1,8 +1,8 @@
 @use "./partials/tablassimples";
 @use "./partials/tituloplantillas";
-@use "./partials/estrella";
 @use "./partials/botonazul";
 @use "./partials/flecha";
+@use "./partials/modal";
 
 body {
   background: #191d31;
@@ -137,4 +137,13 @@ section {
 
 .botontitulo{
   width: 360px;
+}
+
+td i{
+  font-size: 28px;
+}
+
+.contenedorflex{
+  display: flex;
+  justify-content: space-around;
 }

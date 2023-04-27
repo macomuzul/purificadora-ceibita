@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --ignore ./src/public/ --ignore ./cypress --ignore ./e2e src/index.js",
+    "debug": "nodemon NODE_OPTIONS=\"--inspect\" --ignore ./src/public/ --ignore ./cypress --ignore ./e2e src/index.js",
     "e2e": "cypress open",
     "test": "jest",
     "grabar": "playwright codegen --viewport-size \"1366, 657\""
@@ -25,7 +26,8 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.1",
     "passport": "^0.6.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "redis": "^4.6.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.32.2",

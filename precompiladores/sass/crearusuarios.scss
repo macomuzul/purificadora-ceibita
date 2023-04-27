@@ -2,14 +2,15 @@
 @use "./partials/botonazul";
 @use "./partials/flecha";
 @use "./partials/flecharotada";
-@use "./partials/menuConfirmacionIdentidad";
+@use "./partials/modal";
+@use "./partials/dropdownRoles";
 
 body {
   background: #191d31;
   color: white;
 }
 
-main{
+main {
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -26,158 +27,38 @@ main{
   transform: translateX(-70px);
 }
 
-form{
+form {
   width: 300px;
 }
 
-.botontitulo{
+.botontitulo {
   width: 330px;
 }
 
 @media (max-width: 1200px) {
-  .button2{
+  .button2 {
     transform: translateX(10px);
   }
 }
 
-.modal-dialog.modal-lg{
+.modal-dialog.modal-lg {
   min-width: 750px;
 }
 
-.form-control{
+.form-control {
   margin-bottom: 10px;
 }
 
-
-.contenedorinferior{
-    margin-top: 25px;
+.contenedorinferior {
+  margin-top: 25px;
 }
 
-i{
-  font-size: 24px;
-  color: #c5c5c5;
-  cursor: pointer;
-}
-
-form i{
+form i {
   position: absolute;
   right: -38px;
   top: 55%;
 }
 
-.fa-sharp{
-  margin-left: 5px;
-}
-
-.divcontraseña{
+.divcontraseña {
   position: relative;
-}
-
-.escondido{
-  display: none;
-}
-
-input::-ms-reveal,
-input::-ms-clear {
-  display: none;
-}
-
-.dropdown-menu{
-  width: 300px;
-}
-
-.dropdown-toggle{
-  text-align: left;
-  background: white;
-  position: relative;
-
-  &::after{
-    position: absolute;
-    top: 45%;
-    right: 10px;
-    font-size: 19px;
-  }
-}
-
-.dropdown-item
-{
-  &.active, &:active{
-    background: white;
-    color: #212529;
-  }
-
-  &:hover{
-    background: #c5c5c5;
-  }
-}
-
-.modal-content{
-  background: #23232e;
-  // color: #878e9c;
-  color: white;
-}
-
-.modal-body{
-  font-size: 18px;
-
-  .fa-sharp{
-    transform: translateY(4px);
-  }
-}
-
-.btn-close{
-  color: white;
-}
-
-.modal-header{
-  // border-bottom: none;
-  font-size: 24px;
-}
-
-.cuerpoModal1{
-  text-align: center;
-  font-size: 22px;
-}
-
-.cuerpoModal2{
-  margin: 15px 0 12px 7px;
-  display: inline-block;
-}
-
-.cuerpoModal3{
-  display: inline-block;
-  margin-left: 5px;
-}
-
-#verificacionIdentidad{
-  width: 220px;
-  padding: 0 5px;
-}
-
-.fa-lock{
-  font-size: 22px;
-  transform: translateY(1px);
-}
-
-.margenbotonswal {
-  margin-left: 40;
-  width: 140;
-  height: 50;
-  font-weight: 500;
-}
-
-.botonconfirm {
-  background: #037841;
-  border: 1px solid #194c19;
-  &:hover{
-    background: #025a31;
-  }
-}
-
-.botoncancel {
-  background: #be0000;
-  border: 1px solid #582630;
-  &:hover{
-    background: #a80101;
-  }
 }

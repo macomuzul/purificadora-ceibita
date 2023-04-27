@@ -1,0 +1,77 @@
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Poppins" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/login.min.css" />
+  <link rel="stylesheet" href="/recuperarcontraseña.min.css" />
+</head>
+
+<body>
+  <div class="box">
+    <form action="/recuperarContraseña" method="POST">
+      <div class="form">
+        <div class="divvolver"><a href="/"><span class="volver"><i class="fa-sharp fa-solid fa-arrow-left"></i> Volver</span></a></div>
+        <h2>Recuperar contraseña</h2>
+        <div class="inputBox">
+          <label for="usuario">
+            <h3><span style="font-family: FontAwesome;">&#xf007;</span> Usuario</h3>
+          </label>
+          <input type="text" required="required" name="usuario" id="usuario" />
+        </div>
+        <div class="inputBox">
+          <label for="contraseña">
+            <h3><span style="font-family: FontAwesome;">&#xf0e0;</span> Correo</h3>
+          </label>
+          <input type="email" title="" required="required" name="correo" id="correo" />
+        </div>
+        <input type="submit" value="Recuperar contraseña" />
+        <div class="divolvidemicontraseña"><a href="/recuperarcontraseña"><span class="olvidemicontraseña"><i class="fa-solid fa-user-slash"></i> Olvidé mi nombre de usuario</span></a></div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    let usuario = document.getElementById("usuario");
+    usuario.addEventListener('input', function (event) {
+      if (correo.validity.valueMissing)
+        correo.setCustomValidity('Por favor escribe un nombre de usuario');
+      else
+        correo.setCustomValidity('');
+    });
+    
+    let correo = document.getElementById("correo");
+    correo.addEventListener('input', function (event) {
+      if (correo.validity.valueMissing)
+        correo.setCustomValidity('Por favor escribe un correo válido');
+      if (correo.validity.typeMismatch)
+        correo.setCustomValidity('Por favor escribe un correo válido por ejemplo: usuario@dominio.com');
+      else
+        correo.setCustomValidity('');
+    });
+  </script>
+  <%if (errorRecuperarContraseña.length> 0 && String(errorRecuperarContraseña) === "El usuario que has ingresado no existe") {%>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <script>
+      window.addEventListener("load", (event) => {
+        usuario.setCustomValidity('El usuario que has ingresado no existe');
+        usuario.reportValidity();
+      });
+    </script>
+  <% } %>
+  <%if (errorRecuperarContraseña.length> 0 && String(errorRecuperarContraseña) === 'El correo ingresado no está en la lista permitida de correos') {%>
+    <script>
+      window.addEventListener("load", (event) => {
+        correo.setCustomValidity('El correo ingresado no está en la lista permitida de correos');
+        correo.reportValidity();
+      });
+    </script>
+  <% } %>
+</body>
+
+</html>

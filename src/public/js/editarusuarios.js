@@ -5,7 +5,6 @@ $("body").on("click", "#cambiarUsuario", function () {
     return;
   }
   funcionEnviar = enviar(`"usuario": "${usuario.trim()}"`, "Se ha cambiado el nombre de usuario correctamente");
-  debugger
   modal.show();
 });
 

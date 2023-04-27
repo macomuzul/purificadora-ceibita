@@ -6,12 +6,15 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
 const morgan = require('morgan');
-const estaAutenticado = require("./passport/autenticado");
+const estaAutenticado = require("./security/estaAutenticado");
+
+global.cantidadMaximaPeticionesInvalidas = 3;
+global.tiempoTimeoutLoginSegundos = 900; //15 minutos
 
 // initializations
 const app = express();
 require('./db');
-require('./passport/auth');
+require('./security/authPassport');
 
 // settings
 app.set('port', process.env.PORT || 3000);
@@ -29,6 +32,7 @@ app.use(express.static(path.join(__dirname, "public/images")));
 app.use(express.static(path.join(__dirname, "public/js")));
 app.use(express.static(path.join(__dirname, "public/js/partials")));
 app.use(express.static(path.join(__dirname, "public/js/utilities")));
+app.use(express.static(path.join(__dirname, "public/components")));
 app.use(express.static(path.join(__dirname, "../cypress/utilidades")));
 app.use(express.static(path.join(__dirname, "../plugins")));
 
@@ -40,13 +44,6 @@ app.use(session({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use((req, res, next) => {
-  app.locals.signinMessage = req.flash('signinMessage');
-  app.locals.signupMessage = req.flash('signupMessage');
-  app.locals.user = req.user;
-  next();
-});
 
 
 // routes

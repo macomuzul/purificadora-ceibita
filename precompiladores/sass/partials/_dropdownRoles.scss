@@ -1,0 +1,29 @@
+.dropdown-toggle {
+  text-align: left;
+  background: white;
+  position: relative;
+
+  &::after {
+    position: absolute;
+    top: 45%;
+    right: 10px;
+    font-size: 19px;
+  }
+}
+
+.dropdown-item {
+  color: white;
+  padding: 8px 10px;
+  &.active,
+  &:active,
+  &:hover {
+    background: #373c49;
+    color: white;
+  }
+}
+
+.dropdown-menu {
+  width: 300px;
+  padding: 8px 10px !important;
+  background: rgb(42, 48, 60);
+}

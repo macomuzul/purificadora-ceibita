@@ -23,3 +23,9 @@ $("#modal").on("hide.bs.modal", () => {
 $("body").on('click', '#enviarVerificacion', () => {
   funcionEnviar();
 });
+
+$("#modal").on("hidePrevented.bs.modal", () => {
+  let $inputVerificacion = $("#verificacionIdentidad")[0];
+  $inputVerificacion.setCustomValidity('Por favor escribe una contraseña');
+  setTimeout(() => $inputVerificacion.reportValidity(), 250);
+})

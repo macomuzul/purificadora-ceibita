@@ -1,5 +1,4 @@
 function estaAutenticado(req, res, next) {
-  // console.log("jfjfj")
   //   if(req.isAuthenticated()) {
   //     return next();
   //   }
