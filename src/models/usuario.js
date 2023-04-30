@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
-
 const { Schema } = mongoose;
+_ = require('underscore');
 
-const userSchema = new Schema({
+const usuarioSchema = new Schema({
   usuario: String,
   contraseña: String,
-  rol: String
+  rol: String,
+  correo: String,
 });
 
-module.exports = mongoose.model('usuarios', userSchema);
+_.each(_.keys(usuarioSchema.paths), attr => usuarioSchema.path(attr).required(true));
+usuarioSchema.path("correo").required(false);
+
+module.exports = mongoose.model('usuarios', usuarioSchema);

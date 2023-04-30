@@ -17,8 +17,8 @@ const oauth2Client = new google.auth.OAuth2(
 oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 const service = google.drive({ version: 'v3', auth: oauth2Client });
 
-router.get("/", async (req, res) => {
-  res.render("respaldos");
+router.get("/registroseliminados", async (req, res) => {
+  res.render("registroseliminados");
 });
 
 router.post("/mandarcorreo", async (req, res) => {
@@ -55,9 +55,9 @@ router.post("/mandarcorreo", async (req, res) => {
     }
 
     const result = await transporter.sendMail(mailOptions)
-    if(result.accepted)
+    if (result.accepted)
       res.send("Correo enviado")
-    else 
+    else
       res.send("No se pudo mandar :(")
   } catch (e) {
     res.status(400).send(`No se pudo enviar el correo ${e}`);
@@ -161,22 +161,20 @@ router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", async (req, res) => {
   try {
     let { buscarpor, fecha1, fecha2, pag } = req.params;
     if (buscarpor != "fecha" && buscarpor != "fechaeliminacion")
-      res.send("búsqueda inválida");
+      return res.send("búsqueda inválida");
     else if ((/^pag[0-9]+$/.test(pag)))
-      res.send("página inválida");
-    else {
-      var fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y").toISODate();
-      var fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y").toISODate();
-      if (buscarpor === "fecha") {
-        buscarpor = "ventaspordia.fecha";
-        resultado = await Respaldo.where(buscarpor).gte(fechaiso1).lte(fechaiso2).sort(buscarpor);
-      }
-      else
-        resultado = await Respaldo.where(buscarpor).gte(fechaiso1).lte(fechaiso2.endOf("day")).sort(buscarpor);
-
-      console.log(resultado)
-      mostrarPagina(resultado, req, res);
+      return res.send("página inválida");
+    var fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y").toISODate();
+    var fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y").toISODate();
+    if (buscarpor === "fecha") {
+      buscarpor = "ventaspordia.fecha";
+      resultado = await Respaldo.where(buscarpor).gte(fechaiso1).lte(fechaiso2).sort(buscarpor);
     }
+    else
+      resultado = await Respaldo.where(buscarpor).gte(fechaiso1).lte(fechaiso2.endOf("day")).sort(buscarpor);
+
+    console.log(resultado)
+    mostrarPagina(resultado, req, res);
   } catch (error) {
     res.send("búsqueda inválida");
   }
@@ -187,33 +185,31 @@ router.get("/:buscarpor&:rango&:fecha&:pag", async (req, res) => {
   try {
     let { buscarpor, rango, fecha, pag } = req.params;
     if (buscarpor != "fecha" && buscarpor != "fechaeliminacion")
-      res.send("búsqueda inválida");
+      return res.send("búsqueda inválida");
     else if (rango != "igual" && rango != "mayor" && rango != "menor")
-      res.send("rango inválido");
+      return res.send("rango inválido");
     else if ((/^pag[0-9]+$/.test(pag)))
-      res.send("página inválida");
-    else {
-      let resultado;
-      if (buscarpor === "fecha") {
-        var fechaiso = DateTime.fromFormat(fecha, "d-M-y").toISODate();
-        buscarpor = "ventaspordia.fecha";
-        if (rango === "igual")
-          resultado = await Respaldo.where(buscarpor).equals(fechaiso).sort(buscarpor);
-        else if (rango === "menor")
-          resultado = await Respaldo.where(buscarpor).lte(fechaiso).sort(buscarpor);
-        else
-          resultado = await Respaldo.where(buscarpor).gte(fechaiso).sort(buscarpor);
+      return res.send("página inválida");
+    let resultado;
+    if (buscarpor === "fecha") {
+      var fechaiso = DateTime.fromFormat(fecha, "d-M-y").toISODate();
+      buscarpor = "ventaspordia.fecha";
+      if (rango === "igual")
+        resultado = await Respaldo.where(buscarpor).equals(fechaiso).sort(buscarpor);
+      else if (rango === "menor")
+        resultado = await Respaldo.where(buscarpor).lte(fechaiso).sort(buscarpor);
+      else
+        resultado = await Respaldo.where(buscarpor).gte(fechaiso).sort(buscarpor);
 
-      } else {
-        var fechaiso = DateTime.fromFormat(fecha, "d-M-y", { zone: "America/Guatemala" });
-        if (rango === "igual")
-          resultado = await Respaldo.where(buscarpor).gte(fechaiso).lte(fechaiso.endOf("day")).sort(buscarpor);
-        else if (rango === "menor")
-          resultado = await Respaldo.where(buscarpor).lte(fechaiso.endOf("day")).sort(buscarpor);
-        else resultado = await Respaldo.where(buscarpor).gte(fechaiso).sort(buscarpor);
-      }
-      mostrarPagina(resultado, req, res);
+    } else {
+      var fechaiso = DateTime.fromFormat(fecha, "d-M-y", { zone: "America/Guatemala" });
+      if (rango === "igual")
+        resultado = await Respaldo.where(buscarpor).gte(fechaiso).lte(fechaiso.endOf("day")).sort(buscarpor);
+      else if (rango === "menor")
+        resultado = await Respaldo.where(buscarpor).lte(fechaiso.endOf("day")).sort(buscarpor);
+      else resultado = await Respaldo.where(buscarpor).gte(fechaiso).sort(buscarpor);
     }
+    mostrarPagina(resultado, req, res);
   } catch (error) {
     res.send("búsqueda inválida");
   }
@@ -236,7 +232,7 @@ function mostrarPagina(resultado, req, res) {
         break;
     }
   }
-  res.render("vistarespaldos", { datostablas, pagina, totalPaginas, DateTime });
+  res.render("gruporegistroseliminados", { datostablas, pagina, totalPaginas, DateTime });
 }
 
 module.exports = router;

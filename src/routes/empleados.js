@@ -7,16 +7,24 @@ router.get('/', async (req, res) => {
   res.render('empleados', { usuarios });
 });
 
-router.get('/usuarios', async (req, res) => {
+router.route('/usuarios').get(async (req, res) => {
   const usuarios = await mUsuario.find();
   res.render('usuarios', { usuarios });
-});
-
-router.post('/usuarios/pedirContrase%C3%B1a', verificacionIdentidad, async (req, res) => {
+}).post(verificacionIdentidad, async (req, res) => {
   try {
-    let  { usuario } = req.body;
+    let { usuario } = req.body;
     let encontrado = await mUsuario.findOne({ usuario });
     res.send(encontrado.contraseña);
+  } catch {
+    res.status(400).send("Error al realizar la petición")
+  }
+}).delete(async (req, res) => {
+  try {
+    let { usuario } = req.body;
+    if(!mUsuario.exists({usuario}))
+      return res.send("Error, usuario no existe");
+    await mUsuario.deleteOne({ usuario });
+    res.send("Borrado con éxito");
   } catch {
     res.status(400).send("Error al realizar la petición")
   }
@@ -28,12 +36,10 @@ router.route('/usuarios/crear')
   })
   .post(verificacionIdentidad, async (req, res) => {
     try {
-      let existeUsuario = await mUsuario.findOne({ usuario });
-      if (existeUsuario) {
-        res.status(400).send("Error, usuario ya existe")
-        return;
-      }
       let { usuario, contraseña, rol } = req.body;
+      let existeUsuario = await mUsuario.findOne({ usuario });
+      if (existeUsuario)
+        return res.status(400).send("Error, usuario ya existe");
       let nuevoUsuario = new mUsuario({ usuario, contraseña, rol });
       await nuevoUsuario.save();
       res.send("Se guardo el usuario exitosamente");
@@ -44,19 +50,17 @@ router.route('/usuarios/crear')
 
 router.route('/usuarios/editar/:id')
   .get(async (req, res) => {
-    res.render('editarusuarios', {nombreUsuario: req.params.id});
+    res.render('editarusuarios', { nombreUsuario: req.params.id });
   })
   .post(verificacionIdentidad, async (req, res) => {
     try {
       let { usuario } = req.body;
-      if(usuario){
+      if (usuario) {
         let existeUsuario = await mUsuario.findOne({ usuario });
-        if (existeUsuario) {
-          res.status(400).send("Error, usuario ya existe")
-          return;
-        }
+        if (existeUsuario)
+          return res.status(400).send("Error, usuario ya existe");
       }
-      
+
       await mUsuario.updateOne({ usuario: req.params.id }, req.body);
       res.send("Se guardo exitosamente");
     } catch {

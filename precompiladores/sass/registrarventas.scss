@@ -49,9 +49,8 @@ input {
 .form-check-label {
   font-size: 16px;
 }
-.form-control{
-
-  &:focus{
+.form-control {
+  &:focus {
     box-shadow: none;
   }
 }
@@ -64,23 +63,27 @@ input {
   border-radius: 0;
 }
 
-.dropdown-toggle-split{
+.dropdown-toggle-split {
   height: 35px;
+  width: 28px;
   border-radius: 0;
   border: none;
   transform: translateX(-1px);
   font-size: 23px;
   background: #00132e !important;
-  &:hover, &:active, &:focus{
+  &:hover,
+  &:active,
+  &:focus {
     background: #00132e !important;
   }
 }
 
-.dropdown-item.active, .dropdown-item:active{
+.dropdown-item.active,
+.dropdown-item:active {
   background: transparent !important;
 }
 
-.dropdown-menu-dark li{
+.dropdown-menu-dark li {
   cursor: pointer;
 }
 
@@ -89,11 +92,11 @@ input {
   font-size: 18px;
 }
 
-.contenedor-input-trabajador{
+.contenedor-input-trabajador {
   display: flex;
 
-  &:has(input:focus){
-    box-shadow: 0 0 0 0.18rem rgba(13,110,253,.25);
+  &:has(input:focus) {
+    box-shadow: 0 0 0 0.18rem rgba(13, 110, 253, 0.25);
   }
 }
 
@@ -124,9 +127,20 @@ h4 {
   height: 50px;
   color: #45f3ff;
   display: flex;
+
+  svg {
+    width: 40px;
+    height: inherit;
+    fill: #45f3ff;
+    &:hover {
+      fill: #00adb5;
+      cursor: pointer;
+    }
+  }
 }
 
 .columnas {
+  user-select: none;
   flex-grow: 1;
   text-align: center;
   font-size: 35px;
@@ -188,16 +202,6 @@ h4 {
 }
 .contenedorsuperior {
   position: relative;
-}
-
-.calendario svg {
-  width: 40px;
-  height: inherit;
-  fill: #45f3ff;
-  &:hover {
-    fill: #00adb5;
-    cursor: pointer;
-  }
 }
 
 .margenbotonswal {
@@ -375,7 +379,7 @@ th {
   background: #0b3787;
 }
 
-.titulopdf{
+.titulopdf, .tituloresumen {
   display: grid;
   align-items: center;
   justify-content: center;
@@ -387,26 +391,41 @@ th {
   font-weight: bold;
 }
 
-.thresumenproducto{
+.tituloresumen{
+  width: 300px;
+}
+
+.thresumenproducto {
   width: 200px;
   height: 75px;
+  min-width: 200px;
+  min-height: 75px;
 }
 
-.thresumenvendidoseingresos{
+.thresumenvendidoseingresos {
   width: 115px;
   height: 75px;
+  min-width: 115px;
+  min-height: 75px;
 }
 
-.btncontinuar{
+.btncontinuar {
   background-color: #0b5ed7;
-  &:hover{
+  &:hover {
     background-color: #003f9d;
   }
 }
 
-.totalresumen{
+.btncontinuar2 {
+  background-color: #003f9d;
+  &:hover {
+    background-color: #012a66;
+  }
+}
+
+.totalresumen {
   position: relative;
-  &::after{
+  &::after {
     content: "-";
     height: 1px;
     display: block;
@@ -414,4 +433,33 @@ th {
     position: absolute;
     width: 66%;
   }
+}
+
+.dropdown-toggle-split::after,
+.dropend .dropdown-toggle-split::after,
+.dropup .dropdown-toggle-split::after {
+  font-size: 22px;
+  transform: rotate(90deg);
+}
+
+.contenedorflex {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 20px;
+  .botonexcel,
+  .botonpdf {
+    position: initial;
+  }
+}
+
+.cajaspinner{
+  transform: translateY(3px);
+  display: inline-block;
+  margin-left: 5px;
+}
+
+.spinner-border{
+  width: 20px;
+  height: 20px;
 }

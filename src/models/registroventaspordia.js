@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-
 const { Schema } = mongoose;
+_ = require('underscore');
 
 const viajesSchema = new Schema({
     sale: Number,
@@ -8,7 +8,8 @@ const viajesSchema = new Schema({
     _id: false
 });
 
-const filasSchema = new Schema({
+//TODO Este hay que cambiarlo por productoSchema en vez de filasSchema
+const productosSchema = new Schema({
     nombreproducto: String,
     precioproducto: Number,
     viajes: [viajesSchema],
@@ -17,10 +18,9 @@ const filasSchema = new Schema({
     _id: false
 });
 
-//hay que cambiar el id a false despues
 const camionesSchema = new Schema({
     nombretrabajador: String,
-    filas: [filasSchema],
+    filas: [productosSchema],
     totalvendidos: Number,
     totalingresos: Number,
     _id: false
@@ -34,5 +34,10 @@ const ventaspordiaSchema = new Schema({
     nombretrabajador: String,
     camiones: [camionesSchema]
 });
+
+_.each(_.keys(viajesSchema.paths), attr => viajesSchema.path(attr).required(true));
+_.each(_.keys(productosSchema.paths), attr => productosSchema.path(attr).required(true));
+_.each(_.keys(camionesSchema.paths), attr => camionesSchema.path(attr).required(true));
+_.each(_.keys(ventaspordiaSchema.paths), attr => ventaspordiaSchema.path(attr).required(true));
 
 module.exports = mongoose.model('ventaspordia', ventaspordiaSchema);

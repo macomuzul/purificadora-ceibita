@@ -15,8 +15,7 @@ router.get('/', async (req, res) => {
     if(cantidadMaximaInicioSesion.length === 0 && cantidadRequestsInvalidas > cantidadMaximaPeticionesInvalidas)
     {
       let tiempoQueQueda = await redis.ttl(textoIP);
-      res.render('index', {errorInicioSesion: [], cantidadMaximaInicioSesion: ["Se ha superado la cantidad maxima"], tiempoQueQueda});
-      return;
+      return res.render('index', {errorInicioSesion: [], cantidadMaximaInicioSesion: ["Se ha superado la cantidad maxima"], tiempoQueQueda});
     }
   }
   

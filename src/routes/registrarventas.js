@@ -31,10 +31,8 @@ router.get("/:id", async (req, res) => {
   try {
     id = req.params.id;
     var datos = id.split("-");
-    if (datos.length !== 3) {
-      res.send("página inválida");
-      return;
-    }
+    if (datos.length !== 3)
+      return res.send("página inválida");
     const fecha = DateTime.fromFormat(id, "d-M-y",{zone: "utc"}).setLocale("es");
     const datostablas = await ventaspordia.findOne({ fecha });
     const plantillas = await plantilla.find().sort("orden");

@@ -11,26 +11,19 @@ body {
   color: white;
 }
 
-.tippy-tooltip {
-  background-color: transparent !important;
+.margenbotonswal {
+  margin-left: 40px;
+  width: 140px;
+  height: 50px;
+  font-weight: 500;
 }
+
 th {
   min-width: 100px;
   resize: none !important;
   font-size: 15px;
 }
-.contenedormedio {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 15px;
-}
-.nombreplantilla {
-  width: 250px;
-}
-.ultimaedicion {
-  width: 150px;
-}
+
 .filasuperior {
   display: flex;
   align-items: center;
@@ -43,14 +36,6 @@ th {
   transform: translateX(100px);
 }
 
-.description {
-  display: none;
-  position: absolute;
-  transform: translateX(-250px) translateY(50px);
-
-  width: 100%;
-  height: 100%;
-}
 
 .button2 {
   position: relative;
@@ -58,16 +43,6 @@ th {
   overflow: hidden;
 }
 
-.swal2-actions {
-  margin: 0 !important;
-  margin-top: 30px !important;
-  justify-content: space-evenly !important;
-}
-
-.margenboton {
-  box-sizing: border-box !important;
-  width: 120px;
-}
 
 .svgver {
   fill: rgb(197, 197, 197);
@@ -119,14 +94,6 @@ td {
   min-width: 200px;
 }
 
-.custom-switch .custom-control-label::before {
-  width: 2rem;
-}
-
-.custom-switch .custom-control-input:checked ~ .custom-control-label::after {
-  transform: translateX(1rem);
-}
-
 section {
   margin-bottom: 40px;
 }
@@ -146,4 +113,50 @@ td i{
 .contenedorflex{
   display: flex;
   justify-content: space-around;
+  position: relative;
+}
+
+custom-counter{
+  position: absolute;
+  top: -8px;
+  left: -8px;
+}
+
+#toast-container>.toast::before {
+  position: absolute;
+  font-family: FontAwesome;
+  font-size: 24px;
+  top: calc(50% - 12px);
+  float: left;
+  color: #FFF;
+  padding-right: 0.5em;
+  margin: auto 0.5em auto -1.5em;
+}
+
+#toast-container>.toast-error::before{
+  content: "\f06a";
+  animation-name: fa-bounce;
+  animation-direction: normal;
+  animation-duration: 1s;
+  animation-timing-function: cubic-bezier(.28, .84, .42, 1);
+  animation-iteration-count: 1;
+  animation-delay: 500ms;
+}
+
+body>#toast-container>.toast-error {
+  background-image: none !important;
+}
+
+body>#toast-container>div:hover{
+  -webkit-box-shadow: 0 0 12px #999;
+  box-shadow: 0 0 12px #999;
+  opacity: 0.9;
+}
+
+.botonconfirm {
+  background: #157347;
+}
+
+.botoncancel {
+  background: #be0000;
 }

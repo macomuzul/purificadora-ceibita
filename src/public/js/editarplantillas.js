@@ -1,5 +1,6 @@
 let click_disabled = false;
 let url = "/plantillas/editar/";
+let nombrePlantillaURL = window.location.pathname.replace(url, '');
 const switchModoSeguro = document.querySelector("#switchModoSeguro");
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
@@ -52,9 +53,8 @@ $(".contenedoreliminar").on('click', async function () {
     cancelButtonText: "No continuar",
   })
   if (result.isConfirmed) {
-    var param = window.location.pathname.replace(url, '');
     $.ajax({
-      url: `/plantillas/${param}`,
+      url: `/plantillas/${nombrePlantillaURL}`,
       method: "DELETE",
       contentType: "application/json",
       success: async res => {
@@ -77,13 +77,13 @@ $(".contenedoreliminar").on('click', async function () {
 })
 
 $(document).on('click', "#guardar", async function () {
-  var param = window.location.pathname.replace(url, '');
-  var valido = await validarPlantillas();
+  let valido = await validarPlantillas();
   if (valido) {
-    var tabla = $("tbody")[0];
-    var filas = tabla.rows.length;
-    var guardar = "{";
-    guardar += ` "nombreplantilla": "${document.getElementById("nombreplantilla").value.trim()}",
+    let tabla = $("tbody")[0];
+    let filas = tabla.rows.length;
+    let nombrePlantilla = document.getElementById("nombreplantilla").value.trim();
+    let guardar = "{";
+    guardar += ` "nombreplantilla": "${nombrePlantilla}",
    "productos": [ `
     for (let i = 0; i < filas; i++) {
       guardar += ` { 
@@ -96,7 +96,7 @@ $(document).on('click', "#guardar", async function () {
     }
     guardar += " ] }"
     $.ajax({
-      url: `/plantillas/${param}`,
+      url: `/plantillas/${nombrePlantillaURL}`,
       method: "PATCH",
       contentType: "application/json",
       data: guardar,
@@ -106,7 +106,7 @@ $(document).on('click', "#guardar", async function () {
           "El archivo se ha almacenado en la base de datos",
           "success"
         )
-        window.location = (url + document.getElementById("nombreplantilla").value.trim());
+        window.location = (url + nombrePlantilla);
       },
       error: res => {
         Swal.fire({

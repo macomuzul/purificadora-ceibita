@@ -1,9 +1,10 @@
-let cantidad = 15;
+let cantidad = 30;
 
 class counter extends HTMLElement {
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: "open" });
+    this.timerId = null;
     shadow.innerHTML = `<style>
     .countdown {
       line-height: 1;
@@ -33,31 +34,41 @@ class counter extends HTMLElement {
     <span style="--value:${cantidad};"></span>
     </span>`;
   }
-
-  resetear() {
+  
+  resetear(cb) {
     this.style.display = "inline";
     let estilo = this.shadowRoot.querySelector(`.countdown span`).style;
     estilo.color = "white";
     estilo.setProperty("--value", cantidad);
-    cuentaAtras(cantidad, this, estilo);
+    this.cuentaAtras(cantidad, this, estilo, cb);
   }
 
-}
-
-function cuentaAtras(cantidad, obj, estilo) {
-  setTimeout(() => {
-    console.log(cantidad)
-    cantidad--;
-    estilo.setProperty("--value", cantidad);
-    if (cantidad <= 3)
-      estilo.color = "red";
-    else if (cantidad <= 10)
-      estilo.color = "yellow";
-    if (cantidad > 0)
-      cuentaAtras(cantidad, obj, estilo)
-    else
-      obj.style.display = "none"
-  }, 1000);
+  cuentaAtras(cantidad, obj, estilo, cb) {
+    this.timerId = setTimeout(() => {
+      console.log(cantidad)
+      cantidad--;
+      estilo.setProperty("--value", cantidad);
+      if (cantidad <= 3)
+        estilo.color = "red";
+      else if (cantidad <= 10)
+        estilo.color = "yellow";
+      if (cantidad > 0)
+        this.cuentaAtras(cantidad, obj, estilo, cb)
+      else
+      {
+        obj.style.display = "none";
+        cb();
+      }
+    }, 1000);
+  }
+  
+  parar() {
+    clearTimeout(this.timerId);
+    this.style.display = "none";
+    let estilo = this.shadowRoot.querySelector(`.countdown span`).style;
+    estilo.color = "white";
+    estilo.setProperty("--value", 0);
+  }
 }
 
 customElements.define("custom-counter", counter);

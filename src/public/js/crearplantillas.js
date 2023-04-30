@@ -20,7 +20,7 @@ $("#guardar").on("click", async function () {
     guardar += " ] }"
     guardar = guardar.replace(/\&nbsp/g, '')
     $.ajax({
-      url: "/plantillas/guardar",
+      url: "/plantillas/crear",
       method: "POST",
       contentType: "application/json",
       data: guardar,

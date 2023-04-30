@@ -10,6 +10,7 @@ let objReordenarPlantillas = [];
 let arreglado;
 let resPlantillas = {};
 let yaSeRecibioTouch = false;
+let fechastr = hoy.format("D-M-YYYY");
 
 let desdeElMobil = function () { return /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent) }
 
@@ -34,7 +35,7 @@ document.querySelectorAll("tbody td:not(:nth-last-child(1), :nth-last-child(2))"
 document.querySelectorAll("tbody td:last-child").forEach(el => el.classList.add("borrarfilas"));
 document.querySelectorAll(".tabs__label").forEach(el => el.classList.add("borrarcamiones"));
 
-$(document).on("dblclick", ".fecha", () => document.querySelectorAll(".fecha").forEach(el => el.classList.toggle("esconder")));
+$("body").on("dblclick", ".fecha", () => document.querySelectorAll(".fecha").forEach(el => el.classList.toggle("esconder")));
 let opcionBorrarFilasYColumnas = -1;
 let opcionBorrarCamiones = -1;
 let opcionExportarPDF = -1;
@@ -42,9 +43,7 @@ let switchReordenarProductos = -1;
 let switchReordenarCamiones = -1;
 let switchOrdenarOrdenAlfabetico = -1;
 
-$(document).on("click", ".tabs__label", function (e) {
-  if (this.closest(".swal2-html-container"))
-    return
+$("body").on("click", ".grupotabs .tabs__label", function (e) {
   let encontrado = objReordenarPlantillas[this.previousElementSibling.dataset.tabid];
   if (encontrado)
     $(".restaurarplantilla").css("display", "initial");
@@ -52,12 +51,12 @@ $(document).on("click", ".tabs__label", function (e) {
     $(".restaurarplantilla").css("display", "none");
 })
 
-$(document).on("click", ".restaurarplantilla", function (e) {
+$("body").on("click", ".restaurarplantilla", function (e) {
   let tabla = _tabla();
   let cuerpo = $(tabla).find(".cuerpo")[0];
   let id = _idTab();
-  let plantillaVieja = objReordenarPlantillas[id];
-  let html = restaurarOrdenPlantilla(plantillaVieja, cuerpo);
+  let ordenAnterior = objReordenarPlantillas[id];
+  let html = restaurarOrdenPlantilla(ordenAnterior, cuerpo);
   cuerpo.innerHTML = html;
   $(tabla).find(`th:not([colspan="2"])`).each((i, el) => el.style.setProperty("--flecha", '"↓"'));
   tabla.querySelector('.activo').classList.remove("activo");
@@ -65,19 +64,19 @@ $(document).on("click", ".restaurarplantilla", function (e) {
   delete objReordenarPlantillas[id];
 })
 
-function restaurarOrdenPlantilla(productos, cuerpo) {
+function restaurarOrdenPlantilla(ordenAnterior, cuerpo) {
   let filas = Array.from(cuerpo.rows);
   let formatoTablaLlena = "";
-  let listaOriginal = filas.map(el => el.cells[0].innerText.normalizar());
-  productos.forEach(producto => {
-    let indice = listaOriginal.findIndex(el => el === producto);
+  let ordenNuevo = filas.map(el => el.cells[0].innerText.normalizar());
+  ordenAnterior.forEach(producto => {
+    let indice = ordenNuevo.findIndex(el => el === producto);
     if (indice >= 0)
       formatoTablaLlena += filas[indice].outerHTML;
   });
 
-  listaOriginal.forEach((prod, i) => {
-    if (!productos.includes(el))
-      formatoTablaLlena += prod[i].outerHTML;
+  ordenNuevo.forEach((prod, i) => {
+    if (!ordenAnterior.includes(prod))
+      formatoTablaLlena += filas[i].outerHTML;
   });
   return formatoTablaLlena;
 }
@@ -125,11 +124,7 @@ async function guardarValoresConfig() {
       disabled: !switchReordenarCamiones,
       stop: function () {
         reacomodarCamiones();
-        Swal.fire(
-          "Se ha cambiado el orden",
-          "Se ha cambiado el orden de los camiones exitosamente",
-          "success"
-        );
+        Swal.fire("Se ha cambiado el orden", "Se ha cambiado el orden de los camiones exitosamente", "success");
       }
     });
 
@@ -144,7 +139,7 @@ async function guardarValoresConfig() {
 
 }
 
-$(document).on("click", ".guardarconfig", () => {
+$("body").on("click", ".guardarconfig", () => {
   colocarValoresConfig();
   guardarValoresConfig();
 })
@@ -159,48 +154,48 @@ function colocarValoresConfig() {
 
   if (opcionBorrarFilasYColumnasNuevo !== opcionBorrarFilasYColumnas) {
     if (opcionBorrarFilasYColumnasNuevo === 0) {
-      $(document).on("pointerdown", ".borrarcolumnas", borrarColumnasHandler);
-      $(document).on("pointerdown", ".borrarfilas", borrarFilasHandler);
+      $("body").on("pointerdown", ".borrarcolumnas", borrarColumnasHandler);
+      $("body").on("pointerdown", ".borrarfilas", borrarFilasHandler);
       if (opcionBorrarFilasYColumnas === 1) {
-        $(document).off("click", ".borrarcolumnas", borrarColumnasHandler);
-        $(document).off("click", ".borrarfilas", borrarFilasHandler);
+        $("body").off("click", ".borrarcolumnas", borrarColumnasHandler);
+        $("body").off("click", ".borrarfilas", borrarFilasHandler);
       }
     }
     if (opcionBorrarFilasYColumnasNuevo === 1) {
-      $(document).on("click", ".borrarcolumnas", borrarColumnasHandler);
-      $(document).on("click", ".borrarfilas", borrarFilasHandler);
+      $("body").on("click", ".borrarcolumnas", borrarColumnasHandler);
+      $("body").on("click", ".borrarfilas", borrarFilasHandler);
       if (opcionBorrarFilasYColumnas === 0) {
-        $(document).off("pointerdown", ".borrarcolumnas", borrarColumnasHandler);
-        $(document).off("pointerdown", ".borrarfilas", borrarFilasHandler);
+        $("body").off("pointerdown", ".borrarcolumnas", borrarColumnasHandler);
+        $("body").off("pointerdown", ".borrarfilas", borrarFilasHandler);
       }
     }
     if (opcionBorrarFilasYColumnasNuevo === 2) {
       if (opcionBorrarFilasYColumnas === 0) {
-        $(document).off("pointerdown", ".borrarcolumnas", borrarColumnasHandler);
-        $(document).off("pointerdown", ".borrarfilas", borrarFilasHandler);
+        $("body").off("pointerdown", ".borrarcolumnas", borrarColumnasHandler);
+        $("body").off("pointerdown", ".borrarfilas", borrarFilasHandler);
       } else if (opcionBorrarFilasYColumnas === 1) {
-        $(document).off("click", ".borrarcolumnas", borrarColumnasHandler);
-        $(document).off("click", ".borrarfilas", borrarFilasHandler);
+        $("body").off("click", ".borrarcolumnas", borrarColumnasHandler);
+        $("body").off("click", ".borrarfilas", borrarFilasHandler);
       }
     }
   }
 
   if (opcionBorrarCamionesNuevo !== opcionBorrarCamiones) {
     if (opcionBorrarCamionesNuevo === 0) {
-      $(document).on("pointerdown", ".borrarcamiones", borrarCamionesHandler);
+      $("body").on("pointerdown", ".borrarcamiones", borrarCamionesHandler);
       if (opcionBorrarCamiones === 1)
-        $(document).off("click", ".borrarcamiones", borrarCamionesHandler);
+        $("body").off("click", ".borrarcamiones", borrarCamionesHandler);
     }
     if (opcionBorrarCamionesNuevo === 1) {
-      $(document).on("click", ".borrarcamiones", borrarCamionesHandler);
+      $("body").on("click", ".borrarcamiones", borrarCamionesHandler);
       if (opcionBorrarCamiones === 0)
-        $(document).off("pointerdown", ".borrarcamiones", borrarCamionesHandler);
+        $("body").off("pointerdown", ".borrarcamiones", borrarCamionesHandler);
     }
     if (opcionBorrarCamionesNuevo === 2) {
       if (opcionBorrarCamiones === 0)
-        $(document).off("pointerdown", ".borrarcamiones", borrarCamionesHandler);
+        $("body").off("pointerdown", ".borrarcamiones", borrarCamionesHandler);
       else if (opcionBorrarCamiones === 1) {
-        $(document).off("click", ".borrarcamiones", borrarCamionesHandler);
+        $("body").off("click", ".borrarcamiones", borrarCamionesHandler);
       }
     }
   }
@@ -229,10 +224,8 @@ document.getElementById('configs').addEventListener('hidden.bs.modal', () => {
 })
 
 //ordenar alfabeticamente ordenar por orden alfabetico
-$(document).on("click", 'th:not([colspan="2"])', function () {
+$("body").on("click", '.grupotabs th:not([colspan="2"])', function () {
   if (switchOrdenarOrdenAlfabetico) {
-    if (this.closest(".swal2-html-container"))
-      return
     $(".restaurarplantilla").css("display", "initial")
 
     let tabla = this.closest("table");
@@ -474,21 +467,13 @@ async function borrarFilas(celda) {
   if (result.isConfirmed) {
     let cuerpo = $(filaborrar).parent()[0];
     if (cuerpo.rows.length === 1) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: `No puedes borrar todos los productos, debe haber al menos uno`,
-      });
+      Swal.fire("Error", "No puedes borrar todos los productos, debe haber al menos uno", "error");
       return;
     }
 
     cuerpo.removeChild(filaborrar);
     calcularvendidoseingresostotal(cuerpo)
-    Swal.fire(
-      "Se ha eliminado el producto",
-      "Se ha eliminado el producto y su contenido exitosamente",
-      "success"
-    );
+    Swal.fire("Se ha eliminado el producto", "Se ha eliminado el producto y su contenido exitosamente", "success");
   }
 };
 
@@ -513,11 +498,7 @@ async function borrarColumnas(colborrar) {
   })
   if (result.isConfirmed) {
     if (_cantidadViajes() === 1) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: `No puedes borrar todos los viajes, debe haber al menos uno`,
-      });
+      Swal.fire("Error", "No puedes borrar todos los viajes, debe haber al menos uno", "error");
       return;
     }
 
@@ -540,11 +521,7 @@ async function borrarColumnas(colborrar) {
       calcularvendidoseingresos(cuerpo.rows[i])
     }
     calcularvendidoseingresostotal(cuerpo);
-    Swal.fire(
-      "Se ha eliminado la columna",
-      "Se ha eliminado la columna y todos sus contenidos exitosamente",
-      "success"
-    );
+    Swal.fire("Se ha eliminado la columna", "Se ha eliminado la columna y todos sus contenidos exitosamente", "success");
   }
 
 };
@@ -687,6 +664,10 @@ document.getElementById("resumen").addEventListener("click", async () => {
     return acc;
   }, {});
 
+  for (const el in result) {
+    result[el].ingresos = result[el].ingresos.normalizarPrecio();
+  }
+
   console.log(result);
   let html = `<table id="tablaresumen" style="margin-left: auto; margin-right:auto"><thead><tr>
     <th class="thresumenproducto">Productos</th>
@@ -701,15 +682,82 @@ document.getElementById("resumen").addEventListener("click", async () => {
   html += `</tbody><tfoot><tr><td style="text-align: center">Total:</td>
   <td class="totalresumen"></td><td class="totalresumen"></td></tr></tfoot></table>`
 
-  $(document.body).append(html)
-  calcularvendidoseingresostotal($("#tablaresumen tbody")[0]);
-  await swalContinuar.fire({
+  html += `<div class="contenedorflex">
+    <button class="btn btn-primary margenbotonswal btncontinuar2" onclick="cancelarSwal()">Continuar</button>
+    <button class="btn btn-success botonexcel" onclick="exportarAExcelResumen()" id="exportarAExcelResumen"><svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 32 32"><title>file_type_excel2</title><path d="M28.781,4.405H18.651V2.018L2,4.588V27.115l16.651,2.868V26.445H28.781A1.162,1.162,0,0,0,30,25.349V5.5A1.162,1.162,0,0,0,28.781,4.405Zm.16,21.126H18.617L18.6,23.642h2.487v-2.2H18.581l-.012-1.3h2.518v-2.2H18.55l-.012-1.3h2.549v-2.2H18.53v-1.3h2.557v-2.2H18.53v-1.3h2.557v-2.2H18.53v-2H28.941Z" style="fill:#20744a;fill-rule:evenodd"/><rect x="22.487" y="7.439" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="10.94" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="14.441" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="17.942" width="4.323" height="2.2" style="fill:#20744a"/><rect x="22.487" y="21.443" width="4.323" height="2.2" style="fill:#20744a"/><polygon points="6.347 10.673 8.493 10.55 9.842 14.259 11.436 10.397 13.582 10.274 10.976 15.54 13.582 20.819 11.313 20.666 9.781 16.642 8.248 20.513 6.163 20.329 8.585 15.666 6.347 10.673" style="fill:#fff;fill-rule:evenodd"/></svg> Exportar a Excel</button>
+    ${devuelveContenidoExportarAPDFResumen()}
+  </div>`;
+
+  await swal.fire({
     title: "Aquí puedes ver todo lo que vendiste durante el día",
     width: window.innerWidth * 0.6,
-    html: $("#tablaresumen")[0],
-    confirmButtonText: "Continuar",
-  })
+    html: html,
+    showConfirmButton: false,
+    didOpen: () => {
+      calcularvendidoseingresostotal($("#tablaresumen tbody")[0]);
+    }
+  });
 });
+
+function devuelveContenidoExportarAPDFResumen(){
+  return `<button class="btn btn-danger botonpdf" onclick="exportarAPDFResumen()" id="exportarAPDFResumen"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="30px" width="30px" version="1.1" id="Capa_1" viewBox="0 0 56 56" xml:space="preserve"><g><path style="fill:#E9E9E0;" d="M36.985,0H7.963C7.155,0,6.5,0.655,6.5,1.926V55c0,0.345,0.655,1,1.463,1h40.074   c0.808,0,1.463-0.655,1.463-1V12.978c0-0.696-0.093-0.92-0.257-1.085L37.607,0.257C37.442,0.093,37.218,0,36.985,0z"/><polygon style="fill:#D9D7CA;" points="37.5,0.151 37.5,12 49.349,12  "/><path style="fill:#CC4B4C;" d="M19.514,33.324L19.514,33.324c-0.348,0-0.682-0.113-0.967-0.326   c-1.041-0.781-1.181-1.65-1.115-2.242c0.182-1.628,2.195-3.332,5.985-5.068c1.504-3.296,2.935-7.357,3.788-10.75   c-0.998-2.172-1.968-4.99-1.261-6.643c0.248-0.579,0.557-1.023,1.134-1.215c0.228-0.076,0.804-0.172,1.016-0.172   c0.504,0,0.947,0.649,1.261,1.049c0.295,0.376,0.964,1.173-0.373,6.802c1.348,2.784,3.258,5.62,5.088,7.562   c1.311-0.237,2.439-0.358,3.358-0.358c1.566,0,2.515,0.365,2.902,1.117c0.32,0.622,0.189,1.349-0.39,2.16   c-0.557,0.779-1.325,1.191-2.22,1.191c-1.216,0-2.632-0.768-4.211-2.285c-2.837,0.593-6.15,1.651-8.828,2.822   c-0.836,1.774-1.637,3.203-2.383,4.251C21.273,32.654,20.389,33.324,19.514,33.324z M22.176,28.198   c-2.137,1.201-3.008,2.188-3.071,2.744c-0.01,0.092-0.037,0.334,0.431,0.692C19.685,31.587,20.555,31.19,22.176,28.198z    M35.813,23.756c0.815,0.627,1.014,0.944,1.547,0.944c0.234,0,0.901-0.01,1.21-0.441c0.149-0.209,0.207-0.343,0.23-0.415   c-0.123-0.065-0.286-0.197-1.175-0.197C37.12,23.648,36.485,23.67,35.813,23.756z M28.343,17.174   c-0.715,2.474-1.659,5.145-2.674,7.564c2.09-0.811,4.362-1.519,6.496-2.02C30.815,21.15,29.466,19.192,28.343,17.174z    M27.736,8.712c-0.098,0.033-1.33,1.757,0.096,3.216C28.781,9.813,27.779,8.698,27.736,8.712z"/><path style="fill:#CC4B4C;" d="M48.037,56H7.963C7.155,56,6.5,55.345,6.5,54.537V39h43v15.537C49.5,55.345,48.845,56,48.037,56z"/><g><path style="fill:#FFFFFF;" d="M17.385,53h-1.641V42.924h2.898c0.428,0,0.852,0.068,1.271,0.205    c0.419,0.137,0.795,0.342,1.128,0.615c0.333,0.273,0.602,0.604,0.807,0.991s0.308,0.822,0.308,1.306    c0,0.511-0.087,0.973-0.26,1.388c-0.173,0.415-0.415,0.764-0.725,1.046c-0.31,0.282-0.684,0.501-1.121,0.656    s-0.921,0.232-1.449,0.232h-1.217V53z M17.385,44.168v3.992h1.504c0.2,0,0.398-0.034,0.595-0.103    c0.196-0.068,0.376-0.18,0.54-0.335c0.164-0.155,0.296-0.371,0.396-0.649c0.1-0.278,0.15-0.622,0.15-1.032    c0-0.164-0.023-0.354-0.068-0.567c-0.046-0.214-0.139-0.419-0.28-0.615c-0.142-0.196-0.34-0.36-0.595-0.492    c-0.255-0.132-0.593-0.198-1.012-0.198H17.385z"/><path style="fill:#FFFFFF;" d="M32.219,47.682c0,0.829-0.089,1.538-0.267,2.126s-0.403,1.08-0.677,1.477s-0.581,0.709-0.923,0.937    s-0.672,0.398-0.991,0.513c-0.319,0.114-0.611,0.187-0.875,0.219C28.222,52.984,28.026,53,27.898,53h-3.814V42.924h3.035    c0.848,0,1.593,0.135,2.235,0.403s1.176,0.627,1.6,1.073s0.74,0.955,0.95,1.524C32.114,46.494,32.219,47.08,32.219,47.682z     M27.352,51.797c1.112,0,1.914-0.355,2.406-1.066s0.738-1.741,0.738-3.09c0-0.419-0.05-0.834-0.15-1.244    c-0.101-0.41-0.294-0.781-0.581-1.114s-0.677-0.602-1.169-0.807s-1.13-0.308-1.914-0.308h-0.957v7.629H27.352z"/><path style="fill:#FFFFFF;" d="M36.266,44.168v3.172h4.211v1.121h-4.211V53h-1.668V42.924H40.9v1.244H36.266z"/></g></g></svg> Exportar a PDF</button>`
+}
+
+async function exportarAExcelResumen(){
+  await pedirExcel();
+  
+  let nombre = `Resumen de ventas ${fechastr}.xlsx`;
+  await TableToExcel.convert($("#tablaresumen")[0],
+    {
+      name: nombre,
+      sheet: {
+        name: "Resumen"
+      }
+    });
+
+}
+
+
+
+async function exportarAPDFResumen(){
+  let btnExportar = $("#exportarAPDFResumen");
+  btnExportar.html(`  Cargando<div class="cajaspinner"><div class="spinner-border text-danger"></div>`);
+  await pedirPDF();
+  let doc = new jsPDF('p', 'pt', 'letter');
+  let margin = 20;
+  let scale = (doc.internal.pageSize.width - margin * 2) / document.body.scrollWidth;
+  let tabla = $("#tablaresumen")[0];
+  let html = `<div class="tituloresumen" style="margin-left: ${tabla.clientWidth / 2 - 150}px">Resumen	&nbsp;del día ${fechastr}</div>${tabla.outerHTML}<br><br>`;
+  doc.html(html, {
+    x: margin,
+    y: margin,
+    html2canvas: {
+      scale
+    },
+    callback: doc => {
+      let nombre = `Resumen de ventas ${fechastr}.pdf`;
+      doc.save(nombre);
+      btnExportar.html(`Archivo creado`);
+      setTimeout(() => {
+        btnExportar[0].outerHTML = devuelveContenidoExportarAPDFResumen();
+      }, 2000);
+
+
+      // doc.output("dataurlnewwindow", {
+      //   filename: "archivohtml2pdf.pdf"
+      // })
+      // let nombre = `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}.pdf`;
+      // if (desdeElMobil()) {
+      //   var blob = doc.output("blob", {
+      //     filename: nombre
+      //   });
+      //   window.open(URL.createObjectURL(blob));
+      // }
+      // else
+      //   doc.save(nombre);
+    }
+  })
+}
 
 async function borrarFilasVacias(tabla, numtabla) {
   let tablaCopia = tabla.cloneNode(true);
@@ -749,11 +797,7 @@ async function borrarFilasVacias(tabla, numtabla) {
 
   if (result.isConfirmed) {
     if (filasQueNoEstanVacias.length === 0) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: `No se puede guardar la tabla ${numtabla} porque está vacía`,
-      });
+      Swal.fire("Error", `No se puede guardar la tabla ${numtabla} porque está vacía`, "error");
       return false;
     }
     let filasVacias = Array.from(tabla.querySelector(".cuerpo").rows).filter(fila => {
@@ -923,11 +967,7 @@ async function borrarTablasVacias() {
     })
 
     reacomodarCamiones();
-    Swal.fire(
-      "Se han eliminado las tablas vacías",
-      "Se han eliminado las tablas vacías exitosamente",
-      "success"
-    );
+    Swal.fire("Se han eliminado las tablas vacías", "Se han eliminado las tablas vacías exitosamente", "success");
     return true;
   }
   return false;
@@ -964,11 +1004,7 @@ async function borrarCamiones(label, e) {
     $(label).parent().remove();
     $(`.grupotabs .tabs__content[data-tabid=${id}]`).remove();
     reacomodarCamiones();
-    Swal.fire(
-      "Se ha eliminado el camión",
-      "Se ha eliminado el camión exitosamente",
-      "success"
-    );
+    Swal.fire("Se ha eliminado el camión", "Se ha eliminado el camión exitosamente", "success");
     return true;
   }
   return false;
@@ -976,11 +1012,7 @@ async function borrarCamiones(label, e) {
 
 async function soloHayUnCamion() {
   if ($(".grupotabs table").length === 1) {
-    await Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: `No se puede borrar, debe haber al menos un camión`,
-    });
+    await Swal.fire("Error", "No se puede borrar, debe haber al menos un camión", "error");
     return true;
   }
   return false;
@@ -1057,9 +1089,8 @@ function clonaValores(tabla) {
 
 //TODO cambiar las librerias de plugins a las desargadas de internet
 document.getElementById("exportarexcel").addEventListener("click", async function () {
-  if (typeof TableToExcel === "undefined")
-    await $.getScript('/tableToExcel.js');
-  let fechastr = hoy.format("D-M-YYYY");
+  await pedirExcel();
+  console.log("oloverga")
   let nombre = `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}.xlsx`;
   TableToExcel.convert(_tabla(),
     {
@@ -1070,14 +1101,25 @@ document.getElementById("exportarexcel").addEventListener("click", async functio
     });
 })
 
-//TODO cambiar estos tambien
-document.getElementById("exportarpdf").addEventListener("click", async function () {
+async function pedirExcel(){
+  if (typeof TableToExcel === "undefined")
+    await $.getScript('/tableToExcel.js');
+}
+
+async function pedirPDF(){
   if (typeof jsPDF === "undefined") {
     // await $.getScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js');
     // await $.getScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.js');
     await $.getScript('/jspdf-1.5.3.js');
     await $.getScript('/html2canvas-1.3.2.js');
   }
+}
+
+
+
+//TODO cambiar estos tambien
+document.getElementById("exportarpdf").addEventListener("click", async function () {
+  await pedirPDF();
   let doc = new jsPDF('p', 'pt', 'letter')
   let margin = 20;
   let scale = (doc.internal.pageSize.width - margin * 2) / document.body.scrollWidth;
@@ -1105,13 +1147,11 @@ document.getElementById("exportarpdf").addEventListener("click", async function 
       scale
     },
     callback: doc => {
-      let fechastr = hoy.format("D-M-YYYY");
       let nombre = `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}.pdf`;
       doc.save(nombre);
       // doc.output("dataurlnewwindow", {
       //   filename: "archivohtml2pdf.pdf"
       // })
-      // let fechastr = hoy.format("D-M-YYYY");
       // let nombre = `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}.pdf`;
       // if (desdeElMobil()) {
       //   var blob = doc.output("blob", {
@@ -1139,11 +1179,7 @@ async function pidePlantilla(nombreplantilla) {
         listaplantillas.push(plantilla);
       },
       error: function (res) {
-        Swal.fire({
-          icon: "error",
-          title: "Ups...",
-          text: "Ha habido un error",
-        });
+        Swal.fire("Ups...", "Ha habido un error", "error");
         return;
       },
     });
@@ -1459,7 +1495,7 @@ document.querySelector(".agregarcamion").addEventListener("click", async () => {
   $(".contenidoTabs").append(nuevoCamion);
 });
 //TODO agregar botones de exportar a excel y pdf en resumen
-$(document).on('click', '.dropdown-item', function () {
+$("body").on('click', '.dropdown-item', function () {
   document.querySelector(`[data-trab="${_idTab()}"]`).value = this.innerText;
 });
 

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
+_ = require('underscore');
 
 const productoSchema = new Schema({
     producto: String,
@@ -15,5 +15,8 @@ const plantillaSchema = new Schema({
     esdefault: Boolean,
     productos: [productoSchema]
 });
+
+_.each(_.keys(productoSchema.paths), attr => productoSchema.path(attr).required(true));
+plantillaSchema.path("esdefault").required(false);
 
 module.exports = mongoose.model('plantilla', plantillaSchema);

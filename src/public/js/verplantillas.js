@@ -73,7 +73,18 @@ $(".svgeliminar").on('click', async function () {
 $(".svgver").each(function (e, btn) {
   tippy(this, {
     trigger: 'click',
-    placement: 'right',
+    placement: 'bottom',
+    allowHTML: true,
+    popperOptions: {
+      modifiers: [
+        {
+          name: 'flip',
+          options: {
+            fallbackPlacements: ['bottom', 'top', 'right', 'left'],
+          },
+        },
+      ],
+    },
     arrow: false,
     content: "Cargando...",
     onCreate(instance) {
@@ -111,6 +122,7 @@ $(".svgver").each(function (e, btn) {
           plantilla += `</table>`;
           instance._src = plantilla;
           instance.setContent(plantilla);
+          instance.popperInstance.update();
         },
         error: res => {
           instance._error = "Error al cargar la plantilla";
@@ -138,7 +150,7 @@ $("#guardar").on('click', function () {
 
   guardar += `] }`
   $.ajax({
-    url: "/plantillas/actualizarverplantillas",
+    url: "/plantillas",
     method: "PATCH",
     contentType: "application/json",
     data: guardar,

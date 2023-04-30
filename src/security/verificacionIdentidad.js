@@ -5,7 +5,7 @@ function verificacionIdentidad(req, res, next) {
   }
 
   if (req.user.contraseña !== req.body.contraseñaVerificacion) {
-    res.status(400).send("Contraseña de verificación del usuario incorrecta")
+    res.status(400).send("Contraseña incorrecta")
     return;
   }
   return next();

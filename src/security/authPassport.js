@@ -31,23 +31,11 @@ passport.use('iniciarSesion', new LocalStrategy({
     return done(null, false, req.flash('cantidadMaximaInicioSesion', 'Se ha superado la cantidad maxima'));
   }
 
-
-  console.log("uwu")
-  console.log(cantidadRequestsInvalidas)
-  console.log(cantidadMaximaPeticionesInvalidas)
-  console.log(cantidadRequestsInvalidas === cantidadMaximaPeticionesInvalidas)
-
-  if (cantidadRequestsInvalidas === cantidadMaximaPeticionesInvalidas){
-    console.log("gagaga")
+  if (cantidadRequestsInvalidas === cantidadMaximaPeticionesInvalidas)
     req.flash('cantidadMaximaInicioSesion', 'Se ha superado la cantidad maxima');
-  }
 
   else if (cantidadRequestsInvalidas === (cantidadMaximaPeticionesInvalidas - 1))
-  {
-    console.log("gegege")
     req.flash('cantidadMaximaInicioSesion', 'Solo te queda un intento');
-  }
-
 
   await redis.incr(textoIP);
   const user = await Usuarios.findOne({ usuario: usuario });

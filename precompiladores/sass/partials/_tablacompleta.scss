@@ -20,6 +20,7 @@ th {
   width: 90px;
   min-width: 90px;
   text-align: center !important;
+  position: relative;
 }
 
 .pintarcolumnas col:nth-child(2n) {
@@ -73,10 +74,6 @@ tfoot td:first-child {
 
 .tabs {
   margin-bottom: 10px;
-}
-
-th {
-  position: relative;
 }
 
 .grupotabs {
