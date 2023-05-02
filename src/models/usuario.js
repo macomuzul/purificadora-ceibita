@@ -10,6 +10,5 @@ const usuarioSchema = new Schema({
 });
 
 _.each(_.keys(usuarioSchema.paths), attr => usuarioSchema.path(attr).required(true));
-usuarioSchema.path("correo").required(false);
 
 module.exports = mongoose.model('usuarios', usuarioSchema);

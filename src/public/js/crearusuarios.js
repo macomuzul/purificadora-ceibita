@@ -3,34 +3,36 @@ let usuario;
 let contraseña;
 let confirmarContraseña;
 let rol;
+let correo;
+
+toastr.options = {
+  "closeButton": true,
+  "progressBar": true,
+  "positionClass": "toast-bottom-right",
+  "preventDuplicates": false,
+  "timeOut": "100000",
+  "extendedTimeOut": "100000",
+}
+
 
 $("body").on('click', '.dropdown-item', function () {
   $(this).closest(".dropdown-menu").prev()[0].innerText = this.innerText;
 });
 
 async function validarDatos() {
-  if (usuario === "" || contraseña === "" || confirmarContraseña === "") {
-    mostrarError("Por favor llenar todos los campos")
-    return false;
-  }
+  if (usuario === "" || contraseña === "" || confirmarContraseña === "")
+    return mostrarError("Por favor llenar todos los campos");
+  if (contraseña !== confirmarContraseña)
+    return mostrarError("Las contraseñas no coinciden");
+  if (rol === "Escoge un rol")
+    return mostrarError("No se ha escogido ningún rol para el usuario");
 
-  if (contraseña !== confirmarContraseña) {
-    mostrarError("Las contraseñas no coinciden")
-    return false;
-  }
-  if (rol === "Escoge un rol") {
-    mostrarError("No se ha escogido ningún rol para el usuario")
-    return false;
-  }
   return true;
 }
 
 function mostrarError(error) {
-  Swal.fire({
-    icon: "error",
-    title: "Error",
-    text: error,
-  });
+  Swal.fire("Error", error, "error");
+  return false;
 }
 
 $("body").on('click', '#guardar', async function () {
@@ -41,12 +43,18 @@ $("body").on('click', '#guardar', async function () {
   let validacion = await validarDatos();
   if (!validacion)
     return;
+  let inputCorreo = document.getElementById("correo");
+  correo = inputCorreo.value;
+  if (correo !== "") {
+    if (!inputCorreo.validar())
+      return mostrarError("correo inválido");
+  }
   modal.show();
 });
 
 funcionEnviar = async function () {
   let contraseñaVerificacion = $("#verificacionIdentidad")[0].value;
-  let mandar = `{ "usuario": "${usuario.trim()}", "contraseña": "${contraseña}", "rol": "${rol}",  "contraseñaVerificacion": "${contraseñaVerificacion}"}`
+  let mandar = `{ "usuario": "${usuario.trim()}", "contraseña": "${contraseña}", "correo": "${correo !== "" ? correo.trim() : "-"}", "rol": "${rol}",  "contraseñaVerificacion": "${contraseñaVerificacion}"}`
   modal.hide();
   $.ajax({
     url: `/empleados/usuarios/crear`,
@@ -54,18 +62,13 @@ funcionEnviar = async function () {
     contentType: "application/json",
     data: mandar,
     success: res => {
-      Swal.fire(
-        "ÉXITO",
-        "Se ha guardado el usuario correctamente",
-        "success"
-      );
+      Swal.fire("ÉXITO", "Se ha guardado el usuario correctamente", "success");
+      if(correo !== ""){
+        toastr.info("Se ha enviado un mensaje a tu correo para validarlo", "Atención");
+      }
     },
     error: res => {
-      Swal.fire({
-        icon: "error",
-        title: "Ups...",
-        text: res.responseText,
-      });
+      Swal.fire("Ups...", res.responseText, "error");
     },
   });
 }

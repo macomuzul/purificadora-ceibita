@@ -33,7 +33,7 @@ main {
   overflow-y: auto;
   overflow-x: hidden;
   position: fixed;
-  z-index: 200;
+  z-index: 99999;
   background-color: var(--bg-primary);
   transition: width 600ms ease;
   margin: 0;
@@ -219,11 +219,6 @@ main {
   .link-text {
     margin-left: -5px;
   }
-}
-
-.romperPalabra{
-  display: flex;
-  flex-direction: column;
 }
 
 .nav-item-compuesto{

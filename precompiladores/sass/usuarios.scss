@@ -89,9 +89,16 @@ td {
 }
 
 .usuario,
-.contraseña,
-.rol {
+.contraseña{
   min-width: 200px;
+}
+
+.rol{
+  min-width: 180px;
+}
+
+.correo{
+  min-width: 250px;
 }
 
 section {

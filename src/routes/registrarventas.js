@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const ventaspordia = require("../models/registroventaspordia");
 const plantilla = require("../models/plantillas");
-const Respaldo = require("../models/respaldo");
+const Respaldo = require("../models/registroseliminados");
 const { DateTime } = require("luxon");
 
 router.post("/guardar", async (req, res) => {

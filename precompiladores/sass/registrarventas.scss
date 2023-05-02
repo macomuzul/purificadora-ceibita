@@ -463,3 +463,13 @@ th {
   width: 20px;
   height: 20px;
 }
+
+.modal-body{
+  max-height: calc(100vh - 250px);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.grupomodal{
+  text-align: center;
+}

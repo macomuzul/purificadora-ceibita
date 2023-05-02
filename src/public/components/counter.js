@@ -45,7 +45,6 @@ class counter extends HTMLElement {
 
   cuentaAtras(cantidad, obj, estilo, cb) {
     this.timerId = setTimeout(() => {
-      console.log(cantidad)
       cantidad--;
       estilo.setProperty("--value", cantidad);
       if (cantidad <= 3)

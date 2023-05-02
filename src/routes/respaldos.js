@@ -1,6 +1,6 @@
 require('dotenv').config()
 const router = require("express").Router();
-const Respaldo = require("../models/respaldo");
+const Respaldo = require("../models/registroseliminados");
 const VENTASPORDIA = require("../models/registroventaspordia");
 const { DateTime } = require("luxon");
 const { google } = require("googleapis")

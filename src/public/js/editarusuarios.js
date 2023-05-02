@@ -1,9 +1,7 @@
 $("body").on("click", "#cambiarUsuario", function () {
   let usuario = document.getElementById("usuario").value;
-  if (usuario === "") {
-    mostrarError("El campo de usuario está vacío")
-    return;
-  }
+  if (usuario === "")
+    return mostrarError("El campo de usuario está vacío");
   funcionEnviar = enviar(`"usuario": "${usuario.trim()}"`, "Se ha cambiado el nombre de usuario correctamente");
   modal.show();
 });
@@ -15,32 +13,32 @@ $("body").on('click', '.dropdown-item', function () {
 $("body").on("click", "#cambiarContraseña", function () {
   let contraseña = document.getElementById("contraseña").value;
   let confirmarContraseña = document.getElementById("confirmarContraseña").value;
-  if (contraseña !== confirmarContraseña) {
-    mostrarError("Las contraseñas no coinciden");
-    return;
-  }
+  if (contraseña !== confirmarContraseña)
+    return mostrarError("Las contraseñas no coinciden");
   funcionEnviar = enviar(`"contraseña": "${contraseña}"`, "Se ha cambiado la contraseña correctamente");
   modal.show();
 });
 
 $("body").on("click", "#cambiarRol", function () {
   rol = document.getElementById("rol").innerText;
-  if (rol === "Escoge un rol") {
-    mostrarError("No se ha escogido ningún rol para el usuario")
-    return;
-  }
+  if (rol === "Escoge un rol")
+    return mostrarError("No se ha escogido ningún rol para el usuario")
   funcionEnviar = enviar(`"rol": "${rol}"`, "Se ha cambiado el rol correctamente");
+  modal.show();
+});
+
+$("body").on("click", "#cambiarCorreo", function () {
+  correo = document.getElementById("correo");
+  if(!correo.validar())
+    return;
+  funcionEnviar = enviar(`"correo": "${correo}"`, "Se ha cambiado el correo correctamente");
   modal.show();
 });
 
 
 
 function mostrarError(error) {
-  Swal.fire({
-    icon: "error",
-    title: "Error",
-    text: error,
-  });
+  Swal.fire("Error", error, "error");
 }
 
 

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const ventaspordia = require('../models/registroventaspordia');
+const ventaspordia = require('./registroventaspordia');
 _ = require('underscore');
 
 const respaldoSchema = new Schema({

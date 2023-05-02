@@ -4,8 +4,9 @@
     padding: 4px;
   }
 
-  body>#toast-container>.toast-error {
-    background-image: none !important;
+  
+  #toast-container>.toast-warning:before {
+    content: "\f003";
   }
 
   #toast-container>.toast::before {
@@ -19,8 +20,8 @@
     margin: auto 0.5em auto -1.5em;
   }
 
-  #toast-container>.toast-warning:before {
-    content: "\f003";
+  body>#toast-container>.toast-error {
+    background-image: none !important;
   }
 
   #toast-container>.toast-error::before{
