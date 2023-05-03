@@ -468,6 +468,11 @@ th {
   max-height: calc(100vh - 250px);
   overflow-x: hidden;
   overflow-y: auto;
+  margin-top: -4px;
+
+  hr{
+    margin: 12px 0;
+  }
 }
 
 .grupomodal{

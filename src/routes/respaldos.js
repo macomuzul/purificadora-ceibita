@@ -7,6 +7,7 @@ const { google } = require("googleapis")
 const stream = require("stream")
 const BSON = require('bson');
 const nodemailer = require("nodemailer");
+const redis = require('../redis');
 const { send } = require('process');
 
 const oauth2Client = new google.auth.OAuth2(
@@ -157,7 +158,7 @@ router.delete("/borrarregistrosseleccionados", async (req, res) => {
   }
 });
 
-router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", async (req, res) => {
+router.get("/registroseliminados/:buscarpor&entre&:fecha1&y&:fecha2&:pag", async (req, res) => {
   try {
     let { buscarpor, fecha1, fecha2, pag } = req.params;
     if (buscarpor != "fecha" && buscarpor != "fechaeliminacion")
@@ -181,7 +182,7 @@ router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", async (req, res) => {
 });
 
 
-router.get("/:buscarpor&:rango&:fecha&:pag", async (req, res) => {
+router.get("/registroseliminados/:buscarpor&:rango&:fecha&:pag", async (req, res) => {
   try {
     let { buscarpor, rango, fecha, pag } = req.params;
     if (buscarpor != "fecha" && buscarpor != "fechaeliminacion")
@@ -232,7 +233,7 @@ function mostrarPagina(resultado, req, res) {
         break;
     }
   }
-  res.render("gruporegistroseliminados", { datostablas, pagina, totalPaginas, DateTime });
+  res.render("mostrarregistroseliminados", { datostablas, pagina, totalPaginas, DateTime });
 }
 
 module.exports = router;

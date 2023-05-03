@@ -9,7 +9,7 @@ router.get('/', async (req, res) => {
 
 router.route('/usuarios').get(async (req, res) => {
   const usuarios = await mUsuario.find();
-  res.render('usuarios', { usuarios });
+  res.render('verusuarios', { usuarios });
 }).post(verificacionIdentidad, async (req, res) => {
   try {
     let { usuario } = req.body;

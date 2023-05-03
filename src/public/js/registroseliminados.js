@@ -1,5 +1,4 @@
-
-var txtnombre = document.getElementById("nombreplantilla");
+let txtnombre = document.getElementById("nombreplantilla");
 window.addEventListener("click", (e) => {
   menuseleccionado?.classList.remove("menu-open");
 });
@@ -28,34 +27,32 @@ $(".date")
 
 jQuery.expr.filters.offscreen = function (el) {
   var rect = el.getBoundingClientRect();
-  return (
-    (rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight
-  );
+  return ((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight);
 };
 
-var btnbuscar = document.getElementById("btnbuscar")
-btnbuscar.addEventListener("click", () => {
+document.getElementById("btnbuscar").addEventListener("click", () => {
   let buscarpor = $("#buscarpor")[0].innerText;
   let rango = $("#rangofecha")[0].innerText;
   let fecha = $("#calendario1")[0].value;
 
-  if (buscarpor === "Buscar por" || rango === "Elige un rango" || fecha === "") {
+  if (buscarpor === "Buscar por" || rango === "Elige un rango" || fecha === "")
     return;
-  }
+
   if (buscarpor === "Fecha (calendario)") buscarpor = "fecha"
-  if (buscarpor === "Fecha de eliminación") buscarpor = "fechaeliminacion"
+  else if (buscarpor === "Fecha de eliminación") buscarpor = "fechaeliminacion"
 
   if (rango === "Fecha igual a") rango = "igual"
-  if (rango === "Fecha menor o igual a") rango = "menor"
-  if (rango === "Fecha mayor o igual a") rango = "mayor"
-  if (rango === "Fecha entre") rango = "entre"
+  else if (rango === "Fecha menor o igual a") rango = "menor"
+  else if (rango === "Fecha mayor o igual a") rango = "mayor"
+  else if (rango === "Fecha entre") rango = "entre"
   fecha = fecha.replaceAll("/", "-");
 
+  let url = `/respaldos/registroseliminados/${buscarpor}&${rango}&${fecha}&`
   if (rango !== "entre")
-    window.location = `/respaldos/${buscarpor}&${rango}&${fecha}&pag=1`;
+    window.location = `${url}pag=1`;
   else {
     let fecha2 = $("#calendario2")[0].value;
     fecha2 = fecha2.replaceAll("/", "-");
-    window.location = `/respaldos/${buscarpor}&${rango}&${fecha}&y&${fecha2}&pag=1`;
+    window.location = `${url}y&${fecha2}&pag=1`;
   }
 })
