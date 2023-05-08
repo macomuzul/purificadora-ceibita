@@ -3,11 +3,11 @@
 <head>
   <title>Registrar ventas</title>
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  //TODO por el momento no hace nada pero tal vez haga despues jquery ui css
   <link href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" /> -->
   <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"> -->
   <%- include("layouts/global") %>
   <link rel="stylesheet" href="/bootstrap-5.2.3.css">
-  <link rel="stylesheet" href="/jquery-ui-1.12.css">
   <link rel="stylesheet" href="/registrarventas.min.css">
 
   <!-- <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
@@ -16,12 +16,16 @@
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
   <!-- <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script> -->
 
+  
+  <!-- //TODO este descomentarlo despues -->
   <script defer src="/bootstrap-5.2.3.js"></script>
   <script defer src="/dayjs.js"></script>
   <script defer src="/dayjs-plugin-utc.js"></script>
   <script defer src="/jquery-3.6.js"></script>
   <script defer src="/sweetalert-2.11.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <!-- <script defer src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+  <script defer src="/jquery-ui-1.13.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script> -->
   <script defer src="/tecladoTabla.js"></script>
   <script defer src="/colocarDatosTablaTests.js"></script>
   <script defer src="/registrarventas.js"></script>
@@ -85,17 +89,16 @@
               <% for (let j=0; j < (ventaspordia?.camiones.length ?? 1); j++){ %>
               <div data-tabid="<%=j%>" class="tabs__content">
                   <div class="contenedor-trabajador">
-                    <label class="label-trabajador">Nombre del trabajador:</label>
+                    <label class="label-trabajador">Nombre del conductor:</label>
                     <div class="contenedor-input-trabajador">
-                      <input type="text" class="form-control trabajador" data-trab="<%=j%>"
+                      <input type="text" class="form-control trabajador"
                       <% if (ventaspordia) { %> value= <%= ventaspordia.camiones[0].nombretrabajador %> <% } %>/>
                       <div class="btn-group dropend">
-                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
-                          <span class="visually-hidden">Toggle Dropdown</span>
-                        </button>
+                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                          <li class="dropdown-item">Action</li>
-                          <li class="dropdown-item">Another action</li>
+                          <% camioneros.forEach(camionero => { %>
+                            <li class="dropdown-item"><%= camionero %></li>
+                          <% }) %>
                         </ul>
                       </div>
                     </div>
@@ -126,103 +129,109 @@
         </div> 
          %>
         <input class="btn btn-primary añadirproductoyviaje resumen" type="button" value="Ver resumen del día" id="resumen"> 
-      </div>    
+      </div>
     </main>
 
 
 
-    <div class="modal fade" id="configs" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="staticBackdropLabel">Configuraciones</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="grupomodal">Ordenar alfabéticamente</div>
+  <div class="modal fade" id="configs" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Configuraciones</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="grupomodal">Ordenar alfabéticamente</div>
+          <hr>
+          <article>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="switchreordenalfabetico" checked>
+              <label class="form-check-label" for="switchreordenalfabetico">Agregar ícono para ordenar por orden alfabético</label>
+            </div>
             <hr>
-            <article>
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="switchreordenalfabetico" checked>
-                <label class="form-check-label" for="switchreordenalfabetico">Agregar ícono para ordenar por orden alfabético</label>
-              </div>
-              <hr>
-              <div class="grupomodal">Cambiar orden de</div>
-              <hr>
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="switchreordenarproductos">
-                <label class="form-check-label" for="switchreordenarproductos">Cambiar el orden de los productos de las tablas</label>
-              </div>
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="switchreordenarcamiones">
-                <label class="form-check-label" for="switchreordenarcamiones">Cambiar el orden de los camiones</label>
-              </div>
-            </article>
+            <div class="grupomodal">Cambiar orden de</div>
             <hr>
-            <div class="grupomodal">Borrar elementos</div>
-            <hr>
-            <article>
-              <div class="titulosecundarioconfiguraciones">¿Cómo prefiere borrar los camiones?</div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="borrarcamiones" id="camionespresionar1segundo">
-                <label class="form-check-label" for="camionespresionar1segundo">Presionando la pestaña por 1 segundo</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="borrarcamiones" id="camionespresionarx" checked>
-                <label class="form-check-label" for="camionespresionarx">Presionando un botón con una X</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="borrarcamiones" id="camionesdesactivar">
-                <label class="form-check-label" for="camionesdesactivar">Desactivar</label>
-              </div>
-            </article>
-            <article>
-              <div class="titulosecundarioconfiguraciones">¿Cómo prefiere borrar filas y columnas en las tablas?</div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="borrarfilasycolumnas" id="filasycolumnaspresionar1segundo" >
-                <label class="form-check-label" for="filasycolumnaspresionar1segundo">Presionando una celda por 1 segundo</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="borrarfilasycolumnas" id="filasycolumnaspresionarx" checked>
-                <label class="form-check-label" for="filasycolumnaspresionarx">Presionando un botón con una X</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="borrarfilasycolumnas" id="filasycolumnasdesactivar">
-                <label class="form-check-label" for="filasycolumnasdesactivar">Desactivar</label>
-              </div>
-            </article>
-            <hr>
-              <div class="grupomodal">Exportar tablas</div>
-            <hr>
-            <article>
-              <div class="titulosecundarioconfiguraciones">¿Cuál desesa que sea el comportamiento por defecto del botón exportar a PDF?</div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="exportarpdf" id="exportarpdfactual" >
-                <label class="form-check-label" for="exportarpdfactual">Exportar solo la tabla actual</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="exportarpdf" id="exportarpdftodo" checked>
-                <label class="form-check-label" for="exportarpdftodo">Exportar todas las tablas</label>
-              </div>
-            </article>
-            <article>
-              <div class="titulosecundarioconfiguraciones">¿Cuál desesa que sea el comportamiento por defecto del botón exportar a Excel?</div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="exportarexcel" id="exportarexcelactual" >
-                <label class="form-check-label" for="exportarexcelactual">Exportar solo la tabla actual</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="exportarexcel" id="exportarexceltodo" checked>
-                <label class="form-check-label" for="exportarexceltodo">Exportar todas las tablas</label>
-              </div>
-            </article>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary btn-config guardarconfig" data-bs-dismiss="modal">Guardar cambios</button>
-            <button type="button" class="btn btn-danger btn-config cerrarconfig" data-bs-dismiss="modal">Cerrar</button>
-          </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="switchreordenarproductos">
+              <label class="form-check-label" for="switchreordenarproductos">Cambiar el orden de los productos de las tablas</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="switchreordenarcamiones">
+              <label class="form-check-label" for="switchreordenarcamiones">Cambiar el orden de los camiones</label>
+            </div>
+          </article>
+          <hr>
+          <div class="grupomodal">Borrar elementos</div>
+          <hr>
+          <article>
+            <div class="titulosecundarioconfiguraciones">¿Cómo prefiere borrar los camiones?</div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="borrarcamiones" id="camionespresionar1segundo">
+              <label class="form-check-label" for="camionespresionar1segundo">Presionando la pestaña por 1 segundo</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="borrarcamiones" id="camionespresionarx" checked>
+              <label class="form-check-label" for="camionespresionarx">Presionando un botón con una X</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="borrarcamiones" id="camionesdesactivar">
+              <label class="form-check-label" for="camionesdesactivar">Desactivar</label>
+            </div>
+          </article>
+          <article>
+            <div class="titulosecundarioconfiguraciones">¿Cómo prefiere borrar filas y columnas en las tablas?</div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="borrarfilasycolumnas" id="filasycolumnaspresionar1segundo" >
+              <label class="form-check-label" for="filasycolumnaspresionar1segundo">Presionando una celda por 1 segundo</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="borrarfilasycolumnas" id="filasycolumnaspresionarx" checked>
+              <label class="form-check-label" for="filasycolumnaspresionarx">Presionando un botón con una X</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="borrarfilasycolumnas" id="filasycolumnasdesactivar">
+              <label class="form-check-label" for="filasycolumnasdesactivar">Desactivar</label>
+            </div>
+          </article>
+          <hr>
+            <div class="grupomodal">Exportar tablas</div>
+          <hr>
+          <article>
+            <div class="titulosecundarioconfiguraciones">¿Cuál desesa que sea el comportamiento por defecto del botón exportar a PDF?</div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="exportarpdf" id="exportarpdfactual" >
+              <label class="form-check-label" for="exportarpdfactual">Exportar solo la tabla actual</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="exportarpdf" id="exportarpdftodo" checked>
+              <label class="form-check-label" for="exportarpdftodo">Exportar todas las tablas</label>
+            </div>
+          </article>
+          <article>
+            <div class="titulosecundarioconfiguraciones">¿Cuál desesa que sea el comportamiento por defecto del botón exportar a Excel?</div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="exportarexcel" id="exportarexcelactual" >
+              <label class="form-check-label" for="exportarexcelactual">Exportar solo la tabla actual</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="exportarexcel" id="exportarexceltodo" checked>
+              <label class="form-check-label" for="exportarexceltodo">Exportar todas las tablas</label>
+            </div>
+          </article>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-config guardarconfig" data-bs-dismiss="modal">Guardar cambios</button>
+          <button type="button" class="btn btn-danger btn-config cerrarconfig" data-bs-dismiss="modal">Cerrar</button>
         </div>
       </div>
     </div>
+  </div>
 </body>
+<script>
+  let camioneros = [];
+  "<% camioneros.forEach(camionero => { %>"
+    camioneros.push("<%= camionero %>")
+  "<% }) %>"
+</script>
 </html>

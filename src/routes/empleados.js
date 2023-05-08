@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const mUsuario = require('../models/usuario');
+const mCamioneros = require('../models/camioneros');
 const verificacionIdentidad = require("../security/verificacionIdentidad");
 
 router.get('/', async (req, res) => {
@@ -79,9 +80,27 @@ router.route('/usuarios/editar/:id')
     }
   });
 
-router.get('/camioneros', async (req, res) => {
-  const usuarios = await mUsuario.find();
-  res.render('camioneros', { usuarios });
+router.route('/camioneros').get(async (req, res) => {
+  const camioneros = await mCamioneros.findOne();
+  res.render('camioneros', { camioneros });
+}).post(async (req, res) => {
+  try {
+    let peticion = req.body;
+    if(!Object.keys(peticion).includes("camioneros"))
+      return res.send("Petición inválida")
+    
+    let camioneros = new mCamioneros(peticion);
+    let camionerosAnterior = await mCamioneros.find();
+    console.log(camionerosAnterior.length)
+    if(camionerosAnterior.length === 1)
+      await mCamioneros.updateOne({}, peticion);
+    else
+      await camioneros.save();
+    res.send("Se ha guardado correctamente")
+  } catch (error) {
+    console.log(error)
+    res.status(400).send("Ha habido un error al momento de guardar")
+  }
 });
 
 module.exports = router;

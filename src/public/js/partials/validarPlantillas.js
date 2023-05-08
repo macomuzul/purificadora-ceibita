@@ -1,66 +1,55 @@
 //TODO validar que las plantillas no tengan el mismo nombre
 async function validarPlantillas() {
-  let tabla = $("tbody")[0];
-  let filas = tabla.rows;
-  if ($("#nombreplantilla")[0].value === "") {
-    await Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "El nombre de plantilla está vacío",
-    });
-    return false;
-  }
+  let productos = [...$("tbody td:nth-child(1)")];
+  let precios = [...$("tbody td:nth-child(2)")];
+  $('#nombreplantilla').val((_, val) => val.trim());
+  if ($('#nombreplantilla').val() === "")
+    return mostrarError("El nombre de la plantilla está vacío");
 
-  if (filas.length < 1) {
-    await Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "No hay productos qué guardar",
-    });
-    return false;
-  }
-  for (let i = 0; i < filas.length; i++) {
-    if (filas[i].cells[0].innerText === "") {
-      await Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Hay un producto sin nombre",
-      });
-      return false;
-    }
-  }
-  for (let i = 0; i < filas.length; i++) {
-    if (filas[i].cells[1].innerText === "") {
-      await Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Hay un precio vacio",
-      });
-      return false;
-    }
-  }
+  if (productos.length < 1)
+    return mostrarError("No hay productos qué guardar");
 
-  for (let i = 0; i < filas.length; i++) {
-    let precio = filas[i].cells[1].innerText;
+  productos.forEach(el => el.textContent = el.innerText.trim());
+  if (productos.some(el => el.textContent === ""))
+    return mostrarError("Hay un producto sin nombre");
+
+  precios.forEach(el => {
+    let precio = el.innerText;
     if (precio.endsWith("."))
-      filas[i].cells[1].innerText = precio.replace(".", "")
-  }
-
-  for (let i = 0; i < filas.length; i++) {
-    let precio = filas[i].cells[1].innerText;
+      el.innerText = precio.replace(".", "");
     if (precio.startsWith("."))
-      filas[i].cells[1].innerText = precio.replace(".", "0.")
-  }
-
-  for (let i = 0; i < filas.length; i++) {
-    if (filas[i].cells[1].innerText === "0") {
-      await Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Hay un precio con valor 0",
+      el.innerText = precio.replace(".", "0.");
+  });
+  if (precios.some(el => el.innerText === ""))
+    return mostrarError("Hay un precio vacio");
+  if (precios.some(el => el.innerText === "0"))
+    return mostrarError("Hay un precio con valor 0");
+  let arrayNormalizado = productos.map(el => el.textContent.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, ""));
+  let hayRepetidos = arrayNormalizado.some((item, index) => {
+    if (arrayNormalizado.indexOf(item) !== index){
+      let tablaCopia = $("table")[0].cloneNode(true);
+      $(tablaCopia).find("tr").each((_, el) => { 
+        el.removeChild(el.lastElementChild)
       });
-      return false;
+      $(tablaCopia).find("td").each((_, el) => el.setAttribute("contenteditable", "false"));
+      let productosCopia = $(tablaCopia).find("tbody td:first-child");
+      productosCopia[arrayNormalizado.indexOf(item)].classList.add("enfocar");
+      productosCopia[index].classList.add("enfocar");
+      Swal.fire({
+        title: `Se ha encontrado productos con el mismo nombre`,
+        icon: "error",
+        width: window.innerWidth * 1 / 2,
+        html: tablaCopia,
+        confirmButtonText: "Continuar"
+      });
+      return true;
     }
-  }
-  return true;
+    return false
+  });
+  return !hayRepetidos;
+}
+
+function mostrarError(error) {
+  Swal.fire("Error", error, "error");
+  return false;
 }

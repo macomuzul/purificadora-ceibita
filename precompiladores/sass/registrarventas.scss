@@ -231,6 +231,7 @@ h4 {
   border: none;
   border-radius: 5px;
   color: white;
+  font-weight: 500;
   &:hover {
     opacity: 0.8;
   }
@@ -464,15 +465,25 @@ th {
   height: 20px;
 }
 
-.modal-body{
-  max-height: calc(100vh - 250px);
-  overflow-x: hidden;
-  overflow-y: auto;
-  margin-top: -4px;
+// .modal-body{
+//   max-height: calc(100vh - 250px);
+//   overflow-x: hidden;
+//   overflow-y: auto;
+//   margin-top: -4px;
 
-  hr{
-    margin: 12px 0;
-  }
+//   hr{
+//     margin: 12px 0;
+//   }
+// }
+
+// @media (max-height: 620px) {
+//   .modal-body{
+//     max-height: calc(100vh - 150px);
+//   }
+// }
+
+.modal.fade.show{
+  padding-right: 0 !important;
 }
 
 .grupomodal{

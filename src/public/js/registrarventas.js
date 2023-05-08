@@ -11,12 +11,17 @@ let arreglado;
 let resPlantillas = {};
 let yaSeRecibioTouch = false;
 let fechastr = hoy.format("D-M-YYYY");
+console.log(camioneros)
+console.log(typeof camioneros)
 
-let desdeElMobil = function () { return /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent) }
+// let desdeElMobil = function () { return /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent) }
+let desdeElMobil = function () { return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)); }
 
-if (desdeElMobil())
-  document.querySelector(".modal-dialog").classList.remove("modal-dialog-centered", "modal-lg")
-
+async function devuelveTouch(){
+  if (desdeElMobil())
+    await $.getScript('/touch.js');
+}
+devuelveTouch();
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]') //estos son para el bootstrap
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
@@ -105,40 +110,31 @@ async function guardarValoresConfig() {
   else
     document.querySelectorAll('.contenidotabs').forEach(el => el.classList.remove("ordenarAlfabeticamente"));
 
-  if ((switchReordenarCamiones || switchReordenarProductos) && typeof $.Widget === "undefined") {
-    await $.getScript('/jquery-ui-1.13.js');
-    if (desdeElMobil() && !yaSeRecibioTouch) {
-      await $.getScript('/touch.js');
-      yaSeRecibioTouch = true;
+  $(".tabs").sortable({
+    axis: "x", stop: function () {
+      let tabs = document.querySelectorAll(".tabs label");
+      for (let i = 0; i < tabs.length; i++) {
+        tabs[i].innerText = `Camión ${i + 1}`;
+      }
+    },
+    items: "> div:not(:last-child)",
+    disabled: !switchReordenarCamiones,
+    stop: function () {
+      reacomodarCamiones();
+      Swal.fire("Se ha cambiado el orden", "Se ha cambiado el orden de los camiones exitosamente", "success");
     }
-  }
+  });
 
-  if (typeof $.Widget !== "undefined") {
-    $(".tabs").sortable({
-      axis: "x", stop: function () {
-        let tabs = document.querySelectorAll(".tabs label");
-        for (let i = 0; i < tabs.length; i++) {
-          tabs[i].innerText = `Camión ${i + 1}`;
-        }
-      },
-      items: "> div:not(:last-child)",
-      disabled: !switchReordenarCamiones,
-      stop: function () {
-        reacomodarCamiones();
-        Swal.fire("Se ha cambiado el orden", "Se ha cambiado el orden de los camiones exitosamente", "success");
-      }
-    });
-
-    $(".grupotabs table tbody").sortable({
-      axis: "y",
-      disabled: !switchReordenarProductos,
-      stop: function () {
-
-      }
-    });
-  }
-
+  tablasSortable();
 }
+
+function tablasSortable(){
+  $(".grupotabs table .cuerpo").sortable({
+    axis: "y",
+    disabled: !switchReordenarProductos
+  });
+}
+
 
 $("body").on("click", ".guardarconfig", () => {
   colocarValoresConfig();
@@ -228,17 +224,22 @@ document.getElementById('configs').addEventListener('hidden.bs.modal', () => {
 })
 
 //ordenar alfabeticamente ordenar por orden alfabetico
-$("body").on("click", '.grupotabs th:not([colspan="2"])', function () {
+$("body").on("click", '.grupotabs th:not([colspan="2"]), #tablaresumen th', function () {
   if (switchOrdenarOrdenAlfabetico) {
-    $(".restaurarplantilla").css("display", "initial")
-
     let tabla = this.closest("table");
+    let esResumen = (tabla.id === "tablaresumen")
+    let cuerpo
+    if (!esResumen) {
+      $(".restaurarplantilla").css("display", "initial")
+      cuerpo = tabla.querySelector(".cuerpo");
+    } else
+      cuerpo = tabla.querySelector("tbody");
+
     let flecha = window.getComputedStyle(this, ':after').content;
     let order = (flecha === '"↓"') ? "asc" : "desc";
     let separador = "-----";
     let objValores = {};
     let listaIdentifObjValores = [];
-    let cuerpo = tabla.querySelector(".cuerpo");
     let listaReordenarPlantillasHelper = []
     let indiceColumna = this.cellIndex;
     let nombreColumna = this.innerText;
@@ -256,8 +257,10 @@ $("body").on("click", '.grupotabs th:not([colspan="2"])', function () {
       listaIdentifObjValores.push(textoCelda + separador + indice);
     });
 
-    if (!objReordenarPlantillas[tabla.closest(".tabs__content").dataset.tabid])
-      objReordenarPlantillas[tabla.closest(".tabs__content").dataset.tabid] = listaReordenarPlantillasHelper;
+    if (!esResumen) {
+      if (!objReordenarPlantillas[tabla.closest(".tabs__content").dataset.tabid])
+        objReordenarPlantillas[tabla.closest(".tabs__content").dataset.tabid] = listaReordenarPlantillasHelper;
+    }
 
     let listaElementosColumna = Array.from(cuerpo.querySelectorAll(`td:nth-child(${(indiceColumna + 1)})`))
     let todosSonNumeros = listaElementosColumna.every(el => !isNaN(parseFloat(el.innerText)))
@@ -270,9 +273,8 @@ $("body").on("click", '.grupotabs th:not([colspan="2"])', function () {
         return cuerpo.rows[parseInt(aa[1])].cells[0].innerText.localeCompare(cuerpo.rows[parseInt(bb[1])].cells[0].innerText)
       });
     }
-    else {
+    else
       listaIdentifObjValores.sort();
-    }
 
     if (order === "desc") {
       listaIdentifObjValores.reverse();
@@ -285,7 +287,7 @@ $("body").on("click", '.grupotabs th:not([colspan="2"])', function () {
     this.classList.add("activo")
     let html = "";
     listaIdentifObjValores.forEach(key => html += objValores[key]);
-    tabla.getElementsByTagName("tbody")[1].innerHTML = html;
+    cuerpo.innerHTML = html;
   }
 });
 
@@ -558,7 +560,7 @@ $("#guardar").on("click", async function () {
     return;
   let tabscontenido = document.querySelectorAll(".grupotabs .tabs__content");
   for (let i = 0; i < tabscontenido.length; i++) {
-    respuesta = await validarTrabajador(tabscontenido[i].querySelector("input"), i + 1);
+    respuesta = await validarCamioneros(tabscontenido[i].querySelector("input"), i + 1);
     if (!respuesta)
       return;
   }
@@ -583,38 +585,35 @@ $("#guardar").on("click", async function () {
     let cuerpo = tabla.querySelector(".cuerpo");
     let filapie = tabla.querySelector("tfoot tr");
     let cantidadProductos = cuerpo.rows.length;
-    // TODO agregar este guardar += `{ "nombretrabajador": "${document.getElementById("trabajador").value.trim()}", "filas": [`;
-    guardar += `{ "nombretrabajador": "", "filas": [`;
+    guardar += `{ "nombretrabajador": "${$(tabla).closest(".tabs__content").find(".trabajador").val()}", "filas": [`;
     for (let i = 0; i < cantidadProductos; i++) {
       let fila = cuerpo.rows[i];
       let cantidadViajesMasComienzo = tabla.querySelector(".pintarColumnas").children.length * 2 + colscomienzo;
-      guardar += `{ "nombreproducto": "${fila.cells[0].innerText.trim()}", 
-      "precioproducto": ${fila.cells[1].innerText},
-      "viajes": [`
+      guardar += `{"nombreproducto": "${fila.cells[0].textContent}", "precioproducto": ${fila.cells[1].innerText}, "viajes":[`
       for (let j = colscomienzo; j < cantidadViajesMasComienzo; j += 2) {
-        guardar += `{ "sale": ${fila.cells[j].innerText}, "entra": ${fila.cells[j + 1].innerText}`;
+        guardar += `{"sale": ${fila.cells[j].innerText},"entra": ${fila.cells[j + 1].innerText}`;
         if (j + 2 >= cantidadViajesMasComienzo)
-          guardar += "} ";
+          guardar += "}";
         else
-          guardar += "}, ";
+          guardar += "},";
       }
       guardar += "],";
       guardar += `"vendidos": ${fila.querySelector("td:nth-last-child(2)").innerText}, "ingresos": ${fila.querySelector("td:nth-last-child(1)").innerText}`
       if (i + 1 >= cantidadProductos)
-        guardar += "} ";
+        guardar += `} `;
       else
-        guardar += "}, ";
+        guardar += `}, 
+        `;
     }
-    guardar += `], 
-                "totalvendidos": ${filapie.cells[1].innerText},
-                "totalingresos": ${filapie.cells[2].innerText}`
+    guardar += `], "totalvendidos": ${filapie.cells[1].innerText}, "totalingresos": ${filapie.cells[2].innerText}`
 
     if (indice + 1 >= cantidadTablas)
-      guardar += ` } `;
+      guardar += `}`;
     else
-      guardar += ` }, `;
+      guardar += `}, 
+      `;
   })
-  guardar += `]} `;
+  guardar += `]}`;
 
   console.log(guardar);
 
@@ -943,8 +942,9 @@ async function validarProductosYPrecios(tabla, numtabla) {
   let verificacionPrecios = true;
   for (let i = 0; i < cuerpocopia.rows.length; i++) {
     let celdaProductos = cuerpocopia.rows[i].cells[0];
+    celdaProductos.textContent = celdaProductos.innerHTML.trim();
     let celdaPrecios = cuerpocopia.rows[i].cells[1];
-    if (celdaProductos.innerHTML === "") {
+    if (celdaProductos.textContent === "") {
       celdaProductos.classList.add("enfocar");
       verificacionProductos = false;
     }
@@ -1095,11 +1095,12 @@ async function soloHayUnCamion() {
 }
 
 function reacomodarCamiones() {
-  document.querySelectorAll(".grupotabs .tab").forEach((tab, index) => {
+  let listaContenido = [...$(".grupotabs .tab")].map(el => 
+    $(`.grupotabs .tabs__content[data-tabid="${$(el).find("input")[0].dataset.tabid}"]`)[0]);
+
+  $(".grupotabs .tab").each((index, tab) => {
+    listaContenido[index].dataset.tabid = index;
     let checkbox = tab.querySelector("input");
-    let id = checkbox.dataset.tabid;
-    document.querySelector(`[data-trab="${id}"]`).dataset.trab = index;
-    document.querySelector(`.grupotabs .tabs__content[data-tabid="${id}"]`).dataset.tabid = index;
     checkbox.dataset.tabid = index;
     let idNuevo = `tab${index}`;
     checkbox.id = idNuevo;
@@ -1111,29 +1112,33 @@ function reacomodarCamiones() {
     $(".grupotabs .tab:first-child .tabs__label")[0].click();
 }
 
-async function validarTrabajador(textbox, numerotabla) {
+async function validarCamioneros(textbox, numerotabla) {
+  textbox.value = textbox.value.trim()
   if (textbox.value !== "")
     return true;
 
-  let result = await swalContinuar.fire({
+  let result = await swalConfirmarYCancelar.fire({
     icon: "warning",
     width: window.innerWidth * 3 / 4,
-    html: `
-      <h3>El nombre del trabajador del camión ${numerotabla} está vacío.
-      <br>
-      Estás seguro que desesas dejarlo asi? </h3>
-      <br>
+    html: `<h3>El nombre del conductor del camión ${numerotabla} está vacío. <br> Escribe o elige un nombre para continuar </h3> <br>
       <div class="divtrabajadorrevisar">
-      <input type="text" class="form-control" id="trabajadorrevisar" style="width: 260px; max-width: 260px; text-align:center;" placeholder="Escribe el nombre del trabajador" />
+      <input type="text" class="form-control trabajador" style="height: 35px; min-width: 228px" id="trabajadorrevisar" style="width: 260px; max-width: 260px; text-align:center;" placeholder="Escribe el nombre del conductor" />
+      <div class="btn-group dropend">
+        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" id="dropdowncamionero" data-bs-toggle="dropdown"></button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+          ${devuelveCamioneros()}
+        </ul>
       </div>
-      <br>
-      <h3>Puedes escribir un nombre aquí o dejarlo en blanco y continuar</h3>
-      <br>`,
+      </div>`,
+    showCancelButton: true,
     confirmButtonText: "Continuar",
+    cancelButtonText: "Volver"
   })
   if (result.isConfirmed) {
-    textbox.value = $("#trabajadorrevisar")[0].value;
-    return true;
+    textbox.value = $("#trabajadorrevisar").val().trim();
+    if(textbox.value !== "")
+      return true;
+    return validarCamioneros(textbox, numerotabla);
   } else
     return false;
 }
@@ -1381,6 +1386,7 @@ async function opcionesPlantilla() {
 function crearPlantillaVacia() {
   let formatotablavacia = creaTablaVacia(resPlantillas);
   _tabla().outerHTML = formatotablavacia;
+  tablasSortable();
   Swal.close();
 }
 
@@ -1432,6 +1438,7 @@ async function ordenPlantillaHandler(callback, callbackConfirmado, callbackDeneg
     tabla.outerHTML = tablaCopia.outerHTML;
   else if (result.dismiss === Swal.DismissReason.cancel)
     mezclarHandler(callbackConfirmado, callbackDenegado);
+  tablasSortable();
 }
 
 function tabsTexto(tablaOriginal, tablaNueva, texto) {
@@ -1618,14 +1625,13 @@ document.querySelector(".agregarcamion").addEventListener("click", async () => {
   let formatotablavacia = creaTablaVacia(res);
   let nuevoCamion = `<div data-tabid="${cantidadTabs}" class="tabs__content">
   <div class="contenedor-trabajador">
-  <label class="label-trabajador">Nombre del trabajador:</label>
+  <label class="label-trabajador">Nombre del conductor:</label>
   <div class="contenedor-input-trabajador">
-  <input type="text" class="form-control trabajador" data-trab="${cantidadTabs}"><div class="btn-group dropend">
+  <input type="text" class="form-control trabajador"><div class="btn-group dropend">
   <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
     <span class="visually-hidden">Toggle Dropdown</span></button>
   <ul class="dropdown-menu dropdown-menu-dark">
-    <li><a class="dropdown-item" href="#">Action</a></li>
-    <li><a class="dropdown-item" href="#">Another action</a></li>
+  ${devuelveCamioneros()}
   </ul></div></div></div>`
   nuevoCamion += formatotablavacia + "</div>";
   let nuevaTab = `<div class="tab">
@@ -1634,10 +1640,40 @@ document.querySelector(".agregarcamion").addEventListener("click", async () => {
 </div>`
   $(".agregarcamion").before(nuevaTab);
   $(".contenidoTabs").append(nuevoCamion);
+  tablasSortable();
 });
-//TODO agregar botones de exportar a excel y pdf en resumen
-$("body").on('click', '.dropdown-item', function () {
-  document.querySelector(`[data-trab="${_idTab()}"]`).value = this.innerText;
+
+$("body").on('click', '.grupotabs .dropdown-item', function () {
+  $(this).closest(".tabs__content").find(".trabajador").val(this.innerText);
 });
+
+$("body").on('click', '.swal2-html-container .dropdown-toggle', function (e) {
+  let altura = ($(this).next().children().length - 4) * 30 + 135;
+  this.closest(".swal2-html-container").style.minHeight = `${altura}px`;
+});
+
+$("body").on('click', '.swal2-html-container .dropdown-item', function () {
+  $(this).closest(".dropend").prev().val(this.innerText);
+});
+
+$("body").on('hide.bs.dropdown', '#dropdowncamionero', function () {
+  this.closest(".swal2-html-container").style.minHeight = "68.2px";
+});
+
+
+function devuelveCamioneros(){
+  return camioneros.map(el => `<li class="dropdown-item">${el}</li>`).join("")
+}
+
+// var element = document.querySelector('.contenidotabs');
+// var observer = new MutationObserver(function(mutations) {
+//     mutations.forEach(function(mutation) {
+//       console.log(mutation.type)
+//         if (mutation.type === "childList") {
+//             console.log("attributes changed");
+//         }
+//     });
+// });
+// observer.observe(element, { childList: true, subtree: false });
 
 colocarDatosTabla()

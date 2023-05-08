@@ -10,7 +10,7 @@ const swalWithBootstrapButtons = Swal.mixin({
   buttonsStyling: false,
 });
 
-$(document).on('click', ".botoneliminar", async function () {
+$("body").on('click', ".botoneliminar", async function () {
   if (switchbtn.checked) return;
 
   if (!switchModoSeguro.checked) {
@@ -35,11 +35,10 @@ $(document).on('click', ".botoneliminar", async function () {
 });
 
 $('#añadirproducto').on('click', function () {
-  let fila =
-    `<tr>
+  let fila = `<tr>
   <td contenteditable="true"></td>
-            <td contenteditable="true"></td>
-            <td><button type="button" class="botoneliminar"><svg class="svgeliminar" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="red" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /></svg></button></td>
+  <td contenteditable="true"></td>
+  <td><button type="button" class="botoneliminar"><svg class="svgeliminar" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="red" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /></svg></button></td>
   </tr>`;
   $("#cuerpotabla").append(fila);
 });
@@ -58,63 +57,47 @@ $(".contenedoreliminar").on('click', async function () {
       method: "DELETE",
       contentType: "application/json",
       success: async res => {
-        await Swal.fire(
-          "Se ha borrado la plantilla exitosamente",
-          "Ahora será redireccionado al menú de plantillas",
-          "success"
-        )
+        await Swal.fire("Se ha borrado la plantilla exitosamente", "Ahora será redireccionado al menú de plantillas", "success");
         window.location = "/plantillas"
       },
       error: res => {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: res.responseText,
-        });
+        mostrarError(res.responseText)
       },
     });
   }
 })
 
-$(document).on('click', "#guardar", async function () {
+$("body").on('click', "#guardar", async function () {
   let valido = await validarPlantillas();
-  if (valido) {
-    let tabla = $("tbody")[0];
-    let filas = tabla.rows.length;
-    let nombrePlantilla = document.getElementById("nombreplantilla").value.trim();
-    let guardar = "{";
-    guardar += ` "nombreplantilla": "${nombrePlantilla}",
+  if (!valido)
+    return;
+  let tabla = $("tbody")[0];
+  let filas = tabla.rows.length;
+  let nombrePlantilla = document.getElementById("nombreplantilla").value.trim();
+  let guardar = "{";
+  guardar += ` "nombreplantilla": "${nombrePlantilla}",
    "productos": [ `
-    for (let i = 0; i < filas; i++) {
-      guardar += ` { 
+  for (let i = 0; i < filas; i++) {
+    guardar += ` { 
         "producto": "${tabla.rows[i].cells[0].innerText.trim()}", 
         "precio": ${tabla.rows[i].cells[1].innerText} 
        }`;
-      if (i + 1 < filas) {
-        guardar += ",";
-      }
+    if (i + 1 < filas) {
+      guardar += ",";
     }
-    guardar += " ] }"
-    $.ajax({
-      url: `/plantillas/${nombrePlantillaURL}`,
-      method: "PATCH",
-      contentType: "application/json",
-      data: guardar,
-      success: async res => {
-        await Swal.fire(
-          "Se ha guardado exitosamente",
-          "El archivo se ha almacenado en la base de datos",
-          "success"
-        )
-        window.location = (url + nombrePlantilla);
-      },
-      error: res => {
-        Swal.fire({
-          icon: "error",
-          title: "Ups...",
-          text: res.responseText,
-        });
-      },
-    });
   }
+  guardar += " ] }"
+  $.ajax({
+    url: `/plantillas/${nombrePlantillaURL}`,
+    method: "PATCH",
+    contentType: "application/json",
+    data: guardar,
+    success: async res => {
+      await Swal.fire("Se ha guardado exitosamente", "El archivo se ha almacenado en la base de datos", "success");
+      window.location = (url + nombrePlantilla);
+    },
+    error: res => {
+      Swal.fire("Ups...", res.responseText, "error");
+    },
+  });
 });

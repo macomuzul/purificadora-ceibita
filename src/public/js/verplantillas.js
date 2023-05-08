@@ -39,11 +39,7 @@ $(".svgeliminar").on('click', async function () {
   })
   if (result.isConfirmed) {
     if ($(this).closest("tr").index() === $(".faved").closest("tr").index()) {
-      Swal.fire({
-        icon: "error",
-        title: "Ups...",
-        text: "No puedes borrar la plantilla de default",
-      });
+      Swal.fire("Error", "No puedes borrar la plantilla de default", "error");
       return;
     }
     $.ajax({
@@ -51,19 +47,11 @@ $(".svgeliminar").on('click', async function () {
       method: "DELETE",
       contentType: "application/json",
       success: res => {
-        Swal.fire(
-          "Se ha borrado la plantilla exitosamente",
-          "La plantilla ya ha sido borrada del sistema",
-          "success"
-        );
+        Swal.fire("Se ha borrado la plantilla exitosamente", "La plantilla ya ha sido borrada del sistema", "success");
         tablaborrar.removeChild(filaborrar);
       },
       error: res => {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: res.responseText,
-        });
+        Swal.fire("Error", res.responseText, "error");
       },
     });
   }
@@ -155,18 +143,10 @@ $("#guardar").on('click', function () {
     contentType: "application/json",
     data: guardar,
     success: res => {
-      Swal.fire(
-        "Se ha guardado exitosamente",
-        "Se ha guardado el orden",
-        "success"
-      );
+      Swal.fire("Se ha guardado exitosamente", "Se ha guardado el orden", "success");
     },
     error: res => {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: res.responseText,
-      });
+      Swal.fire("Error", res.responseText, "error");
     },
   });
 });

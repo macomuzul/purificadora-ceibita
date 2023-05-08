@@ -2,6 +2,7 @@ const router = require("express").Router();
 const ventaspordia = require("../models/registroventaspordia");
 const plantilla = require("../models/plantillas");
 const Respaldo = require("../models/registroseliminados");
+const Camioneros = require("../models/camioneros");
 const { DateTime } = require("luxon");
 
 router.post("/guardar", async (req, res) => {
@@ -37,7 +38,10 @@ router.get("/:id", async (req, res) => {
     const datostablas = await ventaspordia.findOne({ fecha });
     const plantillas = await plantilla.find().sort("orden");
     const plantillaDefault = await plantilla.findOne({ esdefault: true });
-    res.render("registrarventas", { fecha: fecha.toFormat("d/M/y"), ventaspordia: datostablas, plantillas, plantillaDefault, fechastr: fecha.weekdayLong + ", " + fecha.toLocaleString(DateTime.DATE_FULL), DateTime});
+    let camioneros = await Camioneros.findOne();
+    let nombresCamioneros = camioneros.camioneros.map(el => el.nombre)
+    let fechastr = fecha.weekdayLong + ", " + fecha.toLocaleString(DateTime.DATE_FULL);
+    res.render("registrarventas", { fecha: fecha.toFormat("d/M/y"), ventaspordia: datostablas, plantillas, plantillaDefault, fechastr, DateTime, camioneros: nombresCamioneros});
   } catch (e) {
     res.send("página inválida");
   }
