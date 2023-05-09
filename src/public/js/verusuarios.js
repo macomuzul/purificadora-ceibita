@@ -52,24 +52,22 @@ function devuelveBorrarUsuario(mandar, fila, cuerpo){
         cuerpo.removeChild(fila);
       },
       error: res => {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: res.responseText,
-        });
+        Swal.fire("Error", res.responseText, "error");
         // toastr["error"](res.responseText, "Error");
       },
     });
   }
 }
 
-$("body").on("click", ".fa-eye", function () {
+$("body").on("click", "td .fa-eye", function () {
   let counter = $(this).prev()[0];
-  if(counter.style.display !== "none"){
+  if(counter.style.display !== "none")
     counter.parar();
-  }
+  $(this).closest("td").prev().text("********");
+});
 
-  $(this).closest("td").prev()[0].textContent = "********";
+$("body").on("click", ".modal-body .fa-eye", function () {
+  $(this).closest("td").prev().val("********");
 });
 
 $("body").on("click", ".fa-eye-slash", function () {

@@ -352,3 +352,129 @@ export let jsonDosTablasAlReves = `"camiones": [{
   "totalingresos": 209443.99
 }
 ]`
+export let jsonCambiandoPlantilla = `"camiones": [{
+  "nombretrabajador": "xeresano",
+  "filas": [{
+      "nombreproducto": "garrafón",
+      "precioproducto": 10,
+      "viajes": [{
+        "sale": 123,
+        "entra": 12
+      }],
+      "vendidos": 111,
+      "ingresos": 1110
+    },
+    {
+      "nombreproducto": "bolsa",
+      "precioproducto": 5.60,
+      "viajes": [{
+        "sale": 43,
+        "entra": 5
+      }],
+      "vendidos": 38,
+      "ingresos": 212.80
+    },
+    {
+      "nombreproducto": "isomax",
+      "precioproducto": 32,
+      "viajes": [{
+        "sale": 1,
+        "entra": 0
+      }],
+      "vendidos": 1,
+      "ingresos": 32
+    },
+    {
+      "nombreproducto": "cuco 50",
+      "precioproducto": 15,
+      "viajes": [{
+        "sale": 3,
+        "entra": 3
+      }],
+      "vendidos": 0,
+      "ingresos": 0
+    },
+    {
+      "nombreproducto": "cuco 25",
+      "precioproducto": 15,
+      "viajes": [{
+        "sale": 4,
+        "entra": 1
+      }],
+      "vendidos": 3,
+      "ingresos": 45
+    },
+    {
+      "nombreproducto": "boopi",
+      "precioproducto": 25,
+      "viajes": [{
+        "sale": 1,
+        "entra": 1
+      }],
+      "vendidos": 0,
+      "ingresos": 0
+    },
+    {
+      "nombreproducto": "obj1",
+      "precioproducto": 12,
+      "viajes": [{
+        "sale": 4,
+        "entra": 2
+      }],
+      "vendidos": 2,
+      "ingresos": 24
+    },
+    {
+      "nombreproducto": "dispensador",
+      "precioproducto": 50,
+      "viajes": [{
+        "sale": 12,
+        "entra": 5
+      }],
+      "vendidos": 7,
+      "ingresos": 350
+    },
+    {
+      "nombreproducto": "obj2",
+      "precioproducto": 14.23,
+      "viajes": [{
+        "sale": 4,
+        "entra": 2
+      }],
+      "vendidos": 2,
+      "ingresos": 28.46
+    },
+    {
+      "nombreproducto": "obj3",
+      "precioproducto": 31.12,
+      "viajes": [{
+        "sale": 124,
+        "entra": 12
+      }],
+      "vendidos": 112,
+      "ingresos": 3485.44
+    },
+    {
+      "nombreproducto": "obj4",
+      "precioproducto": 12,
+      "viajes": [{
+        "sale": 54,
+        "entra": 4
+      }],
+      "vendidos": 50,
+      "ingresos": 600
+    },
+    {
+      "nombreproducto": "obj5",
+      "precioproducto": 14,
+      "viajes": [{
+        "sale": 43,
+        "entra": 12
+      }],
+      "vendidos": 31,
+      "ingresos": 434
+    }
+  ],
+  "totalvendidos": 357,
+  "totalingresos": 6321.70
+}]`

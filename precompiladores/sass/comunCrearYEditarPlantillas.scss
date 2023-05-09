@@ -1,17 +1,20 @@
 @use "./partials/tablassimples";
 @use "./partials/tituloplantillas";
-@use "./partials/dropdown";
 @use "./partials/botonazul";
+@use "./partials/flecha";
+@use "./partials/flecharotada";
 
 body {
   background: #191d31;
+  margin: 0;
+  padding: 0;
   color: white;
+  min-width: 1000px;
 }
 
-.form-switch,
-.form-check-label {
-  font-size: 16px;
-  color: white;
+.contenedorinferior {
+  position: relative;
+  margin-top: 25px;
 }
 
 .botoneliminar {
@@ -26,6 +29,13 @@ td {
   line-height: 35px;
 }
 
+.form-switch,
+.form-check-label {
+  font-size: 16px;
+  color: white;
+}
+
+
 .contenedormedio {
   display: flex;
   justify-content: flex-start;
@@ -33,29 +43,22 @@ td {
   margin-bottom: 25px;
 }
 
+.nombreplantilla {
+  margin-left: 30px;
+}
+
+#nombreplantilla {
+  width: 100%;
+  max-width: 250px;
+}
+
 .filasuperior {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   margin-bottom: 20px;
   flex-wrap: wrap;
   margin-top: 5px;
-}
-
-.switchmodoseguro {
-  margin-left: auto;
-}
-
-.contenedorsuperior{
-    margin: 20px 0 5px;
-}
-
-.contenedorinferior{
-    margin-top: 25px;
-}
-
-.botonazul{
-  margin-right: 12px;
 }
 
 .switchmodoseguro {
@@ -67,20 +70,27 @@ td {
   flex-direction: column;
   justify-content: end;
   margin-left: auto;
-  transform: translateY(10px);
 }
 
 .piedepagina {
   font-size: 12px;
 }
 
-.margenbotonswal {
-  margin-left: 40;
-  width: 140;
-  height: 50;
-  font-weight: 500;
+.swal2-actions {
+  margin: 0 !important;
+  margin-top: 30px !important;
+  justify-content: space-evenly !important;
 }
 
-.botontitulo{
-  width: 420px;
+.margenboton {
+  box-sizing: border-box !important;
+  width: 120px;
+}
+
+.botonazul{
+  margin-right: 12px;
+}
+
+.enfocar {
+  background: #24c2ce !important;
 }

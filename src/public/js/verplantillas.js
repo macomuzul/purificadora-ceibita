@@ -1,6 +1,6 @@
 let click_disabled = false;
 let clickeado = $(".faved");
-const swalWithBootstrapButtons = Swal.mixin({
+const swalConfirmarYCancelar = Swal.mixin({
   customClass: {
     confirmButton: "btn btn-success margenboton",
     cancelButton: "btn btn-danger margenboton",
@@ -30,7 +30,7 @@ $(".svgeliminar").on('click', async function () {
   let tablaborrar = document.getElementById("cuerpotabla");
   let filaborrar = $(this).closest("tr")[0];
   let plantillaborrar = filaborrar.cells[0].innerText;
-  let result = await swalWithBootstrapButtons.fire({
+  let result = await swalConfirmarYCancelar.fire({
     icon: "warning",
     text: `Estas seguro que deseas borrar la plantilla ${plantillaborrar}?`,
     showCancelButton: true,

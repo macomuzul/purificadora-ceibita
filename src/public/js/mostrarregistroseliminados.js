@@ -36,7 +36,7 @@ window.addEventListener("load", () => {
 
 window.addEventListener("scroll", scrollFunction);
 
-const swalWithBootstrapButtons = Swal.mixin({
+const swalConfirmarYCancelar = Swal.mixin({
   customClass: {
     confirmButton: "btn btn-success margenbotonswal",
     cancelButton: "btn btn-danger margenbotonswal",
@@ -90,7 +90,7 @@ document.querySelectorAll(".btnrestaurar").forEach((el) => {
     let registro = this.closest("article");
     let resultado = devuelveTabla(registro);
 
-    let result = await swalWithBootstrapButtons
+    let result = await swalConfirmarYCancelar
       .fire({
         title: "Estás seguro que deseas restaurar este registro?",
         icon: "warning",
@@ -101,7 +101,7 @@ document.querySelectorAll(".btnrestaurar").forEach((el) => {
         cancelButtonText: "No",
       })
     if (result.isConfirmed) {
-      result = await swalWithBootstrapButtons
+      result = await swalConfirmarYCancelar
         .fire({
           title: `Si restauras vas a sobreescribir el registro con fecha ${resultado.fecha} estas seguro que deseas continuar?`,
           icon: "warning",
@@ -140,7 +140,7 @@ document.querySelectorAll(".btneliminar").forEach((el) => {
     let registro = this.closest("article");
     let resultado = devuelveTabla(registro);
 
-    let result = await swalWithBootstrapButtons
+    let result = await swalConfirmarYCancelar
       .fire({
         title: "Estás seguro que deseas borrar este registro?",
         icon: "warning",
@@ -186,7 +186,7 @@ document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
     let tabla = registro.querySelector(`[name=${nombreTabla}]`);
     let numTabla = nombreTabla.split("t")[1];
     let fecha = registro.querySelector(".fechaDelRegistro").innerText;
-    let result = await swalWithBootstrapButtons.fire({
+    let result = await swalConfirmarYCancelar.fire({
       title: "Estás seguro que deseas restaurar esta tabla?",
       icon: "warning",
       width: (window.innerWidth * 3) / 4,
@@ -196,7 +196,7 @@ document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
       cancelButtonText: "No",
     })
     if (result.isConfirmed) {
-      result = await swalWithBootstrapButtons.fire({
+      result = await swalConfirmarYCancelar.fire({
         title: "Si restauras vas a sobreescribir el registro del dia",
         icon: "warning",
         width: (window.innerWidth * 3) / 4,
@@ -235,7 +235,7 @@ document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
       let registros = { registros: [] };
       document.querySelectorAll(".check:checked").forEach(el =>
         registros.registros.push(el.closest("article").getAttribute("name")));
-      let result = await swalWithBootstrapButtons.fire({
+      let result = await swalConfirmarYCancelar.fire({
         title: "Estás seguro que deseas borrar los registros seleccionados?",
         icon: "warning",
         showCancelButton: true,

@@ -11,19 +11,20 @@ let arreglado;
 let resPlantillas = {};
 let yaSeRecibioTouch = false;
 let fechastr = hoy.format("D-M-YYYY");
-console.log(camioneros)
-console.log(typeof camioneros)
 
 // let desdeElMobil = function () { return /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent) }
 let desdeElMobil = function () { return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)); }
 
-async function devuelveTouch(){
+$(async function () {
+  colocarValoresConfig();
+  guardarValoresConfig();
+
   if (desdeElMobil())
     await $.getScript('/touch.js');
-}
-devuelveTouch();
+})
+
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]') //estos son para el bootstrap
-const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 
 function _cantidadTabs() { return document.querySelector(".contenidotabs").children.length; }
 function _idTab() { return document.querySelector(".grupotabs .tabs__radio:checked").dataset.tabid; }
@@ -64,14 +65,24 @@ $("body").on("click", ".restaurarplantilla", function (e) {
   let ordenAnterior = objReordenarPlantillas[id];
   let html = restaurarOrdenPlantilla(ordenAnterior, cuerpo);
   cuerpo.innerHTML = html;
-  $(tabla).find(`th:not([colspan="2"])`).each((i, el) => el.style.setProperty("--flecha", '"↓"'));
-  tabla.querySelector('.activo').classList.remove("activo");
-  $(".restaurarplantilla").css("display", "none");
-  delete objReordenarPlantillas[id];
+  borrarListaOrdenarPlantillas(tabla, id)
 })
 
+function borrarListaOrdenarPlantillas(tabla, id) {
+  $(tabla).find(`th:not([colspan="2"])`).each((i, el) => el.style.setProperty("--flecha", '"↓"'));
+  tabla.querySelector('.activo')?.classList.remove("activo");
+  $(".restaurarplantilla").css("display", "none");
+  delete objReordenarPlantillas[id];
+}
+
+function borrarListaOrdenarPlantillasTablaActual() {
+  let id = _idTab();
+  let tabla = _tabla();
+  borrarListaOrdenarPlantillas(tabla, id);
+}
+
 function restaurarOrdenPlantilla(ordenAnterior, cuerpo) {
-  let filas = Array.from(cuerpo.rows);
+  let filas = [...cuerpo.rows];
   let formatoTablaLlena = "";
   let ordenNuevo = filas.map(el => el.cells[0].innerText.normalizar());
   ordenAnterior.forEach(producto => {
@@ -86,11 +97,6 @@ function restaurarOrdenPlantilla(ordenAnterior, cuerpo) {
   });
   return formatoTablaLlena;
 }
-
-$(function () {
-  colocarValoresConfig();
-  guardarValoresConfig();
-})
 
 async function guardarValoresConfig() {
   //estos son solo para visualizar los iconos
@@ -128,7 +134,7 @@ async function guardarValoresConfig() {
   tablasSortable();
 }
 
-function tablasSortable(){
+function tablasSortable() {
   $(".grupotabs table .cuerpo").sortable({
     axis: "y",
     disabled: !switchReordenarProductos
@@ -262,8 +268,8 @@ $("body").on("click", '.grupotabs th:not([colspan="2"]), #tablaresumen th', func
         objReordenarPlantillas[tabla.closest(".tabs__content").dataset.tabid] = listaReordenarPlantillasHelper;
     }
 
-    let listaElementosColumna = Array.from(cuerpo.querySelectorAll(`td:nth-child(${(indiceColumna + 1)})`))
-    let todosSonNumeros = listaElementosColumna.every(el => !isNaN(parseFloat(el.innerText)))
+    let listaElementosColumna = [...cuerpo.querySelectorAll(`td:nth-child(${(indiceColumna + 1)})`)];
+    let todosSonNumeros = listaElementosColumna.every(el => !isNaN(parseFloat(el.innerText)));
     if (todosSonNumeros) {
       listaIdentifObjValores.sort(function (a, b) {
         let aa = a.split(separador);
@@ -472,10 +478,8 @@ async function borrarFilas(celda) {
   })
   if (result.isConfirmed) {
     let cuerpo = $(filaborrar).parent()[0];
-    if (cuerpo.rows.length === 1) {
-      Swal.fire("Error", "No puedes borrar todos los productos, debe haber al menos uno", "error");
-      return;
-    }
+    if (cuerpo.rows.length === 1)
+      return Swal.fire("Error", "No puedes borrar todos los productos, debe haber al menos uno", "error");
 
     cuerpo.removeChild(filaborrar);
     calcularvendidoseingresostotal(cuerpo)
@@ -503,10 +507,8 @@ async function borrarColumnas(colborrar) {
     cancelButtonText: "No",
   })
   if (result.isConfirmed) {
-    if (_cantidadViajes() === 1) {
-      Swal.fire("Error", "No puedes borrar todos los viajes, debe haber al menos uno", "error");
-      return;
-    }
+    if (_cantidadViajes() === 1)
+      return Swal.fire("Error", "No puedes borrar todos los viajes, debe haber al menos uno", "error");
 
     let cuerpo = tabla.querySelector(".cuerpo");
     for (let i = 0; i < cuerpo.rows.length; i++) {
@@ -549,7 +551,7 @@ function añadirceros(cuerpo) {
 }
 
 function devuelveListaTablas() {
-  let listaCamiones = Array.from(document.querySelectorAll(".grupotabs .tabs__radio"));
+  let listaCamiones = [...document.querySelectorAll(".grupotabs .tabs__radio")];
   let listaTablas = listaCamiones.map(el => document.querySelector(`.contenidotabs [data-tabid="${el.dataset.tabid}"] table`));
   return listaTablas;
 }
@@ -837,9 +839,9 @@ function archivoCreado(btn, cb) {
 async function borrarFilasVacias(tabla, numtabla) {
   let tablaCopia = tabla.cloneNode(true);
   let cuerpoCopia = tablaCopia.querySelector(".cuerpo");
-  let filasCopia = Array.from(cuerpoCopia.rows)
+  let filasCopia = [...cuerpoCopia.rows];
   let filasQueNoEstanVacias = filasCopia.filter(fila => {
-    let celdasEspecificas = Array.from(fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))"))
+    let celdasEspecificas = [...fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))")];
     let res = celdasEspecificas.every(celda => celda.innerText === "0")
     if (res)
       $(fila).find("td").each((i, celda) => celda.classList.add("enfocar"))
@@ -875,8 +877,8 @@ async function borrarFilasVacias(tabla, numtabla) {
       Swal.fire("Error", `No se puede guardar la tabla ${numtabla} porque está vacía`, "error");
       return false;
     }
-    let filasVacias = Array.from(tabla.querySelector(".cuerpo").rows).filter(fila => {
-      let celdasEspecificas = Array.from(fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))"))
+    let filasVacias = [...tabla.querySelector(".cuerpo").rows].filter(fila => {
+      let celdasEspecificas = [...fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))")];
       let res = celdasEspecificas.every(celda => celda.innerText === "0")
       return res;
     });
@@ -997,7 +999,7 @@ async function validarProductosYPrecios(tabla, numtabla) {
 }
 
 async function borrarTablasVacias() {
-  let tablas = Array.from(document.querySelectorAll(".contenidotabs table"));
+  let tablas = [...document.querySelectorAll(".contenidotabs table")];
   let tablasVacias = tablas.filter(tabla => tabla.querySelector("tfoot td:nth-child(3)").innerText === "");
 
   if (tablasVacias.length === 0)
@@ -1076,7 +1078,7 @@ async function borrarCamiones(label, e) {
     let res = await soloHayUnCamion();
     if (res)
       return false;
-
+    delete objReordenarPlantillas[id];
     $(label).parent().remove();
     $(`.grupotabs .tabs__content[data-tabid=${id}]`).remove();
     reacomodarCamiones();
@@ -1095,7 +1097,7 @@ async function soloHayUnCamion() {
 }
 
 function reacomodarCamiones() {
-  let listaContenido = [...$(".grupotabs .tab")].map(el => 
+  let listaContenido = [...$(".grupotabs .tab")].map(el =>
     $(`.grupotabs .tabs__content[data-tabid="${$(el).find("input")[0].dataset.tabid}"]`)[0]);
 
   $(".grupotabs .tab").each((index, tab) => {
@@ -1136,7 +1138,7 @@ async function validarCamioneros(textbox, numerotabla) {
   })
   if (result.isConfirmed) {
     textbox.value = $("#trabajadorrevisar").val().trim();
-    if(textbox.value !== "")
+    if (textbox.value !== "")
       return true;
     return validarCamioneros(textbox, numerotabla);
   } else
@@ -1325,8 +1327,7 @@ async function pidePlantilla(nombreplantilla) {
         listaplantillas.push(plantilla);
       },
       error: function (res) {
-        Swal.fire("Ups...", "Ha habido un error", "error");
-        return;
+        return Swal.fire("Ups...", "Ha habido un error", "error");
       },
     });
   }
@@ -1361,7 +1362,7 @@ async function metododropdown(option) {
     showCancelButton: true,
     confirmButtonText: "Sí",
     cancelButtonText: "No",
-  })
+  });
   if (result.isConfirmed)
     await opcionesPlantilla();
 }
@@ -1383,10 +1384,22 @@ async function opcionesPlantilla() {
   })
 }
 
-function crearPlantillaVacia() {
+async function crearPlantillaVacia() {
   let formatotablavacia = creaTablaVacia(resPlantillas);
-  _tabla().outerHTML = formatotablavacia;
-  tablasSortable();
+  let result = await swalConfirmarYCancelar.fire({
+    title: "Estás seguro que deseas utilizar esta plantilla?",
+    icon: "warning",
+    width: "850px",
+    html: formatotablavacia,
+    showCancelButton: true,
+    confirmButtonText: "Sí",
+    cancelButtonText: "No",
+  })
+  if (result.isConfirmed) {
+    _tabla().outerHTML = formatotablavacia;
+    borrarListaOrdenarPlantillasTablaActual();
+    tablasSortable();
+  }
   Swal.close();
 }
 
@@ -1438,11 +1451,11 @@ async function ordenPlantillaHandler(callback, callbackConfirmado, callbackDeneg
     tabla.outerHTML = tablaCopia.outerHTML;
   else if (result.dismiss === Swal.DismissReason.cancel)
     mezclarHandler(callbackConfirmado, callbackDenegado);
+  borrarListaOrdenarPlantillasTablaActual();
   tablasSortable();
 }
 
 function tabsTexto(tablaOriginal, tablaNueva, texto) {
-  console.log(tablaNueva.outerHTML)
   return `<div class="tabs-swal">
   <input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal0" checked>
   <label for="tabswal0" class="tabs__label label-swal">${texto}</label>
@@ -1467,7 +1480,7 @@ function devuelveProductoVacio(producto) {
 
 //TODO optimizar estos que dicen mezclar
 function mezclarSinEliminarOrdenTabla(productos) {
-  let filas = Array.from(_cuerpo().rows);
+  let filas = [..._cuerpo().rows];
   let formatoTablaLlena = "";
   let pTabla = filas.map(el => el.cells[0].innerText.normalizar());
   let pSeleccionada = productos.map(el => el.producto.normalizar());
@@ -1493,7 +1506,7 @@ function mezclarSinEliminarOrdenTabla(productos) {
 }
 
 function mezclarSinEliminarOrdenPlantilla(productos) {
-  let filas = Array.from(_cuerpo().rows);
+  let filas = [..._cuerpo().rows];
   let formatoTablaLlena = "";
   let pTabla = filas.map(el => el.cells[0].innerText.normalizar());
   let pSeleccionada = productos.map(el => el.producto.normalizar());
@@ -1520,7 +1533,7 @@ function mezclarSinEliminarOrdenPlantilla(productos) {
 }
 
 function mezclarEliminandoOrdenTabla(productos) {
-  let filas = Array.from(_cuerpo().rows);
+  let filas = [..._cuerpo().rows];
   let formatoTablaLlena = "";
   let pTabla = filas.map(el => el.cells[0].innerText.normalizar());
   let pSeleccionada = productos.map(el => el.producto.normalizar());
@@ -1545,7 +1558,7 @@ function mezclarEliminandoOrdenTabla(productos) {
 }
 
 function mezclarEliminandoOrdenPlantilla(productos) {
-  let filas = Array.from(_cuerpo().rows);
+  let filas = [..._cuerpo().rows];
   let formatoTablaLlena = "";
   let pTabla = filas.map(el => el.cells[0].innerText.normalizar());
   let pSeleccionada = productos.map(el => el.producto.normalizar());
@@ -1618,7 +1631,6 @@ function creaTablaVacia(res) {
   return formatotablavacia;
 }
 
-//TODO agregar aqui los trabajadores
 document.querySelector(".agregarcamion").addEventListener("click", async () => {
   let cantidadTabs = _cantidadTabs();
   let res = await pidePlantilla(plantillaDefault);
@@ -1661,7 +1673,7 @@ $("body").on('hide.bs.dropdown', '#dropdowncamionero', function () {
 });
 
 
-function devuelveCamioneros(){
+function devuelveCamioneros() {
   return camioneros.map(el => `<li class="dropdown-item">${el}</li>`).join("")
 }
 

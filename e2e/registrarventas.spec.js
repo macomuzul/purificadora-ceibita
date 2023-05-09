@@ -4,6 +4,7 @@ import * as json from "./utilidades/jsonParaTests";
 
 test.beforeEach(async ({ page }) => {
   await page.goto('http://localhost:3000/registrarventas/1-3-2024');
+
 });
 
 test.describe("prueba console", () => {
@@ -74,9 +75,7 @@ test.describe("prueba console", () => {
   //   await page.locator('tr:nth-child(2) > td:nth-child(6)').type('21');
   //   await page.locator('tr:nth-child(2) > td:nth-child(6)').press('ArrowUp');
   //   await page.locator('td:nth-child(6)').first().type('42');
-  //   await page.pause();
   //   await page.locator("#guardar").click();
-  //   await page.pause();
   // });
 
   // test("prueba cambiando orden de los productos", async ({ page }) => {
@@ -92,23 +91,80 @@ test.describe("prueba console", () => {
   //   await page.locator("#guardar").click();
   // });
 
-  test("prueba cambiando orden de los productos", async ({ page }) => {
-    page.on('console', log(json.jsonDosTablas));
-    await page.locator(".trabajador").fill("xeresano");
-    await agregarCamion(page);
-    await page.getByRole('textbox').fill("mostro");
-    await page.locator("#guardar").click();
-  });
+  // test("prueba cambiando orden de los productos", async ({ page }) => {
+  //   page.on('console', log(json.jsonDosTablas));
+  //   await page.locator(".trabajador").fill("xeresano");
+  //   await agregarCamion(page);
+  //   await page.getByRole('textbox').fill("mostro");
+  //   await page.locator("#guardar").click();
+  // });
 
-  test("prueba dos tablas cambiando orden", async ({ page }) => {
-    page.on('console', log(json.jsonDosTablasAlReves));
+  // test("prueba dos tablas cambiando orden", async ({ page }) => {
+  //   page.on('console', log(json.jsonDosTablasAlReves));
+  //   await page.locator(".trabajador").fill("xeresano");
+  //   await agregarCamion(page);
+  //   await page.getByRole('textbox').fill("mostro");
+  //   await page.getByRole('button', { name: 'Configuraciones' }).click();
+  //   await page.getByLabel('Cambiar el orden de los camiones').check();
+  //   await page.getByRole('button', { name: 'Guardar cambios' }).click();
+  //   await cambiarOrdenCamiones(page, "[for=tab0]", "[for=tab1]");
+  //   await page.locator("#guardar").click();
+  // });
+
+
+  test("prueba poniendo otra plantilla", async ({ page }) => {
+    page.on('console', log(json.jsonCambiandoPlantilla));
     await page.locator(".trabajador").fill("xeresano");
-    await agregarCamion(page);
-    await page.getByRole('textbox').fill("mostro");
-    await page.getByRole('button', { name: 'Configuraciones' }).click();
-    await page.getByLabel('Cambiar el orden de los camiones').check();
-    await page.getByRole('button', { name: 'Guardar cambios' }).click();
-    await cambiarOrdenCamiones(page, "[for=tab0]", "[for=tab1]");
+    await page.locator('#selector div').filter({ hasText: 'Selecciona una plantilla aquí (opcional)' }).click();
+    await page.getByText('Otraplantilla').click();
+    await page.getByRole('button', { name: 'Sí' }).click();
+    await page.getByRole('button', { name: 'Crear plantilla vacía' }).click();
+    await page.locator('td:nth-child(3)').first().click();
+    await page.locator('td:nth-child(3)').first().type('123');
+    await page.locator('td:nth-child(3)').first().press('ArrowDown');
+    await page.locator('tr:nth-child(2) > td:nth-child(3)').type('43');
+    await page.locator('tr:nth-child(2) > td:nth-child(3)').press('ArrowDown');
+    await page.locator('tr:nth-child(3) > td:nth-child(3)').type('1');
+    await page.locator('tr:nth-child(3) > td:nth-child(3)').press('ArrowDown');
+    await page.locator('tr:nth-child(4) > td:nth-child(3)').type('3');
+    await page.locator('tr:nth-child(4) > td:nth-child(3)').press('ArrowDown');
+    await page.locator('tr:nth-child(5) > td:nth-child(3)').type('4');
+    await page.locator('tr:nth-child(5) > td:nth-child(3)').press('ArrowDown');
+    await page.locator('tr:nth-child(6) > td:nth-child(3)').type('1');
+    await page.locator('tr:nth-child(6) > td:nth-child(3)').press('ArrowDown');
+    await page.locator('tr:nth-child(7) > td:nth-child(3)').type('4');
+    await page.locator('tr:nth-child(7) > td:nth-child(3)').press('ArrowDown');
+    await page.locator('tr:nth-child(8) > td:nth-child(3)').type('12');
+    await page.locator('tr:nth-child(8) > td:nth-child(3)').press('ArrowDown');
+    await page.locator('tr:nth-child(9) > td:nth-child(3)').type('4');
+    await page.locator('tr:nth-child(9) > td:nth-child(3)').press('ArrowDown');
+    await page.locator('tr:nth-child(10) > td:nth-child(3)').type('124');
+    await page.locator('tr:nth-child(10) > td:nth-child(3)').press('ArrowDown');
+    await page.locator('tr:nth-child(11) > td:nth-child(3)').type('54');
+    await page.locator('tr:nth-child(11) > td:nth-child(3)').press('ArrowDown');
+    await page.locator('tr:nth-child(12) > td:nth-child(3)').type('43');
+    await page.locator('td:nth-child(4)').first().click();
+    await page.locator('td:nth-child(4)').first().type('12');
+    await page.locator('tr:nth-child(2) > td:nth-child(4)').type('5');
+    await page.locator('tr:nth-child(3) > td:nth-child(4)').press('ArrowDown');
+    await page.locator('tr:nth-child(4) > td:nth-child(4)').type('3');
+    await page.locator('tr:nth-child(4) > td:nth-child(4)').press('ArrowDown');
+    await page.locator('tr:nth-child(5) > td:nth-child(4)').type('1');
+    await page.locator('tr:nth-child(5) > td:nth-child(4)').press('ArrowDown');
+    await page.locator('tr:nth-child(6) > td:nth-child(4)').type('1');
+    await page.locator('tr:nth-child(6) > td:nth-child(4)').press('ArrowDown');
+    await page.locator('tr:nth-child(7) > td:nth-child(4)').type('2');
+    await page.locator('tr:nth-child(7) > td:nth-child(4)').press('ArrowDown');
+    await page.locator('tr:nth-child(8) > td:nth-child(4)').type('5');
+    await page.locator('tr:nth-child(8) > td:nth-child(4)').press('ArrowDown');
+    await page.locator('tr:nth-child(9) > td:nth-child(4)').type('2');
+    await page.locator('tr:nth-child(9) > td:nth-child(4)').press('ArrowDown');
+    await page.locator('tr:nth-child(10) > td:nth-child(4)').type('12');
+    await page.locator('tr:nth-child(10) > td:nth-child(4)').press('ArrowDown');
+    await page.locator('tr:nth-child(11) > td:nth-child(4)').type('4');
+    await page.locator('tr:nth-child(11) > td:nth-child(4)').press('ArrowDown');
+    await page.locator('tr:nth-child(12) > td:nth-child(4)').type('12');
+    await page.pause();
     await page.locator("#guardar").click();
   });
 

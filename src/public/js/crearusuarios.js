@@ -1,4 +1,3 @@
-//TODO cambiar los $(document) a $(body) para mas performance
 let usuario;
 let contraseña;
 let confirmarContraseña;
