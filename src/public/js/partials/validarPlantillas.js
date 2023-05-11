@@ -15,10 +15,11 @@ async function validarPlantillas() {
 
   precios.forEach(el => {
     let precio = el.innerText;
-    if (precio.endsWith("."))
-      el.innerText = precio.replace(".", "");
-    if (precio.startsWith("."))
-      el.innerText = precio.replace(".", "0.");
+    if (precio === ".")
+      el.textContent = "";
+    let numeroParseado = parseFloat(precio);
+    if (!isNaN(numeroParseado))
+      el.textContent = numeroParseado.normalizarPrecio();
   });
   if (precios.some(el => el.innerText === ""))
     return mostrarError("Hay un precio vacio");
@@ -47,6 +48,12 @@ async function validarPlantillas() {
     return false
   });
   return !hayRepetidos;
+}
+
+String.prototype.normalizarPrecio = fNormalizarPrecio;
+Number.prototype.normalizarPrecio = fNormalizarPrecio;
+function fNormalizarPrecio() {
+  return this.toFixed(2).replace(/[.,]00$/, "");
 }
 
 function mostrarError(error) {

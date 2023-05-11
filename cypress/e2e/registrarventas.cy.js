@@ -6,6 +6,7 @@ import * as json from "../utilidades/jsonParaTests.js"
 beforeEach(() => {
   cy.visit('http://localhost:3000/registrarventas/1-3-2024');
   cy.get("input.trabajador").type("aaa");
+  cy.viewport(1366, 570);
 })
 
 describe('validaciones antes de guardar', () => {
@@ -139,11 +140,11 @@ function filasycolumnasdesactivar() {
   return new Promise(resolve => {
     cy.get('.configuraciones').click();
     cy.wait(500)
-    cy.contains("Guardar cambios").should("be.visible");
+    cy.contains("Ordenar alfabéticamente").should("be.visible");
     cy.get('#filasycolumnasdesactivar').check();
     cy.get('.modal-footer .guardarconfig').click();
     cy.wait(500)
-    cy.contains("Guardar cambios").should("not.be.visible");
+    cy.contains("Ordenar alfabéticamente").should("not.be.visible");
     cy.get('[data-tabid="0"] > table > :nth-child(5) > :nth-child(1) > .borrarcolumnas').then(el => {
       const win = el[0].ownerDocument.defaultView;
       const after = win.getComputedStyle(el[0], 'after');
@@ -160,11 +161,11 @@ function filasycolumnaspresionar1segundo() {
   return new Promise(resolve => {
     cy.get('.configuraciones').click();
     cy.wait(500)
-    cy.contains("Guardar cambios").should("be.visible");
+    cy.contains("Ordenar alfabéticamente").should("be.visible");
     cy.get('#filasycolumnaspresionar1segundo').check();
     cy.get('.modal-footer .guardarconfig').click();
     cy.wait(500)
-    cy.contains("Guardar cambios").should("not.be.visible");
+    cy.contains("Ordenar alfabéticamente").should("not.be.visible");
     cy.get('[data-tabid="0"] > table > :nth-child(5) > :nth-child(1) > .borrarcolumnas').then(el => {
       const win = el[0].ownerDocument.defaultView;
       const after = win.getComputedStyle(el[0], 'after');
@@ -181,11 +182,11 @@ function filasycolumnaspresionarx() {
   return new Promise(resolve => {
     cy.get('.configuraciones').click();
     cy.wait(500)
-    cy.contains("Guardar cambios").should("be.visible");
+    cy.contains("Ordenar alfabéticamente").should("be.visible");
     cy.get('#filasycolumnaspresionarx').check();
     cy.get('.modal-footer .guardarconfig').click();
     cy.wait(500)
-    cy.contains("Guardar cambios").should("not.be.visible");
+    cy.contains("Ordenar alfabéticamente").should("not.be.visible");
     cy.get('.contenidotabs').should("have.class", "cerrarconboton")
     cy.get('[data-tabid="0"] > table > :nth-child(5) > :nth-child(1) > .borrarcolumnas').then(el => {
       const win = el[0].ownerDocument.defaultView;
@@ -227,11 +228,11 @@ function borrarCamiones() {
     try {
       cy.get('.configuraciones').click();
       cy.wait(500)
-      cy.contains("Guardar cambios").should("be.visible");
+      cy.contains("Ordenar alfabéticamente").should("be.visible");
       cy.get('#filasycolumnasdesactivar').check();
       cy.get('.modal-footer .guardarconfig').click();
       cy.wait(500)
-      cy.contains("Guardar cambios").should("not.be.visible");
+      cy.contains("Ordenar alfabéticamente").should("not.be.visible");
       cy.get(".grupotabs .tabs__label").click('topRight');
       cy.get(".swal2-confirm").click();
       cy.contains("No se puede borrar, debe haber al menos un camión")

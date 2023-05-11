@@ -31,7 +31,6 @@ const ventaspordiaSchema = new Schema({
     usuario: String,
     fechacreacion: { type: Date, inmutable: true },
     fechaultimocambio: Date,
-    nombretrabajador: String,
     camiones: [camionesSchema]
 });
 
