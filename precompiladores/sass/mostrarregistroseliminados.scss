@@ -173,3 +173,7 @@ hr {
 #seleccionarTodos {
   margin-bottom: 20px;
 }
+
+[slot="fecha"]{
+  display: none;
+}

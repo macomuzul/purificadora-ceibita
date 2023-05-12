@@ -1,10 +1,9 @@
-dayjs.locale('es');
 const backToTopButton = document.querySelector("#back-to-top-btn");
 let tabs = document.querySelectorAll(".tabs");
-var fechaRegistro = document.querySelectorAll(".fechaDelRegistro");
-var clickeados = { valores: [] }
-var seleccionarTodos = document.getElementById("seleccionarTodos");
-var checkboxes = document.querySelectorAll(".check");
+let fechaRegistro = document.querySelectorAll(".fechaDelRegistro");
+let clickeados = { valores: [] }
+let seleccionarTodos = document.getElementById("seleccionarTodos");
+let checkboxes = document.querySelectorAll(".check");
 
 seleccionarTodos.addEventListener("change", () => {
   if (seleccionarTodos.checked)
@@ -12,27 +11,6 @@ seleccionarTodos.addEventListener("change", () => {
   else
     checkboxes.forEach(el => el.checked = false);
 });
-function cambiarFormatoFecha(el) {
-  var fecha = el.innerText.split("/");
-  if (fecha.length > 2) {
-    clickeados.valores.push({ numero: el.dataset.fecha, valor: el.innerText });
-    var fechaCompleta = dayjs(fecha[2] + "-" + fecha[1] + "-" + fecha[0]);
-    el.innerText = fechaCompleta.format("dddd, D % MMMM % YYYY").replaceAll("%", "de");
-  }
-  else
-    el.innerText = clickeados.valores.filter(x => x.numero === el.dataset.fecha)[0].valor;
-}
-
-fechaRegistro.forEach(el => {
-  el.addEventListener("click", () => {
-    cambiarFormatoFecha(el);
-  });
-});
-
-window.addEventListener("load", () => {
-  fechaRegistro.forEach((el) => cambiarFormatoFecha(el));
-});
-
 
 window.addEventListener("scroll", scrollFunction);
 
@@ -86,7 +64,7 @@ function devuelveTabla(registro) {
 }
 
 document.querySelectorAll(".btnrestaurar").forEach((el) => {
-  el.addEventListener("click", async function(e) {
+  el.addEventListener("click", async function (e) {
     let registro = this.closest("article");
     let resultado = devuelveTabla(registro);
 
@@ -116,18 +94,10 @@ document.querySelectorAll(".btnrestaurar").forEach((el) => {
           contentType: "application/json",
           data: `{"id": "${registro.getAttribute("name")}"}`,
           success: function (res) {
-            Swal.fire(
-              "Se ha restaurado correctamente",
-              `El registro con fecha: ${resultado.fecha} se ha restaurado correctamente. Ahora serás redireccionado a esta fecha en el calendario para ver los cambios`,
-              "success"
-            );
+            Swal.fire("Se ha restaurado correctamente", `El registro con fecha: ${resultado.fecha} se ha restaurado correctamente. Ahora serás redireccionado a esta fecha en el calendario para ver los cambios`, "success");
           },
           error: function (res) {
-            Swal.fire({
-              icon: "error",
-              title: "Ups...",
-              text: "No se pudo restaurar el registro",
-            });
+            Swal.fire("Ups...", "No se pudo restaurar el registro", "error");
           },
         });
       }
@@ -136,7 +106,7 @@ document.querySelectorAll(".btnrestaurar").forEach((el) => {
 });
 
 document.querySelectorAll(".btneliminar").forEach((el) => {
-  el.addEventListener("click", async function(e) {
+  el.addEventListener("click", async function (e) {
     let registro = this.closest("article");
     let resultado = devuelveTabla(registro);
 
@@ -157,22 +127,14 @@ document.querySelectorAll(".btneliminar").forEach((el) => {
         contentType: "application/json",
         data: `{"id": "${registro.getAttribute("name")}"}`,
         success: async function (res) {
-          await Swal.fire(
-            "Se ha borrado correctamente",
-            `El registro con fecha: ${resultado.fecha} se ha borrado correctamente`,
-            "success"
-          );
+          await Swal.fire("Se ha borrado correctamente", `El registro con fecha: ${resultado.fecha} se ha borrado correctamente`, "success");
           if (clickeados.valores.length > 2)
             window.location = document.URL;
           else
             window.location = `${document.URL.replace(/pag=[0-9]+/, `pag=${parseInt(page) - 1}`)}`;
         },
         error: function (res) {
-          Swal.fire({
-            icon: "error",
-            title: "Ups...",
-            text: "No se pudo eliminar el registro",
-          });
+          Swal.fire("Ups...", "No se pudo eliminar el registro", "error",);
         },
       });
     }
@@ -180,7 +142,7 @@ document.querySelectorAll(".btneliminar").forEach((el) => {
 });
 
 document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
-  el.addEventListener("click", async function(e) {
+  el.addEventListener("click", async function (e) {
     let registro = this.closest("article");
     let nombreTabla = this.getAttribute("name");
     let tabla = registro.querySelector(`[name=${nombreTabla}]`);
@@ -212,18 +174,10 @@ document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
           contentType: "application/json",
           data: `{"id": "${nombreTabla}", "numTabla": "${numTabla}"}`,
           success: function (res) {
-            Swal.fire(
-              "Se ha restaurado correctamente",
-              `La tabla del camión No. ${numtabla} con fecha: ${fecha} se ha restaurado correctamente. Ahora serás redireccionado a esta fecha en el calendario para ver los cambios`,
-              "success"
-            );
+            Swal.fire("Se ha restaurado correctamente", `La tabla del camión No. ${numtabla} con fecha: ${fecha} se ha restaurado correctamente. Ahora serás redireccionado a esta fecha en el calendario para ver los cambios`, "success");
           },
           error: function (res) {
-            Swal.fire({
-              icon: "error",
-              title: "Ups...",
-              text: "No se pudo restaurar el registro",
-            });
+            Swal.fire("Ups...", "No se pudo restaurar el registro", "error",);
           },
         });
       }
@@ -250,21 +204,14 @@ document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
           contentType: "application/json",
           data: JSON.stringify(registros),
           success: async function (res) {
-            await Swal.fire(
-              "Se ha borrado correctamente",
-              `Se han borrado correctamente todos los registros seleccionados`,
-              "success"
-            );
+            await Swal.fire("Se ha borrado correctamente", `Se han borrado correctamente todos los registros seleccionados`, "success");
             if (clickeados.valores.length > 2)
               window.location = document.URL;
             else
               window.location = `${document.URL.replace(/pag=[0-9]+/, `pag=${parseInt(page) - 1}`)}`;
           },
           error: function (res) {
-            Swal.fire({
-              icon: "error",
-              title: "Ups...",
-              text: "No se pudieron eliminar los registros",});
+            Swal.fire("Ups...", "No se pudieron eliminar los registros", "error");
           },
         });
       }

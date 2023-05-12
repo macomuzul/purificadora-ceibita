@@ -27,6 +27,7 @@
   <script defer src="/jquery-ui-1.13.js"></script>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script> -->
   <script defer src="/tecladoTabla.js"></script>
+  <script defer src="/spanFechas.js"></script>
   <script defer src="/colocarDatosTablaTests.js"></script>
   <script defer src="/registrarventas.js"></script>
   <script defer src="/dropdown.js"></script>
@@ -91,8 +92,8 @@
                   <div class="contenedor-trabajador">
                     <label class="label-trabajador">Nombre del conductor:</label>
                     <div class="contenedor-input-trabajador">
-                      <input type="text" class="form-control trabajador" value="jeje"
-                      <% if (ventaspordia) { %> value= <%= ventaspordia.camiones[0].nombretrabajador %> <% } %>/>
+                      <input type="text" class="form-control trabajador"
+                      <% if (ventaspordia) { %> value="<%= ventaspordia.camiones[j].nombretrabajador %>"<% } %>/>
                       <div class="btn-group dropend">
                         <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
                         <ul class="dropdown-menu dropdown-menu-dark">
@@ -108,7 +109,8 @@
               <% } %>
             </div>
             <% if (ventaspordia) { %>
-              <span class="ultima-modificacion">Fecha de última modificación: <span class="ultima-modificacion-fecha"><%=DateTime.fromJSDate(ventaspordia.fechaultimocambio, {zone: "America/Guatemala"}).toFormat("d/M/y")%></span><span> a las <%= DateTime.fromJSDate(ventaspordia.fechaultimocambio, {zone: "America/Guatemala"}).toFormat("H:mm 'con' ss 'segundos'") %></span></span>
+              <% let fechaUltimaModificacion = DateTime.fromJSDate(ventaspordia.fechaultimocambio, { zone: "America/Guatemala" }); %>
+              <span class="ultima-modificacion">Fecha de última modificación: <span-fechas><span slot="fecha"><%= fechaUltimaModificacion.toFormat("d/M/y") %></span><span slot="fechaStr"><%= fechaUltimaModificacion.toLocaleString(DateTime.DATE_HUGE)  %></span></span-fechas> <span class="ultima-modificacion-fecha"></span> <%= fechaUltimaModificacion.toFormat("'a las' H:mm 'con' ss 'segundos'") %></span>
             <% } %>
         </div>
       </article>

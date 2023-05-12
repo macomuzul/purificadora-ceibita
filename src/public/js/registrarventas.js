@@ -21,7 +21,6 @@ let desdeElMobil = function () { return (('ontouchstart' in window) || (navigato
 $(async function () {
   colocarValoresConfig();
   guardarValoresConfig();
-console.log("epa")
   if (desdeElMobil())
     await $.getScript('/touch.js');
 })
@@ -643,7 +642,7 @@ $("#guardar").on("click", async function () {
 
 document.getElementById("resumen").addEventListener("click", async () => {
   let listaTablas = devuelveListaTablas();
-  listaTablasValores = []
+  listaTablasValores = [];
   listaTablas.forEach(tabla => {
     listaValores = [];
     let productos = tabla.querySelectorAll(".cuerpo td:first-child");
@@ -1060,8 +1059,6 @@ async function validarQueTablaNoTengaMismoNombre(tabla, numtabla) {
   let hayRepetidos = false;
   arrayNormalizado.forEach((item, index) => {
     if (arrayNormalizado.indexOf(item) !== index) {
-      console.log(item)
-
       let color = colorAleatorio();
       productosCopia.forEach(el => {
         if (el.textContent === item)
@@ -1381,8 +1378,7 @@ async function borrarCamiones(label, e) {
     <div class="tabs__content" style="display:initial !important;">` + tabla.cloneNode(true).outerHTML + "</div>"
   htmlTablas += `</div>
     <br>
-    <div class="textovista">Desea continuar?</div>
-    <br><br>`
+    <div class="textovista">Deseas continuar?</div>`
   e.preventDefault();
   e.stopPropagation();
   let result = await swalConfirmarYCancelar.fire({

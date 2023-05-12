@@ -15,6 +15,7 @@
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.7/locale/es.min.js"></script>
   <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="/spanFechas.js"></script>
   <script defer src="/mostrarregistroseliminados.js"></script>
   <script defer src="/paginacion.js"></script>
 </head>
@@ -69,8 +70,10 @@
           <span>Eliminar este registro</span>
         </div>
       </div>
-      <h2>Fecha del registro: <span class="fechaDelRegistro" data-fecha="<%=i%>"><%=DateTime.fromJSDate(datostablas[i].ventaspordia.fecha, {zone: "utc"}).toFormat("d/M/y")%></span></h2>
-      <span>Se eliminó el <span class="fechaDelRegistro" data-fecha="<%=i%>a"><%=DateTime.fromJSDate(datostablas[i].fechaeliminacion, {zone: "America/Guatemala"}).toFormat("d/M/y")%></span> a las <%= DateTime.fromJSDate(datostablas[i].fechaeliminacion, {zone: "America/Guatemala"}).toFormat("H:mm 'con' ss 'segundos'") %></span>
+      <% let fechaDelRegistro = DateTime.fromJSDate(datostablas[i].ventaspordia.fecha, {zone: "utc"}) %>
+      <% let fechaEliminado = DateTime.fromJSDate(datostablas[i].fechaeliminacion, {zone: "America/Guatemala"}) %>
+      <h2>Fecha del registro: <span-fechas><span slot="fecha"><%= fechaDelRegistro.toFormat("d/M/y") %></span><span slot="fechaStr"><%= fechaDelRegistro.toLocaleString(DateTime.DATE_HUGE).replace(/^\w/, c => c.toUpperCase())  %></span></span-fechas></span></h2>
+      <span>Se eliminó el <span-fechas><span slot="fecha"><%= fechaEliminado.toFormat("d/M/y") %></span><span slot="fechaStr"><%= fechaEliminado.toLocaleString(DateTime.DATE_HUGE) %></span></span-fechas><%= fechaEliminado.toFormat("'a las' H:mm 'con' ss 'segundos'") %></span>
       <div class="tabs">
         <% for (let j=0; j < datostablas[i].ventaspordia.camiones.length; j++){ %>
         <input type="radio" class="tabs__radio" name="<%=i%>tab" id="<%=i%>tab<%=j%>" <% if (j===0) { %> checked <% } %> />

@@ -6,10 +6,12 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
 const morgan = require('morgan');
+const { Settings } = require('luxon');
 const estaAutenticado = require("./security/estaAutenticado");
 
 global.cantidadMaximaPeticionesInvalidas = 3;
 global.tiempoTimeoutLoginSegundos = 900; //15 minutos
+Settings.defaultLocale = "es";
 
 // initializations
 const app = express();
