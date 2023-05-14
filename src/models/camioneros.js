@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const nombreSchema = new Schema({
   nombre: String,
+  color: String,
   _id: false
 });
 const camionerosSchema = new Schema({

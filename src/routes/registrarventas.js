@@ -13,6 +13,8 @@ function calcularTodosLosResumenesPorDia() {
 }
 
 function calcularResumenPorDia(venta) {
+  let fecha = DateTime.fromJSDate(venta.fecha).toFormat("d/M/y");
+
   listaTablasValores = [];
   venta.camiones.forEach(camion => {
     listaValores = [];
@@ -23,7 +25,7 @@ function calcularResumenPorDia(venta) {
     listaTablasValores.push(listaValores);
   });
 
-  let result = listaTablasValores.reduce((acc, table) => {
+  let productos = listaTablasValores.reduce((acc, table) => {
     table.forEach(fila => {
       if (acc[fila.producto]) {
         acc[fila.producto].vendidos += fila.vendidos;
@@ -34,10 +36,20 @@ function calcularResumenPorDia(venta) {
     });
     return acc;
   }, {});
-
-
-
+  let vendidosTotal = 0;
+  let ingresosTotal = 0;
+  for (const key in productos) {
+    vendidosTotal += productos[key].vendidos;
+    ingresosTotal += productos[key].ingresos;
+  }
+  let resumenDia = ResumenDia.find({ _id: fecha });
+  if (resumenDia)
+    Object.assign(resumendia, { productos, vendidostotal, ingresostotal });
+  else
+    resumenDia = new ResumenDia({ _id: fecha, productos, vendidosTotal, ingresosTotal });
+  resumenDia.save();
 }
+
 String.prototype.normalizar = function () {
   return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
 }
@@ -80,7 +92,7 @@ router.get("/:id", async (req, res) => {
     let listaCamioneros = await Camioneros.findOne();
     let camioneros = listaCamioneros.camioneros.map(el => el.nombre);
     let fechastr = fecha.toLocaleString(DateTime.DATE_HUGE);
-    res.render("registrarventas", { fecha: fecha.toFormat("d/M/y"), ventaspordia: datostablas, plantillas, plantillaDefault, fechastr, camioneros, DateTime});
+    res.render("registrarventas", { fecha: fecha.toFormat("d/M/y"), ventaspordia: datostablas, plantillas, plantillaDefault, fechastr, camioneros, DateTime });
   } catch (e) {
     console.log(e)
     res.send("página inválida");
@@ -89,6 +101,9 @@ router.get("/:id", async (req, res) => {
 
 VentasPorDia.watch().on('change', (cambio) => {
   console.log('Change detected:', cambio);
+  if (cambio.ns.coll === "ventaspordias" && cambio.operationType === "insert") {
+    calcularResumenPorDia(cambio.fullDocument)
+  }
 });
 
 module.exports = router;

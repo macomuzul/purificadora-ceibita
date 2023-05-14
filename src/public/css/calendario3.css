@@ -15,7 +15,7 @@ input:focus, textarea:focus, button:focus {
 .evo-calendar {
     position: relative;
     background-color: #fbfbfb;
-    color: #5a5a5a;
+    color: #EEE;
     width: 100%;
     -webkit-box-shadow: 0 10px 50px -20px #8773c1;
             box-shadow: 0 10px 50px -20px #8773c1;
@@ -192,7 +192,7 @@ th[colspan="7"]::after {
 tr.calendar-header .calendar-header-day {
     padding: 10px;
     text-align: center;
-    color: #5a5a5a;
+    color: #EEE;
 }
 
 tr.calendar-body .calendar-day {
@@ -206,7 +206,7 @@ tr.calendar-body .calendar-day .day {
     margin: 0 auto;
     border-radius: 50%;
     text-align: center;
-    color: #5a5a5a;
+    color: #EEE;
     border: 1px solid transparent;
     -webkit-transition: all .3s ease, -webkit-transform .5s ease;
     transition: all .3s ease, -webkit-transform .5s ease;
@@ -226,7 +226,7 @@ tr.calendar-body .calendar-day .day:active {
 
 tr.calendar-body .calendar-day .day.calendar-active,
 tr.calendar-body .calendar-day .day.calendar-active:hover {
-    color: #5a5a5a;
+    color: #EEE;
     border-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -278,7 +278,7 @@ tr.calendar-body .calendar-day .day[disabled] {
 .calendar-events > .event-header > p {
     font-size: 30px;
     font-weight: 600;
-    color: #5a5a5a;
+    color: #EEE;
 }
 #eventListToggler {
     position: absolute;
@@ -382,7 +382,7 @@ tr.calendar-body .calendar-day .day[disabled] {
 }
 .event-container > .event-info > p {
     margin: 0;
-    color: #5a5a5a;
+    color: #EEE;
 }
 .event-container > .event-info > p.event-title {
     position: relative;

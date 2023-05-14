@@ -1,15 +1,3 @@
-/*!
- * Evo Calendar - Simple and Modern-looking Event Calendar Plugin
- *
- * Licensed under the MIT License
- * 
- * Version: 1.1.3
- * Author: Edlyn Villegas
- * Docs: https://edlynvillegas.github.com/evo-calendar
- * Repo: https://github.com/edlynvillegas/evo-calendar
- * Issues: https://github.com/edlynvillegas/evo-calendar/issues
- * 
- */
 var fechaseleccionada;
 ;(function(factory) {
     'use strict';
@@ -86,10 +74,6 @@ var fechaseleccionada;
             // Format Calendar Events into selected format
             if(_.options.calendarEvents != null) {
                 for(var i=0; i < _.options.calendarEvents.length; i++) {
-                    // If event doesn't have an id, throw an error message
-                    if(!_.options.calendarEvents[i].id) {
-                        console.log("%c Event named: \""+_.options.calendarEvents[i].name+"\" doesn't have a unique ID ", "color:white;font-weight:bold;background-color:#e21d1d;");
-                    }
                     if(_.isValidDate(_.options.calendarEvents[i].date)) {
                         _.options.calendarEvents[i].date = _.formatDate(_.options.calendarEvents[i].date, _.options.format)
                     }
@@ -256,22 +240,6 @@ var fechaseleccionada;
 
         var ndate = new Date(date);
         fechaseleccionada = new Date(ndate);
-//         console.log(ndate.getFullYear());
-//         console.log(ndate.getMonth()+1);
-//         console.log(ndate.getDate());
-//         console.log(ndate);
-
-//         var anterior = new Date(ndate);
-//         anterior.setDate(ndate.getDate() - 1)
-//         var siguiente = new Date(ndate);
-//         siguiente.setDate(ndate.getDate() + 1)
-
-// console.log(anterior);
-// console.log(siguiente);
-        // if (!_.isValidDate(ndate)) { // test
-        //     ndate = new Date(date.replace(/-/g, '/'))
-        // }
-        
         var val = {
             d: ndate.getDate(),
             D: _.initials.dates[language].daysShort[ndate.getDay()],
@@ -528,11 +496,12 @@ var fechaseleccionada;
                         '</div>';
 
             // events
-            markup += '<div class="calendar-events">'+
-                            '<div class="event-header"><p></p></div>'+
-                            '<div class="event-list"></div>'+
-                            '<input class="boton" type="submit" id="miboton" onclick="mifuncion()" value="Crear nuevo registro"/>'+
-                        '</div>';
+            markup += `<div class="calendar-events">
+                <div class="event-header"><p></p></div>
+                <div class="event-list"></div>
+                <div id="ultimaModificacion"></div>
+                <input class="boton" type="submit" id="irARegistrarVentas" onclick="irARegistrarVentas()" value="Crear nuevo registro"/>
+            </div>`;
 
             // --- Finally, build it now! --- //
             _.$elements.calendarEl.html(markup);
@@ -551,7 +520,6 @@ var fechaseleccionada;
                 if(!_.$elements.eventListToggler) _.$elements.eventListToggler = $(_.$elements.calendarEl).find('span#eventListToggler');
             }
         }
-
         _.buildSidebarYear();
         _.buildSidebarMonths();
         _.buildCalendar();
@@ -564,7 +532,6 @@ var fechaseleccionada;
     // v1.0.0 - Build Event: Event list
     EvoCalendar.prototype.buildEventList = function() {
         var _ = this, markup, hasEventToday = false;
-        
         _.$active.events = [];
         // Event date
 
@@ -593,10 +560,14 @@ var fechaseleccionada;
         }
         function eventAdder(event) {
             hasEventToday = true;
+            $($).find("#ultimaModificacion").text("Fecha de última modificación: jueves, 11 de mayo de 2023 por: Pacha el señor de Guatemala");
+            $($).find("#irARegistrarVentas").val("Ir a registro");
             _.addEventList(event)
         }
         // IF: no event for the selected date
         if(!hasEventToday) {
+            $($).find("#ultimaModificacion").text("");
+            $($).find("#irARegistrarVentas").val("Crear nuevo registro");
             markup = '<div class="event-empty">';
             if (_.$active.date === _.$current.date) {
                 markup += '<p>'+_.initials.dates[_.options.language].noEventForToday+'</p>';
@@ -701,7 +672,6 @@ var fechaseleccionada;
                     }
                     markup += '</tr>';
         _.$elements.innerEl.find('.calendar-table').append(markup);
-
         if(_.options.todayHighlight) {
             _.$elements.innerEl.find("[data-date-val='" + _.$current.date + "']").addClass('calendar-today');
         }
@@ -710,7 +680,6 @@ var fechaseleccionada;
         _.$elements.innerEl.find('.calendar-day').children()
         .off('click.evocalendar')
         .on('click.evocalendar', _.selectDate)
-
         var selectedDate = _.$elements.innerEl.find("[data-date-val='" + _.$active.date + "']");
         if (selectedDate) {
             // Remove active class to all
@@ -810,18 +779,6 @@ var fechaseleccionada;
         }
     };
 
-    // v1.0.0 - Select event
-    EvoCalendar.prototype.selectEvent = function(event) {
-        var _ = this;
-        var el = $(event.target).closest('.event-container');
-        var id = $(el).data('eventIndex').toString();
-        var index = _.options.calendarEvents.map(function (event) { return (event.id).toString() }).indexOf(id);
-        var modified_event = _.options.calendarEvents[index];
-        if (modified_event.date instanceof Array) {
-            modified_event.dates_range = _.getBetweenDates(modified_event.date);
-        }
-        $(_.$elements.calendarEl).trigger("selectEvent", [_.options.calendarEvents[index]])
-    }
 
     // v1.0.0 - Select year
     EvoCalendar.prototype.selectYear = function(event) {
@@ -858,7 +815,7 @@ var fechaseleccionada;
     // v1.0.0 - Select month
     EvoCalendar.prototype.selectMonth = function(event) {
         var _ = this;
-        
+        debugger;
         if (typeof event === 'string' || typeof event === 'number') {
             if (event >= 0 && event <=_.$label.months.length) {
                 // if: 0-11
@@ -984,19 +941,16 @@ var fechaseleccionada;
         var _ = this;
 
         function addEvent(data) {
-            if(!data.id) {
-                console.log("%c Event named: \""+data.name+"\" doesn't have a unique ID ", "color:white;font-weight:bold;background-color:#e21d1d;");
-            }
-
-            if (data.date instanceof Array) {
-                for (var j=0; j < data.date.length; j++) {
-                    if(isDateValid(data.date[j])) {
-                        data.date[j] = _.formatDate(new Date(data.date[j]), _.options.format);
+            let fecha = data.date;
+            if (fecha instanceof Array) {
+                for (var j=0; j < fecha.length; j++) {
+                    if(isDateValid(fecha[j])) {
+                        fecha[j] = _.formatDate(new Date(fecha[j]), _.options.format);
                     }
                 }
             } else {
-                if(isDateValid(data.date)) {
-                    data.date = _.formatDate(new Date(data.date), _.options.format);
+                if(isDateValid(fecha)) {
+                    fecha = _.formatDate(new Date(fecha), _.options.format);
                 }
             }
             
@@ -1004,9 +958,9 @@ var fechaseleccionada;
             _.options.calendarEvents.push(data);
             // add to date's indicator
             _.addEventIndicator(data);
-            // add to event list IF active.event_date === data.date
-            if (_.$active.event_date === data.date) _.addEventList(data);
-            // _.$elements.innerEl.find("[data-date-val='" + data.date + "']")
+            // add to event list IF active.event_date === fecha
+            if (_.$active.event_date === fecha) _.addEventList(data);
+            // _.$elements.innerEl.find("[data-date-val='" + fecha + "']")
 
             function isDateValid(date) {
                 if(_.isValidDate(date)) {
@@ -1081,6 +1035,6 @@ var fechaseleccionada;
 
      
 
-function mifuncion() { 
+function irARegistrarVentas() { 
     window.location = `/registrarventas/${fechaseleccionada.getDate()}-${(fechaseleccionada.getMonth()+1)}-${fechaseleccionada.getFullYear()}`;
 }

@@ -98,7 +98,7 @@
 }
 .midnight-blue .calendar-events {
     background-color: #192435;
-    padding: 70px 20px 60px 20px;
+    padding: 30px 20px 60px 20px;
 }
 .midnight-blue .calendar-events::-webkit-scrollbar-thumb {
     background: #fff;

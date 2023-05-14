@@ -103,6 +103,7 @@ body {
   border-radius: 30px;
   margin-left: auto;
   margin-top: 10px;
+  transform: translateX(180px);
 }
 
 .eliminartodos {
@@ -176,4 +177,12 @@ hr {
 
 [slot="fecha"]{
   display: none;
+}
+
+.tabs__label, .agregarcamion{
+  transform: translateX(-48px);
+}
+
+.tab__interior__content{
+  width: fit-content;
 }
