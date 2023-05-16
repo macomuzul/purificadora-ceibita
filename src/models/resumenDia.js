@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 _ = require('underscore');
 
 const resumenDiaSchema = new Schema({
-  _id: String,
+  _id: Date,
   productos: {
 
   },

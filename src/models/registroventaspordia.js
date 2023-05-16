@@ -8,7 +8,6 @@ const viajesSchema = new Schema({
     _id: false
 });
 
-//TODO Este hay que cambiarlo por productoSchema en vez de filasSchema
 const productosSchema = new Schema({
     nombreproducto: String,
     precioproducto: Number,

@@ -23,57 +23,67 @@
   <%- include("layouts/navbar") %>
     <main>
       <div class="contenedorsuperior"> <button class="button-85">Restaura registros anteriores</button></div>
-      <br>
-      <h3 class="pt-4 pb-2 borde">Elije una fecha para buscar</h3>
-      <br>
-      <div class="dropdown" id="selector">
-        <div class="select">
-          <span class="selected" id="buscarpor">Buscar por</span>
-          <div class="caret"></div>
+
+      <section>
+        <div class="tituloSeccion">Buscar una fecha en específico</div>
+        <h3 class="borde">Elije una fecha para buscar</h3>
+        <br>
+        <div class="dropdown" id="selector">
+          <div class="select">
+            <span class="selected" id="buscarpor">Buscar por</span>
+            <div class="caret"></div>
+          </div>
+          <ul class="menu">
+            <li>Fecha (calendario)</li>
+            <li>Fecha de eliminación</li>
+          </ul>
         </div>
-        <ul class="menu">
-          <li>Fecha (calendario)</li>
-          <li>Fecha de eliminación</li>
-        </ul>   
-      </div>
-      <div class="dropdown" id="selector">
-        <div class="select">
-          <span class="selected" id="rangofecha">Elige un rango</span>
-          <div class="caret"></div>
+        <div class="dropdown" id="selector">
+          <div class="select">
+            <span class="selected" id="rangofecha">Elige un rango</span>
+            <div class="caret"></div>
+          </div>
+          <ul class="menu" id="fechasdropdown">
+            <li>Fecha igual a</li>
+            <li>Fecha menor o igual a</li>
+            <li>Fecha mayor o igual a</li>
+            <li>Fecha entre</li>
+          </ul>
         </div>
-        <ul class="menu" id="fechasdropdown">
-          <li>Fecha igual a</li>
-          <li>Fecha menor o igual a</li>
-          <li>Fecha mayor o igual a</li>
-          <li>Fecha entre</li>
-        </ul>
-      </div>
-      <div class="contenedorentre">
-        <div class="contenedorentreflex">
-          <div class="divdatepicker">
-            <div class="input-group date" id="datepicker">
-              <input type="text" class="form-control" readonly id="calendario1">
-              <span class="input-group-append">
-                <span class="input-group-text bg-white">
-                  <i class="fa fa-calendar"></i>
+        <div class="contenedorentre">
+          <div class="contenedorentreflex">
+            <div class="divdatepicker">
+              <div class="input-group date" id="datepicker">
+                <input type="text" class="form-control" readonly id="calendario1">
+                <span class="input-group-append">
+                  <span class="input-group-text bg-white">
+                    <i class="fa fa-calendar"></i>
+                  </span>
                 </span>
-              </span>
+              </div>
+            </div>
+            <div class="divseparador">y</div>
+            <div class="divdatepicker" id="divdatepickerescondido">
+              <div class="input-group date" id="datepicker2">
+                <input type="text" class="form-control" readonly id="calendario2">
+                <span class="input-group-append">
+                  <span class="input-group-text bg-white">
+                    <i class="fa fa-calendar"></i>
+                  </span>
+                </span>
+              </div>
             </div>
           </div>
-          <div class="divseparador">y</div>
-          <div class="divdatepicker" id="divdatepickerescondido">
-            <div class="input-group date" id="datepicker2">
-              <input type="text" class="form-control" readonly id="calendario2">
-              <span class="input-group-append">
-                <span class="input-group-text bg-white">
-                  <i class="fa fa-calendar"></i>
-                </span>
-              </span>
-            </div>
-          </div>
         </div>
-      </div>
-      <input class="btn btn-primary botonazul" type="button" value="Buscar fecha" id="btnbuscar" readonly="false" />
+        <input class="btn btn-primary botonazul" type="button" value="Buscar fecha" id="btnbuscar"/>
+      </section><hr>
+      <section>
+        <div class="tituloSeccion">Buscar últimos registros eliminados</div>
+        <div class="flex">
+          <input class="btn btn-primary botonazul btnOrden" type="button" value="Desde los más recientes a los más antiguos" id="btnMasReciente"/>
+          <input class="btn btn-primary botonazul btnOrden" type="button" value="Desde los más antiguos a los más recientes" id="btnMasAntiguo"/>
+        </div>
+      </section>
     </main>
 </body>
 

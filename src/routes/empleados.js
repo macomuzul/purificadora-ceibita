@@ -1,20 +1,20 @@
 const router = require('express').Router();
-const mUsuario = require('../models/usuario');
-const mCamioneros = require('../models/camioneros');
+const Usuario = require('../models/usuario');
+const Camioneros = require('../models/camioneros');
 const verificacionIdentidad = require("../security/verificacionIdentidad");
 
 router.get('/', async (req, res) => {
-  const usuarios = await mUsuario.find();
+  const usuarios = await Usuario.find();
   res.render('empleados', { usuarios });
 });
 
 router.route('/usuarios').get(async (req, res) => {
-  const usuarios = await mUsuario.find();
+  const usuarios = await Usuario.find();
   res.render('verusuarios', { usuarios });
 }).post(verificacionIdentidad, async (req, res) => {
   try {
     let { usuario } = req.body;
-    let encontrado = await mUsuario.findOne({ usuario });
+    let encontrado = await Usuario.findOne({ usuario });
     res.send(encontrado.contraseña);
   } catch {
     res.status(400).send("Error al realizar la petición")
@@ -22,9 +22,9 @@ router.route('/usuarios').get(async (req, res) => {
 }).delete(async (req, res) => {
   try {
     let { usuario } = req.body;
-    if (!mUsuario.exists({ usuario }))
+    if (!Usuario.exists({ usuario }))
       return res.send("Error, usuario no existe");
-    await mUsuario.deleteOne({ usuario });
+    await Usuario.deleteOne({ usuario });
     res.send("Borrado con éxito");
   } catch {
     res.status(400).send("Error al realizar la petición")
@@ -38,10 +38,10 @@ router.route('/usuarios/crear')
   .post(verificacionIdentidad, async (req, res) => {
     try {
       let { usuario, contraseña, rol, correo } = req.body;
-      let existeUsuario = await mUsuario.findOne({ usuario });
+      let existeUsuario = await Usuario.findOne({ usuario });
       if (existeUsuario)
         return res.status(400).send("Error, usuario ya existe");
-      let nuevoUsuario = new mUsuario({ usuario, contraseña, rol, correo });
+      let nuevoUsuario = new Usuario({ usuario, contraseña, rol, correo });
       await nuevoUsuario.save();
       res.send("Se guardo el usuario exitosamente");
     } catch {
@@ -57,7 +57,7 @@ router.route('/usuarios/editar/:id')
     try {
       let { usuario } = req.body;
       if (usuario) {
-        let existeUsuario = await mUsuario.findOne({ usuario });
+        let existeUsuario = await Usuario.findOne({ usuario });
         if (existeUsuario)
           return res.status(400).send("Error, usuario ya existe");
       }
@@ -70,7 +70,7 @@ router.route('/usuarios/editar/:id')
       if (!peticionValida)
         return res.status(400).send("Error al realizar la petición");
 
-      let guardado = await mUsuario.updateOne({ usuario: req.params.id }, req.body);
+      let guardado = await Usuario.updateOne({ usuario: req.params.id }, req.body);
       if(guardado.modifiedCount === 1)
         res.send("Se guardo exitosamente");
       else
@@ -81,7 +81,7 @@ router.route('/usuarios/editar/:id')
   });
 
 router.route('/camioneros').get(async (req, res) => {
-  const camioneros = await mCamioneros.findOne();
+  const camioneros = await Camioneros.findOne();
   res.render('camioneros', { camioneros });
 }).post(async (req, res) => {
   try {
@@ -89,11 +89,11 @@ router.route('/camioneros').get(async (req, res) => {
     if(!Object.keys(peticion).includes("camioneros"))
       return res.send("Petición inválida")
     
-    let camioneros = new mCamioneros(peticion);
-    let camionerosAnterior = await mCamioneros.find();
+    let camioneros = new Camioneros(peticion);
+    let camionerosAnterior = await Camioneros.find();
     console.log(camionerosAnterior.length)
     if(camionerosAnterior.length === 1)
-      await mCamioneros.updateOne({}, peticion);
+      await Camioneros.updateOne({}, peticion);
     else
       await camioneros.save();
     res.send("Se ha guardado correctamente")

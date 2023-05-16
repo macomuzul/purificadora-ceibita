@@ -29,9 +29,7 @@ async function validarPlantillas() {
   let hayRepetidos = arrayNormalizado.some((item, index) => {
     if (arrayNormalizado.indexOf(item) !== index){
       let tablaCopia = $("table")[0].cloneNode(true);
-      $(tablaCopia).find("tr").each((_, el) => { 
-        el.removeChild(el.lastElementChild)
-      });
+      $(tablaCopia).find("tr").each((_, el) => el.removeChild(el.lastElementChild));
       $(tablaCopia).find("td").each((_, el) => el.setAttribute("contenteditable", "false"));
       let productosCopia = $(tablaCopia).find("tbody td:first-child");
       productosCopia[arrayNormalizado.indexOf(item)].classList.add("enfocar");

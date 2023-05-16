@@ -1,10 +1,10 @@
 require('dotenv').config()
 const router = require("express").Router();
 const RegistrosEliminados = require("../../models/registroseliminados");
-const VENTASPORDIA = require("../../models/registroventaspordia");
+const VentasPorDia = require("../../models/registroventaspordia");
 const { DateTime } = require("luxon");
 const redis = require('../../redis');
-let vencerEn = 7200 //dos horas
+let vencerEn = 900 //quince minutos
 
 router.get("/", async (req, res) => {
   res.render("registroseliminados");
@@ -13,23 +13,23 @@ router.get("/", async (req, res) => {
 router.post("/restaurarregistro", async (req, res) => {
   try {
     let registrorecuperado = await RegistrosEliminados.findById(req.body.id);
+    if (registrorecuperado == null)
+      return res.status(400).send("Registro no existe");
     let fecha = registrorecuperado.ventaspordia.fecha;
-    let registroanterior = await VENTASPORDIA.findOne({ fecha });
     let ahora = new Date();
-    let ventas = new VENTASPORDIA({
-      fecha, usuario: req.user?.usuario ?? "", fechacreacion: registrorecuperado.ventaspordia.fechacreacion,
-      fechaultimocambio: ahora, camiones: registrorecuperado.ventaspordia.camiones
-    });
+    let ventasPorDiaRecuperado = new VentasPorDia(registrorecuperado.ventaspordia);
+    Object.assign(ventasPorDiaRecuperado, { usuario: req.user?.usuario ?? "jitomate", fechaultimocambio: ahora })
 
     //si ya existe un registro anterior lo guarda en la parte de respaldos
+    let registroanterior = await VentasPorDia.findOne({ fecha });
     if (registroanterior) {
-      const respaldo = new RegistrosEliminados();
-      respaldo.ventaspordia = registroanterior;
-      respaldo.fechaeliminacion = ahora;
+      const respaldo = new RegistrosEliminados({ ventaspordia: registroanterior, fechaeliminacion: ahora });
       await respaldo.save();
-      await registroanterior.deleteOne();
+      registroanterior = ventasPorDiaRecuperado.ventaspordia;
+      await registroanterior.save();
     }
-    await ventas.save();
+    else
+      await ventasPorDiaRecuperado.save();
     await registrorecuperado.deleteOne();
 
     res.send("Se ha restaurado con éxito");
@@ -40,11 +40,12 @@ router.post("/restaurarregistro", async (req, res) => {
 
 router.delete("/borrarregistro", async (req, res, next) => {
   try {
-    let registro = await RegistrosEliminados.findById(req.body.id);
-    await registro.delete();
+    let registro = await RegistrosEliminados.findByIdAndDelete(req.body.id);
+    if (registro == null)
+      return res.status(400).send("Registro no existe");
     res.send("Se ha borrado con éxito");
   } catch {
-    res.status(400).send("No se pudo restaurar");
+    res.status(400).send("Error al borrar el registro");
   }
 });
 
@@ -52,26 +53,65 @@ router.delete("/borrarregistrosseleccionados", async (req, res) => {
   try {
     let registros = req.body.registros;
     console.log(registros)
-    registros.forEach(async el => {
-      let registro = await RegistrosEliminados.findById(el);
-      await registro.delete();
-    });
+    registros.forEach(async el => await RegistrosEliminados.findByIdAndDelete(el));
     res.send("Se ha borrado con éxito");
   } catch {
     res.status(400).send("No se pudo restaurar");
   }
 });
 
-router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", async (req, res) => {
+router.get("/masrecientes&:pag", validarPagina, async (req, res) => {
+  await masRecientesYMasAntiguos(req, res, 1);
+});
+
+router.get("/masantiguos&:pag", validarPagina, async (req, res) => {
+  await masRecientesYMasAntiguos(req, res, 2);
+});
+
+function validarPagina(req, res, next) {
+  let { pag } = req.params;
+  if (!(/^pag=[0-9]+$/.test(pag)))
+    return res.send("página inválida");
+  return next();
+}
+
+async function devuelveRegistroRedis(url) {
+  let resultado = await redis.get(devuelveURL(url));
+  return resultado;
+}
+async function guardarRegistroRedis(url, resultado) {
+  await redis.setEx(devuelveURL(url), vencerEn, JSON.stringify(resultado))
+}
+let devuelveURL = url => `registroseliminados:${url.split("pag")[0]}`;
+
+async function masRecientesYMasAntiguos(req, res, opcion) {
   try {
-    let urlRedis = "registroseliminados:" + req.url;
-    let resultado = await redis.get(urlRedis);
+    let resultado = await devuelveRegistroRedis(req.url);
     if (!resultado) {
-      let { buscarpor, fecha1, fecha2, pag } = req.params;
+      if (opcion === 1)
+        resultado = await RegistrosEliminados.find();
+      else
+        resultado = (await RegistrosEliminados.find()).reverse();
+      await guardarRegistroRedis(req.url, resultado);
+    }
+    else {
+      resultado = JSON.parse(resultado)
+      resultado = resultado.map(el => new RegistrosEliminados(el));
+    }
+    mostrarPagina(resultado, req, res);
+  } catch (error) {
+    res.send("búsqueda inválida");
+    console.log(error)
+  }
+}
+
+router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", validarPagina, async (req, res) => {
+  try {
+    let resultado = await devuelveRegistroRedis(req.url);
+    if (!resultado) {
+      let { buscarpor, fecha1, fecha2 } = req.params;
       if (buscarpor != "fecha" && buscarpor != "fechaeliminacion")
         return res.send("búsqueda inválida");
-      else if ((/^pag[0-9]+$/.test(pag)))
-        return res.send("página inválida");
       if (buscarpor === "fecha") {
         buscarpor = "ventaspordia.fecha";
         var fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y").toISODate();
@@ -79,11 +119,11 @@ router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", async (req, res) => {
         resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso1).lte(fechaiso2).sort(buscarpor);
       }
       else {
-        var fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y", { zone: "America/Guatemala" }).toISO();
-        var fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y", { zone: "America/Guatemala" }).endOf("day").toISO();
+        var fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y").toISO();
+        var fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y").endOf("day").toISO();
         resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso1).lte(fechaiso2).sort(buscarpor);
       }
-      await redis.setEx(urlRedis, vencerEn, JSON.stringify(resultado))
+      await guardarRegistroRedis(req.url, resultado);
     }
     else {
       resultado = JSON.parse(resultado)
@@ -97,18 +137,15 @@ router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", async (req, res) => {
 });
 
 
-router.get("/:buscarpor&:rango&:fecha&:pag", async (req, res) => {
+router.get("/:buscarpor&:rango&:fecha&:pag", validarPagina, async (req, res) => {
   try {
-    let urlRedis = "registroseliminados:" + req.url;
-    let resultado = await redis.get(urlRedis);
+    let resultado = await devuelveRegistroRedis(req.url);
     if (!resultado) {
-      let { buscarpor, rango, fecha, pag } = req.params;
+      let { buscarpor, rango, fecha } = req.params;
       if (buscarpor != "fecha" && buscarpor != "fechaeliminacion")
         return res.send("búsqueda inválida");
       else if (rango != "igual" && rango != "mayor" && rango != "menor")
         return res.send("rango inválido");
-      else if ((/^pag[0-9]+$/.test(pag)))
-        return res.send("página inválida");
       if (buscarpor === "fecha") {
         let fechaiso = DateTime.fromFormat(fecha, "d-M-y").toISODate();
         buscarpor = "ventaspordia.fecha";
@@ -118,9 +155,8 @@ router.get("/:buscarpor&:rango&:fecha&:pag", async (req, res) => {
           resultado = await RegistrosEliminados.where(buscarpor).lte(fechaiso).sort(buscarpor);
         else
           resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).sort(buscarpor);
-
       } else {
-        let fechaiso = DateTime.fromFormat(fecha, "d-M-y", { zone: "America/Guatemala" });
+        let fechaiso = DateTime.fromFormat(fecha, "d-M-y");
         if (rango === "igual")
           resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).lte(fechaiso.endOf("day")).sort(buscarpor);
         else if (rango === "menor")
@@ -128,7 +164,7 @@ router.get("/:buscarpor&:rango&:fecha&:pag", async (req, res) => {
         else
           resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).sort(buscarpor);
       }
-      await redis.setEx(urlRedis, vencerEn, JSON.stringify(resultado))
+      await guardarRegistroRedis(req.url, resultado);
     }
     else {
       resultado = JSON.parse(resultado)
@@ -152,9 +188,5 @@ function mostrarPagina(resultado, req, res) {
   let datostablas = resultado.slice(limite * (pagina - 1), limite * pagina);
   res.render("mostrarregistroseliminados", { datostablas, pagina, totalPaginas, DateTime });
 }
-
-let borrarLlaves = require("../../utilities/borrarLlavesRedis")
-const changeStream = RegistrosEliminados.watch();
-changeStream.on('change', borrarLlaves("registroseliminados"));
 
 module.exports = router;

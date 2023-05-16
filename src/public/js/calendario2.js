@@ -44,7 +44,7 @@ window.onload = function () {
     },{
       name: "Camión 2",
       description: "Conductor: Jose",
-      date: "2023/05/15",
+      date: "6-6-2023",
       type: "Yo",
     },{
       name: "Camión 3",

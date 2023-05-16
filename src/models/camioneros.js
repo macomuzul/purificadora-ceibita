@@ -12,4 +12,4 @@ const camionerosSchema = new Schema({
 _.each(_.keys(nombreSchema.paths), attr => nombreSchema.path(attr).required(true));
 _.each(_.keys(camionerosSchema.paths), attr => camionerosSchema.path(attr).required(true));
 
-module.exports = mongoose.model('camionero', camionerosSchema);
+module.exports = mongoose.model('camioneros', camionerosSchema)

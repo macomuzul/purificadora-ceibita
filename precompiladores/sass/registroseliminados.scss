@@ -75,7 +75,7 @@ input:focus {
   border: 1px solid #ced4da !important;
 }
 
-main{
+main {
   min-width: 1150px;
 }
 
@@ -101,4 +101,38 @@ main{
   to {
     background-position: 0 -200%;
   }
+}
+
+.tituloSeccion {
+  text-align: center;
+  font-size: 33px;
+  font-weight: 500;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 25px;
+}
+
+section {
+  margin-top: 35px;
+}
+
+.btnOrden{
+  width: 210px;
+  height: 80px;
+  padding: 10px 15px;
+  white-space: normal;
+  margin: 0;
+}
+
+body{
+  min-height: 700px;
+}
+
+hr{
+  background: white;
+  margin-top: 50px;
+  margin-bottom: 25px;
 }

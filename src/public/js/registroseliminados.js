@@ -1,7 +1,5 @@
-let txtnombre = document.getElementById("nombreplantilla");
-window.addEventListener("click", (e) => {
-  menuseleccionado?.classList.remove("menu-open");
-});
+let urlPag = "/respaldos/registroseliminados/";
+
 
 
 function metododropdown(option, menu) {
@@ -30,10 +28,18 @@ jQuery.expr.filters.offscreen = function (el) {
   return ((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight);
 };
 
-document.getElementById("btnbuscar").addEventListener("click", () => {
+$("body").on("click", "#btnMasReciente", () => {
+  window.location = `${urlPag}masrecientes&pag=1`
+});
+$("body").on("click", "#btnMasAntiguo", () => {
+  window.location = `${urlPag}masantiguos&pag=1`
+});
+
+
+$("body").on("click", "#btnbuscar", () => {
   let buscarpor = $("#buscarpor")[0].innerText;
   let rango = $("#rangofecha")[0].innerText;
-  let fecha = $("#calendario1")[0].value;
+  let fecha = $("#calendario1").val();
 
   if (buscarpor === "Buscar por" || rango === "Elige un rango" || fecha === "")
     return;
@@ -47,12 +53,11 @@ document.getElementById("btnbuscar").addEventListener("click", () => {
   else if (rango === "Fecha entre") rango = "entre"
   fecha = fecha.replaceAll("/", "-");
 
-  let url = `/respaldos/registroseliminados/${buscarpor}&${rango}&${fecha}&`
-  if (rango !== "entre")
-    window.location = `${url}pag=1`;
-  else {
-    let fecha2 = $("#calendario2")[0].value;
-    fecha2 = fecha2.replaceAll("/", "-");
-    window.location = `${url}y&${fecha2}&pag=1`;
+  let url = `${urlPag}${buscarpor}&${rango}&${fecha}&`;
+  if (rango === "entre"){
+    let fecha2 = $("#calendario2").val().replaceAll("/", "-");
+    url += `y&${fecha2}&`;
   }
+  url += "pag=1";
+  window.location = url;
 })
