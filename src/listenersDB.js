@@ -9,11 +9,39 @@ const { DateTime } = require("luxon");
 
 
 VentasPorDia.watch().on('change', async (cambio) => {
-  console.log('Change detected:', cambio);
-  if (cambio.operationType === "insert" || cambio.operationType === "update") {
-    await calcularResumenPorDia(await VentasPorDia.findById(cambio.documentKey._id))
+  try {
+    console.log('Change detected:', cambio);
+    if (cambio.operationType === "insert" || cambio.operationType === "update") {
+      let objcambiado = await VentasPorDia.findById(cambio.documentKey._id);
+      await actualizarCamioneros(objcambiado);
+      if(cambio.updateDescription.updatedFields.hasOwnProperty("camiones"))
+        await calcularResumenPorDia(objcambiado);
+    }
+  } catch (error) {
+    console.log(error)
   }
 });
+
+async function actualizarCamioneros(venta) {
+  let _id = venta.fecha;
+  let fechaultimocambio = venta.fechaultimocambio;
+  let camioneros = venta.camiones.map(el => el.nombretrabajador);
+  let usuario = venta.usuario;
+  let idMes = DateTime.fromJSDate(_id).toFormat("y/M");
+  let calendarioCamioneros = await CalendarioCamioneros.findById(idMes);
+  if (calendarioCamioneros) {
+    let dia = calendarioCamioneros.dias.find(el => el._id.toString() === _id.toString());
+    if (dia)
+      Object.assign(dia, { camioneros, fechaultimocambio, usuario });
+    else
+      calendarioCamioneros.dias.push({ _id, camioneros, fechaultimocambio, usuario })
+    calendarioCamioneros.save();
+  } else {
+    let dias = [{ _id, camioneros, fechaultimocambio }];
+    let nuevo = new CalendarioCamioneros({ _id: idMes, dias, usuario });
+    nuevo.save();
+  }
+}
 
 function calcularTodosLosResumenesPorDia() {
   let ventas = VentasPorDia.find();
@@ -21,8 +49,8 @@ function calcularTodosLosResumenesPorDia() {
 
 async function calcularResumenPorDia(venta) {
   try {
-    // let fecha = DateTime.fromJSDate(venta.fecha).setZone("utc").toFormat("y/M/d");
-    listaTablasValores = [];
+    let _id = venta.fecha;
+    let listaTablasValores = [];
     venta.camiones.forEach(camion => {
       listaValores = [];
       camion.filas.forEach(fila => {
@@ -49,18 +77,12 @@ async function calcularResumenPorDia(venta) {
       vendidosTotal += productos[key].vendidos;
       ingresosTotal += productos[key].ingresos;
     }
-    let resumenDia = await ResumenDia.findOne({ _id: venta.fecha });
-    console.log(resumenDia)
-    if (resumenDia) {
-      console.log("opa")
+    let resumenDia = await ResumenDia.findOne({ _id });
+    if (resumenDia)
       Object.assign(resumenDia, { productos, vendidosTotal, ingresosTotal });
-    }
-    else {
-      console.log("ayayay")
-      resumenDia = new ResumenDia({ _id: venta.fecha, productos, vendidosTotal, ingresosTotal });
-    }
+    else
+      resumenDia = new ResumenDia({ _id, productos, vendidosTotal, ingresosTotal });
     await resumenDia.save();
-    console.log("guardado")
   } catch (e) {
     console.log(e)
   }

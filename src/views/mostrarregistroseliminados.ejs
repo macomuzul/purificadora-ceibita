@@ -71,7 +71,7 @@
         </div>
       </div>
       <% let fechaDelRegistro = DateTime.fromJSDate(datostablas[i].ventaspordia.fecha) %>
-      <% let fechaEliminado = DateTime.fromJSDate(datostablas[i].fechaeliminacion) %>
+      <% let fechaEliminado = DateTime.fromJSDate(datostablas[i].fechaeliminacion, { zone: "America/Guatemala" }) %>
       <h2>Fecha del registro: <span-fechas><span slot="fecha"><%= fechaDelRegistro.toFormat("d/M/y") %></span><span slot="fechaStr"><%= fechaDelRegistro.toLocaleString(DateTime.DATE_HUGE).replace(/^\w/, c => c.toUpperCase())  %></span></span-fechas></span></h2>
       <span>Se eliminó el <span-fechas><span slot="fecha"><%= fechaEliminado.toFormat("d/M/y") %></span><span slot="fechaStr"><%= fechaEliminado.toLocaleString(DateTime.DATE_HUGE) %></span></span-fechas><%= fechaEliminado.toFormat("'a las' H:mm 'con' ss 'segundos'") %></span>
       <div class="tabs">

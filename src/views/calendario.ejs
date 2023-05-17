@@ -22,9 +22,18 @@
         </div>
     </section>
 </main>
+  <script>
+    let eventosCalendario = [];
+    "<% dias.forEach(dia => { dia.camioneros.forEach((camionero, i) => { let fechaDia = DateTime.fromJSDate(dia._id).toFormat('y/M/d'); let fechaUltimoCambio = DateTime.fromJSDate(dia.fechaultimocambio).setZone('America/Guatemala'); let ultimoCambioStr = fechaUltimoCambio.toLocaleString(DateTime.DATE_HUGE)%>"
+        eventosCalendario.push({ name: `Camión ${"<%=i+1%>"}`, description: `Conductor: ${"<%=camionero%>"}`, date: "<%=fechaDia%>", type: "a", ultimoCambio: "<%=ultimoCambioStr%>", usuario: "<%=dia.usuario%>"})
+    "<% }); }) %>"
+  </script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/timezone.js"></script>
     <script src="calendario1.js"></script>
     <script src="calendario2.js"></script>
 

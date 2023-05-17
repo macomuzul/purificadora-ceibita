@@ -109,7 +109,7 @@
               <% } %>
             </div>
             <% if (ventaspordia) { %>
-              <% let fechaUltimaModificacion = DateTime.fromJSDate(ventaspordia.fechaultimocambio); %>
+              <% let fechaUltimaModificacion = DateTime.fromJSDate(ventaspordia.fechaultimocambio, { zone: "America/Guatemala" }); %>
               <span class="ultima-modificacion">Fecha de última modificación: <span-fechas><span slot="fecha"><%= fechaUltimaModificacion.toFormat("d/M/y") %></span><span slot="fechaStr"><%= fechaUltimaModificacion.toLocaleString(DateTime.DATE_HUGE)  %></span></span-fechas> <span class="ultima-modificacion-fecha"></span> <%= fechaUltimaModificacion.toFormat("'a las' H:mm 'con' ss 'segundos'") %></span>
             <% } %>
         </div>

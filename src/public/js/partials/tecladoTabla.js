@@ -1,17 +1,17 @@
-$("body").on("keydown", "tr td", function (e) {
-  var textInput = this;
-  var val = textInput.val;
-  var isAtStart = false,
-  isAtEnd = false;
-  var cellindex = $(this).index();
+$("body").on("keydown", "td", function (e) {
+  let textInput = this;
+  let val = textInput.val;
+  let isAtStart = false;
+  let isAtEnd = false;
+  let cellindex = $(this).index();
   if (typeof textInput.selectionStart == "number") {
     isAtStart = textInput.selectionStart == 0;
     isAtEnd = textInput.selectionEnd == val.length;
   } else if (document.selection && document.selection.createRange) {
     textInput.focus();
-    var selRange = document.selection.createRange();
-    var inputRange = textInput.createTextRange();
-    var inputSelRange = inputRange.duplicate();
+    let selRange = document.selection.createRange();
+    let inputRange = textInput.createTextRange();
+    let inputSelRange = inputRange.duplicate();
     inputSelRange.moveToBookmark(selRange.getBookmark());
     isAtStart = inputSelRange.compareEndPoints("StartToStart", inputRange) == 0;
     isAtEnd = inputSelRange.compareEndPoints("EndToEnd", inputRange) == 0;
@@ -50,16 +50,15 @@ function enfocarCelda(elem, e) {
   if (elem[0] !== undefined && elem[0].getAttribute("contentEditable") === "true") {
     elem.focus();
     setEndOfContenteditable(elem[0]);
-    if ($(elem).is(':offscreen')) {
+    if ($(elem).is(':offscreen'))
       elem[0].scrollIntoView();
-    }
   }
 }
 
 
 function setEndOfContenteditable(elem) {
-  var range = document.createRange()
-  var sel = window.getSelection()
+  let range = document.createRange()
+  let sel = window.getSelection()
   if (elem.innerText == "")
     return;
   range.setStart(elem.childNodes[0], elem.innerText.length)
@@ -69,9 +68,9 @@ function setEndOfContenteditable(elem) {
   sel.addRange(range)
 }
 
-$("body").on("beforeinput", "tr td", function (e) {
+$("body").on("beforeinput", "td", function (e) {
   let letra = event.data === null ? '' : event.data
-  var colindex = $(this).parent().children().index($(this));
+  let colindex = $(this).parent().children().index($(this));
   if (letra === '"' || letra == "\\")
     e.preventDefault();
   if (isNaN(letra) && colindex != 0 && colindex != 1)
@@ -81,19 +80,16 @@ $("body").on("beforeinput", "tr td", function (e) {
 
   if (colindex == 1) {
     let el = $(this)[0].innerText;
-    var number = el.split(".");
-    if (isNaN(letra) && letra != ".") {
+    let number = el.split(".");
+    if (isNaN(letra) && letra != ".")
       e.preventDefault();
-    }
-    if (number.length > 1 && letra == ".") { //solo permite un punto
+    if (number.length > 1 && letra == ".") //solo permite un punto
       e.preventDefault();
-    }
 
-    var caratPos = getCaretPosition(this);
-    var dotPos = el.indexOf(".");
-    if (caratPos > dotPos && dotPos > -1 && number[1].length > 1 && letra != "") {
+    let caratPos = getCaretPosition(this);
+    let dotPos = el.indexOf(".");
+    if (caratPos > dotPos && dotPos > -1 && number[1].length > 1 && letra != "")
       e.preventDefault();
-    }
   }
 
   if (this.innerText === "0")

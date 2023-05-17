@@ -560,7 +560,9 @@ var fechaseleccionada;
         }
         function eventAdder(event) {
             hasEventToday = true;
+            let dia = eventosCalendario.find(el => new Date(el.date).valueOf() === new Date(_.$active.date).valueOf())            
             $($).find("#ultimaModificacion").text("Fecha de última modificación: jueves, 11 de mayo de 2023 por: Pacha el señor de Guatemala");
+            $($).find("#ultimaModificacion").text(`Fecha de última modificación: ${dia.ultimoCambio} por: ${dia.usuario}`);
             $($).find("#irARegistrarVentas").val("Ir a registro");
             _.addEventList(event)
         }
@@ -842,7 +844,6 @@ var fechaseleccionada;
         var _ = this;
         var oldDate = _.$active.date;
         var date, year, month, activeDayEl, isSameDate;
-
         if (typeof event === 'string' || typeof event === 'number' || event instanceof Date) {
             date = _.formatDate(new Date(event), _.options.format)
             year = new Date(date).getFullYear();

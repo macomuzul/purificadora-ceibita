@@ -3,9 +3,10 @@ const { Schema } = mongoose;
 _ = require('underscore');
 
 const calendarioDiasSchema = new Schema({
-  fecha: Date,
+  _id: Date,
   camioneros: [String],
-  ultimaModificacion: Date
+  fechaultimocambio: Date,
+  usuario: String,
 });
 
 const calendarioCamionerosSchema = new Schema({

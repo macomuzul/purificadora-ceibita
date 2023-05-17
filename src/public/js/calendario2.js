@@ -1,3 +1,5 @@
+dayjs.extend(window.dayjs_plugin_utc);
+dayjs.extend(window.dayjs_plugin_timezone)
 var defaultTheme = getRandom(4);
 
 var today = new Date();
@@ -35,23 +37,7 @@ window.onload = function () {
     titleFormat: "MM",
     language: "es",
     firstDayOfWeek: "1",
-    calendarEvents: [{
-      name: "Camión 1",
-      description: "Conductor: Pacha",
-      date: "2023/5/17",
-      type: "Mi",
-      color: "#FF0000"
-    },{
-      name: "Camión 2",
-      description: "Conductor: Jose",
-      date: "6-6-2023",
-      type: "Yo",
-    },{
-      name: "Camión 3",
-      description: "Conductor: asdf",
-      date: "2023/05/15",
-      type: "masdf",
-    }]
+    calendarEvents: eventosCalendario
   });
   $("[data-set-theme]").click(function (b) {
     a(b.target);

@@ -1,6 +1,9 @@
 const router = require('express').Router();
 const passport = require('passport');
 const redis = require('../redis');
+const { DateTime } = require('luxon');
+const CalendarioCamioneros = require("../models/calendarioCamioneros");
+
 
 router.get('/', async (req, res) => {
   let errorInicioSesion = req.flash("errorInicioSesion");
@@ -37,8 +40,10 @@ router.route('/recuperarcontrase%C3%B1a').get((req, res) => {
 });
 
 
-router.get('/calendario', (req, res) => {
-  res.render('calendario');
+router.get('/calendario', async (req, res) => {
+  let fechaActual = DateTime.now().setZone("America/Guatemala").toFormat("y/M");
+  let camioneros = await CalendarioCamioneros.findById(fechaActual);
+  res.render('calendario', { dias: camioneros.dias, DateTime });
 });
 
 router.post('/iniciarSesion', passport.authenticate('iniciarSesion', {

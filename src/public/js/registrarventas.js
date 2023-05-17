@@ -825,60 +825,6 @@ function archivoCreado(btn, cb) {
   }, 2000);
 }
 
-// async function borrarFilasVacias(tabla, numtabla) {
-//   let tablaCopia = tabla.cloneNode(true);
-//   let filasCopia = [...$(tablacopia).find(".cuerpo tr")];
-//   let filasQueNoEstanVacias = filasCopia.filter(fila => {
-//     let celdasEspecificas = [...fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))")];
-//     let res = celdasEspecificas.every(celda => celda.innerText === "0")
-//     if (res)
-//       $(fila).find("td").each((i, celda) => celda.classList.add("enfocar"))
-//     return !res;
-//   });
-//   if (filasQueNoEstanVacias.length === filasCopia.length)
-//     return true;
-
-//   let tablaCopiaSinFilasVacias = tabla.cloneNode(true);
-//   let tablaSinFilasVacias = ""
-//   filasQueNoEstanVacias.forEach(el => tablaSinFilasVacias += el.outerHTML)
-//   tablaCopiaSinFilasVacias.querySelector(".cuerpo").innerHTML = tablaSinFilasVacias
-
-//   $(tablaCopia).find(".cuerpo td").each((i, el) => el.setAttribute("contenteditable", false))
-//   $(tablaCopiaSinFilasVacias).find(".cuerpo td").each((i, el) => el.setAttribute("contenteditable", false))
-
-//   let result = await swal3Botones.fire({
-//     title: "Se han detectado filas vacias",
-//     icon: "warning",
-//     width: window.innerWidth * 3 / 4,
-//     html: `<div class="textovista">Se han detectado filas vacias en la tabla ${numtabla}</div>
-//     <br><br><br> ${tabsTexto(tablaCopia, tablaCopiaSinFilasVacias, "Ver filas vacías")}
-//     <br><div class="textovista">Desea eliminarlas?</div><br><br>`,
-//     showCancelButton: true,
-//     showDenyButton: true,
-//     confirmButtonText: "Borrar las filas vacías",
-//     denyButtonText: `Conservar las filas vacías`,
-//     cancelButtonText: "Volver",
-//   })
-
-//   if (result.isConfirmed) {
-//     if (filasQueNoEstanVacias.length === 0) {
-//       Swal.fire("Error", `No se puede guardar la tabla ${numtabla} porque está vacía`, "error");
-//       return false;
-//     }
-//     let filasVacias = [...tabla.querySelector(".cuerpo").rows].filter(fila => {
-//       let celdasEspecificas = [...fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))")];
-//       let res = celdasEspecificas.every(celda => celda.innerText === "0")
-//       return res;
-//     });
-//     filasVacias.forEach(fila => $(fila).remove());
-//     return true;
-//   }
-//   else if (result.isDenied)
-//     return true;
-
-//   return false;
-// }
-
 async function borrarFilasVacias(tabla, numtabla) {
   let tablaCopia = tabla.cloneNode(true);
   let filasCopia = [...$(tablaCopia).find(".cuerpo tr")];
@@ -1032,6 +978,7 @@ async function entraMasDeLoQueSale(tabla, numtabla) {
     width: window.innerWidth * 3 / 4,
     html: tablaCopia,
     showCancelButton: true,
+    stopKeydownPropagation: false,
     confirmButtonText: "Ya lo arreglé",
     cancelButtonText: "Volver",
   })
@@ -1069,6 +1016,7 @@ async function validarQueTablaNoTengaMismoNombre(tabla, numtabla) {
     width: window.innerWidth * 3 / 4,
     html: tablaCopia,
     showCancelButton: true,
+    stopKeydownPropagation: false,
     confirmButtonText: "Ya lo arreglé",
     cancelButtonText: "Volver",
   })
@@ -1113,6 +1061,7 @@ async function validarQueLosPreciosNoTenganPuntoAlFinal(tabla, numtabla) {
     html: tablaCopia,
     showCancelButton: true,
     showDenyButton: true,
+    stopKeydownPropagation: false,
     confirmButtonText: "Borrar los puntos al final",
     denyButtonText: `Ya lo arreglé`,
     cancelButtonText: "Volver",
@@ -1162,6 +1111,7 @@ async function validarQueLosPreciosNoSeanMenorAUno(tabla, numtabla) {
     icon: "error",
     width: window.innerWidth * 3 / 4,
     html,
+    stopKeydownPropagation: false,
     showCancelButton: false,
     showDenyButton: false,
     showConfirmButton: false,
@@ -1297,6 +1247,7 @@ async function validarProductosYPrecios(tabla, numtabla) {
     width: window.innerWidth * 3 / 4,
     html: tablaCopia,
     showCancelButton: true,
+    stopKeydownPropagation: false,
     confirmButtonText: "Ya lo arreglé",
     cancelButtonText: "Volver",
   })

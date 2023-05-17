@@ -15,6 +15,7 @@ global.cantidadMaximaPeticionesInvalidas = 3;
 global.tiempoTimeoutLoginSegundos = 900; //15 minutos
 Settings.defaultLocale = "es";
 Settings.defaultZone = "America/Guatemala";
+Settings.defaultZone = "UTC";
 
 // initializations
 const app = express();

@@ -4,6 +4,7 @@ const plantilla = require("../models/plantillas");
 const Respaldo = require("../models/registroseliminados");
 const Camioneros = require("../models/camioneros");
 const { DateTime } = require("luxon");
+const _ = require("underscore");
 
 router.post("/guardar", async (req, res) => {
   try {
@@ -13,9 +14,7 @@ router.post("/guardar", async (req, res) => {
     if (ventasAnterior) { //si ya existe un registro anterior lo guarda en la parte de respaldos
       let respaldo = new Respaldo({ ventaspordia: ventasAnterior, fechaeliminacion: new Date() });
       await respaldo.save();
-      for (const key in ["usuario", "fechaultimocambio", "camiones"]) {
-        ventasAnterior[key] = ventasNuevo[key];
-      }
+      _.extend(ventasAnterior, _.pick(ventasNuevo, ["usuario", "fechaultimocambio", "camiones"]));
       await ventasAnterior.save();
     }
     else
@@ -36,13 +35,13 @@ router.get("/:id", async (req, res) => {
     if (datos.length !== 3)
       return res.send("página inválida");
     const fecha = DateTime.fromFormat(id, "d-M-y");
-    const datostablas = await VentasPorDia.findOne({ fecha: fecha.toISODate() });
+    const ventaspordia = await VentasPorDia.findOne({ fecha: fecha.toISODate() });
     const plantillas = await plantilla.find().sort("orden");
     const plantillaDefault = await plantilla.findOne({ esdefault: true });
     let listaCamioneros = await Camioneros.findOne();
     let camioneros = listaCamioneros.camioneros.map(el => el.nombre);
     let fechastr = fecha.toLocaleString(DateTime.DATE_HUGE);
-    res.render("registrarventas", { fecha: fecha.toFormat("d/M/y"), ventaspordia: datostablas, plantillas, plantillaDefault, fechastr, camioneros, DateTime });
+    res.render("registrarventas", { fecha: fecha.toFormat("d/M/y"), ventaspordia, plantillas, plantillaDefault, fechastr, camioneros, DateTime });
   } catch (e) {
     console.log(e)
     res.send("página inválida");
