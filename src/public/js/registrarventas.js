@@ -335,8 +335,7 @@ $("body").on("keyup", "tr td", function (e) {
   let keycode = event.keyCode || event.which;
   if ((keycode >= 48 && keycode <= 57) || keycode === 229 || keycode === 8) {
     let cuerpo = this.closest(".cuerpo");
-    let indiceFila = $(this).parent().index();
-    calcularvendidoseingresos(cuerpo.rows[parseInt(indiceFila)]);
+    [...cuerpo.rows].forEach(el => calcularvendidoseingresos(el));
     calcularvendidoseingresostotal(cuerpo);
   }
 });
@@ -836,7 +835,7 @@ async function borrarFilasVacias(tabla, numtabla) {
     return !res;
   });
   if (filasQueNoEstanVacias.length === filasCopia.length) {
-    clonaValores(tablaCopia);
+    clonaValores(tabla, tablaCopia);
     return true;
   }
 
@@ -874,7 +873,7 @@ async function borrarFilasVacias(tabla, numtabla) {
       return res;
     });
     filasVacias.forEach(fila => $(fila).remove());
-    clonaValores(tablaCopia);
+    clonaValores(tabla, tablaCopia);
     return true;
   }
   else if (opcionSwal === "conservarFilasVacias") {
@@ -888,60 +887,6 @@ async function borrarFilasVacias(tabla, numtabla) {
   }
   return false;
 }
-
-// async function borrarFilasConCeros(tabla, numtabla) {
-//   let tablaCopia = tabla.cloneNode(true);
-//   let filasCopia = [...$(tablaCopia).find(".cuerpo tr")];
-//   let filasQueNoEstanVacias = filasCopia.filter(fila => {
-//     let celdasEspecificas = [...fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))")];
-//     let res = celdasEspecificas.every(celda => celda.innerText === "0")
-//     if (res)
-//       $(fila).find("td").each((i, celda) => celda.classList.add("enfocar"))
-//     return !res;
-//   });
-//   if (filasQueNoEstanVacias.length === filasCopia.length)
-//     return true;
-
-//   let tablaCopiaSinFilasVacias = tabla.cloneNode(true);
-//   let tablaSinFilasVacias = ""
-//   filasQueNoEstanVacias.forEach(el => tablaSinFilasVacias += el.outerHTML)
-//   tablaCopiaSinFilasVacias.querySelector(".cuerpo").innerHTML = tablaSinFilasVacias
-
-//   $(tablaCopia).find(".cuerpo td").each((i, el) => el.setAttribute("contenteditable", false))
-//   $(tablaCopiaSinFilasVacias).find(".cuerpo td").each((i, el) => el.setAttribute("contenteditable", false))
-
-//   let result = await swal3Botones.fire({
-//     title: "Se han detectado filas vacias",
-//     icon: "warning",
-//     width: window.innerWidth * 3 / 4,
-//     html: `<div class="textovista">Se han detectado filas vacias en la tabla ${numtabla}</div>
-//     <br><br><br> ${tabsTexto(tablaCopia, tablaCopiaSinFilasVacias, "Ver filas vacías")}
-//     <br><div class="textovista">Desea eliminarlas?</div><br><br>`,
-//     showCancelButton: true,
-//     showDenyButton: true,
-//     confirmButtonText: "Borrar las filas vacías",
-//     denyButtonText: `Conservar las filas vacías`,
-//     cancelButtonText: "Volver",
-//   })
-
-//   if (result.isConfirmed) {
-//     if (filasQueNoEstanVacias.length === 0) {
-//       Swal.fire("Error", `No se puede guardar la tabla ${numtabla} porque está vacía`, "error");
-//       return false;
-//     }
-//     let filasVacias = [...tabla.querySelector(".cuerpo").rows].filter(fila => {
-//       let celdasEspecificas = [...fila.querySelectorAll("td:not(:nth-child(1),:nth-child(2),:nth-last-child(1),:nth-last-child(2))")];
-//       let res = celdasEspecificas.every(celda => celda.innerText === "0")
-//       return res;
-//     });
-//     filasVacias.forEach(fila => $(fila).remove());
-//     return true;
-//   }
-//   else if (result.isDenied)
-//     return true;
-
-//   return false;
-// }
 
 async function entraMasDeLoQueSale(tabla, numtabla) {
   let tablaCopia = tabla.cloneNode(true);
@@ -967,7 +912,7 @@ async function entraMasDeLoQueSale(tabla, numtabla) {
   }
 
   if (verificacion) {
-    clonaValores(tablaCopia);
+    clonaValores(tabla, tablaCopia);
     tablaValida = true;
     return true;
   }
@@ -1007,7 +952,7 @@ async function validarQueTablaNoTengaMismoNombre(tabla, numtabla) {
     }
   });
   if (!hayRepetidos) {
-    clonaValores(tablaCopia);
+    clonaValores(tabla, tablaCopia);
     return true;
   }
   let result = await swalConfirmarYCancelar.fire({
@@ -1050,7 +995,7 @@ async function validarQueLosPreciosNoTenganPuntoAlFinal(tabla, numtabla) {
   });
 
   if (!hayTerminaConPunto) {
-    clonaValores(tablaCopia);
+    clonaValores(tabla, tablaCopia);
     return true;
   }
 
@@ -1074,7 +1019,7 @@ async function validarQueLosPreciosNoTenganPuntoAlFinal(tabla, numtabla) {
         el.textContent = precio.replace(".", "");
       }
     });
-    clonaValores(tablaCopia);
+    clonaValores(tabla, tablaCopia);
     return true;
   }
   else if (result.isDenied) {
@@ -1096,7 +1041,7 @@ async function validarQueLosPreciosNoSeanMenorAUno(tabla, numtabla) {
   });
 
   if (!hayEmpiezaConPunto) {
-    clonaValores(tablaCopia);
+    clonaValores(tabla, tablaCopia);
     return true;
   }
 
@@ -1226,7 +1171,7 @@ async function validarProductosYPrecios(tabla, numtabla) {
     }
   });
   if (verificacionProductos && verificacionPrecios) {
-    clonaValores(tablaCopia);
+    clonaValores(tabla, tablaCopia);
     return true;
   }
 
@@ -1272,7 +1217,7 @@ async function borrarTablasVacias() {
   else
     htmlTablas += `<div class="textovista">Se han detectado las siguientes tablas vacias las cuales serán eliminadas</div>`
 
-  htmlTablas += `<br><br><br><div class="tabs-swal">`;
+  htmlTablas += `<div class="tabs-swal">`;
   tablasVacias.forEach((tabla, indice) => {
     htmlTablas += `<input type="radio" class="tabs__radio" name="tabs-swal" id="tabswal${indice}" checked />
     <label for="tabswal${indice}" class="tabs__label label-swal">Camión ${parseInt(tabla.closest(".tabs__content").dataset.tabid) + 1}</label>
@@ -1280,8 +1225,7 @@ async function borrarTablasVacias() {
   });
   htmlTablas += `</div>
             <br>
-            <div class="textovista">Desea continuar?</div>
-            <br><br>`
+            <div class="textovista">Desea continuar?</div>`
 
   let result = await swalConfirmarYCancelar.fire({
     title: "Se han detectado tablas vacias",
@@ -1440,21 +1384,8 @@ async function validarDatosTabla(tabla, numtabla) {
     return true;
 }
 
-// function clonaValores(tabla) {
-//   let filasCuerpo = $(tabla).find(".cuerpo tr");
-//   let filasCuerpoCopia = $(arreglado).find(".cuerpo tr");
-//   let filasPie = $(tabla).find("tfoot tr");
-//   let filasPieCopia = $(arreglado).find("tfoot tr");
-//   for (let i = 0; i < filasCuerpo.length; i++) {
-//     for (let j = 0; j < filasCuerpo[i].cells.length; j++) {
-//       filasCuerpo[i].cells[j].innerHTML = filasCuerpoCopia[i].cells[j].innerHTML
-//     }
-//   }
-//   filasPie[0].cells[1].innerHTML = filasPieCopia[0].cells[1].innerHTML
-//   filasPie[0].cells[2].innerHTML = filasPieCopia[0].cells[2].innerHTML
-// }
-
-function clonaValores(tablaCopia) {
+function clonaValores(tabla, tablaCopia) {
+  tabla.innerHTML = tablaCopia.innerHTML;
   tablaParaValidacion.innerHTML = tablaCopia.innerHTML;
 }
 

@@ -403,7 +403,6 @@ tr.calendar-body .calendar-day .day[disabled] {
     transform: translateY(-50%);
 }
 .event-container > .event-info > p.event-desc {
-    font-size: 14px;
     margin-top: 5px;
 }
 

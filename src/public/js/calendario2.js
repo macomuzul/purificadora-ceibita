@@ -13,6 +13,15 @@ function getRandom(a) {
   return Math.floor(Math.random() * a);
 }
 
+toastr.options = {
+  "closeButton": true,
+  "progressBar": true,
+  "positionClass": "toast-bottom-full-width",
+  "preventDuplicates": true,
+  "timeOut": "100000",
+  "extendedTimeOut": "100000",
+}
+
 function getWeeksInMonth(a, b) {
   var c = [], d = new Date(b, a, 1), e = new Date(b, a + 1, 0), f = e.getDate();
   var g = 1;

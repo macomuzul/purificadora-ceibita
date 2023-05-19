@@ -4,7 +4,6 @@
     padding: 4px;
   }
 
-  
   #toast-container>.toast-warning:before {
     content: "\f003";
   }
@@ -42,21 +41,8 @@
     content: "\f0e0";
   }
 </style>
-
-<script src="/jquery-3.6.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script defer>
   const minutos = Math.floor("<%= tiempoQueQueda %>" / 60);
   const segundos = "<%= tiempoQueQueda %>" % 60;
-
-  toastr.options = {
-    "closeButton": true,
-    "progressBar": true,
-    "positionClass": "toast-bottom-full-width",
-    "preventDuplicates": true,
-    "timeOut": "100000",
-    "extendedTimeOut": "100000",
-  }
   toastr["error"](`Has superado la cantidad máxima de intentos incorrectos, la cantidad de tiempo que te queda para volver a intentarlo son: ${minutos} minutos y ${segundos} segundos`, "Alerta");
-
 </script>

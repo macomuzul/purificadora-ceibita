@@ -5,7 +5,7 @@ _ = require('underscore');
 const calendarioDiasSchema = new Schema({
   _id: Date,
   camioneros: [String],
-  fechaultimocambio: Date,
+  ultimoCambio: Date,
   usuario: String,
 });
 

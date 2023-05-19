@@ -24,7 +24,8 @@ VentasPorDia.watch().on('change', async (cambio) => {
 
 async function actualizarCamioneros(venta) {
   let _id = venta.fecha;
-  let fechaultimocambio = venta.fechaultimocambio;
+  let ultimoCambio = venta.fechaultimocambio;
+  console.log(ultimoCambio)
   let camioneros = venta.camiones.map(el => el.nombretrabajador);
   let usuario = venta.usuario;
   let idMes = DateTime.fromJSDate(_id).toFormat("y/M");
@@ -32,13 +33,13 @@ async function actualizarCamioneros(venta) {
   if (calendarioCamioneros) {
     let dia = calendarioCamioneros.dias.find(el => el._id.toString() === _id.toString());
     if (dia)
-      Object.assign(dia, { camioneros, fechaultimocambio, usuario });
+      Object.assign(dia, { camioneros, ultimoCambio, usuario });
     else
-      calendarioCamioneros.dias.push({ _id, camioneros, fechaultimocambio, usuario })
+      calendarioCamioneros.dias.push({ _id, camioneros, ultimoCambio, usuario })
     calendarioCamioneros.save();
   } else {
-    let dias = [{ _id, camioneros, fechaultimocambio }];
-    let nuevo = new CalendarioCamioneros({ _id: idMes, dias, usuario });
+    let dias = [{ _id, camioneros, ultimoCambio, usuario }];
+    let nuevo = new CalendarioCamioneros({ _id: idMes, dias});
     nuevo.save();
   }
 }

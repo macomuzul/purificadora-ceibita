@@ -204,11 +204,13 @@ h4 {
   position: relative;
 }
 
-.margenbotonswal {
-  margin-left: 40;
+.margenbotonswal{
   width: 140;
   height: 50;
   font-weight: 500;
+  &:not(.btn-success){
+    margin-left: 40;
+  }
 }
 
 .botonconfirm {
