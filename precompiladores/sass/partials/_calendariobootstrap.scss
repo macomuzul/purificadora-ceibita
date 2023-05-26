@@ -36,9 +36,19 @@
 
   td.active,
   span.active,
-  td.active {
+  td.active, 
+  .range-start.day,
+  .range-end.day {
     background: #2013a3 !important;
     box-shadow: 0 0 10px 3px;
+  }
+
+  span.year.focused:has(+ .year.active){
+    background: inherit !important;
+  }
+
+  .datepicker-years span.year.focused:hover{
+    background: #317da0 !important;
   }
 }
 
@@ -92,4 +102,16 @@ td.today::after {
 .divdatepicker {
   width: 360px;
   display: inline-block;
+}
+
+.datepicker-dropdown.datepicker-orient-top:after{
+  border-top: 6px solid #ddd;
+}
+
+.range.day{
+  background: #2f78b7 !important;
+}
+
+input{
+  text-align: center !important;
 }

@@ -10,7 +10,6 @@
 }
 
 .divseparador {
-  display: none;
   font-size: 30px;
   margin: 0 10px 12px 10px;
 }
@@ -29,6 +28,10 @@ body {
   margin: 0;
   padding: 0;
   color: white;
+}
+
+#datepickerEntre{
+  display: none;
 }
 
 .contenedorsuperior {
@@ -53,10 +56,6 @@ body {
   box-shadow: none;
   background-color: #0b2346 !important;
   border-color: #010a18;
-}
-
-#divdatepickerescondido {
-  display: none;
 }
 
 .form-control:read-only {

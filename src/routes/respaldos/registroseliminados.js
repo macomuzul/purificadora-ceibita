@@ -20,8 +20,7 @@ router.post("/restaurarregistro", async (req, res) => {
     let ventasPorDiaRecuperado = new VentasPorDia(registrorecuperado.ventaspordia);
     Object.assign(ventasPorDiaRecuperado, { usuario: req.user?.usuario ?? "jitomate", fechaultimocambio: ahora })
 
-    //si ya existe un registro anterior lo guarda en la parte de respaldos
-    let registroanterior = await VentasPorDia.findOne({ fecha });
+    let registroanterior = await VentasPorDia.findOne({ fecha }); //si ya existe un registro anterior lo guarda en la parte de respaldos
     if (registroanterior) {
       const respaldo = new RegistrosEliminados({ ventaspordia: registroanterior, fechaeliminacion: ahora });
       await respaldo.save();
@@ -31,7 +30,6 @@ router.post("/restaurarregistro", async (req, res) => {
     else
       await ventasPorDiaRecuperado.save();
     await registrorecuperado.deleteOne();
-
     res.send("Se ha restaurado con éxito");
   } catch {
     res.status(400).send("No se pudo restaurar");
@@ -110,17 +108,17 @@ router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", validarPagina, async (req
     let resultado = await devuelveRegistroRedis(req.url);
     if (!resultado) {
       let { buscarpor, fecha1, fecha2 } = req.params;
-      if (buscarpor != "fecha" && buscarpor != "fechaeliminacion")
+      if (buscarpor !== "fecha" && buscarpor !== "fechaeliminacion")
         return res.send("búsqueda inválida");
       if (buscarpor === "fecha") {
         buscarpor = "ventaspordia.fecha";
-        var fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y").toISODate();
-        var fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y").toISODate();
+        let fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y").toISODate();
+        let fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y").toISODate();
         resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso1).lte(fechaiso2).sort(buscarpor);
       }
       else {
-        var fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y").toISO();
-        var fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y").endOf("day").toISO();
+        let fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y", { zone: "America/Guatemala" }).toISO();
+        let fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y", { zone: "America/Guatemala" }).endOf("day").toISO();
         resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso1).lte(fechaiso2).sort(buscarpor);
       }
       await guardarRegistroRedis(req.url, resultado);
@@ -129,7 +127,6 @@ router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", validarPagina, async (req
       resultado = JSON.parse(resultado)
       resultado = resultado.map(el => new RegistrosEliminados(el));
     }
-
     mostrarPagina(resultado, req, res);
   } catch (error) {
     res.send("búsqueda inválida");
@@ -142,9 +139,9 @@ router.get("/:buscarpor&:rango&:fecha&:pag", validarPagina, async (req, res) => 
     let resultado = await devuelveRegistroRedis(req.url);
     if (!resultado) {
       let { buscarpor, rango, fecha } = req.params;
-      if (buscarpor != "fecha" && buscarpor != "fechaeliminacion")
+      if (buscarpor !== "fecha" && buscarpor !== "fechaeliminacion")
         return res.send("búsqueda inválida");
-      else if (rango != "igual" && rango != "mayor" && rango != "menor")
+      if (rango !== "igual" && rango !== "mayor" && rango !== "menor")
         return res.send("rango inválido");
       if (buscarpor === "fecha") {
         let fechaiso = DateTime.fromFormat(fecha, "d-M-y").toISODate();
@@ -156,7 +153,7 @@ router.get("/:buscarpor&:rango&:fecha&:pag", validarPagina, async (req, res) => 
         else
           resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).sort(buscarpor);
       } else {
-        let fechaiso = DateTime.fromFormat(fecha, "d-M-y");
+        let fechaiso = DateTime.fromFormat(fecha, "d-M-y", { zone: "America/Guatemala" });
         if (rango === "igual")
           resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).lte(fechaiso.endOf("day")).sort(buscarpor);
         else if (rango === "menor")
@@ -170,7 +167,6 @@ router.get("/:buscarpor&:rango&:fecha&:pag", validarPagina, async (req, res) => 
       resultado = JSON.parse(resultado)
       resultado = resultado.map(el => new RegistrosEliminados(el));
     }
-
     mostrarPagina(resultado, req, res);
   } catch (error) {
     res.send("búsqueda inválida");

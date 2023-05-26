@@ -581,8 +581,7 @@ var fechaseleccionada;
   }
 
   function devuelveFecha(dia){
-    console.log(dia)
-    return new Intl.DateTimeFormat('es', { dateStyle: 'full' }).format(new Date(dia.ultimoCambio))
+    return new Intl.DateTimeFormat('es', { dateStyle: 'full' }).format(new Date(dia.ultimoCambio));
   }
 
   function pedirCamioneros(_){

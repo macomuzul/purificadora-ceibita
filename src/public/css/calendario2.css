@@ -715,24 +715,3 @@ code span.violet {
 		font-size: 12px
 	}
 }
-
-
-.boton{
-	background-color: #5a5a5a; 
-	margin-top: 25px; border: none; 
-	font-size: 20; color: white; 
-	align-self: center; 
-	align-items: center; 
-	width: 100%;
-	padding-top: 10;
-	padding-bottom: 10;
-}
-
-.boton:hover{
-	background-color: #6a6a6a; 
-	cursor: pointer;
-}
-
-#ultimaModificacion{
-	transition: none !important;
-}

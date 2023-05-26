@@ -29,18 +29,15 @@ $("body").on("click", "#cambiarRol", function () {
 
 $("body").on("click", "#cambiarCorreo", function () {
   correo = document.getElementById("correo");
-  if(!correo.validar())
+  if (!correo.validar())
     return;
   funcionEnviar = enviar(`"correo": "${correo}"`, "Se ha cambiado el correo correctamente");
   modal.show();
 });
 
-
-
 function mostrarError(error) {
   Swal.fire("Error", error, "error");
 }
-
 
 function enviar(atributo, texto) {
   return function () {
@@ -53,18 +50,10 @@ function enviar(atributo, texto) {
       contentType: "application/json",
       data: mandar,
       success: res => {
-        Swal.fire(
-          "ÉXITO",
-          texto,
-          "success"
-        );
+        Swal.fire("ÉXITO", texto, "success");
       },
       error: res => {
-        Swal.fire({
-          icon: "error",
-          title: "Ups...",
-          text: res.responseText,
-        });
+        Swal.fire("Ups...", res.responseText, "error");
       },
     });
   }

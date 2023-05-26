@@ -1,27 +1,28 @@
 let urlPag = "/respaldos/registroseliminados/";
 
-
-
 function metododropdown(option, menu) {
   if (menu.id === "fechasdropdown") {
     if (option.innerText === "Fecha entre") {
-      $("#divdatepickerescondido").css("display", "inline-block");
-      $(".divseparador").css("display", "inline-block");
+      $("#datepickernormal").css("display", "none");
+      $("#datepickerEntre").css("display", "inline-block");
     } else {
-      $("#divdatepickerescondido").css("display", "none");
-      $(".divseparador").css("display", "none");
+      $("#datepickerEntre").css("display", "none");
+      $("#datepickernormal").css("display", "inline-block");
     }
   }
 }
 
-$(".date")
-  .datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true })
-  .on("show", (e) => {
+function crearDatePicker(idDatePicker) {
+  let opciones = { weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" };
+  $(`#${idDatePicker}`).datepicker(opciones).on("show", (e) => {
     if ($(".datepicker").is(":offscreen")) {
       $(".datepicker")[0].scrollIntoView();
     }
   });
+}
 
+crearDatePicker("datepickerNormal");
+crearDatePicker("datepickerEntre");
 
 jQuery.expr.filters.offscreen = function (el) {
   var rect = el.getBoundingClientRect();
@@ -39,11 +40,24 @@ $("body").on("click", "#btnMasAntiguo", () => {
 $("body").on("click", "#btnbuscar", () => {
   let buscarpor = $("#buscarpor")[0].innerText;
   let rango = $("#rangofecha")[0].innerText;
-  let fecha = $("#calendario1").val();
+  let fecha = $("#calendario").val().replaceAll("/", "-");
+  let fecha1 = $("#calendario1").val().replaceAll("/", "-");
+  let fecha2 = $("#calendario2").val().replaceAll("/", "-");
 
-  if (buscarpor === "Buscar por" || rango === "Elige un rango" || fecha === "")
-    return;
-
+  if(buscarpor === "Buscar por")
+    return Swal.fire("Campo de buscar por vacío", "Por favor selecciona un campo en la sección de buscar por para continuar", "error");
+  if(rango === "Elige un rango")
+    return Swal.fire("Campo de rango vacío", "Por favor selecciona un campo en la sección de rango para continuar", "error");
+  if(rango === "Fecha entre"){
+    if(fecha1 === "")
+      return Swal.fire("Campo de fecha vacío", "No se ha seleccionado la fecha para el calendario de arriba", "error");
+    if(fecha2 === "")
+      return Swal.fire("Campo de fecha vacío", "No se ha seleccionado la fecha para el calendario de abajo", "error");
+  } else {
+    if(fecha === "")
+      return Swal.fire("Campo de fecha vacío", "No se ha seleccionado la fecha en el calendario", "error");
+  }
+  
   if (buscarpor === "Fecha (calendario)") buscarpor = "fecha"
   else if (buscarpor === "Fecha de eliminación") buscarpor = "fechaeliminacion"
 
@@ -51,13 +65,13 @@ $("body").on("click", "#btnbuscar", () => {
   else if (rango === "Fecha menor o igual a") rango = "menor"
   else if (rango === "Fecha mayor o igual a") rango = "mayor"
   else if (rango === "Fecha entre") rango = "entre"
-  fecha = fecha.replaceAll("/", "-");
 
-  let url = `${urlPag}${buscarpor}&${rango}&${fecha}&`;
-  if (rango === "entre"){
-    let fecha2 = $("#calendario2").val().replaceAll("/", "-");
-    url += `y&${fecha2}&`;
-  }
+  let url = `${urlPag}${buscarpor}&${rango}&`;
+  if (rango === "entre")
+    url += `${fecha1}&y&${fecha2}&`;
+  else
+    url += `${fecha}&`;
+    
   url += "pag=1";
   window.location = url;
 })

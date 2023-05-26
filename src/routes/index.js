@@ -46,7 +46,6 @@ router.route('/calendario').get(async (req, res) => {
 }).post(async (req, res) => {
   try {
     let mes = await CalendarioCamioneros.findById(req.body.fecha);
-    console.log(mes)
     if(mes)
       res.send(mes)
     else

@@ -1,6 +1,7 @@
 .dropdown-toggle {
   text-align: left;
-  background: white;
+  background: white !important;
+  color: #212529 !important;
   position: relative;
 
   &::after {
@@ -14,6 +15,7 @@
 .dropdown-item {
   color: white;
   padding: 8px 10px;
+  cursor: pointer;
   &.active,
   &:active,
   &:hover {

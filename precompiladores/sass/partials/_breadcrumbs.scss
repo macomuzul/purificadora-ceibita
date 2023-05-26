@@ -1,0 +1,111 @@
+$blue 				      : #072a5c;
+$green 				      : #0e65a0;
+
+h1{
+  font-weight:100;
+  font-size:32px;
+  padding:40px;
+  color:#fff;
+}
+
+#breadcrumb{
+  list-style:none;
+  display: flex;
+  justify-content: center;
+  
+  .icon{
+    font-size: 14px;
+  }
+  
+  li{
+    float:left;
+    cursor: pointer;
+    a{
+      color:#FFF;
+      display:block;
+      background: $blue;
+      text-decoration: none;
+      position:relative;
+      height: 40px;
+      line-height:40px;
+      padding: 0 10px 0 5px;
+      text-align: center;
+      margin-right: 23px;
+    }
+    &:nth-child(even){
+      a{
+        background-color: $blue;
+        
+        &:before{
+          border-color:$blue;
+          border-left-color:transparent;
+         }
+        &:after{
+          border-left-color:$blue;
+        }
+      }
+    }
+    &:first-child{
+      a{
+        padding-left:15px;
+        border-radius: 4px 0 0 4px;
+        &:before{
+          border:none;
+         }
+      }
+    }
+    &:last-child{
+      a{
+        padding-right:15px;
+        border-radius: 0 4px 4px 0;
+        &:after{
+          border:none;
+         }
+      }
+    }
+    
+    a{   
+      &:before,
+      &:after{
+        content: "";
+        position:absolute;
+        top: 0;
+        border:0 solid $blue;
+        border-width:20px 10px;
+        width: 0;
+        height: 0;
+      }
+      &:before{
+        left:-20px;
+        border-left-color:transparent;
+      }
+      &:after{
+        left:100%;
+        border-color:transparent;
+        border-left-color:$blue;
+      }
+      &:hover{
+        background-color: $green;
+        
+        &:before{
+          border-color:$green;
+          border-left-color:transparent;
+         }
+        &:after{
+          border-left-color:$green;
+        }
+      }
+      &:active{
+        background-color: $green;
+        
+        &:before{
+          border-color:$green;
+          border-left-color:transparent;
+         }
+        &:after{
+          border-left-color:$green;
+        }
+      }
+    }
+  }
+}

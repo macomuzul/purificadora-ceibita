@@ -1,0 +1,85 @@
+@use "./partials/breadcrumbs";
+@use "./partials/flecha";
+@use "./partials/flecharotada";
+
+.gridUnidadTiempo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  justify-items: center;
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  row-gap: 25px;
+  margin-top: 30px;
+  align-content: center;
+}
+
+.btnOrden {
+  font-size: 18px;
+}
+
+#breadcrumbs,
+#sectionUnidadTiempo {
+  margin-top: 35px;
+}
+
+#sectionUnidadTiempo {
+  display: block;
+}
+
+.rotado svg {
+  transform: rotate(180deg) scale(1.5);
+}
+
+.botonvolver {
+  padding: 10px 20px;
+  height: 50px;
+  position: absolute;
+  top: 3px;
+}
+
+#sectionUnidadTiempo {
+  display: block;
+  button {
+    display: none;
+  }
+}
+
+.divdatepicker{
+  width: 500px;
+  height: 50px;
+}
+
+.btnAnalizar{
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.divseparador{
+  display: block;
+}
+
+.custom-control-input:checked~.custom-control-label::before, 
+.custom-switch .custom-control-label::before{
+  width: 2rem;
+  height: 1rem;
+}
+
+.custom-switch .custom-control-input:checked~.custom-control-label::after{
+  transform: translateX(1rem);
+}
+
+.sections{
+  position: relative;
+}
+.switchAnimaciones{
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#datepickerEntre{
+  display: flex;
+}
