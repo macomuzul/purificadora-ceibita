@@ -10,7 +10,6 @@ beforeEach(() => {
 })
 
 describe('validaciones antes de guardar', () => {
-
   it("Verifica tablas vacías", async () => {
     let resultado = await borrarCamiones();
     expect(resultado).to.be.true;
@@ -21,49 +20,49 @@ describe('validaciones antes de guardar', () => {
     expect(resultado).to.be.true;
   });
 
-    describe(("Valida que los productos esten llenos"), () => {
-      it("validacion un solo producto una vez", async () => {
-        let resultado = await validarUnSoloProducto(0);
-        expect(resultado).to.be.true;
-      })
-
-      it("validacion varios productos una vez", async () => {
-        let resultado = await validarVariosProductos(0);
-        expect(resultado).to.be.true;
-      })
-
-      it("validacion un solo producto varias veces", async () => {
-        let resultado = await validarUnSoloProducto(4);
-        expect(resultado).to.be.true;
-      })
-
-      it("validacion varios productos varias veces", async () => {
-        let resultado = await validarVariosProductos(4);
-        expect(resultado).to.be.true;
-      })
+  describe(("Valida que los productos esten llenos"), () => {
+    it("validacion un solo producto una vez", async () => {
+      let resultado = await validarUnSoloProducto(0);
+      expect(resultado).to.be.true;
     })
 
-    describe(("Valida que los precios esten llenos"), () => {
-      it("validacion un solo precio una vez", async () => {
-        let resultado = await validarUnSoloPrecio(0);
-        expect(resultado).to.be.true;
-      })
-
-      it("validacion varios precios una vez", async () => {
-        let resultado = await validarVariosPrecios(0);
-        expect(resultado).to.be.true;
-      })
-
-      it("validacion un solo precio varias veces", async () => {
-        let resultado = await validarUnSoloPrecio(4);
-        expect(resultado).to.be.true;
-      })
-
-      it("validacion varios precios varias veces", async () => {
-        let resultado = await validarVariosPrecios(4);
-        expect(resultado).to.be.true;
-      })
+    it("validacion varios productos una vez", async () => {
+      let resultado = await validarVariosProductos(0);
+      expect(resultado).to.be.true;
     })
+
+    it("validacion un solo producto varias veces", async () => {
+      let resultado = await validarUnSoloProducto(4);
+      expect(resultado).to.be.true;
+    })
+
+    it("validacion varios productos varias veces", async () => {
+      let resultado = await validarVariosProductos(4);
+      expect(resultado).to.be.true;
+    })
+  })
+
+  describe(("Valida que los precios esten llenos"), () => {
+    it("validacion un solo precio una vez", async () => {
+      let resultado = await validarUnSoloPrecio(0);
+      expect(resultado).to.be.true;
+    })
+
+    it("validacion varios precios una vez", async () => {
+      let resultado = await validarVariosPrecios(0);
+      expect(resultado).to.be.true;
+    })
+
+    it("validacion un solo precio varias veces", async () => {
+      let resultado = await validarUnSoloPrecio(4);
+      expect(resultado).to.be.true;
+    })
+
+    it("validacion varios precios varias veces", async () => {
+      let resultado = await validarVariosPrecios(4);
+      expect(resultado).to.be.true;
+    })
+  })
 
   describe("Mezcla validar productos y validar precios", () => {
     it("Valida productos y precios una vez", async () => {
@@ -92,7 +91,6 @@ describe('validaciones antes de guardar', () => {
       expect(resultado).to.be.true;
     });
   });
-
 })
 
 describe("configuraciones", () => {

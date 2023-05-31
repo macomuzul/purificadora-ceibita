@@ -7,19 +7,29 @@ datos.forEach(data => Object.keys(data.productos).map(el => labelsSet.add(el)));
 let labels = [...labelsSet].sort();
 let labelsdesnormalizados = labels.map(label => datos.find(el => el.productos[label]?.productoDesnormalizado).productos[label].productoDesnormalizado);
 
-let colores = devuelveColores();
-let coloresAlfa = devuelveColores(0.2);
+const swalConfirmarYCancelar = Swal.mixin({
+  customClass: {
+    confirmButton: "btn btn-success margenbotonswal",
+    cancelButton: "btn btn-danger margenbotonswal",
+  },
+  buttonsStyling: false,
+});
 
-function devuelveColores(opacidad = 1){
-  let colores = [
-    `rgba(255, 99, 132, ${opacidad})`,
-    `rgba(54, 162, 235, ${opacidad})`,
-    `rgba(255, 206, 86, ${opacidad})`,
-    `rgba(75, 192, 192, ${opacidad})`,
-    `rgba(153, 102, 255, ${opacidad})`,
-    `rgba(255, 159, 64, ${opacidad})`
-  ];
-  return colores;
+let colores = devuelveColores();
+let coloresAlfa = devuelveColores(1);
+
+function devuelveColores(opacidad, colores = ["#ff6384", "#136ba7", "#ffce56", "#4bc0c0", "#9966ff", "#f20034", "#1f00c0", "#004d1a", "#1b005a", "#2bb01a"]) {
+  let mayor = Math.max(colores.length, labels.length, datos.length);
+  let arr = [...Array(mayor).keys()];
+  let res = arr.map(i => {
+    while (i >= colores.length)
+      i -= colores.length;
+    let color = colores[i];
+    if (opacidad)
+      color += "20";
+    return color;
+  })
+  return res;
 }
 
 datos.forEach((data, i) => {
@@ -33,13 +43,32 @@ datos.forEach((data, i) => {
     borderWidth: 1
   }
   datasetVendidos.push(objVendidos);
-  let objIngresos = JSON.parse(JSON.stringify(objVendidos));
+  let objIngresos = structuredClone(objVendidos);
   objIngresos.data = ingresos;
   datasetIngresos.push(objIngresos);
 })
 
-$("#chartVendidos")[0].crearGrafico(labelsdesnormalizados, datasetVendidos, "Productos vendidos durante la semana agrupados por producto")
-$("#chartIngresos")[0].crearGrafico(labelsdesnormalizados, datasetIngresos, "Ingresos generados por cada producto durante la semana agrupados por producto")
+let datasetVendidosTotales = Array.of(structuredClone(datasetVendidos[0]));
+let datasetIngresosTotales = Array.of(structuredClone(datasetIngresos[0]));
+datasetVendidosTotales[0].data = datasetVendidos[0].data.map((_, i) => datasetVendidos.reduce((acc, curr) => acc + curr.data[i], 0));
+datasetVendidosTotales[0].borderColor = colores;
+datasetVendidosTotales[0].backgroundColor = coloresAlfa;
+datasetVendidosTotales[0].label = unirTexto(datasetVendidos.map(el => el.label));
+
+datasetIngresosTotales[0].data = datasetIngresos[0].data.map((_, i) => datasetIngresos.reduce((acc, curr) => acc + curr.data[i], 0));
+datasetIngresosTotales[0].borderColor = colores;
+datasetIngresosTotales[0].backgroundColor = coloresAlfa;
+datasetIngresosTotales[0].label = unirTexto(datasetIngresos.map(el => el.label));
+
+let unidadTiempoSingularGenero = "la semana"
+let unidadTiempoSingular = "semana"
+let unidadTiempoPlural = "semanas"
+let unidadTiempoSubunidadPlural = "dias"
+
+$("#chartVendidos")[0].crearGrafico(labelsdesnormalizados, datasetVendidos, `Productos vendidos durante ${unidadTiempoSingularGenero} agrupados por producto`, "vendidos", 1, 0, "alf")
+$("#chartIngresos")[0].crearGrafico(labelsdesnormalizados, datasetIngresos, `Ingresos generados por cada producto durante ${unidadTiempoSingularGenero} agrupados por producto`, "ingresos", 1, 1, "alf")
+$("#chartVentasTotales")[0].crearGrafico(labelsdesnormalizados, datasetVendidosTotales, `Resumen del total de ventas durante ${unidadTiempoSingularGenero}`, `total vendidos durante ${unidadTiempoSingularGenero}`, 0, 0, "ambos")
+$("#chartIngresosTotales")[0].crearGrafico(labelsdesnormalizados, datasetIngresosTotales, `Resumen del total de ingresos durante ${unidadTiempoSingularGenero}`, `total ingresos durante ${unidadTiempoSingularGenero}`, 0, 1, "ambos")
 
 //TODO cambiar estos
 async function pedirPDF() {
@@ -68,3 +97,13 @@ $("body").on("click", ".botonpdf", async function () {
     pdf.save('chart.pdf');
   });
 });
+
+
+function unirTexto(arr) {
+  if (arr.length === 1) {
+    return arr[0];
+  } else {
+    let ultimo = arr.pop();
+    return "Dias: " + arr.join(" - ") + " y " + ultimo;
+  }
+}

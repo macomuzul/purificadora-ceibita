@@ -1,3 +1,5 @@
+@use "./partials/botonazul";
+
 body {
   background: #191d31;
   margin: 0;
@@ -20,12 +22,12 @@ body {
   }
 }
 
-.dropdown{
+.dropdown {
   width: 300px;
   display: inline-block;
 }
 
-label{
+label {
   font-size: 18px;
 }
 
@@ -62,7 +64,7 @@ label{
   background: rgb(42, 48, 60);
 }
 
-article{
+article {
   // margin-top: 50px;
 }
 
@@ -72,7 +74,7 @@ article{
   background: #0e1a2e;
   font-size: 20px;
   box-shadow: var(--bs-accordion-btn-focus-box-shadow) !important;
-
+  border-radius: 5px !important;
   &:not(.collapsed) {
     color: white;
     background: #192435;
@@ -88,7 +90,6 @@ article{
   background-color: #14213a;
   padding: 15px;
   row-gap: 10px;
-  color: white;
 }
 
 .camionero {
@@ -104,7 +105,6 @@ article{
   justify-self: center;
 }
 
-
 .textoCamionero {
   grid-column: 2 / span 15;
   grid-row: 1 / span 1;
@@ -117,38 +117,127 @@ article{
   align-self: center;
 }
 
-.accordion-body{
+.accordion-body {
   padding: 0;
   user-select: none;
+  color: white;
+
+  .accordion-body {
+    box-shadow: 0 0 5px blue;
+  }
 }
 
-.seccioncamioneros{
+.seccioncamioneros {
   padding: 0 20px 5px;
 }
 
-.accordion-item{
+.accordion-item {
   border: none;
+  background: currentColor;
 }
 
 .accordion-button::after {
   background-image: var(--bs-accordion-btn-active-icon);
 }
 
-canvas{
-  // margin-top: 50px;
-}
+// canvas{
+//   // height: 589px !important;
+//   // aspect-ratio: 2;
+// }
 
-.contenedormedio{
+.contenedormedio {
   height: 80px;
   width: 100%;
   display: flex;
-  align-items:flex-end;
+  align-items: flex-end;
 }
 
-.tituloProductos{
+.tituloProductos,
+.contenedorabajo {
   font-size: 22px;
   text-align: center;
-  color: white;
   background: #051533;
   padding: 20px 0 10px;
+}
+
+.contenedorabajo {
+  box-shadow: 0 0 5px darkslateblue;
+}
+
+.tituloProductos {
+  margin-left: auto;
+}
+
+.contenedorotrasopciones {
+  background: #14213a;
+}
+
+.tituloacordeon {
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  height: 63px;
+}
+
+.acordeonroot {
+  z-index: 9999;
+}
+
+.radiobuttons {
+  display: inline-block;
+  padding: 15px 20px;
+}
+
+.tituloopciones {
+  font-size: 20px;
+  text-align: center;
+  padding: 15px;
+}
+
+hr {
+  margin: 0;
+}
+
+.conmargen {
+  margin: 25px;
+}
+
+.headeracordeon {
+  //  border: 1px solid blue;
+  //  border-top: none;
+  box-shadow: 0 0 10px darkslateblue;
+  border-bottom: 1px solid darkslateblue;
+}
+
+.accordion {
+  background: transparent;
+}
+
+.botonreset {
+  padding: 15px;
+  background: #081038;
+}
+
+.margenbotonswal {
+  width: 140;
+  height: 50;
+  font-weight: 500;
+  &:not(.btn-success) {
+    margin-left: 40;
+  }
+}
+
+.contenedoropcion {
+  padding: 5px 25px;
+}
+
+.contenedorCanvas {
+  width: 1179px;
+  height: 589px;
+}
+
+custom-graficos {
+  display: inline-block;
+  width: 1179px !important;
 }
