@@ -168,37 +168,15 @@ h4 {
 }
 
 .botonexcel {
-  padding: 10px;
-  background: #064723;
-  border-color: #116d3a;
   position: absolute;
   bottom: 10;
   right: 0;
-  width: 172px;
-  height: 52px;
-  &:hover,
-  &:focus,
-  &:active {
-    background: #165a35;
-    box-shadow: 0 0 0 0.1rem rgb(60 153 110 / 50%) !important;
-  }
 }
 
 .botonpdf {
-  padding: 10px;
-  background: #871a08;
-  border-color: #b31616;
   position: absolute;
   bottom: 10;
   right: 180;
-  width: 168;
-  height: 52;
-  &:hover,
-  &:focus,
-  &:active {
-    background: #950303;
-    box-shadow: 0 0 0 0.2rem rgba(156, 44, 44, 0.5) !important;
-  }
 }
 .contenedorsuperior {
   position: relative;
@@ -246,20 +224,9 @@ h4 {
   height: 90px;
 }
 
-.btn-primary:disabled {
-  background-color: #112438;
-}
-.btn-success:disabled {
-  background: #064723;
-}
-
 .divtrabajadorrevisar {
   display: flex;
   justify-content: center;
-}
-
-*:disabled {
-  opacity: 0.5;
 }
 
 th {
@@ -436,7 +403,7 @@ th {
 .totalresumen {
   position: relative;
   &::after {
-    content: "-";
+    content: "";
     height: 1px;
     display: block;
     background-color: white;
