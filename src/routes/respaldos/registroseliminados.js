@@ -6,6 +6,10 @@ const { DateTime } = require("luxon");
 const redis = require('../../redis');
 let vencerEn = 900 //quince minutos
 
+//TODO hacer esto de los reroutes 
+router.get("/jeje", async (req, res) => {
+  res.redirect("jojo");
+});
 router.get("/", async (req, res) => {
   res.render("registroseliminados");
 });

@@ -6,7 +6,7 @@ body {
   margin: 0;
   padding: 0;
   color: white;
-  min-width: 1100px;
+  min-width: 1200px;
 }
 
 .botonpdf {
@@ -93,7 +93,7 @@ article {
   row-gap: 10px;
 }
 
-.camioneros2{
+.camioneros2 {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
@@ -172,6 +172,7 @@ article {
 
 .contenedorabajo {
   box-shadow: 0 0 5px darkslateblue;
+  padding: 15px 0;
 }
 
 .tituloProductos {
@@ -180,6 +181,10 @@ article {
 
 .contenedorotrasopciones {
   background: #14213a;
+
+  & > .tituloopciones{
+    box-shadow: 0 0 2px white;
+  }
 }
 
 .tituloacordeon {
@@ -259,7 +264,7 @@ custom-graficos {
 
 .convertira {
   font-size: 17px;
-  width: 200px;
+  width: 210px;
   height: 52px;
   padding: 15px;
   position: absolute;
@@ -282,7 +287,7 @@ th {
 
 table {
   padding: 0;
-  margin-top: 25px;
+  margin-top: 20px;
 }
 
 .multiple td:last-child,
@@ -296,4 +301,14 @@ tfoot td:not(:first-child) {
     position: absolute;
     width: calc(100% - 30px);
   }
+}
+
+.contenedorTabla {
+  width: fit-content;
+}
+
+.tituloTabla {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 26px;
 }

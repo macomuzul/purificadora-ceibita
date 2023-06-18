@@ -1,9 +1,5 @@
-class radiobutton extends HTMLElement {
+ class radiobutton extends HTMLElement {
   connectedCallback() {
-    this.render();
-  }
-
-  render() {
     let { id, checked } = this.dataset;
     this.innerHTML = `<div class="form-check form-check-inline">
     <input class="form-check-input" type="radio" id="${id}" ${checked ? "checked" : ""}>

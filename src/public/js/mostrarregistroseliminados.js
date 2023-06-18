@@ -52,8 +52,7 @@ function devuelveTabla(registro) {
   let $tablas = registro.querySelectorAll("table");
   let tablas = `<div class="tabs">`;
   for (let i = 0; i < $tablas.length; i++) {
-    tablas += `<input type="radio" class="tabs__radio" name="tabswal" id="tabswal${i}" ${i === 0 ? "checked" : ""
-      }>
+    tablas += `<input type="radio" class="tabs__radio" name="tabswal" id="tabswal${i}" ${i === 0 ? "checked" : ""}>
         <label for="tabswal${i}" class="tabs__label">Camión ${i + 1}</label>
         <div class="tabs__content">`;
     tablas += $tablas[i].outerHTML;

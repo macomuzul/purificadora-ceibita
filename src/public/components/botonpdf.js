@@ -49,6 +49,7 @@ class botonPDF extends HTMLButtonElement {
   async exportarTabla() {
     await this.cargando();
     let pdf = new jsPDF('p', 'pt', 'letter');
+    // let pdf = new jspdf.jsPDF();
     let margin = 20;
     let scale = (pdf.internal.pageSize.width - margin * 2) / document.body.scrollWidth;
     let html = this.generarHTML();
@@ -92,10 +93,14 @@ class botonPDF extends HTMLButtonElement {
   //TODO cambiar estos tambien
   async pedirPDF() {
     if (typeof jsPDF === "undefined") {
-      await $.getScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js');
-      await $.getScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.js');
-      // await $.getScript('/jspdf-1.5.3.js');
-      // await $.getScript('/html2canvas-1.3.2.js');
+      // await $.getScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js');
+      // await $.getScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.js');
+
+      // await $.getScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.1.1/jspdf.umd.min.js');
+      // await $.getScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
+      // await $.getScript('https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.3/purify.min.js');
+      await $.getScript('/jspdf-1.5.3.js');
+      await $.getScript('/html2canvas-1.3.2.js');
     }
   }
 
