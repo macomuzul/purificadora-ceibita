@@ -1,6 +1,3 @@
-const moduloRedis = require("redis");
-let redis = moduloRedis.createClient();
-
 async function intentosIP(req, res, next){
   let ip = req.ip || req.socket.remoteAddress;
   let textoIP = `ip:${ip}`;

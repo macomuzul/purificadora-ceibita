@@ -1,0 +1,17 @@
+.contenedoreliminar {
+  display: inline-block;
+  justify-content: center;
+  padding: 10px;
+  background: rgb(216, 12, 12);
+  border: 1.5px solid rgb(159, 7, 7);
+  color: #FFF;
+
+  &:hover {
+    cursor: pointer;
+    background: rgb(159, 7, 7);
+  }
+
+  svg {
+    fill: white;
+  }
+}

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --ignore ./src/public/ --ignore ./cypress --ignore ./e2e src/index.js",
-    "debug": "NODE_OPTIONS=\"--inspect\" npm run dev",
+    "debug": "nodemon --ignore ./src/public/ --ignore ./cypress --ignore ./e2e --inspect src/index.js",
+    "debug2": "NODE_OPTIONS=\"--inspect\" npm run dev",
     "e2e": "cypress open",
     "test": "jest",
     "grabar": "playwright codegen --viewport-size \"1366, 657\""

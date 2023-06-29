@@ -3,6 +3,8 @@
 @use "./partials/fondo";
 @use "./partials/tabs";
 @use "./partials/swal";
+@use "./partials/botoneliminar";
+@use "./partials/modal";
 
 @mixin botonRegistrarVentasHoverFocusActive {
   &:focus,
@@ -468,4 +470,17 @@ th {
 
 [slot="fecha"]{
   display: none;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+}
+
+.button-text {
+  margin-right: 10px;
+}
+
+.contenedoreliminar{
+  border: none;
 }

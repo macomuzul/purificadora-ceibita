@@ -4,18 +4,21 @@ const ResumenMes = require("./models/resumenMes");
 const CalendarioCamioneros = require("./models/calendarioCamioneros");
 const RegistrosEliminados = require("./models/registroseliminados");
 let borrarLlaves = require("./utilities/borrarLlavesRedis")
-const redis = require('./redis');
 const { DateTime } = require("luxon");
 
 
 VentasPorDia.watch().on('change', async (cambio) => {
   try {
     console.log('Change detected:', cambio);
-    if (cambio.operationType === "insert" || cambio.operationType === "update") {
+    if (["insert", "update"].includes(cambio.operationType)) {
       let objcambiado = await VentasPorDia.findById(cambio.documentKey._id);
-      await actualizarCamioneros(objcambiado);
-      if(cambio.updateDescription.updatedFields.hasOwnProperty("camiones"))
+      if(cambio.operationType === "insert" || cambio.updateDescription.updatedFields.hasOwnProperty("camiones")){
+        await actualizarCamioneros(objcambiado);
         await calcularResumenPorDia(objcambiado);
+      }
+    } else if(cambio.operationType === "delete"){
+      let objcambiado = await VentasPorDia.findById(cambio.documentKey._id);
+      console.log(objcambiado)
     }
   } catch (error) {
     console.log(error)
@@ -94,5 +97,4 @@ String.prototype.normalizar = function () {
 }
 
 
-const changeStream = RegistrosEliminados.watch();
-changeStream.on('change', borrarLlaves("registroseliminados"));
+RegistrosEliminados.watch().on('change', borrarLlaves("registroseliminados"));

@@ -10,6 +10,11 @@ const { Settings } = require('luxon');
 const estaAutenticado = require("./security/estaAutenticado");
 require("./listenersDB");
 
+// const convertirRegistrosPorDia = require("./utilities/convertirregistrospordia");
+// convertirRegistrosPorDia()
+
+// const convertirRespaldos = require("./utilities/convertirrespaldos");
+// convertirRespaldos()
 
 global.cantidadMaximaPeticionesInvalidas = 3;
 global.tiempoTimeoutLoginSegundos = 900; //15 minutos
@@ -36,6 +41,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public/css")));
 app.use(express.static(path.join(__dirname, "public/images")));
 app.use(express.static(path.join(__dirname, "public/js")));
+app.use(express.static(path.join(__dirname, "public/html")));
 app.use(express.static(path.join(__dirname, "public/js/partials")));
 app.use(express.static(path.join(__dirname, "public/js/utilities")));
 app.use(express.static(path.join(__dirname, "public/components")));
@@ -43,7 +49,7 @@ app.use(express.static(path.join(__dirname, "../cypress/utilidades")));
 app.use(express.static(path.join(__dirname, "../plugins")));
 
 app.use(session({
-  secret: 'llavedeautenticacionparaelusuario',
+  secret: process.env.SECRET_SESSION,
   resave: false,
   saveUninitialized: false
 }));
@@ -61,6 +67,7 @@ app.use('/respaldos', require('./routes/respaldos'));
 app.use('/empleados', require('./routes/empleados'));
 app.use('/configuraciones', require('./routes/configuraciones'));
 app.use('/analisis', require('./routes/analisis'));
+app.use('/extras', require('./routes/extras'));
 
 
 

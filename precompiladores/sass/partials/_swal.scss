@@ -12,6 +12,10 @@
   width: 200px;
   height: 60px;
   margin-right: 10px;
+
+  &:hover {
+    color: #FFF;
+  }
 }
 
 .botoncancel {

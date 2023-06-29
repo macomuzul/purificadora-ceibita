@@ -1,6 +1,5 @@
-const backToTopButton = document.querySelector("#back-to-top-btn");
+const botonSubir = document.querySelector("#back-to-top-btn");
 let tabs = document.querySelectorAll(".tabs");
-let fechaRegistro = document.querySelectorAll(".fechaDelRegistro");
 let clickeados = { valores: [] }
 let seleccionarTodos = document.getElementById("seleccionarTodos");
 let checkboxes = document.querySelectorAll(".check");
@@ -22,120 +21,133 @@ const swalConfirmarYCancelar = Swal.mixin({
   buttonsStyling: false,
 });
 
+const swalSobreescribir = Swal.mixin({
+  customClass: {
+    confirmButton: "btn btn-success margenbotonswal2 botonconfirm",
+    cancelButton: "btn margenbotonswal2 botondeny",
+  },
+  buttonsStyling: false,
+});
 
 function scrollFunction() {
-  if (window.pageYOffset > 0) {
+  if (window.scrollY > 0) {
     // mostrar scroller
-    if (!backToTopButton.classList.contains("btnEntrance")) {
-      backToTopButton.classList.remove("btnExit");
-      backToTopButton.classList.add("btnEntrance");
-      backToTopButton.style.display = "block";
+    if (!botonSubir.classList.contains("btnEntrance")) {
+      botonSubir.classList.remove("btnExit");
+      botonSubir.classList.add("btnEntrance");
+      botonSubir.style.display = "block";
     }
   } else {
     // esconder
-    if (backToTopButton.classList.contains("btnEntrance")) {
-      backToTopButton.classList.remove("btnEntrance");
-      backToTopButton.classList.add("btnExit");
+    if (botonSubir.classList.contains("btnEntrance")) {
+      botonSubir.classList.remove("btnEntrance");
+      botonSubir.classList.add("btnExit");
       setTimeout(function () {
-        backToTopButton.style.display = "none";
+        botonSubir.style.display = "none";
       }, 250);
     }
   }
 }
 
-backToTopButton.addEventListener("click", (e) => {
+botonSubir.addEventListener("click", (e) => {
   window.scrollTo(0, 0);
 });
 
 
-function devuelveTabla(registro) {
-  let $tablas = registro.querySelectorAll("table");
-  let tablas = `<div class="tabs">`;
-  for (let i = 0; i < $tablas.length; i++) {
-    tablas += `<input type="radio" class="tabs__radio" name="tabswal" id="tabswal${i}" ${i === 0 ? "checked" : ""}>
-        <label for="tabswal${i}" class="tabs__label">Camión ${i + 1}</label>
-        <div class="tabs__content">`;
-    tablas += $tablas[i].outerHTML;
-    tablas += `</div>`;
-  }
-  tablas += `</div>`;
-  return { tablas, fecha: registro.querySelector(".fechaDelRegistro").innerText };
+function devuelveTabla(article) {
+  let registro = $(article).find(".content")[0].cloneNode(true);
+  let html = `<custom-tabs><div class="tabs">`
+  $(registro).find("table").each(i => html += `<custom-label name="swal" data-id="swal${i}">Camión ${i + 1}</custom-label>`);
+  html += `</div>`
+  html += registro.outerHTML;
+  html += "</custom-tabs>";
+  return { html, fecha: $(article).find(`.fecharegistro [slot="fechaStr"]`).text(), fechaDate: parseDate($(article).find(`.fecharegistro [slot="fecha"]`).text()) };
 }
 
 document.querySelectorAll(".btnrestaurar").forEach((el) => {
   el.addEventListener("click", async function (e) {
     let registro = this.closest("article");
-    let resultado = devuelveTabla(registro);
+    let id = registro.getAttribute("name");
+    let { html, fecha, fechaDate } = devuelveTabla(registro);
 
-    let result = await swalConfirmarYCancelar
-      .fire({
-        title: "Estás seguro que deseas restaurar este registro?",
-        icon: "warning",
-        width: (window.innerWidth * 3) / 4,
-        html: resultado.tablas,
-        showCancelButton: true,
-        confirmButtonText: "Sí",
-        cancelButtonText: "No",
-      })
+    let result = await swalConfirmarYCancelar.fire({
+      title: "Estás seguro que deseas restaurar este registro?",
+      icon: "warning",
+      width: (window.innerWidth * 3) / 4,
+      html,
+      showCancelButton: true,
+      confirmButtonText: "Sí",
+      cancelButtonText: "No",
+    })
     if (result.isConfirmed) {
-      result = await swalConfirmarYCancelar
-        .fire({
-          title: `Si restauras vas a sobreescribir el registro con fecha ${resultado.fecha} estas seguro que deseas continuar?`,
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "Sí",
-          cancelButtonText: "No",
-        })
-      if (result.isConfirmed) {
-        $.ajax({
-          url: "/respaldos/restaurarregistro",
-          method: "POST",
-          contentType: "application/json",
-          data: `{"id": "${registro.getAttribute("name")}"}`,
-          success: function (res) {
-            Swal.fire("Se ha restaurado correctamente", `El registro con fecha: ${resultado.fecha} se ha restaurado correctamente. Ahora serás redireccionado a esta fecha en el calendario para ver los cambios`, "success");
-          },
-          error: function (res) {
-            Swal.fire("Ups...", "No se pudo restaurar el registro", "error");
+      result = await swalSobreescribir.fire({
+        title: "Estás seguro que deseas continuar?",
+        text: `Si restauras vas a sobreescribir el registro con fecha ${fecha}`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sobreescribir registro",
+        cancelButtonText: "Utilizar una fecha diferente",
+      })
+      if (result.isConfirmed)
+        restaurarregistro(`{"id": "${id}", "fecha": ${fechaDate.valueOf()}}`, fecha)
+      else {
+        result = await Swal.fire({
+          title: "Escoge la fecha a donde quieres mover el registro",
+          width: 750,
+          html: `<iframe src="/extras/calendarioIframe" frameborder="0"></iframe><button id="continuarIframe" class="btn btn-success margenbotonswal">Continuar</button><button id="cancelarIframe" class="btn btn-danger margenbotonswal">Cancelar</button>`,
+          showConfirmButton: false,
+          didOpen: () => {
+            $(document).find("#continuarIframe")[0].addEventListener("click", () => {
+              let contenidoIframe = $(document).find("iframe")[0].contentDocument;
+              let input = contenidoIframe.querySelector("input");
+              let fecha = input.value;
+              if (fecha === "") {
+                input.classList.add("is-invalid");
+                contenidoIframe.querySelector("#validadorIframe").className = "invalid-feedback";
+                return;
+              }
+              restaurarRegistro(`{"id": "${id}", "fecha": ${parseDate(fecha).valueOf()}}`, fecha)
+              Swal.close()
+            });
+            $(document).find("#cancelarIframe")[0].addEventListener("click", () => Swal.close());
           },
         });
       }
     }
-  });
+  })
 });
+
+function restaurarRegistro(data, fecha) {
+  $.ajax({
+    url: "/respaldos/registroseliminados/restaurarregistro",
+    method: "POST",
+    contentType: "application/json",
+    data,
+    success: function (res) {
+      Swal.fire("Se ha restaurado correctamente", `El registro con fecha: ${fecha} se ha restaurado correctamente. Ahora serás redireccionado a esta fecha en el calendario para ver los cambios`, "success");
+    },
+    error: function (res) {
+      Swal.fire("Ups...", "No se pudo restaurar el registro", "error");
+    },
+  });
+}
 
 document.querySelectorAll(".btneliminar").forEach((el) => {
   el.addEventListener("click", async function (e) {
     let registro = this.closest("article");
-    let resultado = devuelveTabla(registro);
+    let { html, fecha } = devuelveTabla(registro);
 
-    let result = await swalConfirmarYCancelar
-      .fire({
-        title: "Estás seguro que deseas borrar este registro?",
-        icon: "warning",
-        width: (window.innerWidth * 3) / 4,
-        html: resultado.tablas,
-        showCancelButton: true,
-        confirmButtonText: "Sí",
-        cancelButtonText: "No",
-      })
+    let result = await swalConfirmarYCancelar.fire({
+      title: "Estás seguro que deseas borrar este registro?",
+      icon: "warning",
+      width: (window.innerWidth * 3) / 4,
+      html,
+      showCancelButton: true,
+      confirmButtonText: "Sí",
+      cancelButtonText: "No",
+    })
     if (result.isConfirmed) {
-      $.ajax({
-        url: "/respaldos/borrarregistro",
-        method: "DELETE",
-        contentType: "application/json",
-        data: `{"id": "${registro.getAttribute("name")}"}`,
-        success: async function (res) {
-          await Swal.fire("Se ha borrado correctamente", `El registro con fecha: ${resultado.fecha} se ha borrado correctamente`, "success");
-          if (clickeados.valores.length > 2)
-            window.location = document.URL;
-          else
-            window.location = `${document.URL.replace(/pag=[0-9]+/, `pag=${parseInt(page) - 1}`)}`;
-        },
-        error: function (res) {
-          Swal.fire("Ups...", "No se pudo eliminar el registro", "error",);
-        },
-      });
+      borrarRegistros(`{"registros": ["${registro.getAttribute("name")}"]}`, `El registro con fecha: ${fecha} se ha borrado correctamente`, "No se pudo eliminar el registro")
     }
   });
 });
@@ -143,10 +155,9 @@ document.querySelectorAll(".btneliminar").forEach((el) => {
 document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
   el.addEventListener("click", async function (e) {
     let registro = this.closest("article");
-    let nombreTabla = this.getAttribute("name");
-    let tabla = registro.querySelector(`[name=${nombreTabla}]`);
-    let numTabla = nombreTabla.split("t")[1];
-    let fecha = registro.querySelector(".fechaDelRegistro").innerText;
+    let tabla = [...$(registro).find("tab-content")].filter(x => x.style.display === "initial")[0];
+    let numTabla = $(tabla).index();
+    let fecha = $(registro).find(`.fecharegistro [slot="fechaStr"]`).text();
     let result = await swalConfirmarYCancelar.fire({
       title: "Estás seguro que deseas restaurar esta tabla?",
       icon: "warning",
@@ -168,7 +179,7 @@ document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
       })
       if (result.isConfirmed) {
         $.ajax({
-          url: "/respaldos/restaurarregistro",
+          url: "/respaldos/registroseliminados/restaurarregistro",
           method: "POST",
           contentType: "application/json",
           data: `{"id": "${nombreTabla}", "numTabla": "${numTabla}"}`,
@@ -185,9 +196,9 @@ document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
 
   document.querySelectorAll(".eliminartodos").forEach((el) => {
     el.addEventListener("click", async (e) => {
-      let registros = { registros: [] };
+      let objRegistros = { registros: [] };
       document.querySelectorAll(".check:checked").forEach(el =>
-        registros.registros.push(el.closest("article").getAttribute("name")));
+        objRegistros.registros.push(el.closest("article").getAttribute("name")));
       let result = await swalConfirmarYCancelar.fire({
         title: "Estás seguro que deseas borrar los registros seleccionados?",
         icon: "warning",
@@ -197,23 +208,38 @@ document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
       })
 
       if (result.isConfirmed) {
-        $.ajax({
-          url: "/respaldos/borrarregistrosseleccionados",
-          method: "DELETE",
-          contentType: "application/json",
-          data: JSON.stringify(registros),
-          success: async function (res) {
-            await Swal.fire("Se ha borrado correctamente", `Se han borrado correctamente todos los registros seleccionados`, "success");
-            if (clickeados.valores.length > 2)
-              window.location = document.URL;
-            else
-              window.location = `${document.URL.replace(/pag=[0-9]+/, `pag=${parseInt(page) - 1}`)}`;
-          },
-          error: function (res) {
-            Swal.fire("Ups...", "No se pudieron eliminar los registros", "error");
-          },
-        });
+        borrarRegistros(JSON.stringify(objRegistros), "Se han borrado correctamente todos los registros seleccionados", "No se pudo eliminar uno o más registros, pero los que sí se podian eliminar fueron eliminados")
       }
     });
   });
 });
+
+
+function borrarRegistros(data, texto, textoError) {
+  $.ajax({
+    url: "/respaldos/registroseliminados/borrarregistros",
+    method: "DELETE",
+    contentType: "application/json",
+    data,
+    success: async function (res) {
+      let result = await swalConfirmarYCancelar.fire({
+        title: "Se ha borrado correctamente",
+        text: texto + ", deseas refrescar la página?",
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonText: "Sí",
+        cancelButtonText: "No",
+      })
+      if (result.isConfirmed)
+        location.reload()
+    },
+    error: function (res) {
+      Swal.fire("Ups...", textoError, "error");
+    },
+  });
+}
+
+function parseDate(dateString) {
+  const [day, month, year] = dateString.split('/');
+  return Date.UTC(year, month - 1, day);
+}

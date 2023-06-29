@@ -7,7 +7,6 @@ const { google } = require("googleapis")
 const stream = require("stream")
 const BSON = require('bson');
 const nodemailer = require("nodemailer");
-const redis = require('../../redis');
 const { send } = require('process');
 
 const oauth2Client = new google.auth.OAuth2(

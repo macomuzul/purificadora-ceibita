@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const passport = require('passport');
-const redis = require('../redis');
 const { DateTime } = require('luxon');
 const CalendarioCamioneros = require("../models/calendarioCamioneros");
 const Camioneros = require("../models/camioneros");
@@ -41,8 +40,8 @@ router.route('/recuperarcontrase%C3%B1a').get((req, res) => {
 router.route('/calendario').get(async (req, res) => {
   let fechaActual = DateTime.now().setZone("America/Guatemala").toFormat("y/M");
   let mes = await CalendarioCamioneros.findById(fechaActual);
-  let camioneros = (await Camioneros.findOne()).camioneros;
-  res.render('calendario', { mes, camioneros, DateTime });
+  let camioneros = (await Camioneros.findOne())?.camioneros || [];
+  res.render('calendario', { mes, camioneros, DateTime, fechaActual });
 }).post(async (req, res) => {
   try {
     let mes = await CalendarioCamioneros.findById(req.body.fecha);

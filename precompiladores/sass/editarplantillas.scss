@@ -1,23 +1,11 @@
-.contenedoreliminar {
-  display: inline;
+@use "./partials/botoneliminar";
+
+.contenedoreliminar{
   position: absolute;
   right: 0;
-  justify-content: center;
-  width: 180px;
-  padding: 10px;
   margin-right: 20px;
-  background: rgb(216, 12, 12);
-  border: 1.5px solid rgb(159, 7, 7);
-
-  &:hover {
-    cursor: pointer;
-    background: rgb(159, 7, 7);
-  }
-
-  svg {
-    fill: white;
-  }
 }
+
 
 .button2 {
   transform: translateX(-60px);

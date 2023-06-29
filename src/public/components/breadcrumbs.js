@@ -87,4 +87,7 @@ String.prototype.capitalizar = function(){
   return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
+document.documentElement.style.setProperty('--animate-delay', '0.1s');
+document.documentElement.style.setProperty('--animate-duration', '0.7s');
+
 customElements.define("custom-breadcrumbs", customBreadcrumbs);

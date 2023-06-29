@@ -4,8 +4,7 @@ class acordeon extends HTMLElement {
   }
 
   render() {
-    let id = this.dataset?.id;
-    this.innerHTML = `<div class="accordion" ${id ? `id="${id}"` : ""}>${this.innerHTML}</div>`;
+    this.classList.add("accordion")
   }
 }
 
@@ -18,13 +17,13 @@ class acordeonitem extends HTMLElement {
 
   render() {
     let idPadre = $(this).closest(".accordion")[0]?.id;
+    this.classList.add("accordion-item")
     let { id, titulo } = this.dataset;
-    this.innerHTML = `<div class="accordion-item">
-      <h2 class="accordion-header headeracordeon">
+    this.innerHTML = `<h2 class="accordion-header headeracordeon">
         <button class="accordion-button tituloacordeon collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${id}"><div class="tituloProductos">${titulo}</div></button> 
       </h2>
   <div id="${id}" class="accordion-collapse collapse" ${idPadre ? `data-bs-parent="#${idPadre}"` : ""}>
-  <div class="accordion-body">${this.innerHTML}</div></div></div>`;
+  <div class="accordion-body">${this.innerHTML}</div></div>`;
   }
 }
 

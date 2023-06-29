@@ -1,1 +1,1 @@
-{"version":3,"sourceRoot":"","sources":["../../../precompiladores/sass/editarplantillas.scss"],"names":[],"mappings":"AAAA,oBACE,eACA,kBACA,QACA,uBACA,YACA,aACA,kBACA,mBACA,2BAEA,0BACE,eACA,mBAGF,wBACE,UAIJ,SACE","file":"editarplantillas.min.css"}
+{"version":3,"sourceRoot":"","sources":["../../../precompiladores/sass/partials/_botoneliminar.scss","../../../precompiladores/sass/editarplantillas.scss"],"names":[],"mappings":"AAAA,oBACE,qBACA,uBACA,aACA,mBACA,2BACA,WAEA,0BACE,eACA,mBAGF,wBACE,UCZJ,oBACE,kBACA,QACA,kBAIF,SACE","file":"editarplantillas.min.css"}

@@ -1,7 +1,8 @@
 class label extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<input type="radio" class="tabs__radio" name="${this.name}" id="${this.id}" ${this.checked ? "checked" : ""}> />
-    <label for="${this.id}" class="tabs__label">${this.innerHTML}</label>`
+    let { id } = this.dataset;
+    this.innerHTML = `<input type="radio" class="tabs__radio" name="${this.getAttribute("name")}" id="${id}">
+    <label for="${id}" class="tabs__label">${this.innerHTML}</label>`
   }
 }
 
@@ -10,9 +11,10 @@ customElements.define("custom-label", label);
 class contenedorAcciones extends HTMLElement {
   connectedCallback() {
     $(this).addClass("contenedoracciones");
+    let { id } = this.dataset;
     this.innerHTML = `<div class="form-check checkabsolute">
-    <input class="form-check-input check" type="checkbox" id="${this.id}">
-    <label class="form-check-label" for="${this.id}">Seleccionar</label>
+    <input class="form-check-input check" type="checkbox" id="${id}">
+    <label class="form-check-label" for="${id}">Seleccionar</label>
   </div>
   <div class="contenedorbotones contenedorrestaurar btnrestaurar">
     <div class="contenedorrestaurarinterior">
@@ -32,19 +34,47 @@ customElements.define("contenedor-acciones", contenedorAcciones);
 class tabContent extends HTMLElement {
   connectedCallback() {
     $(this).addClass("tabs__content");
-    this.innerHTML = `${this.innerHTML} <div class="contenedorrestaurar restaurarsoloestatabla" name="${this.name}">
+    this.innerHTML = `${this.innerHTML}`
+  }
+}
+
+customElements.define("tab-content", tabContent);
+class botonRestaurar extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `<div class="contenedorrestaurar restaurarsoloestatabla">
     <svg xmlns="http://www.w3.org/2000/svg" class="svgrestaurar" viewBox="0 0 25 25"> <path d="M5.88468 17C7.32466 19.1128 9.75033 20.5 12.5 20.5C16.9183 20.5 20.5 16.9183 20.5 12.5C20.5 8.08172 16.9183 4.5 12.5 4.5C8.08172 4.5 4.5 8.08172 4.5 12.5V13.5M12.5 8V12.5L15.5 15.5" /><path d="M7 11L4.5 13.5L2 11" /></svg>
     <span>Restaurar solo esta tabla</span>
   </div>`
   }
 }
 
-customElements.define("tab-content", tabContent);
+customElements.define("boton-restaurar", botonRestaurar);
 
-class customTab extends HTMLElement {
+class customTabs extends HTMLElement {
   connectedCallback() {
-    // requestAnimationFrame(() => $(this).children().each((i, el) => $(el).find("input")[0].name = this.id));
+    requestAnimationFrame(() => {
+      try {
+        $(this).find("custom-label input")[0].checked = true;
+        $(this).find("tab-content")[0].style.display = "initial";
+        $(this).find("custom-label label").each((_, el) => {
+          el.addEventListener("click", () => {
+            let checkeado = $(this).find("custom-label input:checked");
+            checkeado[0].checked = false;
+            let indice = $(checkeado).parent().index();
+            $(this).find(`tab-content:nth-child(${indice + 1})`).css("display", "none");
+
+            let input = $(el).prev();
+            input[0].checked = true;
+            let indice2 = $(el).parent().index();
+            $(this).find(`tab-content:nth-child(${indice2 + 1})`).css("display", "initial");
+          });
+        });
+      } catch {
+
+      }
+    });
+
   }
 }
 
-customElements.define("custom-tab", customTab);
+customElements.define("custom-tabs", customTabs);

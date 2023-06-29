@@ -10,13 +10,12 @@ span-fechas{
 <slot name="fecha"></slot>
 <slot name="fechaStr"></slot>`;
 class spanFechas extends HTMLElement{
-  constructor(){
-    super();
+  connectedCallback() {
     this.append(template.content.cloneNode(true))
     this.addEventListener("click", () => {
       $(this).find(`[slot="fecha"]`).toggle();
       $(this).find(`[slot="fechaStr"]`).toggle();
-    })
+    });
   }
 }
 

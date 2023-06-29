@@ -1,5 +1,5 @@
 const moduloRedis = require("redis");
-let redis = moduloRedis.createClient();
+global.redis = moduloRedis.createClient();
 redis.connect().then(() => {
   console.log("conectado a redis")
 });

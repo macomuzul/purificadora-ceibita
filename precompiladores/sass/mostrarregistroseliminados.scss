@@ -2,19 +2,22 @@
 @use "./partials/paginacion";
 @use "./partials/tablacompleta";
 @use "./partials/titulorespaldos";
-@use "./partials/tabs";
+@use "./partials/tabsmostrarregistroseliminados";
 @use "./partials/botonsubir";
 @use "./partials/flecha";
 @use "./partials/flecharotada";
 @use "./partials/botonazul";
+@use "./partials/swal";
+@use "./partials/calendariobootstrap";
 
 html {
   scroll-behavior: smooth;
 }
 
-h2 {
+.fechaMover {
   text-align: center;
   margin-bottom: 20px;
+  transform: translateX(67px);
 }
 
 .checkbox:focus {
@@ -68,6 +71,9 @@ body {
   font-family: "Poppins", sans-serif;
   border-radius: 7px;
   margin-bottom: 10px;
+  &:not(.eliminartodos) {
+    transform: translateX(115px);
+  }
 }
 
 .contenedorrestaurarinterior {
@@ -103,7 +109,7 @@ body {
   border-radius: 30px;
   margin-left: auto;
   margin-top: 10px;
-  transform: translateX(180px);
+  transform: translateX(115px);
 }
 
 .eliminartodos {
@@ -144,14 +150,20 @@ body {
   display: inline-block;
 }
 
-.botonazul{
+.botonazul {
   margin-top: 15px;
 }
 
-
 .margenbotonswal {
-  margin-left: 40;
   width: 120;
+}
+
+.margenbotonswal2 {
+  width: 160;
+}
+
+.btn-danger, .botondeny {
+  margin-left: 40;
 }
 
 .esconderboton .restaurarsoloestatabla {
@@ -175,14 +187,11 @@ hr {
   margin-bottom: 20px;
 }
 
-[slot="fecha"]{
+[slot="fecha"] {
   display: none;
 }
 
-.tabs__label, .agregarcamion{
-  transform: translateX(-48px);
-}
-
-.tab__interior__content{
-  width: fit-content;
+iframe{
+  width: 100%;
+  height: 400px;
 }

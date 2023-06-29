@@ -28,24 +28,41 @@ router.post("/guardar", async (req, res) => {
 });
 
 
-router.get("/:id", async (req, res) => {
+router.route("/:id").get(async (req, res) => {
   try {
-    id = req.params.id;
-    var datos = id.split("-");
+    let {id} = req.params;
+    let datos = id.split("-");
     if (datos.length !== 3)
       return res.send("página inválida");
-    const fecha = DateTime.fromFormat(id, "d-M-y");
-    const ventaspordia = await VentasPorDia.findOne({ fecha: fecha.toISODate() });
-    const plantillas = await plantilla.find().sort("orden");
-    const plantillaDefault = await plantilla.findOne({ esdefault: true });
+    let fecha = DateTime.fromFormat(id, "d-M-y");
+    let ventaspordia = await VentasPorDia.findOne({ fecha: fecha.toISODate() });
+    let plantillas = await plantilla.find().sort("orden");
+    let plantillaDefault = await plantilla.findOne({ esdefault: true });
     let listaCamioneros = await Camioneros.findOne();
     let camioneros = listaCamioneros.camioneros.map(el => el.nombre);
     let fechastr = fecha.toLocaleString(DateTime.DATE_HUGE);
     res.render("registrarventas", { fecha: fecha.toFormat("d/M/y"), ventaspordia, plantillas, plantillaDefault, fechastr, camioneros, DateTime });
   } catch (e) {
     console.log(e)
+    res.status(400).send("página inválida");
+  }
+}).delete(async (req, res) => {
+  try {
+    let {id} = req.params;
+    let datos = id.split("-");
+    if (datos.length !== 3)
+      return
+    let fecha = DateTime.fromFormat(id, "d-M-y");
+    let ventaspordia = await VentasPorDia.findOne({ fecha: fecha.toISODate() });
+    let respaldo = new Respaldo({ ventaspordia, fechaeliminacion: new Date() });
+    await respaldo.save();
+    ventaspordia.deleteOne();
+    res.send("Exito");
+  } catch (e) {
+    console.log(e)
     res.send("página inválida");
   }
 });
+
 
 module.exports = router;

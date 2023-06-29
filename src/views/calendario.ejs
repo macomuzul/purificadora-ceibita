@@ -54,9 +54,9 @@
       })
 
 
-      let listaMeses = { "<%=mes._id%>": 1 };
+      let listaMeses = { "<%=fechaActual%>": 1 };
       let eventosCalendario = [];
-      "<% let dias = mes.dias; dias.forEach(dia => { dia.camioneros.forEach((camionero, i) => { let fechaDia = DateTime.fromJSDate(dia._id).toFormat('y/M/d'); let fechaUltimoCambio = DateTime.fromJSDate(dia.ultimoCambio).setZone('America/Guatemala'); let ultimoCambioStr = fechaUltimoCambio.toFormat('y/M/d')%>"
+      "<% let dias = mes?.dias || []; dias.forEach(dia => { dia.camioneros.forEach((camionero, i) => { let fechaDia = DateTime.fromJSDate(dia._id).toFormat('y/M/d'); let fechaUltimoCambio = DateTime.fromJSDate(dia.ultimoCambio).setZone('America/Guatemala'); let ultimoCambioStr = fechaUltimoCambio.toFormat('y/M/d')%>"
       eventosCalendario.push({ name: `Camión ${"<%=i+1%>"}`, description: `Conductor: ${"<%=camionero%>"}`, date: "<%=fechaDia%>", type: "<%=i%>", ultimoCambio: "<%=ultimoCambioStr%>", usuario: "<%=dia.usuario%>", color: camioneros["<%=camionero%>"] })
       "<% }); }) %>"
     </script>

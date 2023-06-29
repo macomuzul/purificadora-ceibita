@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const ventaspordia = require('./registroventaspordia');
+const RegistroVentas = require('./registroventas');
 _ = require('underscore');
 
-const respaldoSchema = new Schema({
-  ventaspordia: ventaspordia.schema,
-  fechaeliminacion: Date
+const registroseliminadosSchema = new Schema({
+  registro: RegistroVentas.schema,
+  borradoEl: Date
 });
 
-_.each(_.keys(respaldoSchema.paths), attr => respaldoSchema.path(attr).required(true));
+_.each(_.keys(registroseliminadosSchema.paths), attr => registroseliminadosSchema.path(attr).required(true));
 
-module.exports = mongoose.model('respaldo', respaldoSchema);
+module.exports = mongoose.model('registroseliminados', registroseliminadosSchema);

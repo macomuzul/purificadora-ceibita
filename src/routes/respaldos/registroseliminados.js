@@ -3,36 +3,49 @@ const router = require("express").Router();
 const RegistrosEliminados = require("../../models/registroseliminados");
 const VentasPorDia = require("../../models/registroventaspordia");
 const { DateTime } = require("luxon");
-const redis = require('../../redis');
 let vencerEn = 900 //quince minutos
 
 //TODO hacer esto de los reroutes 
-router.get("/jeje", async (req, res) => {
-  res.redirect("jojo");
-});
 router.get("/", async (req, res) => {
   res.render("registroseliminados");
 });
 
 router.post("/restaurarregistro", async (req, res) => {
   try {
-    let registrorecuperado = await RegistrosEliminados.findById(req.body.id);
+    let { id, fecha } = req.body;
+    let registrorecuperado = await RegistrosEliminados.findById(id);
     if (registrorecuperado == null)
       return res.status(400).send("Registro no existe");
-    let fecha = registrorecuperado.ventaspordia.fecha;
-    let ahora = new Date();
-    let ventasPorDiaRecuperado = new VentasPorDia(registrorecuperado.ventaspordia);
-    Object.assign(ventasPorDiaRecuperado, { usuario: req.user?.usuario ?? "jitomate", fechaultimocambio: ahora })
 
     let registroanterior = await VentasPorDia.findOne({ fecha }); //si ya existe un registro anterior lo guarda en la parte de respaldos
-    if (registroanterior) {
-      const respaldo = new RegistrosEliminados({ ventaspordia: registroanterior, fechaeliminacion: ahora });
-      await respaldo.save();
-      registroanterior = ventasPorDiaRecuperado.ventaspordia;
-      await registroanterior.save();
-    }
-    else
-      await ventasPorDiaRecuperado.save();
+    if (registroanterior)
+      return res.send(registroanterior);
+    let { fechacreacion, camiones } = registrorecuperado.ventaspordia;
+    let ventasPorDiaRecuperado = new VentasPorDia({ usuario: req.user?.usuario ?? "jitomate", fechaultimocambio: new Date(), fecha, fechacreacion, camiones });
+    await ventasPorDiaRecuperado.save();
+    await registrorecuperado.deleteOne();
+    res.send("Se ha restaurado con éxito");
+  } catch (e) {
+    console.log(e)
+    res.status(400).send("No se pudo restaurar");
+  }
+});
+
+router.post("/sobreescribirregistro", async (req, res) => {
+  try {
+    let { id, registroASobreescribir, fecha } = req.body;
+    let registrorecuperado = await RegistrosEliminados.findById(id);
+    if (registrorecuperado == null)
+      return res.status(400).send("Registro no existe");
+    let regASobreescribir = await VentasPorDia.findById(registroASobreescribir);
+    if (regASobreescribir == null)
+      return res.status(400).send("Registro a sobreescribir no existe");
+    let ahora = new Date();
+    const respaldo = new RegistrosEliminados({ ventaspordia: regASobreescribir, fechaeliminacion: ahora });
+    await respaldo.save();
+    let { fechacreacion, camiones } = registrorecuperado.ventaspordia;
+    Object.assign(regASobreescribir, { usuario: req.user?.usuario ?? "jitomate", fechaultimocambio: ahora, fecha, fechacreacion, camiones });
+    await regASobreescribir.save();
     await registrorecuperado.deleteOne();
     res.send("Se ha restaurado con éxito");
   } catch {
@@ -40,25 +53,22 @@ router.post("/restaurarregistro", async (req, res) => {
   }
 });
 
-router.delete("/borrarregistro", async (req, res, next) => {
-  try {
-    let registro = await RegistrosEliminados.findByIdAndDelete(req.body.id);
-    if (registro == null)
-      return res.status(400).send("Registro no existe");
-    res.send("Se ha borrado con éxito");
-  } catch {
-    res.status(400).send("Error al borrar el registro");
-  }
-});
 
-router.delete("/borrarregistrosseleccionados", async (req, res) => {
+router.delete("/borrarregistros", async (req, res) => {
   try {
-    let registros = req.body.registros;
-    console.log(registros)
-    registros.forEach(async el => await RegistrosEliminados.findByIdAndDelete(el));
-    res.send("Se ha borrado con éxito");
+    let { registros } = req.body;
+    let contador = 0;
+    await Promise.all(registros.map(async el => {
+      let borrado = await RegistrosEliminados.findByIdAndDelete(el)
+      if (!borrado)
+        contador++
+    }));
+    if (contador !== 0)
+      res.status(400).send("Error");
+    else
+      res.send("Se ha borrado con éxito");
   } catch {
-    res.status(400).send("No se pudo restaurar");
+    res.status(400).send("No se pudo eliminar uno o más de los registros");
   }
 });
 
@@ -91,9 +101,9 @@ async function masRecientesYMasAntiguos(req, res, opcion) {
     let resultado = await devuelveRegistroRedis(req.url);
     if (!resultado) {
       if (opcion === 1)
-        resultado = await RegistrosEliminados.find();
-      else
         resultado = (await RegistrosEliminados.find()).reverse();
+      else
+        resultado = await RegistrosEliminados.find();
       await guardarRegistroRedis(req.url, resultado);
     }
     else {
@@ -179,12 +189,15 @@ router.get("/:buscarpor&:rango&:fecha&:pag", validarPagina, async (req, res) => 
 
 function mostrarPagina(resultado, req, res) {
   let limite = 10;
-  let pagina = parseInt(req.params.pag.split('pag=')[1]);
+  let [url, pagina] = req.originalUrl.split('pag=');
+  pagina = parseInt(pagina);
   let totalPaginas = Math.ceil(resultado.length / limite);
   if (totalPaginas === 0)
     return res.send("no hay ningún registro");
-  else if (pagina > totalPaginas || pagina < 1)
+  else if (pagina < 1)
     return res.send("numero de búsqueda inválido");
+  else if(pagina > totalPaginas)
+    return res.redirect(url + "pag=" + totalPaginas)
   let datostablas = resultado.slice(limite * (pagina - 1), limite * pagina);
   res.render("mostrarregistroseliminados", { datostablas, pagina, totalPaginas, DateTime });
 }

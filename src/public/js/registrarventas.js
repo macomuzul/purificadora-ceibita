@@ -1,8 +1,7 @@
 dayjs.extend(window.dayjs_plugin_utc);
-let colscomienzo = 2;
-let colsfinal = 2;
-let fecha = document.querySelector(".fechanum").textContent.split("/"); //este hay que ponerle textcontent porque si esta escondido con innertext no lo agarra
-let hoy = dayjs(fecha[2] + "-" + fecha[1] + "-" + fecha[0]).utc(true);
+let colscomienzo = 2, colsfinal = 2;
+let [dia, mes, año] = document.querySelector(".fechanum").textContent.split("/"); //este hay que ponerle textcontent porque si esta escondido con innertext no lo agarra
+let hoy = dayjs(año + "-" + mes + "-" + dia).utc(true);
 let timer;
 let tablaValida = false;
 let touchduration = 600;
@@ -150,14 +149,13 @@ $("body").on("click", ".guardarconfig", () => {
 })
 
 function colocarValoresConfig() {
-  let opcionBorrarFilasYColumnasNuevo = $('[name="borrarfilasycolumnas"]:checked').parent().index() - 1;
-  let opcionBorrarCamionesNuevo = $('[name="borrarcamiones"]:checked').parent().index() - 1;
-  let opcionExportarPDFNuevo = $('[name="exportarpdf"]:checked').parent().index() - 1;
-  let opcionExportarExcelNuevo = $('[name="exportarexcel"]:checked').parent().index() - 1;
+  let opcionBorrarFilasYColumnasNuevo = $('[name="borrarfilasycolumnas"]:checked').parent().index();
+  let opcionBorrarCamionesNuevo = $('[name="borrarcamiones"]:checked').parent().index();
+  let opcionExportarPDFNuevo = $('[name="exportarpdf"]:checked').parent().index();
+  let opcionExportarExcelNuevo = $('[name="exportarexcel"]:checked').parent().index();
   let switchOrdenarCamionesNuevo = $("#switchreordenarcamiones")[0].checked;
   let switchOrdenarProductosNuevo = $("#switchreordenarproductos")[0].checked;
   let switchOrdenarOrdenAlfabeticoNuevo = $("#switchreordenalfabetico")[0].checked;
-
   if (opcionBorrarFilasYColumnasNuevo !== opcionBorrarFilasYColumnas) {
     if (opcionBorrarFilasYColumnasNuevo === 0) {
       $("body").on("pointerdown", ".borrarcolumnas", borrarColumnasHandler);
@@ -1728,8 +1726,7 @@ document.querySelector(".agregarcamion").addEventListener("click", async () => {
   <label class="label-trabajador">Nombre del conductor:</label>
   <div class="contenedor-input-trabajador">
   <input type="text" class="form-control trabajador"><div class="btn-group dropend">
-  <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
-    <span class="visually-hidden">Toggle Dropdown</span></button>
+  <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
   <ul class="dropdown-menu dropdown-menu-dark">
   ${devuelveCamioneros()}
   </ul></div></div></div>`
@@ -1760,6 +1757,40 @@ $("body").on('hide.bs.dropdown', '#dropdowncamionero', function () {
   this.closest(".swal2-html-container").style.minHeight = "68.2px";
 });
 
+$("body").on('click', '.contenedoreliminar', async function () {
+  let result = await swalConfirmarYCancelar.fire({
+    title: "Estás seguro que deseas borrar este registro?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí",
+    cancelButtonText: "No",
+  })
+  if (result.isConfirmed) {
+    funcionEnviar = enviar(`"correo": "mkask"`, "Se ha borrado el registro exitosamente");
+    modal.show();
+  }
+});
+
+function enviar(atributo, texto) {
+  return function () {
+    let contraseñaVerificacion = $("#verificacionIdentidad")[0].value;
+    let mandar = `{ ${atributo},  "contraseñaVerificacion": "${contraseñaVerificacion}"}`
+    modal.hide();
+    $.ajax({
+      url: window.location.pathname,
+      method: "DELETE",
+      contentType: "application/json",
+      data: mandar,
+      success: async res => {
+        await Swal.fire("ÉXITO", texto, "success")
+        location.reload()
+      },
+      error: res => {
+        Swal.fire("Error", res.responseText, "error")
+      },
+    });
+  }
+}
 
 function devuelveCamioneros() {
   return camioneros.map(el => `<li class="dropdown-item">${el}</li>`).join("")

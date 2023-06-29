@@ -113,7 +113,7 @@ function crearDatePickerEntre(idSeccion, idDatepicker) {
 <div class="divseparador">y</div>
 <div class="input-group date">
   <input type="text" class="form-control" readonly required id="calendarioentre2">
-  <span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>`)
+  <span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div></div>`)
   propiedadesDatePicker(idDatepicker);
 }
 

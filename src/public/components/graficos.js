@@ -46,7 +46,7 @@ class graficos extends HTMLElement {
   opcionesTabla() {
     let html = `<article class="articleTabla" style="display: none;"><hr class="conMargen"><custom-acordeon>
     <custom-acordeonitem data-titulo="Opciones de la tabla" data-id="listaCamioneros2${contador}">
-      <custom-acordeon data-id="acordeonsegundonivel2${contador}">`
+      <custom-acordeon id="acordeonsegundonivel2${contador}">`
     if (this.multiple)
       html += this.acordeonItem(this.opcionDiasTabla(), `acordeondias`, "Días");
     html += this.acordeonItem(this.opcionProductosTabla(), `acordeonproductos`, this.esTotal ? "Días" : "Productos");
@@ -243,7 +243,6 @@ class graficos extends HTMLElement {
   }
 
   actualizarGrafico() {
-    debugger;
     let checkboxesDias = [...$(this.graficoDias).find(".form-check-input")].map(el => el.checked);
     let checkboxesProductos = [...$(this.graficoProductos).find(".form-check-input")].map(el => el.checked);
     if(checkboxesDias.every(x => !x) && checkboxesDias.length > 0){
@@ -383,7 +382,7 @@ class graficos extends HTMLElement {
   agregarOpciones() {
     let html = `<article class="articleGrafico"><hr class="conMargen"><custom-acordeon>
       <custom-acordeonitem data-titulo="Opciones del gráfico" data-id="listaCamioneros${contador}">
-        <custom-acordeon data-id="acordeonsegundonivel${contador}">`;
+        <custom-acordeon id="acordeonsegundonivel${contador}">`;
 
     if (this.multiple)
       html += this.acordeonItem(this.opcionDiasHTML(), `acordeondias`, "Días");

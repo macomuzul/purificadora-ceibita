@@ -1,31 +1,33 @@
 let $modal = document.getElementById('modal');
 let modal = new bootstrap.Modal($modal);
+let ojoNormal = $($modal).find(".fa-eye")
+let ojoCerrado = $($modal).find(".fa-eye-slash")
+let inputVerificacion = $($modal).find("input")
 
 $("body").on("click", ".fa-eye", function () {
-  this.classList.add("escondido");
-  $(this).next()[0].classList.remove("escondido");
-  $(this).prev().attr("type", "password");
+  ojoNormal.toggle()
+  ojoCerrado.toggle()
+  inputVerificacion.attr("type", "password")
 });
 
 $("body").on("click", ".fa-eye-slash", function () {
-  this.classList.add("escondido");
-  $(this).prev()[0].classList.remove("escondido");
-  $(this).prev().prev().attr("type", "text");
+  ojoNormal.toggle()
+  ojoCerrado.toggle()
+  inputVerificacion.attr("type", "text")
 });
 
 $("#modal").on("hide.bs.modal", () => {
-  let inputVerificacion = $("#verificacionIdentidad")[0];
   inputVerificacion.value = "";
-  if (!$(inputVerificacion).next()[0].classList.contains("escondido"))
-    $(inputVerificacion).next().click();
+  if (!ojoNormal[0].style.display === "none")
+    inputVerificacion.next().click();
 });
 
 $("body").on('click', '#enviarVerificacion', () => {
-  funcionEnviar();
+  let input = inputVerificacion[0];
+  if (input.value === "") {
+    input.setCustomValidity('Por favor escribe una contraseña')
+    input.reportValidity()
+  }
+  else
+    funcionEnviar();
 });
-
-$("#modal").on("hidePrevented.bs.modal", () => {
-  let $inputVerificacion = $("#verificacionIdentidad")[0];
-  $inputVerificacion.setCustomValidity('Por favor escribe una contraseña');
-  setTimeout(() => $inputVerificacion.reportValidity(), 250);
-})
