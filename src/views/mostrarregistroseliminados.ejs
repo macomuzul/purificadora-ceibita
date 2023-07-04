@@ -45,31 +45,27 @@
       <div class="contenedorbotones contenedoreliminar eliminartodos">
         <div class="contenedoreliminarinterior">
           <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="white" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /></svg>
-          <span class="textoeliminar">
-            <div>Eliminar todos los</div>
-            <div>registros seleccionados</div>
-          </span>
+          <span class="textoeliminar"><div>Eliminar todos los</div><div>registros seleccionados</div></span>
         </div>
       </div>
     </div>
-    <% datostablas.forEach((registro,i)=> { %>
+    <% datostablas.forEach((reg,i)=> { let {registro, borradoEl} = reg; %>
     <hr>
-    <article name="<%=registro._id%>">
+    <article name="<%=reg._id%>">
       <contenedor-acciones data-id="check<%=i%>"></contenedor-acciones>
-      <% let fechaDelRegistro = DateTime.fromJSDate(registro.ventaspordia.fecha) %>
-      <% let fechaEliminado = DateTime.fromJSDate(registro.fechaeliminacion, { zone: "America/Guatemala" }) %>
+      <% let fechaDelRegistro = DateTime.fromJSDate(registro._id); let fechaEliminado = DateTime.fromJSDate(borradoEl, { zone: "America/Guatemala" }); %>
       <h2 class="fechaMover">Fecha del registro: <span-fechas class="fecharegistro"><span slot="fecha"><%= fechaDelRegistro.toFormat("d/M/y") %></span><span slot="fechaStr"><%= fechaDelRegistro.toLocaleString(DateTime.DATE_HUGE).replace(/^\w/, c => c.toUpperCase())  %></span></span-fechas></span></h2>
       <span>Se eliminó el <span-fechas><span slot="fecha"><%= fechaEliminado.toFormat("d/M/y") %></span><span slot="fechaStr"><%= fechaEliminado.toLocaleString(DateTime.DATE_HUGE) %></span></span-fechas><%= fechaEliminado.toFormat("'a las' H:mm 'con' ss 'segundos'") %></span>
       <custom-tabs>
         <div class="tabs">
-        <% registro.ventaspordia.camiones.forEach((el, j) => {%>
+        <% registro.tablas.forEach((_, j) => {%>
           <custom-label name="<%=i%>tab" data-id="<%=i%>tab<%=j%>">Camión <%= (j+1) %></custom-label>
           <% }); %>
         </div>
         <div class="content">
-          <% registro.ventaspordia.camiones.forEach((el, j) => {%>
-            <tab-content name="<%=i%>tab">
-              <%- include("layouts/tablas", {j, ventaspordia: registro.ventaspordia}) %>
+          <% registro.tablas.forEach((tabla, j) => {%>
+            <tab-content>
+              <%- include("layouts/tablas", {j, tabla}) %>
             </tab-content>
             <% }); %>
           </div>

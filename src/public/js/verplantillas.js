@@ -81,17 +81,16 @@ $(".svgver").each(function (e, btn) {
       instance._error = null;
     },
     onShow(instance) {
-      let nombreplantilla = $(btn).closest("tr").children().first()[0].innerText;
       if (instance._isFetching || instance._src) {
         return;
       }
       instance._isFetching = true;
-      let mandar = `{ "nombreplantilla": "${nombreplantilla}" }`
+      let data = `{ "nombreplantilla": "${$(btn).closest("tr").children().first()[0].innerText}" }`
       $.ajax({
         url: "/plantillas/devuelveplantilla",
         method: "POST",
         contentType: "application/json",
-        data: mandar,
+        data,
         success: res => {
           plantilla = `<table>
                   <thead>
@@ -125,23 +124,17 @@ $(".svgver").each(function (e, btn) {
 });
 
 $("#guardar").on('click', function () {
-  let guardar = `{
-    "plantilladefault": "${$(".faved").closest("tr")[0].cells[0].innerText}",
-    "plantillasorden": [ `
-  let tabla = document.getElementById("cuerpotabla");
-  let filas = tabla.rows.length;
-  for (let i = 0; i < filas; i++) {
-    guardar += ` { "nombreplantilla": "${tabla.rows[i].cells[0].innerText}" }`;
-    if (i + 1 < filas)
-      guardar += ",";
-  }
-
-  guardar += `] }`
+  let data = JSON.stringify({
+    plantilladefault: $(".faved").closest("tr")[0].cells[0].innerText,
+    plantillasorden: [
+      [...$("#cuerpotabla tr")].map(x => ({ nombreplantilla: x.cells[0].innerText }))
+    ]
+  })
   $.ajax({
     url: "/plantillas",
     method: "PATCH",
     contentType: "application/json",
-    data: guardar,
+    data,
     success: res => {
       Swal.fire("Se ha guardado exitosamente", "Se ha guardado el orden", "success");
     },

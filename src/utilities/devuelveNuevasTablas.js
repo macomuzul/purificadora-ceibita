@@ -1,6 +1,6 @@
 function devuelveNuevasTablas(venta){
   return venta.camiones.map(tabla => ({
-    trabajador: tabla.nombretrabajador || "asdfasdf",
+    trabajador: tabla.nombretrabajador || "desconocido",
     productos: tabla.filas.map(producto => ({
       nombre: producto.nombreproducto,
       precio: producto.precioproducto,

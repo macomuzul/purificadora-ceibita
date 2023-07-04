@@ -58,16 +58,10 @@
           <div class="fila">
             <div class="formcontraseña">
               <div class="divcontraseña">
-                <label for="contraseña">Contraseña</label>
-                <input class="form-control" type="password" id="contraseña">
-                <i class="fa-solid fa-eye escondido"></i>
-                <i class="fa-sharp fa-solid fa-eye-slash"></i>
+                <input-contraseña data-label="Contraseña" data-id="contraseña"></input-contraseña>
               </div>
               <div class="divcontraseña">
-                <label for="confirmarContraseña">Confirmar contraseña</label>
-                <input class="form-control" type="password" id="confirmarContraseña">
-                <i class="fa-solid fa-eye escondido"></i>
-                <i class="fa-sharp fa-solid fa-eye-slash"></i>
+                <input-contraseña data-label="Confirmar contraseña" data-id="confirmarContraseña"></input-contraseña>
               </div>
             </div>
             <input class="btn btn-primary botonazul botonenviar" type="button" value="Cambiar contraseña" id="cambiarContraseña" />
@@ -89,10 +83,9 @@
           </div>
           <hr>
         </div>
-
       </form>
     </main>
-    <%- include("./componentes/modal.ejs") %>
+    <custom-modal></custom-modal>
 
 </body>
 

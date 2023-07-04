@@ -773,52 +773,7 @@ export let tablaBorrarFilasVacias1 = `<table>
 </tfoot>
 </table>`
 
-export let tablaBorrarFilasVacias2 = `<table>
-<thead></thead>
-<colgroup><col><col></colgroup>
-  <colgroup class="pintarcolumnas">
-    <col span="2">
-  </colgroup>
-<colgroup><col><col></colgroup>
-<tbody>
-  <tr>
-    <th rowspan="2" class="prod">Productos</th>
-    <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
-    <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
-    <th rowspan="2" class="tr">Ingresos</th>
-  </tr>
-  <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
-  </tr>
-  </tbody>
-  <tbody class="cuerpo">
-  <tr> 
-    <td contenteditable="false">garrafón2</td>
-    <td contenteditable="false">10</td>
-    <td contenteditable="false">99</td>
-    <td contenteditable="false">3</td>
-    <td contenteditable="false">96</td>
-    <td class="borrarfilas" contenteditable="false">960</td>
-  </tr>
-  <tr>
-    <td contenteditable="false">boopi</td>
-    <td contenteditable="false">25</td>
-    <td contenteditable="false">3</td>
-    <td contenteditable="false">2</td>
-    <td contenteditable="false">1</td>
-    <td class="borrarfilas" contenteditable="false">25</td>
-  </tr>
-</tbody>
-<tfoot>
-  <tr>
-    <td colspan="4">Total:</td>
-    <td>97</td>
-    <td>985</td>
-  </tr>
-</tfoot>
-</table>`
+export let tablaBorrarFilasVacias2 = `<table><thead></thead><colgroup><col><col></colgroup><colgroupclass="pintarcolumnas"><colspan="2"></colgroup><colgroup><col><col></colgroup><tbody><tr><throwspan="2"class="prod">Productos</th><throwspan="2"class="tr">Precio</th><thcolspan="2"scope="colgroup"class="borrarcolumnas">ViajeNo.1</th><throwspan="2"class="trcolumnaVendidos">Vendidos</th><throwspan="2"class="tr">Ingresos</th></tr><trclass="saleYEntra"><thscope="col">Sale</th><thscope="col">Entra</th></tr></tbody><tbodyclass="cuerpo"><tr><tdcontenteditable="true">garrafón2</td><tdcontenteditable="true">10</td><tdcontenteditable="true">99</td><tdcontenteditable="true">3</td><td>96</td><tdclass="borrarfilas">960</td></tr><tr><tdcontenteditable="true">boopi</td><tdcontenteditable="true">25</td><tdcontenteditable="true">3</td><tdcontenteditable="true">2</td><td>1</td><tdclass="borrarfilas">25</td></tr></tbody><tfoot><tr><tdcolspan="4">Total:</td><td>97</td><td>985</td></tr></tfoot></table>`
 
 
 export let tablaBorrarFilasTotalmenteVacias = `<table>

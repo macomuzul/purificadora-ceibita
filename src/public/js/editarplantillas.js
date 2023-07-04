@@ -25,31 +25,24 @@ $(".contenedoreliminar").on('click', async function () {
   }
 })
 
+//TODO ver si son necesarios estos trims
+
 $("body").on('click', "#guardar", async function () {
-  let valido = await validarPlantillas();
-  if (!valido)
-    return;
-  let tabla = $("tbody")[0];
-  let filas = tabla.rows.length;
-  let nombrePlantilla = document.getElementById("nombreplantilla").value.trim();
-  let guardar = "{";
-  guardar += ` "nombreplantilla": "${nombrePlantilla}",
-   "productos": [ `
-  for (let i = 0; i < filas; i++) {
-    guardar += ` { 
-        "producto": "${tabla.rows[i].cells[0].innerText.trim()}", 
-        "precio": ${tabla.rows[i].cells[1].innerText} 
-       }`;
-    if (i + 1 < filas) {
-      guardar += ",";
-    }
-  }
-  guardar += " ] }"
+  if (!await validarPlantillas())
+    return
+  let data = JSON.stringify({
+    nombreplantilla: $("#nombreplantilla").val().trim(),
+    productos: [...$("tbody tr")].map(fila => ({
+      producto: fila.cells[0].innerText.trim(),
+      precio: parseFloat(fila.cells[1].innerText.trim())
+    }))
+  })
+
   $.ajax({
     url: `/plantillas/${nombrePlantillaURL}`,
     method: "PATCH",
     contentType: "application/json",
-    data: guardar,
+    data,
     success: async res => {
       await Swal.fire("Se ha guardado exitosamente", "El archivo se ha almacenado en la base de datos", "success");
       window.location = (url + nombrePlantilla);
@@ -58,4 +51,4 @@ $("body").on('click', "#guardar", async function () {
       Swal.fire("Ups...", res.responseText, "error");
     },
   });
-});
+})

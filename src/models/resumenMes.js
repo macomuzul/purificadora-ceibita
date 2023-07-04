@@ -4,12 +4,12 @@ _ = require('underscore');
 
 const resumenMesSchema = new Schema({
   _id: String,
-  productos: {
-
+  prods: {
+    
   },
-  vendidosTotal: Number,
-  ingresosTotal: Number,
-  huboCambio: Boolean
+  vt: Number,
+  it: Number,
+  c: Boolean
 });
 
 _.each(_.keys(resumenMesSchema.paths), attr => resumenMesSchema.path(attr).required(true));

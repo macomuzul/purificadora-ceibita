@@ -1,14 +1,12 @@
 const router = require('express').Router();
 const passport = require('passport');
 const { DateTime } = require('luxon');
-const CalendarioCamioneros = require("../models/calendarioCamioneros");
+const RegistroVentas = require("../models/registroventas");
 const Camioneros = require("../models/camioneros");
-
 
 router.get('/', async (req, res) => {
   let errorInicioSesion = req.flash("errorInicioSesion");
   let cantidadMaximaInicioSesion = req.flash("cantidadMaximaInicioSesion");
-
   let ip = req.ip || req.socket.remoteAddress;
   let textoIP = `ip:${ip}`;
   let cantidadRequestsInvalidasSinParsear = await redis.get(textoIP);
@@ -39,13 +37,35 @@ router.route('/recuperarcontrase%C3%B1a').get((req, res) => {
 
 router.route('/calendario').get(async (req, res) => {
   let fechaActual = DateTime.now().setZone("America/Guatemala").toFormat("y/M");
-  let mes = await CalendarioCamioneros.findById(fechaActual);
+  let hoy = DateTime.now().setZone("America/Guatemala").toISODate()
+  let fecha = DateTime.fromISO(hoy)
+  let dias = await RegistroVentas.find().where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month"))
+  let mes = {
+    _id: fechaActual,
+    dias: dias.map(dia => ({
+      _id: dia._id,
+      camioneros: dia.tablas.map(tabla => tabla.trabajador),
+      usuario: dia.usuario,
+      ultimoCambio: dia.ultimocambio
+    }))
+  }
   let camioneros = (await Camioneros.findOne())?.camioneros || [];
   res.render('calendario', { mes, camioneros, DateTime, fechaActual });
 }).post(async (req, res) => {
   try {
-    let mes = await CalendarioCamioneros.findById(req.body.fecha);
-    if(mes)
+    let { fecha } = req.body;
+    fecha = DateTime.fromFormat(fecha, "y/M")
+    let dias = await RegistroVentas.find().where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month"))
+    let mes = {
+      _id: fecha,
+      dias: dias.map(dia => ({
+        _id: dia._id,
+        camioneros: dia.tablas.map(tabla => tabla.trabajador),
+        usuario: dia.usuario,
+        ultimoCambio: dia.ultimocambio
+      }))
+    }
+    if (mes)
       res.send(mes)
     else
       res.send([])

@@ -1,7 +1,3 @@
-.escondido {
-  display: none;
-}
-
 i {
   font-size: 24px;
   color: #c5c5c5;
@@ -16,21 +12,15 @@ i {
 .modal-body {
   font-size: 18px;
 
-  .fa-solid {
-    transform: translateY(4px);
+  .fa-eye {
+    translate: 6px 4px;
+  }
+  .fa-eye-slash {
+    translate: 5px 4px;
   }
 }
 
-.fa-eye{
-  translate: 1px;
-}
-
-.btn-close {
-  color: white;
-}
-
 .modal-header {
-  // border-bottom: none;
   font-size: 24px;
 }
 

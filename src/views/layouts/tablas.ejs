@@ -1,51 +1,43 @@
-<table name="t<%=j%>">
+<% let cantidadViajes = tabla.productos[0].viajes.length/2 %>
+<table>
   <thead>
     <col>
     <col>
     <colgroup class="pintarcolumnas">
-      <% for(k=0; k < ventaspordia.camiones[j].filas[0].viajes.length; k++) {%>
+      <% for(k=0; k < cantidadViajes; k++) {%>
       <col span="2">
       <% }%>
     </colgroup>
     <col>
     <col>
     <tr>
-      <th rowspan="2" class="prod">Productos</th>
-      <th rowspan="2" class="tr">Precio</th>
-      <%for(k=0; k < ventaspordia.camiones[j].filas[0].viajes.length; k++) { %>
-      <th colspan="2" scope="colgroup">
-        Viaje No. <%= (k+1) %>
-      </th>
+      <th rowspan="2" class="prod">Productos</th><th rowspan="2" class="tr">Precio</th>
+      <%for(k=0; k < cantidadViajes; k++) { %>
+      <th colspan="2" scope="colgroup">Viaje No. <%= (k+1) %></th>
       <% }%>
-      <th rowspan="2" class="tr">Vendidos</th>
-      <th rowspan="2" class="tr">Ingresos</th>
+      <th rowspan="2" class="tr">Vendidos</th><th rowspan="2" class="tr">Ingresos</th>
     </tr>
     <tr>
-      <%for(k=0; k < ventaspordia.camiones[j].filas[0].viajes.length; k++) { %>
-      <th scope="col">Sale</th>
-      <th scope="col">Entra</th>
-      <% }%>
-    </tr>
+    <%for(k=0; k < cantidadViajes; k++) { %><th scope="col">Sale</th><th scope="col">Entra</th><% }%></tr>
   </thead>
   <tbody>
-    <%for(k=0; k < ventaspordia.camiones[j].filas.length; k++) { %>
-    <tr>
-      <td><%= ventaspordia.camiones[j].filas[k].nombreproducto %></td>
-      <td><%=ventaspordia.camiones[j].filas[k].precioproducto.toFixed(2).replace(/[.,]00$/, "") %></td>
-      <%for(l=0; l < ventaspordia.camiones[j].filas[0].viajes.length; l++) { %>
-      <td><%= ventaspordia.camiones[j].filas[k].viajes[l].sale %></td>
-      <td><%= ventaspordia.camiones[j].filas[k].viajes[l].entra %></td>
-      <% }%>
-      <td><%= ventaspordia.camiones[j].filas[k].vendidos %></td>
-      <td><%=ventaspordia.camiones[j].filas[k].ingresos.toFixed(2).replace(/[.,]00$/, "") %></td>
-    </tr>
-    <% }%>
+<% tabla.productos.forEach(producto => { %>
+  <tr>
+    <td><%= producto.nombre %></td>
+    <td><%=producto.precio.toFixed(2).replace(/[.,]00$/, "") %></td>
+    <% producto.viajes.forEach(x => { %>
+      <td><%= x %></td>
+    <% }) %>
+    <td><%= producto.vendidos %></td>
+    <td><%=producto.ingresos.toFixed(2).replace(/[.,]00$/, "") %></td>
+  </tr>
+<% }) %>
   </tbody>
   <tfoot>
     <tr>
-      <td colspan="<%= (ventaspordia.camiones[j].filas[0].viajes.length*2) + 2 %>"> Total:</td>
-      <td><%=ventaspordia.camiones[j].totalvendidos%></td>
-      <td><%=ventaspordia.camiones[j].totalingresos.toFixed(2).replace(/[.,]00$/, "")%></td>
+      <td colspan="<%= (cantidadViajes*2) + 2 %>"> Total:</td>
+      <td><%=tabla.totalvendidos%></td>
+      <td><%=tabla.totalingresos.toFixed(2).replace(/[.,]00$/, "")%></td>
     </tr>
   </tfoot>
 </table>

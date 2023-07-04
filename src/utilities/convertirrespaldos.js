@@ -8,7 +8,7 @@ async function convertirRespaldos(){
   registrosEliminados.forEach(async registro => {
     let venta = registro.ventaspordia
     let tablas = devuelveNuevasTablas(venta)
-    let nuevoRegistro = new RegistroVentas({_id: venta.fecha, usuario: venta.usuario || "asdfasdf", ultimocambio: venta.fechaultimocambio, tablas })
+    let nuevoRegistro = new RegistroVentas({_id: venta.fecha, usuario: venta.usuario || "usuariodesconocido", ultimocambio: venta.fechaultimocambio, tablas })
 
     let nuevoRegistroEliminado = new RegistrosEliminados({borradoEl: registro.fechaeliminacion, registro: nuevoRegistro })
     await nuevoRegistroEliminado.save()

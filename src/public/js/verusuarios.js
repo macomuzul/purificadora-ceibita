@@ -21,8 +21,8 @@ $("body").on("click", ".svgeditar", function () {
 })
 
 $("body").on("click", ".svgeliminar", async function () {
-  let mandar = this.closest("tr").cells[0].innerText;
-  let html = `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${mandar}</span>`
+  let usuario = this.closest("tr").cells[0].innerText;
+  let html = `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${usuario}</span>`
   let result = await swalConfirmarYCancelar.fire({
     title: "Estás seguro que deseas borrar este usuario?",
     icon: "warning",
@@ -33,19 +33,19 @@ $("body").on("click", ".svgeliminar", async function () {
     cancelButtonText: "No",
   })
   if (result.isConfirmed) {
-    funcionEnviar = devuelveBorrarUsuario(`{"usuario": "${mandar}"}`, this.closest("tr"), this.closest("tbody"));
+    funcionEnviar = devuelveBorrarUsuario(`{"usuario": "${usuario}"}`, this.closest("tr"), this.closest("tbody"));
     modal.show();
   }
 })
 
-function devuelveBorrarUsuario(mandar, fila, cuerpo){
+function devuelveBorrarUsuario(data, fila, cuerpo){
   return function(){
     modal.hide();
     $.ajax({
       url: `/empleados/usuarios`,
       method: "DELETE",
       contentType: "application/json",
-      data: mandar,
+      data,
       success: res => {
         // toastr["success"]("Se ha borrado el usuario con éxito", "Éxito");
         Swal.fire("Éxito", "Se ha borrado el usuario con éxito", "success");
@@ -64,46 +64,30 @@ $("body").on("click", "td .fa-eye", function () {
   if(counter.style.display !== "none")
     counter.parar();
   $(this).closest("td").prev().text("********");
+  $(this).toggle();
+  $(this).next().toggle();
 });
 
-$("body").on("click", ".modal-body .fa-eye", function () {
-  $(this).closest("td").prev().val("********");
-});
-
-$("body").on("click", ".fa-eye-slash", function () {
-  if ($(this).closest(".modal-body")[0])
-    return;
-  this.classList.remove("escondido");
-  $(this).prev()[0].classList.add("escondido");
+$("body").on("click", "td .fa-eye-slash", function () {
   funcionEnviar = devuelvePedirContraseña(this);
   modal.show();
 });
-
-$("body").on("click", ".fa-eye-slash", function () {
-  if ($(this).closest(".modal-body")[0])
-    return;
-  this.classList.remove("escondido");
-  $(this).prev()[0].classList.add("escondido");
-  funcionEnviar = devuelvePedirContraseña(this);
-  modal.show();
-});
-
 
 function devuelvePedirContraseña(ojo) {
   return function () {
     let usuario = ojo.closest("tr").cells[0].innerText;
-    let contraseñaVerificacion = $("#verificacionIdentidad")[0].value;
-    let mandar = `{ "usuario": "${usuario}", "contraseñaVerificacion": "${contraseñaVerificacion}"}`
+    let contraseñaVerificacion = $("#verificacionIdentidad").val();
+    let data = JSON.stringify({usuario, contraseñaVerificacion})
     modal.hide();
     $.ajax({
       url: `/empleados/usuarios`,
       method: "POST",
       contentType: "application/json",
-      data: mandar,
+      data,
       success: res => {
         toastr["success"]("Se ha realizado la petición con éxito", "Éxito");
-        ojo.classList.add("escondido");
-        $(ojo).prev()[0].classList.remove("escondido");
+        $(ojo).toggle();
+        $(ojo).prev().toggle();
         ojo.closest("tr").cells[1].textContent = res;
         let funcionCountdown = devuelveFuncionCountdown(ojo);
         $(ojo).prev().prev()[0].resetear(funcionCountdown);

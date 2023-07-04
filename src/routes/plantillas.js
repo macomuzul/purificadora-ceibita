@@ -31,7 +31,7 @@ router.route('/crear').get(async (req, res) => {
       return res.status(400).send('La plantilla ya existe');
     const count = await mPlantilla.count();
     plantillanueva.orden = count;
-    plantillanueva.ultimaedicion = req.user?.usuario ?? "";
+    plantillanueva.ultimaedicion = req.user?.usuario ?? "usuariodesconocido";
     await plantillanueva.save();
     res.send("plantilla guardada")
   } catch {
@@ -67,7 +67,7 @@ router.post('/devuelveplantilla', async (req, res) => {
 
 router.route('/:id').patch(async (req, res) => {
   try {
-    req.body.usuario = req.user?.usuario ?? "";
+    req.body.usuario = req.user?.usuario ?? "usuariodesconocido";
     await mPlantilla.updateOne({ nombreplantilla: req.params.id }, req.body);
     res.send("Se ha actualizado con exito");
   } catch (error) {

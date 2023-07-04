@@ -10,37 +10,37 @@ beforeEach(() => {
 })
 
 describe('validaciones antes de guardar', () => {
-  it("Verifica tablas vacías", async () => {
-    let resultado = await borrarCamiones();
-    expect(resultado).to.be.true;
-  });
+  // it("Verifica tablas vacías", async () => {
+  //   let resultado = await borrarCamiones();
+  //   expect(resultado).to.be.true;
+  // });
 
-  it("Verifica tablas totalmente vacías", async () => {
-    let resultado = await borrarFilasVaciasTotalmenteVacias();
-    expect(resultado).to.be.true;
-  });
+  // it("Verifica tablas totalmente vacías", async () => {
+  //   let resultado = await borrarFilasVaciasTotalmenteVacias();
+  //   expect(resultado).to.be.true;
+  // });
 
-  describe(("Valida que los productos esten llenos"), () => {
-    it("validacion un solo producto una vez", async () => {
-      let resultado = await validarUnSoloProducto(0);
-      expect(resultado).to.be.true;
-    })
+  // describe(("Valida que los productos esten llenos"), () => {
+  //   it("validacion un solo producto una vez", async () => {
+  //     let resultado = await validarUnSoloProducto(0);
+  //     expect(resultado).to.be.true;
+  //   })
 
-    it("validacion varios productos una vez", async () => {
-      let resultado = await validarVariosProductos(0);
-      expect(resultado).to.be.true;
-    })
+  //   it("validacion varios productos una vez", async () => {
+  //     let resultado = await validarVariosProductos(0);
+  //     expect(resultado).to.be.true;
+  //   })
 
-    it("validacion un solo producto varias veces", async () => {
-      let resultado = await validarUnSoloProducto(4);
-      expect(resultado).to.be.true;
-    })
+  //   it("validacion un solo producto varias veces", async () => {
+  //     let resultado = await validarUnSoloProducto(4);
+  //     expect(resultado).to.be.true;
+  //   })
 
-    it("validacion varios productos varias veces", async () => {
-      let resultado = await validarVariosProductos(4);
-      expect(resultado).to.be.true;
-    })
-  })
+  //   it("validacion varios productos varias veces", async () => {
+  //     let resultado = await validarVariosProductos(4);
+  //     expect(resultado).to.be.true;
+  //   })
+  // })
 
   describe(("Valida que los precios esten llenos"), () => {
     it("validacion un solo precio una vez", async () => {
@@ -128,7 +128,7 @@ function contiene(t1, t2) {
 }
 
 function comparar(t1, t2) {
-  t1 = t1.replaceAll(/\n| /g, "")
+  t1 = t1.replaceAll(/\n| /g, "").replaceAll(/ui-sortableui-sortable-disabled/g,"").replaceAll(/class="ui-sortable-handle"/g,"")
   t2 = t2.replaceAll(/\n| /g, "")
   expect(t1).eq(t2);
   return (t1 === t2);

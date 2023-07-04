@@ -11,21 +11,17 @@ function mostrarError(error) {
   return false;
 }
 
-function validarCamioneros(){
-  let filas = $("tbody tr");
-  
-  for (let i = 0; i < filas.length; i++)
-  {
-    let nombre = filas[i].cells[0];
-    let color = filas[i].cells[1];
+function validarCamioneros() {
+  $("tbody tr").each(fila => {
+    let nombre = fila.cells[0];
+    let color = fila.cells[1];
     nombre.textContent = nombre.innerText.trim();
-    if(nombre.textContent === "")
+    if (nombre.textContent === "")
       return mostrarError("Error, hay un camionero sin nombre");
     color.textContent = color.innerText.trim();
-    if(color.textContent === "indefinido")
+    if (color.textContent === "indefinido")
       return mostrarError("Error, hay un color con el valor de indefinido");
-  }
-
+  })
   return true;
 }
 
@@ -33,29 +29,23 @@ $("#guardar").on("click", async function () {
   let valido = validarCamioneros();
   if (!valido)
     return;
-  let filas = $("tbody tr");
-    let guardar = `{ "camioneros": [`;
-    for (let i = 0; i < filas.length; i++) {
-      guardar += `{ "nombre": "${filas[i].cells[0].textContent}", 
-      "color": "${filas[i].cells[1].textContent}" }`;
-      if (i + 1 < filas.length)
-        guardar += ",";
-    }
-    guardar += "] }"
-    guardar = guardar.replace(/\&nbsp/g, '');
-    console.log(guardar)
-    $.ajax({
-      url: "/empleados/camioneros",
-      method: "POST",
-      contentType: "application/json",
-      data: guardar,
-      success: res => {
-        Swal.fire("Éxito", "Se han guardado exitosamente", "success");
-      },
-      error: res => {
-        Swal.fire("Ups...", res.responseText, "error");
-      },
-    });
+  let data = JSON.stringify({
+    camioneros: [
+      [...$("tbody tr")].map(fila => ({
+        nombre: fila.cells[0].textContent,
+        color: fila.cells[1].textContent
+      }))
+    ]
+  })
+  console.log(data)
+  $.ajax({
+    url: "/empleados/camioneros",
+    method: "POST",
+    contentType: "application/json",
+    data,
+    success: res => Swal.fire("Éxito", "Se han guardado exitosamente", "success"),
+    error: res => Swal.fire("Ups...", res.responseText, "error")
+  });
 });
 
 $("body").on('click', ".botoneliminar", async function () {
@@ -71,7 +61,7 @@ $("body").on('click', ".botoneliminar", async function () {
       confirmButtonText: "Sí",
       cancelButtonText: "No",
     })
-    if(!result.isConfirmed)
+    if (!result.isConfirmed)
       return
   }
   let tablaborrar = this.closest("tbody");
@@ -79,7 +69,7 @@ $("body").on('click', ".botoneliminar", async function () {
   tablaborrar.removeChild(filaborrar);
 });
 
-$("body").on("input", `[type="color"]`, function(e){
+$("body").on("input", `[type="color"]`, function (e) {
   $(this).parent().prev()[0].textContent = $(this).val();
 });
 

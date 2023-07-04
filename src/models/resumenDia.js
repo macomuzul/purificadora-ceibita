@@ -4,11 +4,11 @@ _ = require('underscore');
 
 const resumenDiaSchema = new Schema({
   _id: Date,
-  productos: {
+  prods: {
 
   },
-  vendidosTotal: Number,
-  ingresosTotal: Number
+  vt: Number,
+  it: Number
 });
 
 _.each(_.keys(resumenDiaSchema.paths), attr => resumenDiaSchema.path(attr).required(true));

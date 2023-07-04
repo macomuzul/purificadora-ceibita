@@ -1,9 +1,10 @@
+<% let cantidadViajes = (registro?.tablas[j].productos[0].viajes.length ?? 1); if (cantidadViajes !== 1) cantidadViajes /= 2 %>
 <table>
     <thead>
       <col>
       <col>
       <colgroup class="pintarcolumnas">
-        <% for(k=0; k < (ventaspordia?.camiones[j].filas[0].viajes.length ?? 1); k++) {%>
+        <% for(k=0; k < cantidadViajes; k++) {%>
         <col span="2">
         <% }%>
       </colgroup>
@@ -12,31 +13,30 @@
       <tr>
         <th rowspan="2" class="prod">Productos</th>
         <th rowspan="2" class="tr">Precio</th>
-        <%for(k=0; k < (ventaspordia?.camiones[j].filas[0].viajes.length ?? 1); k++) { %>
+        <%for(k=0; k < cantidadViajes; k++) { %>
         <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. <%= (k+1) %></th>
         <% }%>
         <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
         <th rowspan="2" class="tr">Ingresos</th>
       </tr>
       <tr class="saleYEntra">
-        <%for(k=0; k < (ventaspordia?.camiones[j].filas[0].viajes.length ?? 1); k++) { %>
+        <%for(k=0; k < cantidadViajes; k++) { %>
         <th scope="col">Sale</th>
         <th scope="col">Entra</th>
         <% }%>
       </tr>
     </thead>
     <tbody class="cuerpo">
-      <% if (ventaspordia) { %>
-        <%for(k=0; k < ventaspordia.camiones[j].filas.length; k++) { %>
+      <% if (registro) { %>
+        <%for(k=0; k < registro.tablas[j].productos.length; k++) { %>
         <tr>
-          <td><%= ventaspordia.camiones[j].filas[k].nombreproducto %></td>
-          <td><%= ventaspordia.camiones[j].filas[k].precioproducto.toFixed(2).replace(/[.,]00$/, "") %></td>
-          <%for(l=0; l < ventaspordia?.camiones[j].filas[0].viajes.length; l++) { %>
-          <td><%= ventaspordia.camiones[j].filas[k].viajes[l].sale %></td>
-          <td><%= ventaspordia.camiones[j].filas[k].viajes[l].entra %></td>
-          <% }%>
-          <td><%= ventaspordia.camiones[j].filas[k].vendidos %></td>
-          <td><%= ventaspordia.camiones[j].filas[k].ingresos.toFixed(2).replace(/[.,]00$/, "") %></td>
+          <td><%= registro.tablas[j].productos[k].nombre %></td>
+          <td><%= registro.tablas[j].productos[k].precio.toFixed(2).replace(/[.,]00$/, "") %></td>
+          <% registro?.tablas[j].productos[k].viajes.forEach(x => { %>
+            <td><%= x %></td>
+          <% }) %>
+          <td><%= registro.tablas[j].productos[k].vendidos %></td>
+          <td><%= registro.tablas[j].productos[k].ingresos.toFixed(2).replace(/[.,]00$/, "") %></td>
         </tr>
         <% }%>
       <% } else { %>
@@ -51,13 +51,12 @@
           </tr>
           <% }%>
       <% } %>
-
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="<%= (ventaspordia ? (ventaspordia.camiones[j].filas[0].viajes.length*2 + 2) : 4) %>">Total:</td>
-        <td><%= ventaspordia?.camiones[j].totalvendidos ?? "" %></td>
-        <td><%= ventaspordia?.camiones[j].totalingresos.toFixed(2).replace(/[.,]00$/, "") ?? "" %></td>
+        <td colspan="<%= (registro ? (cantidadViajes*2 + 2) : 4) %>">Total:</td>
+        <td><%= registro?.tablas[j].totalvendidos ?? "" %></td>
+        <td><%= registro?.tablas[j].totalingresos.toFixed(2).replace(/[.,]00$/, "") ?? "" %></td>
       </tr>
     </tfoot>
   </table>

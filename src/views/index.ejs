@@ -86,7 +86,7 @@
         toastr["warning"]("Solo te queda un intento inválido más, si escribes mal este intento tendrás que esperar 15 minutos para volver a intentarlo de nuevo", "Atención");
       </script>
       <% } %>
-      <% else if (String(cantidadMaximaInicioSesion)==="Se ha superado la cantidad maxima" ) { %>
+      <% if (String(cantidadMaximaInicioSesion)==="Se ha superado la cantidad maxima" ) { %>
         <%- include('layouts/toastIntentosMaximosError.ejs', {tiempoQueQueda}) %>
       <% } %>
     <% } %>

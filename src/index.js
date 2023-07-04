@@ -9,6 +9,7 @@ const morgan = require('morgan');
 const { Settings } = require('luxon');
 const estaAutenticado = require("./security/estaAutenticado");
 require("./listenersDB");
+require("./redis");
 
 // const convertirRegistrosPorDia = require("./utilities/convertirregistrospordia");
 // convertirRegistrosPorDia()

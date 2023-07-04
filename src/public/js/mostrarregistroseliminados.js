@@ -59,72 +59,153 @@ function devuelveTabla(article) {
   let html = `<custom-tabs><div class="tabs">`
   $(registro).find("table").each(i => html += `<custom-label name="swal" data-id="swal${i}">Camión ${i + 1}</custom-label>`);
   html += `</div>`
-  html += registro.outerHTML;
+  let clon = registro.cloneNode(true)
+  $(clon).find("tab-content").each((i, el) => el.style.display = "none")
+  html += clon.outerHTML;
   html += "</custom-tabs>";
   return { html, fecha: $(article).find(`.fecharegistro [slot="fechaStr"]`).text(), fechaDate: parseDate($(article).find(`.fecharegistro [slot="fecha"]`).text()) };
 }
 
-document.querySelectorAll(".btnrestaurar").forEach((el) => {
-  el.addEventListener("click", async function (e) {
-    let registro = this.closest("article");
-    let id = registro.getAttribute("name");
-    let { html, fecha, fechaDate } = devuelveTabla(registro);
+$("body").on("click", ".btnrestaurar", async function (e) {
+  let registro = this.closest("article");
+  let id = registro.getAttribute("name");
+  let { html, fecha, fechaDate } = devuelveTabla(registro);
 
-    let result = await swalConfirmarYCancelar.fire({
-      title: "Estás seguro que deseas restaurar este registro?",
-      icon: "warning",
-      width: (window.innerWidth * 3) / 4,
-      html,
+  let result = await swalSobreescribir.fire({
+    title: `Estás seguro que deseas restaurar este registro con fecha ${fecha}?`,
+    icon: "warning",
+    width: (window.innerWidth * 3) / 4,
+    html,
+    showCancelButton: true,
+    confirmButtonText: "Restaurar usando esta fecha",
+    cancelButtonText: "Usar otra fecha",
+  })
+  if (result.isConfirmed)
+    moverRegistro(id, fechaDate.valueOf(), 0)
+  else if (result.dismiss === "cancel") {
+    result = await Swal.fire({
+      title: "Escoge la fecha a donde quieres mover el registro",
+      width: 750,
+      html: `<iframe src="/extras/calendarioIframe" frameborder="0"></iframe><button id="continuarIframe" class="btn btn-success margenbotonswal">Continuar</button><button id="cancelarIframe" class="btn btn-danger margenbotonswal">Cancelar</button>`,
+      showConfirmButton: false,
+      didOpen: () => {
+        $(document).find("#continuarIframe")[0].addEventListener("click", () => {
+          let contenidoIframe = $(document).find("iframe")[0].contentDocument;
+          let input = contenidoIframe.querySelector("input");
+          let fecha = input.value;
+          if (fecha === "") {
+            input.classList.add("is-invalid");
+            contenidoIframe.querySelector("#validadorIframe").className = "invalid-feedback";
+            return;
+          }
+          moverRegistro(id, parseDate(fecha).valueOf(), 0)
+        });
+        $(document).find("#cancelarIframe")[0].addEventListener("click", () => Swal.close());
+      },
+    });
+  }
+})
+
+
+function preguntarSiQuiereRedireccionar(fecha) {
+  return new Promise((_, reject) => {
+    swalConfirmarYCancelar.fire({
+      title: "Se ha restaurado correctamente",
+      text: `El registro se ha restaurado correctamente. Deseas ser redireccionado para ver los cambios?`,
+      icon: "info",
       showCancelButton: true,
       confirmButtonText: "Sí",
       cancelButtonText: "No",
-    })
-    if (result.isConfirmed) {
-      result = await swalSobreescribir.fire({
-        title: "Estás seguro que deseas continuar?",
-        text: `Si restauras vas a sobreescribir el registro con fecha ${fecha}`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Sobreescribir registro",
-        cancelButtonText: "Utilizar una fecha diferente",
-      })
+    }).then((result) => {
       if (result.isConfirmed)
-        restaurarregistro(`{"id": "${id}", "fecha": ${fechaDate.valueOf()}}`, fecha)
-      else {
-        result = await Swal.fire({
-          title: "Escoge la fecha a donde quieres mover el registro",
-          width: 750,
-          html: `<iframe src="/extras/calendarioIframe" frameborder="0"></iframe><button id="continuarIframe" class="btn btn-success margenbotonswal">Continuar</button><button id="cancelarIframe" class="btn btn-danger margenbotonswal">Cancelar</button>`,
-          showConfirmButton: false,
-          didOpen: () => {
-            $(document).find("#continuarIframe")[0].addEventListener("click", () => {
-              let contenidoIframe = $(document).find("iframe")[0].contentDocument;
-              let input = contenidoIframe.querySelector("input");
-              let fecha = input.value;
-              if (fecha === "") {
-                input.classList.add("is-invalid");
-                contenidoIframe.querySelector("#validadorIframe").className = "invalid-feedback";
-                return;
-              }
-              restaurarRegistro(`{"id": "${id}", "fecha": ${parseDate(fecha).valueOf()}}`, fecha)
-              Swal.close()
-            });
-            $(document).find("#cancelarIframe")[0].addEventListener("click", () => Swal.close());
-          },
-        });
-      }
-    }
+        window.location = `/registrarventas/${devuelveFechaFormateada(fecha)}`;
+      else
+        reject("false");
+    })
   })
-});
+}
 
-function restaurarRegistro(data, fecha) {
+function devuelveFechaFormateada(fecha) {
+  let date = new Date(fecha)
+  let day = date.getUTCDate();
+  let month = date.getUTCMonth() + 1;
+  let year = date.getUTCFullYear();
+  return `${day}-${month}-${year}`;
+}
+
+function moverRegistro(id, fecha, sobreescribir) {
   $.ajax({
     url: "/respaldos/registroseliminados/restaurarregistro",
     method: "POST",
     contentType: "application/json",
-    data,
-    success: function (res) {
-      Swal.fire("Se ha restaurado correctamente", `El registro con fecha: ${fecha} se ha restaurado correctamente. Ahora serás redireccionado a esta fecha en el calendario para ver los cambios`, "success");
+    data: JSON.stringify({ id, fecha, sobreescribir }),
+    success: async function (res) {
+      if (res === "Se ha restaurado con éxito") {
+        await preguntarSiQuiereRedireccionar(fecha)
+        return
+      }
+      let html = `<custom-tabs><div class="tabs">
+      ${[...Array(res.tablas.length)].map((_, i) => `<custom-label name="swal" data-id="swal${i}">Camión ${i + 1}</custom-label>`).join('')}
+      </div><div class="content">`
+
+      res.tablas.forEach(({ productos, totalvendidos, totalingresos }) => {
+        let cantViajes = productos[0].viajes.length / 2;
+        html += `<tab-content><table>
+        <thead>
+          <col>
+          <col>
+          <colgroup class="pintarcolumnas">
+            ${[...Array(cantViajes)].map(_ => `<col span="2">`).join('')}
+          </colgroup>
+          <col>
+          <col>
+          <tr>
+            <th rowspan="2" class="prod">Productos</th>
+            <th rowspan="2" class="tr">Precio</th>
+            ${[...Array(cantViajes)].map((_, k) => `<th colspan="2" scope="colgroup">Viaje No. ${k + 1}</th>`).join('')}
+            <th rowspan="2" class="tr">Vendidos</th>
+            <th rowspan="2" class="tr">Ingresos</th>
+          </tr>
+          <tr>
+            ${[...Array(cantViajes)].map(_ => `<th scope="col">Sale</th><th scope="col">Entra</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${productos.map(({ nombre, precio, viajes, vendidos, ingresos }) => `<tr>
+            <td>${nombre}</td>
+            <td>${precio.toFixed(2).replace(/[.,]00$/, '')}</td>
+            ${viajes
+            .map(x => `<td>${x}</td>`)
+            .join('')}
+            <td>${vendidos}</td>
+            <td>${ingresos.toFixed(2).replace(/[.,]00$/, '')}</td>
+          </tr>`
+        ).join('')}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="${cantViajes * 2 + 2}">Total:</td>
+            <td>${totalvendidos}</td>
+            <td>${totalingresos.toFixed(2).replace(/[.,]00$/, '')}</td>
+          </tr>
+        </tfoot>
+      </table>
+      </tab-content>`;
+      })
+      html += "</div></custom-tabs>"
+
+      let result = await swalConfirmarYCancelar.fire({
+        title: "Ya existe un registro en esa fecha, deseas sobreescribirlo?",
+        icon: "warning",
+        width: (window.innerWidth * 3) / 4,
+        html,
+        showCancelButton: true,
+        confirmButtonText: "Sí",
+        cancelButtonText: "No",
+      })
+      if (result.isConfirmed) {
+        moverRegistro(id, fecha, 1)
+      }
     },
     error: function (res) {
       Swal.fire("Ups...", "No se pudo restaurar el registro", "error");
@@ -132,34 +213,41 @@ function restaurarRegistro(data, fecha) {
   });
 }
 
-document.querySelectorAll(".btneliminar").forEach((el) => {
-  el.addEventListener("click", async function (e) {
-    let registro = this.closest("article");
-    let { html, fecha } = devuelveTabla(registro);
+$("body").on("click", ".btneliminar", async function (e) {
+  let registro = this.closest("article");
+  let { html, fecha } = devuelveTabla(registro);
 
-    let result = await swalConfirmarYCancelar.fire({
-      title: "Estás seguro que deseas borrar este registro?",
-      icon: "warning",
-      width: (window.innerWidth * 3) / 4,
-      html,
-      showCancelButton: true,
-      confirmButtonText: "Sí",
-      cancelButtonText: "No",
-    })
-    if (result.isConfirmed) {
-      borrarRegistros(`{"registros": ["${registro.getAttribute("name")}"]}`, `El registro con fecha: ${fecha} se ha borrado correctamente`, "No se pudo eliminar el registro")
-    }
-  });
-});
+  let result = await swalConfirmarYCancelar.fire({
+    title: "Estás seguro que deseas borrar este registro?",
+    icon: "warning",
+    width: (window.innerWidth * 3) / 4,
+    html,
+    showCancelButton: true,
+    confirmButtonText: "Sí",
+    cancelButtonText: "No",
+  })
+  if (result.isConfirmed) {
+    borrarRegistros(`{"registros": ["${registro.getAttribute("name")}"]}`, `El registro con fecha: ${fecha} se ha borrado correctamente`, "No se pudo eliminar el registro")
+  }
+})
 
-document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
-  el.addEventListener("click", async function (e) {
-    let registro = this.closest("article");
-    let tabla = [...$(registro).find("tab-content")].filter(x => x.style.display === "initial")[0];
-    let numTabla = $(tabla).index();
-    let fecha = $(registro).find(`.fecharegistro [slot="fechaStr"]`).text();
-    let result = await swalConfirmarYCancelar.fire({
-      title: "Estás seguro que deseas restaurar esta tabla?",
+$("body").on("click", ".restaurarsoloestatabla", async function (e) {
+  let registro = this.closest("article");
+  let tabla = [...$(registro).find("tab-content")].filter(x => x.style.display === "initial")[0];
+  let numTabla = $(tabla).index();
+  let fecha = $(registro).find(`.fecharegistro [slot="fechaStr"]`).text();
+  let result = await swalConfirmarYCancelar.fire({
+    title: "Estás seguro que deseas restaurar esta tabla?",
+    icon: "warning",
+    width: (window.innerWidth * 3) / 4,
+    html: tabla.outerHTML,
+    showCancelButton: true,
+    confirmButtonText: "Sí",
+    cancelButtonText: "No",
+  })
+  if (result.isConfirmed) {
+    result = await swalConfirmarYCancelar.fire({
+      title: "Si restauras vas a sobreescribir el registro del dia",
       icon: "warning",
       width: (window.innerWidth * 3) / 4,
       html: tabla.outerHTML,
@@ -168,51 +256,37 @@ document.querySelectorAll(".restaurarsoloestatabla").forEach((el) => {
       cancelButtonText: "No",
     })
     if (result.isConfirmed) {
-      result = await swalConfirmarYCancelar.fire({
-        title: "Si restauras vas a sobreescribir el registro del dia",
-        icon: "warning",
-        width: (window.innerWidth * 3) / 4,
-        html: tabla.outerHTML,
-        showCancelButton: true,
-        confirmButtonText: "Sí",
-        cancelButtonText: "No",
-      })
-      if (result.isConfirmed) {
-        $.ajax({
-          url: "/respaldos/registroseliminados/restaurarregistro",
-          method: "POST",
-          contentType: "application/json",
-          data: `{"id": "${nombreTabla}", "numTabla": "${numTabla}"}`,
-          success: function (res) {
-            Swal.fire("Se ha restaurado correctamente", `La tabla del camión No. ${numtabla} con fecha: ${fecha} se ha restaurado correctamente. Ahora serás redireccionado a esta fecha en el calendario para ver los cambios`, "success");
-          },
-          error: function (res) {
-            Swal.fire("Ups...", "No se pudo restaurar el registro", "error",);
-          },
-        });
-      }
+      $.ajax({
+        url: "/respaldos/registroseliminados/restaurarregistro",
+        method: "POST",
+        contentType: "application/json",
+        data,
+        success: async function (res) {
+          preguntarSiQuiereRedireccionar(fecha)
+          return
+        },
+        error: function (res) {
+          Swal.fire("Ups...", "No se pudo restaurar el registro", "error");
+        },
+      });
     }
-  });
+  }
+})
 
-  document.querySelectorAll(".eliminartodos").forEach((el) => {
-    el.addEventListener("click", async (e) => {
-      let objRegistros = { registros: [] };
-      document.querySelectorAll(".check:checked").forEach(el =>
-        objRegistros.registros.push(el.closest("article").getAttribute("name")));
-      let result = await swalConfirmarYCancelar.fire({
-        title: "Estás seguro que deseas borrar los registros seleccionados?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Sí",
-        cancelButtonText: "No",
-      })
+$("body").on("click", ".eliminartodos", async (e) => {
+  let objRegistros = { registros: [] };
+  document.querySelectorAll(".check:checked").forEach(el => objRegistros.registros.push(el.closest("article").getAttribute("name")));
+  let result = await swalConfirmarYCancelar.fire({
+    title: "Estás seguro que deseas borrar los registros seleccionados?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí",
+    cancelButtonText: "No",
+  })
+  if (result.isConfirmed)
+    borrarRegistros(JSON.stringify(objRegistros), "Se han borrado correctamente todos los registros seleccionados", "No se pudo eliminar uno o más registros, pero los que sí se podian eliminar fueron eliminados")
+})
 
-      if (result.isConfirmed) {
-        borrarRegistros(JSON.stringify(objRegistros), "Se han borrado correctamente todos los registros seleccionados", "No se pudo eliminar uno o más registros, pero los que sí se podian eliminar fueron eliminados")
-      }
-    });
-  });
-});
 
 
 function borrarRegistros(data, texto, textoError) {

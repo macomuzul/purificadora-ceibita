@@ -1,7 +1,7 @@
 require('dotenv').config()
 const router = require("express").Router();
 const RegistrosEliminados = require("../../models/registroseliminados");
-const VentasPorDia = require("../../models/registroventaspordia");
+const RegistroVentas = require("../../models/registroventas");
 const { DateTime } = require("luxon");
 let vencerEn = 900 //quince minutos
 
@@ -10,19 +10,31 @@ router.get("/", async (req, res) => {
   res.render("registroseliminados");
 });
 
+
+//TODO este tal vez se pueda mezclar con el de registrarventas
 router.post("/restaurarregistro", async (req, res) => {
   try {
-    let { id, fecha } = req.body;
+    let { id, fecha, sobreescribir } = req.body;
     let registrorecuperado = await RegistrosEliminados.findById(id);
     if (registrorecuperado == null)
       return res.status(400).send("Registro no existe");
 
-    let registroanterior = await VentasPorDia.findOne({ fecha }); //si ya existe un registro anterior lo guarda en la parte de respaldos
-    if (registroanterior)
-      return res.send(registroanterior);
-    let { fechacreacion, camiones } = registrorecuperado.ventaspordia;
-    let ventasPorDiaRecuperado = new VentasPorDia({ usuario: req.user?.usuario ?? "jitomate", fechaultimocambio: new Date(), fecha, fechacreacion, camiones });
-    await ventasPorDiaRecuperado.save();
+    let registroanterior = await RegistroVentas.findById(fecha) //si ya existe un registro anterior lo guarda en la parte de respaldos
+    let { tablas } = registrorecuperado.registro
+    let ahora = new Date()
+    let nuevosDatos = { usuario: req.user?.usuario ?? "usuariodesconocido", ultimocambio: ahora, tablas }
+    if (registroanterior) {
+      if (!sobreescribir)
+        return res.send(registroanterior);
+
+      const respaldo = new RegistrosEliminados({ registro: registroanterior, borradoEl: ahora });
+      await respaldo.save();
+      Object.assign(registroanterior, nuevosDatos)
+      await registroanterior.save()
+    } else {
+      let registroNuevo = new RegistroVentas({ _id: fecha, ...nuevosDatos });
+      await registroNuevo.save();
+    }
     await registrorecuperado.deleteOne();
     res.send("Se ha restaurado con éxito");
   } catch (e) {
@@ -30,29 +42,6 @@ router.post("/restaurarregistro", async (req, res) => {
     res.status(400).send("No se pudo restaurar");
   }
 });
-
-router.post("/sobreescribirregistro", async (req, res) => {
-  try {
-    let { id, registroASobreescribir, fecha } = req.body;
-    let registrorecuperado = await RegistrosEliminados.findById(id);
-    if (registrorecuperado == null)
-      return res.status(400).send("Registro no existe");
-    let regASobreescribir = await VentasPorDia.findById(registroASobreescribir);
-    if (regASobreescribir == null)
-      return res.status(400).send("Registro a sobreescribir no existe");
-    let ahora = new Date();
-    const respaldo = new RegistrosEliminados({ ventaspordia: regASobreescribir, fechaeliminacion: ahora });
-    await respaldo.save();
-    let { fechacreacion, camiones } = registrorecuperado.ventaspordia;
-    Object.assign(regASobreescribir, { usuario: req.user?.usuario ?? "jitomate", fechaultimocambio: ahora, fecha, fechacreacion, camiones });
-    await regASobreescribir.save();
-    await registrorecuperado.deleteOne();
-    res.send("Se ha restaurado con éxito");
-  } catch {
-    res.status(400).send("No se pudo restaurar");
-  }
-});
-
 
 router.delete("/borrarregistros", async (req, res) => {
   try {
@@ -125,12 +114,13 @@ router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", validarPagina, async (req
       if (buscarpor !== "fecha" && buscarpor !== "fechaeliminacion")
         return res.send("búsqueda inválida");
       if (buscarpor === "fecha") {
-        buscarpor = "ventaspordia.fecha";
+        buscarpor = "registro.fecha";
         let fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y").toISODate();
         let fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y").toISODate();
         resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso1).lte(fechaiso2).sort(buscarpor);
       }
       else {
+        buscarpor = "borradoEl";
         let fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y", { zone: "America/Guatemala" }).toISO();
         let fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y", { zone: "America/Guatemala" }).endOf("day").toISO();
         resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso1).lte(fechaiso2).sort(buscarpor);
@@ -159,7 +149,7 @@ router.get("/:buscarpor&:rango&:fecha&:pag", validarPagina, async (req, res) => 
         return res.send("rango inválido");
       if (buscarpor === "fecha") {
         let fechaiso = DateTime.fromFormat(fecha, "d-M-y").toISODate();
-        buscarpor = "ventaspordia.fecha";
+        buscarpor = "registro.fecha";
         if (rango === "igual")
           resultado = await RegistrosEliminados.where(buscarpor).equals(fechaiso).sort(buscarpor);
         else if (rango === "menor")
@@ -168,6 +158,7 @@ router.get("/:buscarpor&:rango&:fecha&:pag", validarPagina, async (req, res) => 
           resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).sort(buscarpor);
       } else {
         let fechaiso = DateTime.fromFormat(fecha, "d-M-y", { zone: "America/Guatemala" });
+        buscarpor = "borradoEl";
         if (rango === "igual")
           resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).lte(fechaiso.endOf("day")).sort(buscarpor);
         else if (rango === "menor")
@@ -196,7 +187,7 @@ function mostrarPagina(resultado, req, res) {
     return res.send("no hay ningún registro");
   else if (pagina < 1)
     return res.send("numero de búsqueda inválido");
-  else if(pagina > totalPaginas)
+  else if (pagina > totalPaginas)
     return res.redirect(url + "pag=" + totalPaginas)
   let datostablas = resultado.slice(limite * (pagina - 1), limite * pagina);
   res.render("mostrarregistroseliminados", { datostablas, pagina, totalPaginas, DateTime });

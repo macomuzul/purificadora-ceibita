@@ -1,8 +1,4 @@
-let usuario;
-let contraseña;
-let confirmarContraseña;
-let rol;
-let correo;
+let usuario, contraseña, confirmarContraseña, rol, correo;
 
 toastr.options = {
   "closeButton": true,
@@ -19,7 +15,7 @@ $("body").on('click', '.dropdown-item', function () {
 });
 
 async function validarDatos() {
-  if (usuario === "" || contraseña === "" || confirmarContraseña === "")
+  if (!usuario || !contraseña || !confirmarContraseña)
     return mostrarError("Por favor llenar todos los campos");
   if (contraseña !== confirmarContraseña)
     return mostrarError("Las contraseñas no coinciden");
@@ -35,34 +31,33 @@ function mostrarError(error) {
 }
 
 $("body").on('click', '#guardar', async function () {
-  usuario = document.getElementById("usuario").value;
-  contraseña = document.getElementById("contraseña").value;
-  confirmarContraseña = document.getElementById("confirmarContraseña").value;
-  rol = document.getElementById("rol").innerText;
-  let validacion = await validarDatos();
-  if (!validacion)
+  [usuario, contraseña, confirmarContraseña, correo] = ["#usuario", "#contraseña", "#confirmarContraseña", "#correo"].map(id => {
+    let el = $(id);
+    el.val(el.val().trim());
+    return el.val();
+  });
+  rol = $("#rol")[0].innerText;
+  if (!await validarDatos())
     return;
-  let inputCorreo = document.getElementById("correo");
-  correo = inputCorreo.value;
-  if (correo !== "") {
-    if (!inputCorreo.validar())
-      return mostrarError("correo inválido");
+  if (correo) {
+    if (!$("#correo")[0].validar())
+      return
   }
   modal.show();
 });
 
 funcionEnviar = async function () {
   let contraseñaVerificacion = $("#verificacionIdentidad")[0].value;
-  let mandar = `{ "usuario": "${usuario.trim()}", "contraseña": "${contraseña}", "correo": "${correo !== "" ? correo.trim() : "-"}", "rol": "${rol}",  "contraseñaVerificacion": "${contraseñaVerificacion}"}`
+  let data = JSON.stringify({ usuario, contraseña, correo: correo || "-", rol, contraseñaVerificacion })
   modal.hide();
   $.ajax({
     url: `/empleados/usuarios/crear`,
     method: "POST",
     contentType: "application/json",
-    data: mandar,
+    data,
     success: res => {
       Swal.fire("ÉXITO", "Se ha guardado el usuario correctamente", "success");
-      if(correo !== ""){
+      if (correo) {
         toastr.info("Se ha enviado un mensaje a tu correo para validarlo", "Atención");
       }
     },

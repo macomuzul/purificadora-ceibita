@@ -6,7 +6,7 @@ async function convertirRegistrosPorDia(){
   let ventaspordia = await VentasPorDia.find()
   ventaspordia.forEach(async venta => {
     let tablas = devuelveNuevasTablas(venta)
-    let nuevoRegistro = new RegistroVentas({_id: venta.fecha, usuario: venta.usuario || "asdfasdf", ultimocambio: venta.fechaultimocambio, tablas })
+    let nuevoRegistro = new RegistroVentas({_id: venta.fecha, usuario: venta.usuario || "usuariodesconocido", ultimocambio: venta.fechaultimocambio, tablas })
     await nuevoRegistro.save()
   });
 }
