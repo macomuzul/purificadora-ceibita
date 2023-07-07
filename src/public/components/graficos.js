@@ -75,32 +75,31 @@ class graficos extends HTMLElement {
   crearTabla2(datasets, labels) {
     let data = datasets[0].data;
     let html = `<table>
-        <thead><tr>`;
-    labels.forEach(x => html += `<th>${x}</th>`);
-    html += `<th>Total ${this.devuelveSonIngresos()}:</th></tr></thead><tbody><tr>`;
-    data.forEach(el => html += `<td>${el}</td>`);
-
-    html += `<td>${data.reduce((a, t) => a += t).normalizarPrecio()}</td></tr></tbody></table>`;
+        <thead><tr>
+        ${labels.map(x => `<th>${x}</th>`).join("")}
+      <th>Total ${this.devuelveSonIngresos()}:</th></tr></thead><tbody><tr>
+      ${data.map(el => `<td>${el}</td>`).join("")}
+      <td>${data.reduce((a, t) => a += t).normalizarPrecio()}</td></tr></tbody></table>`
     return html;
   }
 
   crearTabla(datasets, productos) {
     let data = datasets[0].data;
     let html = `<table ${(datasets.length > 1) ? `class="multiple"` : ""} >
-        <thead><tr><th>Productos</th>`;
-    datasets.forEach(el => html += `<th>${el.label}</th>`);
-    html += `${this.multiple ? `<th>Total ${this.devuelveSonIngresos()}:</th>` : ""}</tr></thead><tbody>`;
+        <thead><tr><th>Productos</th>
+        ${datasets.map(el => `<th>${el.label}</th>`).join("")}
+        ${this.multiple ? `<th>Total ${this.devuelveSonIngresos()}:</th>` : ""}</tr></thead><tbody>`;
 
     data.forEach((_, i) => {
-      html += `<tr><td>${productos[i]}</td>`
-      datasets.forEach(el => html += `<td>${el.data[i]}</td>`);
-      html += `${this.multiple ? "<td></td>" : ""}</tr>`
+      html += `<tr><td>${productos[i]}</td>
+      ${datasets.map(el => `<td>${el.data[i]}</td>`).join("")}
+      ${this.multiple ? "<td></td>" : ""}</tr>`
     });
 
-    html += `</tbody><tfoot><tr><td>Total:</td>`;
-    datasets.forEach(() => html += "<td></td>");
-    html += `${this.multiple ? "<td></td>" : ""}</tr></tfoot>
-      </table>`;
+    html += `</tbody><tfoot><tr><td>Total:</td>
+    ${datasets.map(() => "<td></td>").join("")}
+    ${this.multiple ? "<td></td>" : ""}</tr></tfoot>
+    </table>`;
     return html;
   }
 
@@ -176,7 +175,7 @@ class graficos extends HTMLElement {
           }
         }
       }
-      XLSX.utils.book_append_sheet(workbook, ws, `Resumen	del día de hoy`);
+      XLSX.utils.book_append_sheet(workbook, ws, `Resumen del día de hoy`);
       XLSX.writeFile(workbook, nombre);
     });
   }
@@ -433,7 +432,7 @@ class graficos extends HTMLElement {
   }
 
   crearGrafico(labels, datasets, titulo, label, multiple, sonIngresos, ordenar, esTotal, type = "bar") {
-    Object.assign(this, { labels, datasets, titulo, label, multiple, sonIngresos: sonIngresos, ordenar, esTotal, type });
+    Object.assign(this, { labels, datasets, titulo, label, multiple, sonIngresos, ordenar, esTotal, type });
     contador++;
     this.contador2 = 0;
     this.agregarOpciones();

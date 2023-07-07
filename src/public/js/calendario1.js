@@ -580,12 +580,12 @@ var fechaseleccionada;
     eventListEl.append(markup)
   }
 
-  function devuelveFecha(dia){
-    return new Intl.DateTimeFormat('es', { dateStyle: 'full' }).format(new Date(dia.ultimoCambio));
+  function devuelveFecha(dia) {
+    return new Intl.DateTimeFormat('es', { dateStyle: 'full' }).format(new Date(dia.ultimocambio));
   }
 
-  function pedirCamioneros(_){
-    let mandar = `{ "fecha": "${_.$active.year + "/" + (_.$active.month+1)}" }`;
+  function pedirCamioneros(_) {
+    let mandar = `{ "fecha": "${_.$active.year + "/" + (_.$active.month + 1)}" }`;
     $.ajax({
       url: "/calendario",
       method: "POST",
@@ -593,18 +593,17 @@ var fechaseleccionada;
       data: mandar,
       success: async function (mes) {
         let id = mes._id;
-        if(mes instanceof Array || listaMeses[id])
+        if (mes instanceof Array || listaMeses[id])
           return;
         let dias = mes.dias;
         listaMeses[id] = 1;
         let añadir = [];
-        dias.forEach(dia => {
-          dia.camioneros.forEach((camionero, i) => {
-            let fecha = new Date(dia._id);
-            let datos = { name: `Camión ${i+1}`, description: `Conductor: ${camionero}`, date: _.formatDate(_.initials.dates[_.defaults.language].months[fecha.getUTCMonth()] + ' ' + fecha.getUTCDate() + ' ' + fecha.getUTCFullYear(), _.options.format), type: `${i}`, ultimoCambio: dia.ultimoCambio, usuario: dia.usuario, color: camioneros[camionero] };
-            añadir.push(datos);
-          });
-        });
+        dias.forEach(({ _id, camioneros, ultimocambio, usuario }) => {
+          camioneros.forEach((camionero, i) => {
+            let fecha = new Date(_id);
+            añadir.push({ name: `Camión ${i + 1}`, description: `Conductor: ${camionero}`, date: _.formatDate(_.initials.dates[_.defaults.language].months[fecha.getUTCMonth()] + ' ' + fecha.getUTCDate() + ' ' + fecha.getUTCFullYear(), _.options.format), type: `${i}`, ultimocambio, usuario, color: camioneros[camionero] });
+          })
+        })
         _.addCalendarEvent(añadir)
       },
       error: function (res) {

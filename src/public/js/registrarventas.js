@@ -17,7 +17,7 @@ let opcionSwal = false;
 // let desdeElMobil = function () { return /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent) }
 let desdeElMobil = () => (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0))
 
-window.onload = async function() {
+window.onload = async function () {
   await colocarValoresConfig();
   guardarValoresConfig();
   if (desdeElMobil())
@@ -185,27 +185,27 @@ async function colocarValoresConfig() {
       }
     }
   }
-  
+
   if (opcionBorrarCamionesNuevo !== opcionBorrarCamiones) {
     if (opcionBorrarCamionesNuevo === 0) {
       $("body").on("pointerdown", ".borrarcamiones", borrarCamionesHandler);
       if (opcionBorrarCamiones === 1)
-      $("body").off("click", ".borrarcamiones", borrarCamionesHandler);
+        $("body").off("click", ".borrarcamiones", borrarCamionesHandler);
     }
     if (opcionBorrarCamionesNuevo === 1) {
       $("body").on("click", ".borrarcamiones", borrarCamionesHandler);
       if (opcionBorrarCamiones === 0)
-      $("body").off("pointerdown", ".borrarcamiones", borrarCamionesHandler);
+        $("body").off("pointerdown", ".borrarcamiones", borrarCamionesHandler);
     }
     if (opcionBorrarCamionesNuevo === 2) {
       if (opcionBorrarCamiones === 0)
-      $("body").off("pointerdown", ".borrarcamiones", borrarCamionesHandler);
+        $("body").off("pointerdown", ".borrarcamiones", borrarCamionesHandler);
       else if (opcionBorrarCamiones === 1) {
         $("body").off("click", ".borrarcamiones", borrarCamionesHandler);
       }
     }
   }
-  
+
   opcionBorrarFilasYColumnas = opcionBorrarFilasYColumnasNuevo;
   opcionBorrarCamiones = opcionBorrarCamionesNuevo;
   opcionExportarPDF = opcionExportarPDFNuevo;
@@ -1567,18 +1567,11 @@ function mezclarEliminandoOrdenPlantilla(productos) {
 
   return formatoTablaLlena;
 }
-String.prototype.normalizar = function () {
-  return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-}
+String.prototype.normalizar = function () { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "") }
+String.prototype.normalizarPrecio = function () { return parseFloat(this).toFixed(2).replace(/[.,]00$/, "") }
+Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }
 
-String.prototype.normalizarPrecio = fNormalizarPrecioString;
-Number.prototype.normalizarPrecio = fNormalizarPrecio;
-function fNormalizarPrecio() {
-  return this.toFixed(2).replace(/[.,]00$/, "");
-}
-function fNormalizarPrecioString() {
-  return parseFloat(this).toFixed(2).replace(/[.,]00$/, "");
-}
+
 
 function cancelarSwal() {
   Swal.close();
@@ -1653,7 +1646,7 @@ $("body").on('click', '.contenedoreliminar', async function () {
     cancelButtonText: "No",
   })
   if (result.isConfirmed) {
-    funcionEnviar = enviar({correo: "jajaj"}, "Se ha borrado el registro exitosamente")
+    funcionEnviar = enviar({ correo: "jajaj" }, "Se ha borrado el registro exitosamente")
     bootstrap.Modal.getInstance(configs).hide()
     modal.show()
   }
@@ -1681,7 +1674,7 @@ $("body").on('click', '.contenedormover', async function () {
   });
 });
 
-function moverRegistro(anterior, fecha, sobreescribir){
+function moverRegistro(anterior, fecha, sobreescribir) {
   $.ajax({
     url: "/registrarventas/mover",
     method: "POST",
@@ -1696,7 +1689,7 @@ function moverRegistro(anterior, fecha, sobreescribir){
       ${[...Array(res.tablas.length)].map((_, i) => `<custom-label name="swal" data-id="swal${i}">Camión ${i + 1}</custom-label>`).join('')}
       </div><div class="content">`
 
-      res.tablas.forEach(({productos, totalvendidos, totalingresos}) => {
+      res.tablas.forEach(({ productos, totalvendidos, totalingresos }) => {
         let cantViajes = productos[0].viajes.length / 2;
         html += `<tab-content><table>
         <thead>
@@ -1719,7 +1712,7 @@ function moverRegistro(anterior, fecha, sobreescribir){
           </tr>
         </thead>
         <tbody>
-          ${productos.map(({nombre, precio, viajes, vendidos, ingresos}) => `<tr>
+          ${productos.map(({ nombre, precio, viajes, vendidos, ingresos }) => `<tr>
             <td>${nombre}</td>
             <td>${precio.normalizarPrecio()}</td>
             ${viajes.map(x => `<td>${x}</td>`).join('')}

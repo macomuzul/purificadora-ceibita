@@ -1,7 +1,7 @@
 const RegistroVentas = require("./models/registroventas");
 const ResumenDia = require("./models/resumenDia");
 const ResumenMes = require("./models/resumenMes");
-const CalendarioCamioneros = require("./models/calendarioCamioneros");
+// const CalendarioCamioneros = require("./models/calendarioCamioneros");
 const RegistrosEliminados = require("./models/registroseliminados");
 let borrarLlaves = require("./utilities/borrarLlavesRedis")
 const { DateTime } = require("luxon");
@@ -46,10 +46,6 @@ RegistroVentas.watch().on('change', async (cambio) => {
 //   }
 // }
 
-function calcularTodosLosResumenesPorDia() {
-  let ventas = RegistroVentas.find();
-}
-
 //v es vendidos, i es ingresos, p es productoDesnormalizado, vt es ventasTotales, it es ingresosTotales, prods es productos 
 async function calcularResumenPorDia(venta) {
   try {
@@ -72,6 +68,7 @@ async function calcularResumenPorDia(venta) {
       vt += prods[key].v;
       it += prods[key].i;
     }
+    it = it.normalizarPrecio()
     let resumenDia = await ResumenDia.findOne({ _id });
     if (resumenDia)
       Object.assign(resumenDia, { prods, vt, it });
@@ -83,9 +80,8 @@ async function calcularResumenPorDia(venta) {
   }
 }
 
-String.prototype.normalizar = function () {
-  return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-}
+String.prototype.normalizar = function () { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "") }
+Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }
 
 
 RegistrosEliminados.watch().on('change', borrarLlaves("registroseliminados"));

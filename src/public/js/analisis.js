@@ -138,31 +138,32 @@ function propiedadesDatePicker(idDatepicker) {
   else
     minViewMode = 2;
 
-  $(`#${idDatepicker}`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, minViewMode, todayHighlight: true, multidate, multidateSeparator: " y ", format: "dd/mm/yyyy"});
+  $(`#${idDatepicker}`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, minViewMode, todayHighlight: true, multidate, multidateSeparator: " y ", format: "dd/mm/yyyy" });
 }
 
 $("body").on("click", "#analizarUno", function () {
-  let fecha = $("#datepickerUnoSolo").find("input").val().replaceAll("/", "-");
-  if(fecha === "")
+  let [fecha] = antesDeCambiarPagina("datepickerUnoSolo")
+  if (fecha === "")
     return Swal.fire("Campo de fecha vacío", "Por favor selecciona una fecha para continuar", "error");
-  unidadTiempo = unidadTiempo.replace("días", "dias")
   window.location = `/analisis/${unidadTiempo}&${cantidad}&${fecha}`;
 })
 $("body").on("click", "#analizarVarios", function () {
-  let fecha = $("#datepickerVarios").find("input").val().replaceAll("/", "-");
-  if(fecha === "")
+  let [fecha] = antesDeCambiarPagina("datepickerVarios")
+  if (fecha === "")
     return Swal.fire("Campo de fecha vacío", "Por favor selecciona una fecha para continuar", "error");
-  unidadTiempo = unidadTiempo.replace("días", "dias")
   window.location = `/analisis/${unidadTiempo}&${cantidad}&${rango}&${fecha}`;
 })
 $("body").on("click", "#analizarEntre", function () {
-  let fecha1 = $("#calendarioentre1").val().replaceAll("/", "-");
-  let fecha2 = $("#calendarioentre2").val().replaceAll("/", "-");
-  if(fecha1 === "" || fecha2 === "")
+  let [fecha1, fecha2] = antesDeCambiarPagina("calendarioentre1", "calendarioentre2")
+  if (fecha1 === "" || fecha2 === "")
     return Swal.fire("Campo de fecha vacío", "Por favor selecciona una fecha para continuar", "error");
-  unidadTiempo = unidadTiempo.replace("días", "dias");
   window.location = `/analisis/${unidadTiempo}&${cantidad}&${rango}&${fecha1}&y&${fecha2}`;
 })
+
+function antesDeCambiarPagina(...calendarios) {
+  unidadTiempo = unidadTiempo.replace("días", "dias")
+  return calendarios.map(x => $("#" + x).find("input").val().replaceAll("/", "-"))
+}
 
 function esconder() {
   $("section-volver").each((i, el) => {

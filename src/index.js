@@ -17,6 +17,9 @@ require("./redis");
 // const convertirRespaldos = require("./utilities/convertirrespaldos");
 // convertirRespaldos()
 
+// const calcularTodosLosResumenesPorDia = require("./utilities/crearresumenespordia");
+// calcularTodosLosResumenesPorDia()
+
 global.cantidadMaximaPeticionesInvalidas = 3;
 global.tiempoTimeoutLoginSegundos = 900; //15 minutos
 Settings.defaultLocale = "es";

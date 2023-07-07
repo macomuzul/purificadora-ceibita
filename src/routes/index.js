@@ -42,11 +42,11 @@ router.route('/calendario').get(async (req, res) => {
   let dias = await RegistroVentas.find().where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month"))
   let mes = {
     _id: fechaActual,
-    dias: dias.map(dia => ({
-      _id: dia._id,
-      camioneros: dia.tablas.map(tabla => tabla.trabajador),
-      usuario: dia.usuario,
-      ultimoCambio: dia.ultimocambio
+    dias: dias.map(({_id, tablas, usuario, ultimocambio}) => ({
+      _id,
+      camioneros: tablas.map(tabla => tabla.trabajador),
+      usuario,
+      ultimocambio
     }))
   }
   let camioneros = (await Camioneros.findOne())?.camioneros || [];
@@ -58,11 +58,11 @@ router.route('/calendario').get(async (req, res) => {
     let dias = await RegistroVentas.find().where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month"))
     let mes = {
       _id: fecha,
-      dias: dias.map(dia => ({
-        _id: dia._id,
-        camioneros: dia.tablas.map(tabla => tabla.trabajador),
-        usuario: dia.usuario,
-        ultimoCambio: dia.ultimocambio
+      dias: dias.map(({_id, tablas, usuario, ultimocambio}) => ({
+        _id,
+        camioneros: tablas.map(tabla => tabla.trabajador),
+        usuario,
+        ultimocambio
       }))
     }
     if (mes)

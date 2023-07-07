@@ -47,12 +47,9 @@ async function validarPlantillas() {
   });
   return !hayRepetidos;
 }
-
-String.prototype.normalizarPrecio = fNormalizarPrecio;
-Number.prototype.normalizarPrecio = fNormalizarPrecio;
-function fNormalizarPrecio() {
-  return this.toFixed(2).replace(/[.,]00$/, "");
-}
+String.prototype.normalizar = function () { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "") }
+String.prototype.normalizarPrecio = function () { return parseFloat(this).toFixed(2).replace(/[.,]00$/, "") }
+Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }
 
 function mostrarError(error) {
   Swal.fire("Error", error, "error");
