@@ -8,68 +8,68 @@ class customBreadcrumbs extends HTMLElement {
     this.animacionRemover = "animate__backOutDown";
     this.breadcrumb = $(this).find("#breadcrumb");
     $(this).addClass("animate__animated");
-    
+
 
     $("body").on("click", "#breadPrimerNivel", () => {
-      if(sectionUnidadTiempo.offsetParent === null)
+      if (sectionUnidadTiempo.offsetParent === null)
         this.transicion($("#breadPrimerNivel")[0], primerNivel);
     });
     $("body").on("click", "#breadSegundoNivel", () => {
-      if(sectionCantidad.offsetParent === null)
+      if (sectionAgrupar.offsetParent === null)
         this.transicion($("#breadSegundoNivel")[0], segundoNivel);
     });
     $("body").on("click", "#breadTercerNivel", () => {
-      if(sectionRangos.offsetParent === null && sectionUnoSolo.offsetParent === null)
+      if (sectionRangos.offsetParent === null)
         this.transicion($("#breadTercerNivel")[0], tercerNivelRangos);
     });
   }
 
-  transicion(bread, cb){
+  transicion(bread, cb) {
     while (bread.nextSibling) {
       bread.nextSibling.remove();
     }
     cb();
   }
 
-  animar(){
+  animar() {
     this.borrarClases();
     setTimeout(() => {
       $(this).addClass(this.animacionAgregar);
     }, 50);
   }
 
-  primerNivel(){
+  primerNivel() {
     this.animar();
     this.breadcrumb.html(this.inicio);
   }
 
-  segundoNivel(){
+  segundoNivel() {
     this.primerNivel();
     this.breadcrumb.append(`<li id="breadSegundoNivel"><a><span class="icon icon-calendar"> </span> ${unidadTiempo.capitalizar()}</a></li>`);
   }
 
-  tercerNivel(){
+  tercerNivel() {
     this.segundoNivel();
-    this.breadcrumb.append(`<li id="breadTercerNivel"><a><span class="icon icon-sort-by-order"></span> ${cantidad.capitalizar()}</a></li>`);
+    this.breadcrumb.append(`<li id="breadTercerNivel"><a><span class="icon icon-sort-by-order"></span> ${agruparPor.capitalizar()}</a></li>`);
   }
 
-  cuartoNivel(){
+  cuartoNivel() {
     this.tercerNivel();
     this.breadcrumb.append(`<li><a><span class="icon icon-sort"></span> ${rango.capitalizar()}</a></li>`);
   }
 
-  añadir(elemento){
+  añadir(elemento) {
     this.animar();
     $(this).append(elemento);
   }
-  
-  mostrar(){
+
+  mostrar() {
     this.borrarClases();
     $(this).css("display", "flex");
     $(this).addClass(this.animacionAgregar);
   }
 
-  esconder(){
+  esconder() {
     this.borrarClases();
     $(this).addClass(this.animacionRemover);
     setTimeout(() => {
@@ -77,15 +77,13 @@ class customBreadcrumbs extends HTMLElement {
     }, 300);
   }
 
-  borrarClases(){
+  borrarClases() {
     this.classList.remove(this.animacionAgregar);
     this.classList.remove(this.animacionRemover);
   }
 }
 
-String.prototype.capitalizar = function(){
-  return this.charAt(0).toUpperCase() + this.slice(1);
-}
+String.prototype.capitalizar = function () { return this.charAt(0).toUpperCase() + this.slice(1) }
 
 document.documentElement.style.setProperty('--animate-delay', '0.1s');
 document.documentElement.style.setProperty('--animate-duration', '0.7s');

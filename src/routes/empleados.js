@@ -13,13 +13,12 @@ router.get('/', async (req, res) => {
 });
 
 router.route('/usuarios').get(async (req, res) => {
-  const usuarios = await Usuario.find();
+  const usuarios = await Usuario.find({}, { _id: 0, contraseña: 0 });
   res.render('verusuarios', { usuarios });
 }).post(verificacionIdentidad, async (req, res) => {
   try {
     let { usuario } = req.body;
-    let encontrado = await Usuario.findOne({ usuario });
-    res.send(encontrado.contraseña);
+    res.send(await Usuario.findOne({ usuario }).contraseña);
   } catch {
     res.status(400).send("Error al realizar la petición")
   }
@@ -42,11 +41,9 @@ router.route('/usuarios/crear')
   .post(verificacionIdentidad, async (req, res) => {
     try {
       let { usuario, contraseña, rol, correo } = req.body;
-      let existeUsuario = await Usuario.findOne({ usuario });
-      if (existeUsuario)
+      if (await Usuario.findOne({ usuario }))
         return res.status(400).send("Error, usuario ya existe");
-      let nuevoUsuario = new Usuario({ usuario, contraseña, rol, correo });
-      await nuevoUsuario.save();
+      await new Usuario({ usuario, contraseña, rol, correo }).save()
       res.send("Se guardo el usuario exitosamente");
     } catch {
       res.status(400).send("Error al guardar el usuario")
@@ -66,12 +63,10 @@ router.route('/usuarios/editar/:id')
           return res.status(400).send("Error, usuario ya existe");
       }
 
-      const camposPermitidos = ["usuario", "contraseña", "rol", "correo"];
       const camposQuery = Object.keys(req.body);
       if(camposQuery.length > 1)
         return res.status(400).send("Error al realizar la petición");
-      const peticionValida = camposPermitidos.includes(camposQuery[0]);
-      if (!peticionValida)
+      if (!["usuario", "contraseña", "rol", "correo"].includes(camposQuery[0]))
         return res.status(400).send("Error al realizar la petición");
 
       let guardado = await Usuario.updateOne({ usuario: req.params.id }, req.body);
@@ -95,7 +90,6 @@ router.route('/camioneros').get(async (req, res) => {
     
     let camioneros = new Camioneros(peticion);
     let camionerosAnterior = await Camioneros.find();
-    console.log(camionerosAnterior.length)
     if(camionerosAnterior.length === 1)
       await Camioneros.updateOne({}, peticion);
     else

@@ -1,4 +1,4 @@
-let urlPag = "/respaldos/registroseliminados/";
+let urlPag = location.pathname + "/"
 
 function metododropdown(option, menu) {
   if (menu.id === "fechasdropdown") {
@@ -30,12 +30,16 @@ jQuery.expr.filters.offscreen = function (el) {
 };
 
 $("body").on("click", "#btnMasReciente", () => {
-  window.location = `${urlPag}masrecientes&pag=1`
+  location = `${urlPag}masrecientes&pag=1`
 });
 $("body").on("click", "#btnMasAntiguo", () => {
-  window.location = `${urlPag}masantiguos&pag=1`
+  location = `${urlPag}masantiguos&pag=1`
 });
 
+
+function mostrarError(titulo, texto) {
+  Swal.fire(titulo, texto, "error");
+}
 
 $("body").on("click", "#btnbuscar", () => {
   let buscarpor = $("#buscarpor")[0].innerText;
@@ -44,34 +48,38 @@ $("body").on("click", "#btnbuscar", () => {
   let fecha1 = $("#calendario1").val().replaceAll("/", "-");
   let fecha2 = $("#calendario2").val().replaceAll("/", "-");
 
-  if(buscarpor === "Buscar por")
-    return Swal.fire("Campo de buscar por vacío", "Por favor selecciona un campo en la sección de buscar por para continuar", "error");
-  if(rango === "Elige un rango")
-    return Swal.fire("Campo de rango vacío", "Por favor selecciona un campo en la sección de rango para continuar", "error");
-  if(rango === "Fecha entre"){
-    if(fecha1 === "")
-      return Swal.fire("Campo de fecha vacío", "No se ha seleccionado la fecha para el calendario de arriba", "error");
-    if(fecha2 === "")
-      return Swal.fire("Campo de fecha vacío", "No se ha seleccionado la fecha para el calendario de abajo", "error");
+  if (buscarpor === "Buscar por")
+    return mostrarError("Campo de buscar por vacío", "Por favor selecciona un campo en la sección de buscar por para continuar")
+  if (rango === "Elige un rango")
+    return mostrarError("Campo de rango vacío", "Por favor selecciona un campo en la sección de rango para continuar")
+  if (rango === "Fecha entre") {
+    if (fecha1 === "")
+      return mostrarError("Campo de fecha vacío", "No se ha seleccionado la fecha para el calendario de arriba")
+    if (fecha2 === "")
+      return mostrarError("Campo de fecha vacío", "No se ha seleccionado la fecha para el calendario de abajo")
   } else {
-    if(fecha === "")
-      return Swal.fire("Campo de fecha vacío", "No se ha seleccionado la fecha en el calendario", "error");
+    if (fecha === "")
+      return mostrarError("Campo de fecha vacío", "No se ha seleccionado la fecha en el calendario")
   }
-  
+
   if (buscarpor === "Fecha (calendario)") buscarpor = "fecha"
   else if (buscarpor === "Fecha de eliminación") buscarpor = "fechaeliminacion"
 
-  if (rango === "Fecha igual a") rango = "igual"
-  else if (rango === "Fecha menor o igual a") rango = "menor"
-  else if (rango === "Fecha mayor o igual a") rango = "mayor"
-  else if (rango === "Fecha entre") rango = "entre"
+  rangos = {
+    "Fecha igual a": igual,
+    "Fecha menor o igual a": "menor",
+    "Fecha mayor o igual a": "mayor",
+    "Fecha entre": "entre"
+  }
+
+  rango = rangos[rango]
 
   let url = `${urlPag}${buscarpor}&${rango}&`;
   if (rango === "entre")
     url += `${fecha1}&y&${fecha2}&`;
   else
     url += `${fecha}&`;
-    
+
   url += "pag=1";
-  window.location = url;
+  location = url;
 })

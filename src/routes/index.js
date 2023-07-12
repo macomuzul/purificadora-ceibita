@@ -34,15 +34,68 @@ router.route('/recuperarcontrase%C3%B1a').get((req, res) => {
 
 });
 
+// router.route('/calendario').get(async (req, res) => {
+//   let fechaActual = DateTime.now().setZone("America/Guatemala").toFormat("y/M");
+//   let hoy = DateTime.now().setZone("America/Guatemala").toISODate()
+//   let fecha = DateTime.fromISO(hoy)
+//   let dias = await RegistroVentas.aggregate([{
+//     $match: {
+//       _id: {
+//         $gte: fecha.startOf("month"),
+//         $lte: fecha.endOf("month")
+//       }
+//     }
+//   }, { $project: { camioneros: "$tablas.trabajador", usuario: "$usuario", ultimocambio: "$ultimocambio" } }])
+//   let mes = {
+//     _id: fechaActual,
+//     dias: dias.map(({ _id, camioneros, usuario, ultimocambio }) => ({
+//       _id,
+//       camioneros,
+//       usuario,
+//       ultimocambio
+//     }))
+//   }
+//   let camioneros = (await Camioneros.findOne())?.camioneros || [];
+//   res.render('calendario', { mes, camioneros, DateTime, fechaActual });
+// }).post(async (req, res) => {
+//   try {
+//     let { fecha } = req.body;
+//     fecha = DateTime.fromFormat(fecha, "y/M")
+//     let dias = await RegistroVentas.aggregate([{
+//       $match: {
+//         _id: {
+//           $gte: fecha.startOf("month"),
+//           $lte: fecha.endOf("month")
+//         }
+//       }
+//     }, { $project: { camioneros: "$tablas.trabajador", usuario: "$usuario", ultimocambio: "$ultimocambio" } }])
+//     let mes = {
+//       _id: fecha,
+//       dias: dias.map(({ _id, camioneros, usuario, ultimocambio }) => ({
+//         _id,
+//         camioneros,
+//         usuario,
+//         ultimocambio
+//       }))
+//     }
+//     if (mes)
+//       res.send(mes)
+//     else
+//       res.send([])
+//   } catch (e) {
+//     console.log(e)
+//     res.send("Hubo un error")
+//   }
+// });
 
 router.route('/calendario').get(async (req, res) => {
   let fechaActual = DateTime.now().setZone("America/Guatemala").toFormat("y/M");
   let hoy = DateTime.now().setZone("America/Guatemala").toISODate()
   let fecha = DateTime.fromISO(hoy)
-  let dias = await RegistroVentas.find().where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month"))
+  let dias = await RegistroVentas.find().where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month")).select("tablas.trabajador usuario ultimocambio")
   let mes = {
     _id: fechaActual,
-    dias: dias.map(({_id, tablas, usuario, ultimocambio}) => ({
+    dias: dias.map(({ _id, tablas, usuario, ultimocambio }) => ({
       _id,
       camioneros: tablas.map(tabla => tabla.trabajador),
       usuario,
@@ -55,10 +108,10 @@ router.route('/calendario').get(async (req, res) => {
   try {
     let { fecha } = req.body;
     fecha = DateTime.fromFormat(fecha, "y/M")
-    let dias = await RegistroVentas.find().where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month"))
+    let dias = await RegistroVentas.find().where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month")).select("tablas.trabajador usuario ultimocambio")
     let mes = {
       _id: fecha,
-      dias: dias.map(({_id, tablas, usuario, ultimocambio}) => ({
+      dias: dias.map(({ _id, tablas, usuario, ultimocambio }) => ({
         _id,
         camioneros: tablas.map(tabla => tabla.trabajador),
         usuario,

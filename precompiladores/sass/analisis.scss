@@ -84,3 +84,9 @@
 #datepickerEntre{
   display: flex;
 }
+
+:disabled{
+  background-color: inherit !important;
+  color: inherit !important;
+  border-color: black !important;
+}

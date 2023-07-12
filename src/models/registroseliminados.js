@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const RegistroVentas = require('./registroventas');
-_ = require('underscore');
+_ = require('lodash');
 
 const registroseliminadosSchema = new Schema({
   registro: RegistroVentas.schema,

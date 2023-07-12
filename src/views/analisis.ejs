@@ -38,21 +38,30 @@
           <div class="tituloSeccion">Escoge una unidad de tiempo para hacer el análisis y crear las gráficas</div>
           <article class="gridUnidadTiempo">
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Crear el análisis en base a días" id="btnDias"/>
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Crear el análisis en base a semanas" id="btnSemanas"/>
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Crear el análisis en base a meses" id="btnMeses"/>
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Crear el análisis en base a años" id="btnAños"/>
+              <input class="btn btn-primary botonazul btnOrden" type="button" value="Crear el análisis en base a semanas" id="btnSemanas" disabled/>
+              <input class="btn btn-primary botonazul btnOrden" type="button" value="Crear el análisis en base a meses" id="btnMeses" disabled/>
+              <input class="btn btn-primary botonazul btnOrden" type="button" value="Crear el análisis en base a años" id="btnAños" disabled/>
           </article>
         </section-volver>
-        <section-volver id="sectionCantidad" data-idboton="volverPrimerNivel">
+        <!-- <section-volver id="sectionCantidad" data-idboton="volverPrimerNivel">
           <div class="tituloSeccion">Escoge la cantidad de meses deseas analizar</div>
           <article class="gridUnidadTiempo">
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Solo uno" id="btnSoloUno"/>
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Varios" id="btnVarios"/>
           </article>
-        </section-volver>
-        <section-volver id="sectionUnoSolo" data-idboton="volverSegundoNivel">
+        </section-volver> -->
+        <!-- <section-volver id="sectionUnoSolo" data-idboton="volverSegundoNivel">
           <div class="divdatepicker"></div>
           <input class="btn btn-primary botonazul btnAnalizar" type="button" value="Analizar" id="analizarUno"/>
+        </section-volver> -->
+        <section-volver id="sectionAgrupar" data-idboton="volverPrimerNivel">
+          <div class="tituloSeccion">Escoge cómo deseas agrupar los días</div>
+          <article class="gridUnidadTiempo">
+              <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por días" id="btnAgruparDias"/>
+              <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por semanas" id="btnAgruparSemanas"/>
+              <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por meses" id="btnAgruparMeses"/>
+              <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por años" id="btnAgruparAños"/>
+          </article>
         </section-volver>
         <section-volver id="sectionRangos" data-idboton="volverSegundoNivelRangos">
           <div class="tituloSeccion">Escoge un rango de fechas para analizar</div>
@@ -60,9 +69,10 @@
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas mayores o igual que" id="btnMayor"/>
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas menores o igual que" id="btnMenor"/>
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas entre" id="btnEntre"/>
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas libremente" id="btnLibre"/>
+              <input class="btn btn-primary botonazul btnOrden" type="button" value="Selección libre (uno o varios)" id="btnLibre"/>
           </article>
         </section-volver>
+
         <section-volver id="sectionVarios" data-idboton="volverTercerNivelVarios">
           <div class="divdatepicker"></div>
           <input class="btn btn-primary botonazul btnAnalizar" type="button" value="Analizar" id="analizarVarios"/>

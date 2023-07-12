@@ -1,13 +1,4 @@
-let unidadTiempo = "";
-let cantidad = "";
-let rango = "";
-let sectionUnidadTiempo = $("#sectionUnidadTiempo")[0];
-let sectionCantidad = $("#sectionCantidad")[0];
-let sectionUnoSolo = $("#sectionUnoSolo")[0];
-let sectionRangos = $("#sectionRangos")[0];
-let sectionVarios = $("#sectionVarios")[0];
-let sectionEntre = $("#sectionEntre")[0];
-let breadcrumbs = $("#breadcrumbs")[0];
+let unidadTiempo = "", agruparPor = "", rango = "", sectionUnidadTiempo = $("#sectionUnidadTiempo")[0], sectionAgrupar = $("#sectionAgrupar")[0], sectionRangos = $("#sectionRangos")[0], sectionVarios = $("#sectionVarios")[0], sectionEntre = $("#sectionEntre")[0], breadcrumbs = $("#breadcrumbs")[0], sectionVolver = $("section-volver")
 $("body").on("click", "#btnDias", function () {
   unidadTiempo = "días";
   segundoNivel();
@@ -24,15 +15,25 @@ $("body").on("click", "#btnAños", function () {
   unidadTiempo = "años";
   segundoNivel();
 });
-$("body").on("click", "#btnSoloUno", function () {
-  cantidad = "uno";
-  tercerNivelUnoSolo();
-});
 
-$("body").on("click", "#btnVarios", function () {
-  cantidad = "varios";
+$("body").on("click", "#btnAgruparDias", function () {
+  agruparPor = "días";
   tercerNivelRangos();
 });
+$("body").on("click", "#btnAgruparSemanas", function () {
+  agruparPor = "semanas";
+  tercerNivelRangos();
+});
+$("body").on("click", "#btnAgruparMeses", function () {
+  agruparPor = "meses";
+  tercerNivelRangos();
+});
+$("body").on("click", "#btnAgruparAños", function () {
+  agruparPor = "años";
+  tercerNivelRangos();
+});
+
+
 $("body").on("click", "#btnMayor", function () {
   rango = "mayor";
   cuartoNivel();
@@ -73,16 +74,9 @@ function primerNivel() {
 
 function segundoNivel() {
   esconder();
-  $(sectionCantidad).find(".tituloSeccion").text(`Escoge la cantidad de ${unidadTiempo} que deseas analizar`)
-  sectionCantidad.mostrar();
+  $(sectionAgrupar).find(".tituloSeccion").text(`Escoge cómo deseas agrupar los ${unidadTiempo}`)
+  sectionAgrupar.mostrar();
   breadcrumbs.segundoNivel();
-}
-
-function tercerNivelUnoSolo() {
-  crearDatePicker("sectionUnoSolo", "datepickerUnoSolo");
-  esconder();
-  sectionUnoSolo.mostrar("flex");
-  breadcrumbs.tercerNivel();
 }
 
 function tercerNivelRangos() {
@@ -118,8 +112,8 @@ function crearDatePickerEntre(idSeccion, idDatepicker) {
 }
 
 function crearDatePicker(idSeccion, idDatepicker) {
-  $(`#${idSeccion}`).children().first().html(`<div class="input-group date" id="${idDatepicker}">
-<input required type="text" class="form-control" readonly>
+  $(`#${idSeccion}`).children().first().html(`<div class="input-group date">
+<input required type="text" class="form-control" readonly id="${idDatepicker}">
 <span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>`)
   propiedadesDatePicker(idDatepicker);
 }
@@ -141,32 +135,32 @@ function propiedadesDatePicker(idDatepicker) {
   $(`#${idDatepicker}`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, minViewMode, todayHighlight: true, multidate, multidateSeparator: " y ", format: "dd/mm/yyyy" });
 }
 
-$("body").on("click", "#analizarUno", function () {
-  let [fecha] = antesDeCambiarPagina("datepickerUnoSolo")
-  if (fecha === "")
-    return Swal.fire("Campo de fecha vacío", "Por favor selecciona una fecha para continuar", "error");
-  window.location = `/analisis/${unidadTiempo}&${cantidad}&${fecha}`;
-})
 $("body").on("click", "#analizarVarios", function () {
-  let [fecha] = antesDeCambiarPagina("datepickerVarios")
+  let [fecha] = devuelveCalendarios("datepickerVarios")
   if (fecha === "")
-    return Swal.fire("Campo de fecha vacío", "Por favor selecciona una fecha para continuar", "error");
-  window.location = `/analisis/${unidadTiempo}&${cantidad}&${rango}&${fecha}`;
+    return Swal.fire("Campo de fecha vacío", "Por favor selecciona una fecha para continuar", "error")
+  antesDeCambiarPagina()
+  location = `/analisis/${agruparPor}&${rango}&${unidadTiempo}=${fecha}`
 })
 $("body").on("click", "#analizarEntre", function () {
-  let [fecha1, fecha2] = antesDeCambiarPagina("calendarioentre1", "calendarioentre2")
+  let [fecha1, fecha2] = devuelveCalendarios("calendarioentre1", "calendarioentre2")
   if (fecha1 === "" || fecha2 === "")
-    return Swal.fire("Campo de fecha vacío", "Por favor selecciona una fecha para continuar", "error");
-  window.location = `/analisis/${unidadTiempo}&${cantidad}&${rango}&${fecha1}&y&${fecha2}`;
+    return Swal.fire("Campo de fecha vacío", "Por favor selecciona una fecha para continuar", "error")
+  antesDeCambiarPagina()
+  location = `/analisis/${agruparPor}&${rango}&${unidadTiempo}=${fecha1}&y&${fecha2}`
 })
 
-function antesDeCambiarPagina(...calendarios) {
+devuelveCalendarios = (...calendarios) => calendarios.map(x => $("#" + x).val().replaceAll("/", "-"))
+
+function antesDeCambiarPagina() {
   unidadTiempo = unidadTiempo.replace("días", "dias")
-  return calendarios.map(x => $("#" + x).find("input").val().replaceAll("/", "-"))
+  agruparPor = agruparPor.replace("días", "dias")
+  agruparPor = "agruparpor=" + agruparPor
+  rango = "rango=" + rango
 }
 
 function esconder() {
-  $("section-volver").each((i, el) => {
+  sectionVolver.each((i, el) => {
     if (el.offsetParent !== null)
       el.esconder();
   });
@@ -174,10 +168,10 @@ function esconder() {
 
 $("body").on("change", "#switchAnimaciones", function () {
   if (this.checked) {
-    $("section-volver").each((i, el) => $(el).addClass("animate__animated"));
-    $("custom-breadcrumbs").each((i, el) => $(el).addClass("animate__animated"));
+    sectionVolver.each((i, el) => $(el).addClass("animate__animated"))
+    $(breadcrumbs).addClass("animate__animated")
   } else {
-    $("section-volver").each((i, el) => $(el).removeClass("animate__animated"));
-    $("custom-breadcrumbs").each((i, el) => $(el).removeClass("animate__animated"));
+    sectionVolver.each((i, el) => $(el).removeClass("animate__animated"))
+    $(breadcrumbs).removeClass("animate__animated")
   }
 })

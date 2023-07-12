@@ -7,12 +7,9 @@ router.route('/').get(async (req, res) => {
 }).patch(async (req, res) => {
   try {
     let { plantilladefault, plantillasorden } = req.body;
-    await mPlantilla.updateOne({ esdefault: true }, { $unset: { esdefault: true }});
-    await mPlantilla.updateOne({ nombreplantilla: plantilladefault }, { esdefault: true });
-
-    for (let i = 0; i < plantillasorden.length; i++) {
-      await mPlantilla.updateOne(plantillasorden[i], { orden: i });
-    }
+    await mPlantilla.updateOne({ esdefault: true }, { $unset: { esdefault: true } });
+    await mPlantilla.updateOne({ nombre: plantilladefault }, { esdefault: true });
+    plantillasorden.forEach(async (el, i) => await mPlantilla.updateOne(el, { orden: i }));
     res.send("Se ha actualizado con exito");
   }
   catch (error) {
@@ -21,16 +18,15 @@ router.route('/').get(async (req, res) => {
 });
 
 router.route('/crear').get(async (req, res) => {
-  const plantillas = await mPlantilla.find().sort("orden");
+  const plantillas = await mPlantilla.find({}, {nombre: 1, _id: 0}).sort("orden");
+  console.log(plantillas)
   res.render('crearplantillas', { plantillas });
 }).post(async (req, res) => {
   try {
     var plantillanueva = new mPlantilla(req.body);
-    const existe = await mPlantilla.findOne({ nombreplantilla: plantillanueva.nombreplantilla });
-    if (existe)
+    if (await mPlantilla.findOne({ nombre: plantillanueva.nombre }))
       return res.status(400).send('La plantilla ya existe');
-    const count = await mPlantilla.count();
-    plantillanueva.orden = count;
+    plantillanueva.orden = await mPlantilla.count()
     plantillanueva.ultimaedicion = req.user?.usuario ?? "usuariodesconocido";
     await plantillanueva.save();
     res.send("plantilla guardada")
@@ -41,8 +37,7 @@ router.route('/crear').get(async (req, res) => {
 
 router.get('/editar/:id', async (req, res) => {
   try {
-    var query = { nombreplantilla: req.params.id }
-    const datosplantilla = await mPlantilla.findOne(query);
+    let datosplantilla = await mPlantilla.findOne({ nombre: req.params.id });
     if (datosplantilla)
       res.render('editarplantillas', { datosplantilla });
     else
@@ -54,7 +49,7 @@ router.get('/editar/:id', async (req, res) => {
 
 router.post('/devuelveplantilla', async (req, res) => {
   try {
-    const datosplantilla = await mPlantilla.findOne(req.body);
+    const datosplantilla = await mPlantilla.findOne(req.body, {productos: 1, _id: 0});
     if (datosplantilla)
       res.send(datosplantilla);
     else
@@ -68,24 +63,21 @@ router.post('/devuelveplantilla', async (req, res) => {
 router.route('/:id').patch(async (req, res) => {
   try {
     req.body.usuario = req.user?.usuario ?? "usuariodesconocido";
-    await mPlantilla.updateOne({ nombreplantilla: req.params.id }, req.body);
+    await mPlantilla.updateOne({ nombre: req.params.id }, req.body);
     res.send("Se ha actualizado con exito");
   } catch (error) {
     res.status(400).send("Error al actualizar la plantilla");
   }
 }).delete(async (req, res) => {
   try {
-    var plantilla = await mPlantilla.findOne({ nombreplantilla: req.params.id });
+    var plantilla = await mPlantilla.findOne({ nombre: req.params.id });
     if (!plantilla)
       return res.status(400).send("La plantilla no existe");
     if (plantilla.esdefault)
       return res.status(400).send("No puedes borrar la plantilla de default");
     await plantilla.deleteOne();
     const plantillas = await mPlantilla.find().sort("orden");
-    plantillas.forEach(async (el, i) => {
-      el.orden = i;
-      await el.save();
-    });
+    plantillas.forEach(async (el, i) => el.updateOne({orden: i}))
 
     res.send("Se ha borrado con exito");
   } catch (error) {

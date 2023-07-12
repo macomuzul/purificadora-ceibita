@@ -8,6 +8,7 @@ const passport = require('passport');
 const morgan = require('morgan');
 const { Settings } = require('luxon');
 const estaAutenticado = require("./security/estaAutenticado");
+
 require("./listenersDB");
 require("./redis");
 
@@ -19,6 +20,15 @@ require("./redis");
 
 // const calcularTodosLosResumenesPorDia = require("./utilities/crearresumenespordia");
 // calcularTodosLosResumenesPorDia()
+
+// const ResumenSemana = require("./models/resumenSemana");
+// const ResumenMes = require("./models/resumenMes");
+// const convertirRegistrosPorSemanaYMes = require("./utilities/crearresumenesporsemanaymes");
+// convertirRegistrosPorSemanaYMes("week", ResumenSemana)
+// convertirRegistrosPorSemanaYMes("month", ResumenMes)
+
+// const convertirPlantillas = require("./utilities/convertirnuevasplantillas");
+// convertirPlantillas()
 
 global.cantidadMaximaPeticionesInvalidas = 3;
 global.tiempoTimeoutLoginSegundos = 900; //15 minutos

@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-_ = require('underscore');
+_ = require('lodash');
 
 const resumenMesSchema = new Schema({
-  _id: String,
+  _id: Date,
+  f: Date,
   prods: {
     
   },

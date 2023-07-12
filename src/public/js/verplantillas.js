@@ -8,6 +8,15 @@ const swalConfirmarYCancelar = Swal.mixin({
   buttonsStyling: false,
 });
 
+window.onload = function () {
+  $(".spanHoras").toggle()
+}
+
+$(".vermas").on("click", function () {
+  $(this).parent().find(".spanHoras").toggle()
+  this.style.rotate = this.style.rotate === "180deg" ? "0deg" : "180deg"
+})
+
 $('.fave').on("click", function () {
   if (click_disabled)
     return;
@@ -27,7 +36,6 @@ $('.fave').on("click", function () {
 });
 
 $(".svgeliminar").on('click', async function () {
-  let tablaborrar = document.getElementById("cuerpotabla");
   let filaborrar = $(this).closest("tr")[0];
   let plantillaborrar = filaborrar.cells[0].innerText;
   let result = await swalConfirmarYCancelar.fire({
@@ -38,21 +46,17 @@ $(".svgeliminar").on('click', async function () {
     cancelButtonText: "No continuar",
   })
   if (result.isConfirmed) {
-    if ($(this).closest("tr").index() === $(".faved").closest("tr").index()) {
-      Swal.fire("Error", "No puedes borrar la plantilla de default", "error");
-      return;
-    }
+    if ($(this).closest("tr").index() === $(".faved").closest("tr").index())
+      return Swal.fire("Error", "No puedes borrar la plantilla de default", "error")
     $.ajax({
       url: `/plantillas/${plantillaborrar}`,
       method: "DELETE",
       contentType: "application/json",
       success: res => {
-        Swal.fire("Se ha borrado la plantilla exitosamente", "La plantilla ya ha sido borrada del sistema", "success");
-        tablaborrar.removeChild(filaborrar);
+        Swal.fire("Se ha borrado la plantilla exitosamente", "La plantilla ya ha sido borrada del sistema", "success")
+        filaborrar.remove()
       },
-      error: res => {
-        Swal.fire("Error", res.responseText, "error");
-      },
+      error: res => Swal.fire("Error", res.responseText, "error")
     });
   }
 })
@@ -85,13 +89,13 @@ $(".svgver").each(function (e, btn) {
         return;
       }
       instance._isFetching = true;
-      let data = `{ "nombreplantilla": "${$(btn).closest("tr").children().first()[0].innerText}" }`
+      let data = `{ "nombre": "${$(btn).closest("tr").children().first()[0].innerText}" }`
       $.ajax({
         url: "/plantillas/devuelveplantilla",
         method: "POST",
         contentType: "application/json",
         data,
-        success: res => {
+        success: (res) => {
           plantilla = `<table>
                   <thead>
                     <tr>
@@ -99,14 +103,9 @@ $(".svgver").each(function (e, btn) {
                       <th class="precio">Precio</th>
                     </tr>
                   </thead>
-                  <tbody>`;
-          for (let i = 0; i < res.productos.length; i++) {
-            plantilla += `<tr>
-                    <td>${res.productos[i].producto}</td>
-                    <td>${res.productos[i].precio.toFixed(2).replace(/[.,]00$/, "")}</td>
-                  </tr>`
-          }
-          plantilla += `</table>`;
+                  <tbody>
+              ${res.productos.map(x => `<tr><td>${x.producto}</td><td>${x.precio.toFixed(2).replace(/[.,]00$/, "")}</td></tr>`).join("")}
+              </table>`
           instance._src = plantilla;
           instance.setContent(plantilla);
           instance.popperInstance.update();
@@ -126,24 +125,16 @@ $(".svgver").each(function (e, btn) {
 $("#guardar").on('click', function () {
   let data = JSON.stringify({
     plantilladefault: $(".faved").closest("tr")[0].cells[0].innerText,
-    plantillasorden: [
-      [...$("#cuerpotabla tr")].map(x => ({ nombreplantilla: x.cells[0].innerText }))
-    ]
+    plantillasorden: [[...$("#cuerpotabla tr")].map(x => ({ nombre: x.cells[0].innerText }))]
   })
   $.ajax({
     url: "/plantillas",
     method: "PATCH",
     contentType: "application/json",
     data,
-    success: res => {
-      Swal.fire("Se ha guardado exitosamente", "Se ha guardado el orden", "success");
-    },
-    error: res => {
-      Swal.fire("Error", res.responseText, "error");
-    },
+    success: res => Swal.fire("Se ha guardado exitosamente", "Se ha guardado el orden", "success"),
+    error: res => Swal.fire("Error", res.responseText, "error")
   });
 });
 
-$(".svgeditar").on('click', function () {
-  window.location = "/plantillas/editar/" + $(this).closest("tr")[0].cells[0].innerText;
-});
+$(".svgeditar").on('click', function () { location = "/plantillas/editar/" + $(this).closest("tr")[0].cells[0].innerText })

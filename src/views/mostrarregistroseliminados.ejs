@@ -53,9 +53,8 @@
     <hr>
     <article name="<%=reg._id%>">
       <contenedor-acciones data-id="check<%=i%>"></contenedor-acciones>
-      <% let fechaDelRegistro = DateTime.fromJSDate(registro._id); let fechaEliminado = DateTime.fromJSDate(borradoEl, { zone: "America/Guatemala" }); %>
-      <h2 class="fechaMover">Fecha del registro: <span-fechas class="fecharegistro"><span slot="fecha"><%= fechaDelRegistro.toFormat("d/M/y") %></span><span slot="fechaStr"><%= fechaDelRegistro.toLocaleString(DateTime.DATE_HUGE).replace(/^\w/, c => c.toUpperCase())  %></span></span-fechas></span></h2>
-      <span>Se eliminó el <span-fechas><span slot="fecha"><%= fechaEliminado.toFormat("d/M/y") %></span><span slot="fechaStr"><%= fechaEliminado.toLocaleString(DateTime.DATE_HUGE) %></span></span-fechas><%= fechaEliminado.toFormat("'a las' H:mm 'con' ss 'segundos'") %></span>
+      <h2 class="fechaMover">Fecha del registro: <span-fechas data-fecha="<%=registro._id%>" data-sinhora="true"></span-fechas></h2>
+      <span>Se eliminó el <span-fechas data-fecha="<%=borradoEl%>"></span-fechas></span>
       <custom-tabs>
         <div class="tabs">
         <% registro.tablas.forEach((_, j) => {%>

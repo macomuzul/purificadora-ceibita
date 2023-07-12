@@ -62,7 +62,7 @@ router.post("/mandarcorreo", async (req, res) => {
 
 router.post("/respaldarGoogleDrive", async (req, res) => {
   try {
-    var fechaiso = DateTime.fromFormat("29-01-2023", "d-M-y").toISODate();
+    var fechaiso = DateTime.fromFormat("29-01-2023", "d-M-y")
     let ventaspordia = await VENTASPORDIA.find().where("fecha").equals(fechaiso);
     const buffer = new stream.PassThrough()
     let i = 0

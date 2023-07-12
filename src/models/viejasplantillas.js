@@ -8,17 +8,15 @@ const productoSchema = new Schema({
     _id: false 
 });
 
-const plantillaSchema = new Schema({
-    nombre: String,
+const viejasPlantillaSchema = new Schema({
+    nombreplantilla: String,
     ultimaedicion: String,
-    fechaultimaedicion: Date,
     orden: Number,
     esdefault: Boolean,
     productos: [productoSchema]
 });
 
 _.each(_.keys(productoSchema.paths), attr => productoSchema.path(attr).required(true));
-_.each(_.keys(plantillaSchema.paths), attr => plantillaSchema.path(attr).required(true));
-plantillaSchema.path("esdefault").required(false);
+viejasPlantillaSchema.path("esdefault").required(false);
 
-module.exports = mongoose.model('plantilla', plantillaSchema);
+module.exports = mongoose.model('viejasplantillas', viejasPlantillaSchema);

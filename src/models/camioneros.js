@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+_ = require('lodash');
+
 const nombreSchema = new Schema({
   nombre: String,
   color: String,

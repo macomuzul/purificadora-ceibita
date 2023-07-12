@@ -4,7 +4,7 @@ const plantilla = require("../models/plantillas");
 const RegistrosEliminados = require("../models/registroseliminados");
 const Camioneros = require("../models/camioneros");
 const { DateTime } = require("luxon");
-const _ = require("underscore");
+const _ = require("lodash");
 
 router.post("/guardar", async (req, res) => {
   try {
@@ -12,8 +12,7 @@ router.post("/guardar", async (req, res) => {
     ventasNuevo.usuario = req.user?.usuario ?? "usuariodesconocido";
     let ventasAnterior = await RegistroVentas.findById(ventasNuevo._id);
     if (ventasAnterior) { //si ya existe un registro anterior lo guarda en la parte de respaldos
-      let registroEliminado = new RegistrosEliminados({ registro: ventasAnterior, borradoEl: new Date() });
-      await registroEliminado.save();
+      await new RegistrosEliminados({ registro: ventasAnterior, borradoEl: new Date() }).save()
       _.extend(ventasAnterior, _.pick(ventasNuevo, ["usuario", "ultimocambio", "tablas"]));
       await ventasAnterior.save();
     }
@@ -42,14 +41,10 @@ router.post("/mover", async (req, res) => {
       if (!sobreescribir)
         return res.send(registroanterior);
 
-      const respaldo = new RegistrosEliminados({ registro: registroanterior, borradoEl: ahora });
-      await respaldo.save();
-      Object.assign(registroanterior, nuevosDatos)
-      await registroanterior.save()
-    } else {
-      let reg = new RegistroVentas({ _id: fecha, ...nuevosDatos });
-      await reg.save();
-    }
+      await new RegistrosEliminados({ registro: registroanterior, borradoEl: ahora }).save()
+      await registroanterior.updateOne(nuevosDatos)
+    } else
+      await new RegistroVentas({ _id: fecha, ...nuevosDatos }).save()
     await registrorecuperado.deleteOne();
     res.send("Se ha restaurado con éxito");
   } catch (e) {
@@ -66,10 +61,10 @@ router.route("/:id").get(async (req, res) => {
     if (datos.length !== 3)
       return res.send("página inválida");
     let fecha = DateTime.fromFormat(id, "d-M-y");
-    let registro = await RegistroVentas.findById(fecha.toISODate());
-    let plantillas = await plantilla.find().sort("orden");
+    let registro = await RegistroVentas.findById(fecha);
+    let plantillas = await plantilla.find({}, { nombre: 1, _id: 0 }).sort("orden");
     let plantillaDefault = await plantilla.findOne({ esdefault: true });
-    let listaCamioneros = await Camioneros.findOne();
+    let listaCamioneros = await Camioneros.findOne({}, { "camioneros.nombre": 1, _id: 0 });
     let camioneros = listaCamioneros.camioneros.map(el => el.nombre);
     let fechastr = fecha.toLocaleString(DateTime.DATE_HUGE);
     res.render("registrarventas", { fecha: fecha.toFormat("d/M/y"), registro: registro, plantillas, plantillaDefault, fechastr, camioneros, DateTime });
@@ -84,9 +79,8 @@ router.route("/:id").get(async (req, res) => {
     if (datos.length !== 3)
       return
     let fecha = DateTime.fromFormat(id, "d-M-y");
-    let registro = await RegistroVentas.findById(fecha.toISODate());
-    let respaldo = new RegistrosEliminados({ registro, borradoEl: new Date() });
-    await respaldo.save();
+    let registro = await RegistroVentas.findById(fecha);
+    await new RegistrosEliminados({ registro, borradoEl: new Date() }).save()
     registro.deleteOne();
     res.send("Exito");
   } catch (e) {

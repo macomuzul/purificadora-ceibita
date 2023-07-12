@@ -4,11 +4,9 @@ let datos = JSON.parse(decodificado);
 // document.body.style.width = "2000px"
 let [, url] = window.location.pathname.split("analisis/")
 let [unidadTiempo] = url.split("&")
-let labelsSet = new Set();
 let datasetVendidos = [], datasetIngresos = [];
-datos.forEach(data => Object.keys(data.prods).map(el => labelsSet.add(el)));
-let labels = [...labelsSet].sort();
-let labelsdesnormalizados = labels.map(label => datos.find(el => el.prods[label]?.p).prods[label].p);
+let labels = [...new Set(datos.flatMap(data => Object.keys(data.prods)))].sort()
+let labelsdesnormalizados = labels.map(label => datos.find(el => el.prods[label])?.prods[label].p);
 const swalConfirmarYCancelar = Swal.mixin({
   customClass: {
     confirmButton: "btn btn-success margenbotonswal",
@@ -22,8 +20,7 @@ let coloresAlfa = devuelveColores(undefined, 1);
 
 function devuelveColores(colores = ["#ff6384", "#136ba7", "#ffce56", "#4bc0c0", "#9966ff", "#f20034", "#1f00c0", "#004d1a", "#1b005a", "#2bb01a"], opacidad) {
   let mayor = Math.max(colores.length, labels.length, datos.length);
-  let arr = [...Array(mayor).keys()];
-  return arr.map(i => {
+  return [...Array(mayor).keys()].map(i => {
     while (i >= colores.length)
       i -= colores.length;
     let color = colores[i];
@@ -78,7 +75,7 @@ inicializarDatasets2(datasetVendidosTotal, 0);
 inicializarDatasets2(datasetIngresosTotal, 1);
 
 function inicializarDatasets(dataset, origen, sonIngresos) {
-  dataset[0].data = origen[0].data.map((_, i) => origen.reduce((acc, curr) => acc + curr.data[i], 0).normalizarPrecio());
+  dataset[0].data = labels.map((_, i) => origen.reduce((acc, curr) => acc + curr.data[i], 0).normalizarPrecio());
   dataset[0].borderColor = colores;
   dataset[0].backgroundColor = coloresAlfa;
   if (unidadTiempo === "semanas")

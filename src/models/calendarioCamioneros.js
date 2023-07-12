@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-_ = require('underscore');
+_ = require('lodash');
 
 const calendarioDiasSchema = new Schema({
   _id: Date,

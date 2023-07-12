@@ -17,12 +17,14 @@ let opcionSwal = false;
 // let desdeElMobil = function () { return /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent) }
 let desdeElMobil = () => (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0))
 
-window.onload = async function () {
-  await colocarValoresConfig();
-  guardarValoresConfig();
-  if (desdeElMobil())
-    await $.getScript('/touch.js');
-};
+$(async function () {
+  setTimeout(async () => {
+    colocarValoresConfig();
+    guardarValoresConfig();
+    if (desdeElMobil())
+      await $.getScript('/touch.js');
+  }, 5);
+})
 
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]') //estos son para el bootstrap
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
@@ -38,11 +40,11 @@ _saleYEntra = () => _tabla().querySelector(".saleYEntra")
 _cantidadSaleYEntra = () => (_pintarColumnas().children.length * 2 + colscomienzo + colsfinal)
 _cantidadProductos = () => _cuerpo().rows.length
 
-document.querySelectorAll(".cuerpo td:not(:nth-last-child(1), :nth-last-child(2))").forEach(el => el.setAttribute("contentEditable", true));
-document.querySelectorAll(".cuerpo td:last-child").forEach(el => el.classList.add("borrarfilas"));
-document.querySelectorAll(".tabs__label").forEach(el => el.classList.add("borrarcamiones"));
+$(".cuerpo td:not(:nth-last-child(1), :nth-last-child(2))").each((_, el) => el.setAttribute("contentEditable", true));
+$(".cuerpo td:last-child").each((_, el) => el.classList.add("borrarfilas"));
+$(".tabs__label").each((_, el) => el.classList.add("borrarcamiones"));
 
-$("body").on("click", ".fecha", () => document.querySelectorAll(".fecha").forEach(el => el.classList.toggle("esconder")));
+$("body").on("click", ".fecha", () => $(".fecha").each((_, el) => el.classList.toggle("esconder")));
 let opcionBorrarFilasYColumnas = -1;
 let opcionBorrarCamiones = -1;
 let opcionExportarPDF = -1;
@@ -133,26 +135,11 @@ $("body").on("click", ".guardarconfig", async () => {
   guardarValoresConfig();
 })
 
-function comprobarQueNoSeaMenosUno(objDOM) {
-  return new Promise((resolve) => {
-    const checkIndex = () => {
-      const parent = $(objDOM)?.parent();
-      if (parent?.index() === -1) {
-        setTimeout(checkIndex, 20); // Delay before checking again (e.g., 100 milliseconds)
-      } else {
-        resolve(parent?.index());
-      }
-    };
-
-    checkIndex();
-  });
-}
-
 async function colocarValoresConfig() {
-  let opcionBorrarFilasYColumnasNuevo = await comprobarQueNoSeaMenosUno('[name="borrarfilasycolumnas"]:checked')
-  let opcionBorrarCamionesNuevo = await comprobarQueNoSeaMenosUno('[name="borrarcamiones"]:checked')
-  let opcionExportarPDFNuevo = await comprobarQueNoSeaMenosUno('[name="exportarpdf"]:checked')
-  let opcionExportarExcelNuevo = await comprobarQueNoSeaMenosUno('[name="exportarexcel"]:checked')
+  let opcionBorrarFilasYColumnasNuevo = $('[name="borrarfilasycolumnas"]:checked').parent().index();
+  let opcionBorrarCamionesNuevo = $('[name="borrarcamiones"]:checked').parent().index();
+  let opcionExportarPDFNuevo = $('[name="exportarpdf"]:checked').parent().index();
+  let opcionExportarExcelNuevo = $('[name="exportarexcel"]:checked').parent().index();
   let switchOrdenarCamionesNuevo = $("#switchreordenarcamiones")[0].checked;
   let switchOrdenarProductosNuevo = $("#switchreordenarproductos")[0].checked;
   let switchOrdenarOrdenAlfabeticoNuevo = $("#switchreordenalfabetico")[0].checked;
@@ -1317,17 +1304,17 @@ $("#exportarpdf")[0].inicializar(() => {
   return html;
 }, `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}`)
 
-async function pidePlantilla(nombreplantilla) {
-  let plantilla = listaplantillas.find(el => el.nombre === nombreplantilla)
+async function pidePlantilla(nombre) {
+  let plantilla = listaplantillas.find(el => el.nombre === nombre)
   if (!plantilla) {
-    let data = JSON.stringify({ nombreplantilla })
+    let data = JSON.stringify({ nombre })
     await $.ajax({
       url: "/plantillas/devuelveplantilla",
       method: "POST",
       contentType: "application/json",
       data,
       success: async function (res) {
-        plantilla = { nombre: nombreplantilla, plantilla: res };
+        plantilla = { nombre, plantilla: res };
         listaplantillas.push(plantilla);
       },
       error: function (res) {

@@ -1,36 +1,64 @@
-var menuseleccionado = null;
-var caretseleccionada = null;
-const dropdowns = document.querySelectorAll(".dropdown");
-window.addEventListener("click", (e) => {
-  menuseleccionado?.classList.remove("menu-open");
-  caretseleccionada?.classList.remove("caret-rotate");
-});
-dropdowns.forEach((dropdown) => {
-  const select = dropdown.querySelector(".select");
-  const caret = dropdown.querySelector(".caret");
-  const menu = dropdown.querySelector(".menu");
-  const options = dropdown.querySelectorAll(".menu li");
-  const selected = dropdown.querySelector(".selected");
-  select.addEventListener("click", e => {
-    if(menuseleccionado === menu && menuseleccionado.classList.contains("menu-open") ) 
-       return;
-    e.stopPropagation()
-    select.classList.toggle("select-clicked");
-    caret.classList.toggle("caret-rotate");
-    menu.classList.toggle("menu-open");
-    menuseleccionado = menu;
-    caretseleccionada = caret;
-  });
+let dropdownSeleccionado = null
+$(window).on("click", e => dropdownSeleccionado?.cambiarEstado(-1));
 
-  options.forEach((option) => {
-    option.addEventListener("click", () => {
-      selected.innerText = option.innerText;
-      select.classList.remove("select-clicked");
-      caret.classList.remove("caret-rotate");
-      menu.classList.remove("menu-open");
-      options.forEach((option) => option.classList.remove("active"));
-      option.classList.add("active");
-      metododropdown(option, menu);
+class customDropdown extends HTMLElement {
+  cosa() {
+    console.log("jeje")
+  }
+  connectedCallback() {
+    let { idmenu, idseleccionado, textopordefecto } = this.dataset
+    this.innerHTML = `<div class="dropdown">
+    <div class="select">
+      <span class="selected" id="${idseleccionado}">${textopordefecto}</span>
+      <div class="caret"></div>
+    </div>
+    <ul class="menu" id="${idmenu}">
+      ${this.innerHTML}
+    </ul>
+  </div>`
+
+    let select = this.querySelector(".select")
+    let caret = this.querySelector(".caret")
+    let menu = this.querySelector(".menu")
+    let opciones = $(this).find(".menu li")
+    let selected = this.querySelector(".selected")
+    let estaActivo = 0
+
+    $(this).on("click", function (e) {
+      e.stopPropagation()
+      if (dropdownSeleccionado !== this)
+        dropdownSeleccionado?.cambiarEstado(-1)
+      this.cambiarEstado(0)
+      dropdownSeleccionado = this
     });
-  });
-});
+
+    let cambiarEstado = (i) => {
+      if (!estaActivo && i === -1) return
+      estaActivo = i === 0 ? true : false
+      cambiarClase(select, "select-clicked", i)
+      cambiarClase(caret, "caret-rotate", i)
+      cambiarClase(menu, "menu-open", i)
+    }
+
+    this.cambiarEstado = cambiarEstado
+
+    let cambiarClase = (el, clase, i) => {
+      if (i === -1)
+        $(el).removeClass(clase);
+      else if (i === 0)
+        $(el).toggleClass(clase);
+    }
+
+    $(this).on("click", "li", e => {
+      let opcion = e.currentTarget
+      e.stopPropagation()
+      selected.innerText = opcion.innerText;
+      cambiarEstado(-1)
+      opciones.each((i, opcion) => $(opcion).removeClass("active"))
+      $(opcion).addClass("active")
+      metododropdown(opcion, menu)
+    })
+  }
+}
+
+customElements.define("custom-dropdown", customDropdown);

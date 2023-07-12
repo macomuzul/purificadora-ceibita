@@ -31,8 +31,13 @@ th {
   width: 250px;
 }
 .ultimaedicion {
-  width: 150px;
+  width: 400px;
 }
+
+td{
+  padding: 10px 15px;
+}
+
 .filasuperior {
   display: flex;
   align-items: center;
@@ -97,8 +102,8 @@ td button:hover {
   opacity: 0.8;
 }
 
-.botonazul{
-    margin-top: 20px;
+table{
+    margin-bottom: 20px;
 }
 
 .custom-switch .custom-control-label::before {

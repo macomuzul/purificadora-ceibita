@@ -115,11 +115,13 @@ router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", validarPagina, async (req
         return res.send("búsqueda inválida");
       if (buscarpor === "fecha") {
         buscarpor = "registro.fecha";
-        let fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y").toISODate();
-        let fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y").toISODate();
+        let fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y");
+        let fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y");
         resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso1).lte(fechaiso2).sort(buscarpor);
       }
       else {
+
+        //TODO ver si estos necesitan toISO
         buscarpor = "borradoEl";
         let fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y", { zone: "America/Guatemala" }).toISO();
         let fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y", { zone: "America/Guatemala" }).endOf("day").toISO();

@@ -83,18 +83,13 @@
                 <span>Restaurar orden de la plantilla</span>
               </div>
             </div> 
-            <div class="dropdown" id="selector">
-              <div class="select">
-                <span class="selected">Selecciona una plantilla aquí (opcional)</span>
-                <div class="caret"></div>
-              </div>
-            <ul class="menu">
-              <% plantillas.forEach(function(plantilla){ %>
-                <li><%= plantilla.nombreplantilla %></li>
-                <% }); %>
-            </ul></div>
+            <custom-dropdown data-idmenu="" data-idseleccionado="selector" data-textopordefecto="Selecciona una plantilla aquí (opcional)">
+              <% plantillas.forEach(plantilla => { %>
+                <li><%= plantilla.nombre %></li>
+              <% }); %>
+            </custom-dropdown>
             <script>
-              let plantillaDefault = "<%= plantillas[0].nombreplantilla %>";
+              let plantillaDefault = "<%= plantillas[0].nombre %>";
             </script>
             <input type="button" value="Añadir producto" id="añadirProducto" class=" añadirproductoyviaje" />
             <input type="button" value="Añadir viaje" id="añadirViaje" class="añadirproductoyviaje" />
@@ -122,8 +117,7 @@
               <% } %>
             </div>
             <% if (registro) { %>
-              <% let fechaUltimaModificacion = DateTime.fromJSDate(registro.ultimocambio, { zone: "America/Guatemala" }); %>
-              <span class="ultima-modificacion">Fecha de última modificación: <span-fechas><span slot="fecha"><%= fechaUltimaModificacion.toFormat("d/M/y") %></span><span slot="fechaStr"><%= fechaUltimaModificacion.toLocaleString(DateTime.DATE_HUGE)  %></span></span-fechas> <span class="ultima-modificacion-fecha"></span> <%= fechaUltimaModificacion.toFormat("'a las' H:mm 'con' ss 'segundos'") %></span>
+              <span class="ultima-modificacion">Fecha de última modificación: <span-fechas data-fecha="<%=registro.ultimocambio%>"></span-fechas></span>
             <% } %>
         </div>
       </article>

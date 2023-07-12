@@ -29,28 +29,16 @@
         <div class="tituloSeccion">Buscar registro de una fecha en específico</div>
         <h3 class="borde">Elige una fecha para buscar</h3>
         <br>
-        <div class="dropdown" id="selector">
-          <div class="select">
-            <span class="selected" id="buscarpor">Buscar por</span>
-            <div class="caret"></div>
-          </div>
-          <ul class="menu">
-            <li>Fecha (calendario)</li>
-            <li>Fecha de eliminación</li>
-          </ul>
-        </div>
-        <div class="dropdown" id="selector">
-          <div class="select">
-            <span class="selected" id="rangofecha">Elige un rango</span>
-            <div class="caret"></div>
-          </div>
-          <ul class="menu" id="fechasdropdown">
-            <li>Fecha igual a</li>
-            <li>Fecha menor o igual a</li>
-            <li>Fecha mayor o igual a</li>
-            <li>Fecha entre</li>
-          </ul>
-        </div>
+        <custom-dropdown data-idmenu="" data-idseleccionado="buscarpor" data-textopordefecto="Buscar por">
+          <li>Fecha (calendario)</li>
+          <li>Fecha de eliminación</li>
+        </custom-dropdown>
+        <custom-dropdown data-idmenu="fechasdropdown" data-idseleccionado="rangofecha" data-textopordefecto="Elige un rango">
+          <li>Fecha igual a</li>
+          <li>Fecha menor o igual a</li>
+          <li>Fecha mayor o igual a</li>
+          <li>Fecha entre</li>
+        </custom-dropdown>
         <div class="contenedorentre">
           <div class="divdatepicker" id="datepickernormal">
             <div class="input-group date" id="datepickerNormal">

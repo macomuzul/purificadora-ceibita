@@ -55,7 +55,7 @@ class customModal extends HTMLElement {
         else
           funcionEnviar();
       });
-    }, 0);
+    }, 5);
   }
 }
 

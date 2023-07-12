@@ -63,7 +63,7 @@ function devuelveTabla(article) {
   $(clon).find("tab-content").each((i, el) => el.style.display = "none")
   html += clon.outerHTML;
   html += "</custom-tabs>";
-  return { html, fecha: $(article).find(`.fecharegistro [slot="fechaStr"]`).text(), fechaDate: parseDate($(article).find(`.fecharegistro [slot="fecha"]`).text()) };
+  return { html, fecha: $(article).find(`.fecharegistro .spanFechaStr`).text(), fechaDate: parseDate($(article).find(`.fecharegistro .spanFecha`).text()) };
 }
 
 $("body").on("click", ".btnrestaurar", async function (e) {
@@ -235,7 +235,7 @@ $("body").on("click", ".restaurarsoloestatabla", async function (e) {
   let registro = this.closest("article");
   let tabla = [...$(registro).find("tab-content")].filter(x => x.style.display === "initial")[0];
   let numTabla = $(tabla).index();
-  let fecha = $(registro).find(`.fecharegistro [slot="fechaStr"]`).text();
+  let fecha = $(registro).find(`.fecharegistro .spanFechaStr`).text();
   let result = await swalConfirmarYCancelar.fire({
     title: "Estás seguro que deseas restaurar esta tabla?",
     icon: "warning",

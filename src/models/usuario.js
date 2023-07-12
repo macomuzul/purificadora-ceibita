@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-_ = require('underscore');
+_ = require('lodash');
 
 const usuarioSchema = new Schema({
   usuario: String,

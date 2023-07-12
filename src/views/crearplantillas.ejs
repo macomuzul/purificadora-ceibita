@@ -42,18 +42,11 @@
       </div>
       <div class="contenedorsuperior">
         <label for="selector" class="label">Crear plantilla en base a otra plantilla</label>
-        <div class="dropdown" id="selector">
-          <div class="select">
-            <span class="selected">Selecciona una plantilla aquí (opcional)</span>
-            <div class="caret"></div>
-          </div>
-          <ul class="menu">
-            <% plantillas.forEach(function(plantilla){ %>
-              <li><%= plantilla.nombreplantilla %></li>
-              <% }); %>
-          </ul>
-
-        </div>
+        <custom-dropdown data-idmenu="" data-idseleccionado="seleccionado" data-textopordefecto="Selecciona una plantilla aquí (opcional)">
+          <% plantillas.forEach(plantilla => { %>
+            <li><%= plantilla.nombre %></li>
+          <% }); %>
+        </custom-dropdown>
       </div>
       <br>
       <div class="contenedormedio">

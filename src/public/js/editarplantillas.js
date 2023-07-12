@@ -31,7 +31,7 @@ $("body").on('click', "#guardar", async function () {
   if (!await validarPlantillas())
     return
   let data = JSON.stringify({
-    nombreplantilla: $("#nombreplantilla").val().trim(),
+    nombre: $("#nombreplantilla").val().trim(),
     productos: [...$("tbody tr")].map(fila => ({
       producto: fila.cells[0].innerText.trim(),
       precio: parseFloat(fila.cells[1].innerText.trim())
