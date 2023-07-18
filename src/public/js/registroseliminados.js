@@ -54,32 +54,24 @@ $("body").on("click", "#btnbuscar", () => {
     return mostrarError("Campo de rango vacío", "Por favor selecciona un campo en la sección de rango para continuar")
   if (rango === "Fecha entre") {
     if (fecha1 === "")
-      return mostrarError("Campo de fecha vacío", "No se ha seleccionado la fecha para el calendario de arriba")
+      return mostrarError("Campo de fecha vacío", "No se ha seleccionado ninguna fecha para el primer calendario")
     if (fecha2 === "")
-      return mostrarError("Campo de fecha vacío", "No se ha seleccionado la fecha para el calendario de abajo")
+      return mostrarError("Campo de fecha vacío", "No se ha seleccionado ninguna fecha para el segundo calendario")
   } else {
     if (fecha === "")
-      return mostrarError("Campo de fecha vacío", "No se ha seleccionado la fecha en el calendario")
+      return mostrarError("Campo de fecha vacío", "No se ha seleccionado ninguna fecha en el calendario")
   }
-
-  if (buscarpor === "Fecha (calendario)") buscarpor = "fecha"
-  else if (buscarpor === "Fecha de eliminación") buscarpor = "fechaeliminacion"
-
+  buscar = {
+    "Fecha (calendario)": "fecha",
+    "Fecha de eliminación": "fechaeliminacion"
+  }
   rangos = {
-    "Fecha igual a": igual,
+    "Fecha igual a": "igual",
     "Fecha menor o igual a": "menor",
     "Fecha mayor o igual a": "mayor",
     "Fecha entre": "entre"
   }
-
   rango = rangos[rango]
-
-  let url = `${urlPag}${buscarpor}&${rango}&`;
-  if (rango === "entre")
-    url += `${fecha1}&y&${fecha2}&`;
-  else
-    url += `${fecha}&`;
-
-  url += "pag=1";
-  location = url;
+  buscarpor = buscar[buscarpor]
+  location = `${urlPag}${buscarpor}&${rango}&${rango === "entre" ? `${fecha1}y${fecha2}` : fecha}&pag=1`;
 })

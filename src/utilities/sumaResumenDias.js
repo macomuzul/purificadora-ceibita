@@ -18,7 +18,7 @@ function sumaResumenDias(venta) {
     vt += x.v
     it += x.i
   })
-  it = it.normalizarPrecio()
+  it = parseFloat(it.normalizarPrecio())
   return { prods, vt, it }
 }
 

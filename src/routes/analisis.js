@@ -2,63 +2,84 @@ const router = require('express').Router();
 const ResumenDia = require("../models/resumenDia");
 const ResumenSemana = require("../models/resumenSemana");
 const ResumenMes = require("../models/resumenMes");
+const ResumenAño = require("../models/resumenAño");
 const { DateTime } = require("luxon");
 const devuelveValoresSumados = require("../utilities/devuelveValoresSumados")
 
 String.prototype.normalizarPrecio = function () { return parseFloat(this).toFixed(2).replace(/[.,]00$/, "") }
 Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }
-router.get('/', async (req, res) => {
-  // const plantillas = await mPlantilla.find().sort("orden");
-  res.render('analisis');
-});
+router.get('/', async (req, res) => res.render('analisis'))
 
-async function actualizarSiHuboCambios(fechas, tiempo) {
-  const promises = []
-  for (const fecha of fechas) {
-    let { c, f, _id } = fecha
-    if (c) {
-      let dias
-      if (tiempo === "week")
-        dias = await ResumenDia.where("_id").gte(_id).lte(f)
-      else if (tiempo === "month")
-        dias = await ResumenDia.where("_id").gte(_id).lte(f)
-      else if (tiempo === "year")
-        dias = await ResumenMes.where("_id").gte(_id).lte(f)
+async function actualizarSiHuboCambiosSemanaOMes(tiempo) {
+  let resumenSemanaOMes
+  if (tiempo === "week")
+    resumenSemanaOMes = await ResumenSemana.find({ c: true })
+  else if (tiempo === "month")
+    resumenSemanaOMes = await ResumenMes.find({ c: true })
 
-      let { prods, vt, it } = devuelveValoresSumados(dias)
-      promises.push(fecha.updateOne({ prods, vt, it, c: false }))
-    }
+  if (resumenSemanaOMes.length > 0) {
+    let grupodias = resumenSemanaOMes.map(x => {
+      const fecha = DateTime.fromJSDate(x);
+      return fecha.until(fecha.endOf(tiempo)).splitBy({ days: 1 }).map(x => x.start.toISO());
+    });
+
+    let resumenDias = await ResumenDia.find({ _id: { $in: grupodias } })
+    let agrupados = _.groupBy(resumenDias, x => DateTime.fromJSDate(new Date(x._id)).startOf(tiempo).toISO())
+    resumenSemanaOMes.forEach(async x => await x.updateOne({ ...devuelveValoresSumados(agrupados[x._id.toISOString()]), c: false }))
+    //TODO despues mejorarlo para hacerlo con bulkwrite
+    //ResumenSemana.bulkWrite()
   }
-  await Promise.all(promises)
+}
+async function actualizarSiHuboCambiosAño() {
+  let resumenAño = await ResumenAño.find({ c: true })
+  if (resumenAño.length > 0) {
+    await actualizarSiHuboCambiosSemanaOMes("month")
+    let grupoMeses = resumenAño.map(x => {
+      const fecha = DateTime.fromJSDate(x);
+      return fecha.until(fecha.endOf("year")).splitBy({ months: 1 }).map(x => x.start.toISO());
+    });
+    let resumenMeses = await ResumenMes.find({ _id: { $in: grupoMeses } })
+    let agrupados = _.groupBy(resumenMeses, x => DateTime.fromJSDate(new Date(x._id)).startOf("year").toISO())
+    resumenAño.forEach(async x => await x.updateOne({ ...devuelveValoresSumados(agrupados[x._id.toISOString()]), c: false }))
+    //TODO despues mejorarlo para hacerlo con bulkwrite
+    //ResumenSemana.bulkWrite()
+  }
 }
 
-devuelveDiasSueltosSumados = arr => arr.length > 0 ? [{ _id: arr[0]._id, ...devuelveValoresSumados(arr), f: arr.slice(-1)._id }] : []
+let BuscaYDevuelveDiasSueltos = async (inicio, fin) => devuelveObjDiasSueltos(await ResumenDia.where("_id").gte(inicio).lte(fin), inicio, fin)
+let devuelveObjDiasSueltos = (arr, _id, f) => arr.length > 0 ? [{ _id, f, ...devuelveValoresSumados(arr) }] : []
 
 async function rangoMayor(fecha, tiempo, resumen) {
-  let fin = fecha.endOf(tiempo)
-  let datosSueltos = [], fechas = []
-  if (fecha.valueOf() === fecha.startOf(tiempo).valueOf())
-    fechas = await resumen.where("_id").gte(fecha)
-  else {
-    let dias = await ResumenDia.where("_id").gte(fecha).lte(fin).sort("_id")
-    datosSueltos = devuelveDiasSueltosSumados(dias)
-    fechas = await resumen.where("_id").gt(fin)
+  let diasSueltos = []
+  if (!fecha.equals(fecha.startOf(tiempo))) {
+    let fin = fecha.endOf(tiempo)
+    diasSueltos = await BuscaYDevuelveDiasSueltos(fecha, fin)
+    fecha = fin.plus(1)
   }
-  await actualizarSiHuboCambios(fechas, tiempo)
-  return [...datosSueltos, ...fechas]
+  return [...diasSueltos, ...await resumen.where("_id").gte(fecha).sort("_id")]
 }
 async function rangoMenor(fecha, tiempo, resumen) {
-  let inicio = fecha.startOf(tiempo)
-  let datosSueltos = [], fechas = []
-  if (fecha.valueOf() === fecha.endOf(tiempo).startOf("day").valueOf())
-    fechas = await resumen.where("_id").lte(fecha)
-  else {
-    let dias = await ResumenDia.where("_id").gte(inicio).lte(fecha).sort("_id")
-    datosSueltos = devuelveDiasSueltosSumados(dias)
-    fechas = await resumen.where("_id").lt(inicio)
+  let diasSueltos = []
+  if (!fecha.equals(fecha.endOf(tiempo).startOf("day"))) {
+    let inicio = fecha.startOf(tiempo)
+    diasSueltos = await BuscaYDevuelveDiasSueltos(inicio, fecha)
+    fecha = inicio.minus(1)
   }
-  await actualizarSiHuboCambios(fechas, tiempo)
-  return [...datosSueltos, ...fechas]
+  return [...await resumen.where("_id").lte(fecha).sort("_id"), ...diasSueltos]
+}
+async function rangoEntre(fecha1, fecha2, tiempo, resumen) {
+  let diasAlPrincipio = [], diasAlFinal = []
+  if (!fecha1.equals(fecha1.startOf(tiempo))) {
+    let fin = fecha1.endOf(tiempo)
+    diasAlPrincipio = await BuscaYDevuelveDiasSueltos(fecha1, fin)
+    fecha1 = fin.plus(1)
+  }
+  if (!fecha2.equals(fecha2.endOf(tiempo).startOf("day"))) {
+    let inicio = fecha2.startOf(tiempo)
+    diasAlFinal = await BuscaYDevuelveDiasSueltos(inicio, fecha2)
+    fecha2 = inicio.minus(1)
+  }
+  return [...diasAlPrincipio, ...await resumen.where("_id").gte(fecha1).lte(fecha2).sort("_id"), ...diasAlFinal]
 }
 
 router.get("/:agruparPor&:rango&:fecha", async (req, res) => {
@@ -72,36 +93,114 @@ router.get("/:agruparPor&:rango&:fecha", async (req, res) => {
       return res.send("búsqueda inválida");
     if (!["dias", "semanas", "meses", "años"].includes(agruparPor))
       return res.send("búsqueda inválida");
-    if (!["mayor", "menor", "libre"].includes(rango))
+    if (!["mayor", "menor", "libre", "entre"].includes(rango))
       return res.send("búsqueda inválida");
-    let fechas
+
+    let fechas, fecha1, fecha2
     if (rango === "libre")
       fechas = fecha.split(",").map(x => DateTime.fromFormat(x, "d-M-y"))
+    else if (rango === "entre")
+      [fecha1, fecha2] = fecha.split("y").map(x => DateTime.fromFormat(x, "d-M-y"))
     else
       fecha = DateTime.fromFormat(fecha, "d-M-y")
     let datos;
+    if (["semanas", "meses"].includes(agruparPor))
+      await actualizarSiHuboCambiosSemanaOMes(agruparPor === "semanas" ? "week" : "month")
+    if (agruparPor === "años")
+      await actualizarSiHuboCambiosAño()
     if (agruparPor === "dias") {
       if (rango === "mayor")
-        datos = await ResumenDia.where("_id").gte(fecha);
+        datos = await ResumenDia.where("_id").gte(fecha).sort("_id")
       else if (rango === "menor")
-        datos = await ResumenDia.where("_id").lte(fecha);
+        datos = await ResumenDia.where("_id").lte(fecha).sort("_id")
+      else if (rango === "igual")
+        datos = await ResumenDia.find({ _id: { $in: fechas } }).sort("_id")
       else
-        datos = await ResumenDia.find({ _id: { $in: fechas } })
-    }
-    if (agruparPor === "semanas") {
+        datos = await ResumenDia.where("_id").gte(fecha1).lte(fecha2).sort("_id")
+    } else if (agruparPor === "semanas") {
       if (rango === "mayor")
         datos = await rangoMayor(fecha, "week", ResumenSemana)
       else if (rango === "menor")
         datos = await rangoMenor(fecha, "week", ResumenSemana)
-      else
+      else if (rango === "igual")
         datos = await agrupar(fechas, "week")
-    } if (agruparPor === "meses") {
+      else
+        datos = await rangoEntre(fecha1, fecha2, "week", ResumenSemana)
+    } else if (agruparPor === "meses") {
       if (rango === "mayor")
         datos = await rangoMayor(fecha, "month", ResumenMes)
       else if (rango === "menor")
         datos = await rangoMenor(fecha, "month", ResumenMes)
-      else
+      else if (rango === "igual")
         datos = await agrupar(fechas, "month")
+      else
+        datos = await rangoEntre(fecha1, fecha2, "month", ResumenMes)
+    } else if (agruparPor === "años") {
+      if (rango === "mayor") {
+        let inicio = fecha.startOf("day")
+        let diasSueltos = [], mesesSueltos = [], diasYMesesSueltos = []
+        if (!fecha.equals(fecha.startOf("month"))) {
+          let finMes = fecha.endOf("month")
+          diasSueltos = await ResumenDia.where("_id").gte(fecha).lte(finMes)
+          fecha = finMes.plus(1)
+        }
+        if (!fecha.equals(fecha.startOf("year"))) {
+          let finAño = fecha.endOf("year")
+          mesesSueltos = await ResumenMes.where("_id").gte(fecha).lte(finAño)
+          fecha = finAño.plus(1)
+        }
+        if (diasSueltos.length > 0 || mesesSueltos.length > 0)
+          diasYMesesSueltos = devuelveObjDiasSueltos([...diasSueltos, ...mesesSueltos], inicio, fecha)
+        datos = [...diasYMesesSueltos, ...await ResumenAño.where("_id").gte(fecha).sort("_id")]
+      }
+      else if (rango === "menor") {
+        let fin = fecha.startOf("day")
+        let diasSueltos = [], mesesSueltos = [], diasYMesesSueltos = []
+        if (!fecha.equals(fecha.endOf("month"))) {
+          let inicioMes = fecha.startOf("month")
+          diasSueltos = await ResumenDia.where("_id").gte(inicioMes).lte(fecha)
+          fecha = inicioMes.minus(1)
+        }
+        if (!fecha.equals(fecha.endOf("year"))) {
+          let inicioAño = fecha.startOf("year")
+          mesesSueltos = await ResumenMes.where("_id").gte(inicioAño).lte(fecha)
+          fecha = inicioAño.minus(1)
+        }
+        if (diasSueltos.length > 0 || mesesSueltos.length > 0)
+          diasYMesesSueltos = devuelveObjDiasSueltos([...diasSueltos, ...mesesSueltos], fecha, fin)
+        datos = [...await ResumenAño.where("_id").lte(fecha).sort("_id"), ...diasYMesesSueltos]
+      }
+      else if (rango === "igual")
+        datos = await agrupar(fechas, "month")
+      else {
+        let inicio = fecha1.startOf("day"), fin = fecha2.startOf("day")
+        let diasSueltos1 = [], mesesSueltos1 = [], diasSueltos2 = [], mesesSueltos2 = [], diasYMesesSueltosInicio = [], diasYMesesSueltosFin = []
+        if (!fecha1.equals(fecha1.startOf("month"))) {
+          let finMes = fecha1.endOf("month")
+          diasSueltos1 = await ResumenDia.where("_id").gte(fecha1).lte(finMes)
+          fecha1 = finMes.plus(1)
+        }
+        if (!fecha1.equals(fecha1.startOf("year"))) {
+          let finAño = fecha1.endOf("year")
+          mesesSueltos1 = await ResumenMes.where("_id").gte(fecha1).lte(finAño)
+          fecha1 = finAño.plus(1)
+        }
+        if (diasSueltos1.length > 0 || mesesSueltos1.length > 0)
+          diasYMesesSueltosInicio = devuelveObjDiasSueltos([...diasSueltos1, ...mesesSueltos1], inicio, fecha1)
+        if (!fecha2.equals(fecha2.endOf("month"))) {
+          let inicioMes = fecha2.startOf("month")
+          diasSueltos2 = await ResumenDia.where("_id").gte(inicioMes).lte(fecha2)
+          fecha2 = inicioMes.minus(1)
+        }
+        if (!fecha2.equals(fecha2.endOf("year"))) {
+          let inicioAño = fecha2.startOf("year")
+          mesesSueltos2 = await ResumenMes.where("_id").gte(inicioAño).lte(fecha2)
+          fecha2 = inicioAño.minus(1)
+        }
+        if (diasSueltos2.length > 0 || mesesSueltos2.length > 0)
+          diasYMesesSueltosFin = devuelveObjDiasSueltos([...diasSueltos2, ...mesesSueltos2], fecha2, fin)
+        datos = [...diasYMesesSueltosInicio, ...await ResumenAño.where("_id").lte(fecha).sort("_id"), ...diasYMesesSueltosFin]
+      }
     }
     // res.send(datos)
     datos = JSON.stringify(datos)
@@ -114,68 +213,10 @@ router.get("/:agruparPor&:rango&:fecha", async (req, res) => {
 
 
 async function agrupar(fechas, tiempo) {
-  let fechasEncontradas = await fechaInicio.find({ _id: { $in: object[fechas] } }, { c: 0 })
-  let agrupados = _.groupBy(fechasEncontradas, x => DateTime.fromJSDate(x._id).startOf(tiempo).toISO())
-  let dias = Object.entries(agrupados).map(([k, v]) => ({ _id: DateTime.fromISO(k).startOf("tiempo"), ...devuelveValoresSumados(v), f: DateTime.fromISO(k).endOf("tiempo") }))
+  let fechasEncontradas = await ResumenDia.find({ _id: { $in: fechas } })
+  let agrupados = _.groupBy(fechasEncontradas, x => DateTime.fromJSDate(new Date(x._id)).startOf(tiempo).toISO())
+  let dias = Object.entries(agrupados).map(([k, v]) => ({ _id: DateTime.fromISO(k).startOf(tiempo), ...devuelveValoresSumados(v), f: DateTime.fromISO(k).endOf(tiempo) }))
   return dias.sort((a, b) => a - b)
 }
-
-
-router.get("/:unidadTiempo&:cantidad&:rango&:fecha1&y&fecha2", async (req, res) => {
-});
-
-// router.get("/:unidadTiempo&:cantidad&:rango&:fecha", async (req, res) => {
-//   let { unidadTiempo, cantidad, rango, fecha } = req.params;
-//   if (!["dias", "semanas", "meses", "años"].includes(unidadTiempo))
-//     return res.send("búsqueda inválida");
-//   if (cantidad !== "uno")
-//     return res.send("búsqueda inválida");
-//   if (!["mayor", "menor"].includes(rango))
-//     return res.send("rango inválido");
-//   let fechaISO = DateTime.fromFormat(fecha, "d-M-y").toISODate();
-//   let datos;
-//   if (unidadTiempo === "dias") {
-//     datos = await ResumenDia.find().where("_id").gte(fechaISO);
-//   }
-//   if (unidadTiempo === "semanas") {
-//     let fechaInicio = DateTime.fromISO(fechaISO).startOf("week");
-//     let fechaFin = fechaInicio.endOf("week");
-//     datos = await ResumenDia.where("_id").gte(fechaInicio).lte(fechaFin);
-//   } if (unidadTiempo === "meses") {
-//     let fechaInicio = DateTime.fromISO(fechaISO).startOf("month");
-//     let fechaFin = fechaInicio.endOf("month");
-//     datos = await ResumenDia.where("_id").gte(fechaInicio).lte(fechaFin);
-//   }
-//   // res.send(datos)
-//   datos = JSON.stringify(datos)
-//   res.render("mostraranalisis", { datos })
-// });
-
-// router.get("/:unidadTiempo&:cantidad&:fecha", async (req, res) => {
-//   let { unidadTiempo, cantidad, fecha } = req.params;
-//   if (!["dias", "semanas", "meses", "años"].includes(unidadTiempo))
-//     return res.send("búsqueda inválida");
-//   if (cantidad !== "uno")
-//     return res.send("búsqueda inválida");
-//   let fechaISO = DateTime.fromFormat(fecha, "d-M-y").toISODate();
-//   let datos;
-//   if (unidadTiempo === "dias") {
-//     datos = await ResumenDia.findById(fechaISO);
-//   }
-//   if (unidadTiempo === "semanas") {
-//     let fechaInicio = DateTime.fromISO(fechaISO).startOf("week");
-//     let fechaFin = fechaInicio.endOf("week");
-//     datos = await ResumenDia.where("_id").gte(fechaInicio).lte(fechaFin);
-//   } if (unidadTiempo === "meses") {
-//     let fechaInicio = DateTime.fromISO(fechaISO).startOf("month");
-//     let fechaFin = fechaInicio.endOf("month");
-//     datos = await ResumenDia.where("_id").gte(fechaInicio).lte(fechaFin);
-//   }
-//   // res.send(datos)
-//   datos = JSON.stringify(datos)
-//   res.render("mostraranalisis", { datos })
-// });
-
-
 
 module.exports = router;

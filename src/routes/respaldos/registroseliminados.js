@@ -89,16 +89,13 @@ async function masRecientesYMasAntiguos(req, res, opcion) {
   try {
     let resultado = await devuelveRegistroRedis(req.url);
     if (!resultado) {
+      resultado = await RegistrosEliminados.find()
       if (opcion === 1)
-        resultado = (await RegistrosEliminados.find()).reverse();
-      else
-        resultado = await RegistrosEliminados.find();
+        resultado.reverse();
       await guardarRegistroRedis(req.url, resultado);
     }
-    else {
-      resultado = JSON.parse(resultado)
-      resultado = resultado.map(el => new RegistrosEliminados(el));
-    }
+    else
+      resultado = JSON.parse(resultado).map(el => new RegistrosEliminados(el));
     mostrarPagina(resultado, req, res);
   } catch (error) {
     res.send("búsqueda inválida");
@@ -106,74 +103,43 @@ async function masRecientesYMasAntiguos(req, res, opcion) {
   }
 }
 
-router.get("/:buscarpor&entre&:fecha1&y&:fecha2&:pag", validarPagina, async (req, res) => {
+router.get("/:buscarpor&:rango&:fechaP&:pag", validarPagina, async (req, res) => {
   try {
     let resultado = await devuelveRegistroRedis(req.url);
     if (!resultado) {
-      let { buscarpor, fecha1, fecha2 } = req.params;
-      if (buscarpor !== "fecha" && buscarpor !== "fechaeliminacion")
+      let { buscarpor, rango, fechaP } = req.params;
+      let [fecha, fecha2] = fechaP.split("y")
+      if (!["fecha", "fechaeliminacion"].includes(buscarpor))
         return res.send("búsqueda inválida");
-      if (buscarpor === "fecha") {
-        buscarpor = "registro.fecha";
-        let fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y");
-        let fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y");
-        resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso1).lte(fechaiso2).sort(buscarpor);
-      }
-      else {
-
-        //TODO ver si estos necesitan toISO
-        buscarpor = "borradoEl";
-        let fechaiso1 = DateTime.fromFormat(fecha1, "d-M-y", { zone: "America/Guatemala" }).toISO();
-        let fechaiso2 = DateTime.fromFormat(fecha2, "d-M-y", { zone: "America/Guatemala" }).endOf("day").toISO();
-        resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso1).lte(fechaiso2).sort(buscarpor);
-      }
-      await guardarRegistroRedis(req.url, resultado);
-    }
-    else {
-      resultado = JSON.parse(resultado)
-      resultado = resultado.map(el => new RegistrosEliminados(el));
-    }
-    mostrarPagina(resultado, req, res);
-  } catch (error) {
-    res.send("búsqueda inválida");
-  }
-});
-
-
-router.get("/:buscarpor&:rango&:fecha&:pag", validarPagina, async (req, res) => {
-  try {
-    let resultado = await devuelveRegistroRedis(req.url);
-    if (!resultado) {
-      let { buscarpor, rango, fecha } = req.params;
-      if (buscarpor !== "fecha" && buscarpor !== "fechaeliminacion")
-        return res.send("búsqueda inválida");
-      if (rango !== "igual" && rango !== "mayor" && rango !== "menor")
+      if (!["igual", "mayor", "menor", "entre"].includes(rango))
         return res.send("rango inválido");
       if (buscarpor === "fecha") {
-        let fechaiso = DateTime.fromFormat(fecha, "d-M-y").toISODate();
-        buscarpor = "registro.fecha";
+        let fechaiso = fecha.aFechaUTC()
+        buscarpor = "registro._id"
         if (rango === "igual")
-          resultado = await RegistrosEliminados.where(buscarpor).equals(fechaiso).sort(buscarpor);
+          resultado = await RegistrosEliminados.where(buscarpor).equals(fechaiso).sort(buscarpor)
         else if (rango === "menor")
-          resultado = await RegistrosEliminados.where(buscarpor).lte(fechaiso).sort(buscarpor);
+          resultado = (await RegistrosEliminados.where(buscarpor).lte(fechaiso).sort(buscarpor)).reverse()
+        else if (rango === "mayor")
+          resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).sort(buscarpor)
         else
-          resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).sort(buscarpor);
+          resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).lte(fecha2.aFechaUTC()).sort(buscarpor)
       } else {
-        let fechaiso = DateTime.fromFormat(fecha, "d-M-y", { zone: "America/Guatemala" });
+        let fechaiso = fecha.aFechaGuatemala()
         buscarpor = "borradoEl";
         if (rango === "igual")
-          resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).lte(fechaiso.endOf("day")).sort(buscarpor);
+          resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).lte(fechaiso.endOf("day")).sort(buscarpor)
         else if (rango === "menor")
-          resultado = await RegistrosEliminados.where(buscarpor).lte(fechaiso.endOf("day")).sort(buscarpor);
+          resultado = (await RegistrosEliminados.where(buscarpor).lte(fechaiso.endOf("day")).sort(buscarpor)).reverse()
+        else if (rango === "mayor")
+          resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).sort(buscarpor)
         else
-          resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).sort(buscarpor);
+          resultado = await RegistrosEliminados.where(buscarpor).gte(fechaiso).lte(fecha2.aFechaGuatemala().endOf("day")).sort(buscarpor)
       }
       await guardarRegistroRedis(req.url, resultado);
     }
-    else {
-      resultado = JSON.parse(resultado)
-      resultado = resultado.map(el => new RegistrosEliminados(el));
-    }
+    else
+      resultado = JSON.parse(resultado).map(el => new RegistrosEliminados(el));
     mostrarPagina(resultado, req, res);
   } catch (error) {
     res.send("búsqueda inválida");
@@ -194,5 +160,8 @@ function mostrarPagina(resultado, req, res) {
   let datostablas = resultado.slice(limite * (pagina - 1), limite * pagina);
   res.render("mostrarregistroseliminados", { datostablas, pagina, totalPaginas, DateTime });
 }
+
+String.prototype.aFechaUTC = function () { return DateTime.fromFormat(this, "d-M-y") }
+String.prototype.aFechaGuatemala = function () { return DateTime.fromFormat(this, "d-M-y", { zone: "America/Guatemala" }) }
 
 module.exports = router;

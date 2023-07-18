@@ -30,6 +30,7 @@ body {
 
 label {
   font-size: 18px;
+  white-space: nowrap;
 }
 
 .dropdown-toggle {
@@ -125,7 +126,7 @@ article {
 .nombreCamionero {
   grid-column: 2 / span 15;
   grid-row: 2 / span 1;
-  align-self: center;
+  align-self: flex-start;
 }
 
 .accordion-body {
@@ -265,7 +266,7 @@ custom-graficos {
 .convertira {
   font-size: 17px;
   width: 210px;
-  height: 52px;
+  height: 58px;
   padding: 15px;
   position: absolute;
   left: 50%;

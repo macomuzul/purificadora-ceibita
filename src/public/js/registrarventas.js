@@ -1673,7 +1673,7 @@ function moverRegistro(anterior, fecha, sobreescribir) {
         return
       }
       let html = `<custom-tabs><div class="tabs">
-      ${[...Array(res.tablas.length)].map((_, i) => `<custom-label name="swal" data-id="swal${i}">Camión ${i + 1}</custom-label>`).join('')}
+      ${res.tablas.map((_, i) => `<custom-label name="swal" data-id="swal${i}">Camión ${i + 1}</custom-label>`).join('')}
       </div><div class="content">`
 
       res.tablas.forEach(({ productos, totalvendidos, totalingresos }) => {

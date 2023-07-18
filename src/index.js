@@ -27,6 +27,9 @@ require("./redis");
 // convertirRegistrosPorSemanaYMes("week", ResumenSemana)
 // convertirRegistrosPorSemanaYMes("month", ResumenMes)
 
+// const calcularTodosLosResumenesPorAño = require("./utilities/crearresumenesporaño");
+// calcularTodosLosResumenesPorAño()
+
 // const convertirPlantillas = require("./utilities/convertirnuevasplantillas");
 // convertirPlantillas()
 
