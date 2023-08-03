@@ -8,6 +8,7 @@ const passport = require('passport');
 const morgan = require('morgan');
 const { Settings } = require('luxon');
 const estaAutenticado = require("./security/estaAutenticado");
+const pruebasvalidaciones = require('./models/pruebasvalidaciones');
 
 require("./listenersDB");
 require("./redis");
@@ -33,6 +34,17 @@ require("./redis");
 // const convertirPlantillas = require("./utilities/convertirnuevasplantillas");
 // convertirPlantillas()
 
+
+
+async function crearPruebasValidacion(){
+  try {
+    pruebasvalidaciones.create({nombre: "masmfnvcnv",precio: 1200, viajes: [2,5,5,51,1,4]})
+  } catch (error) {
+    console.log(error)
+  }
+}
+crearPruebasValidacion()
+
 global.cantidadMaximaPeticionesInvalidas = 3;
 global.tiempoTimeoutLoginSegundos = 900; //15 minutos
 Settings.defaultLocale = "es";
@@ -53,8 +65,8 @@ app.set('view engine', 'ejs');
 
 // middlewares
 app.use(morgan('dev'));
-app.use(express.urlencoded({extended: false}));
-app.use(express.json()); 
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(express.static(path.join(__dirname, "public/css")));
 app.use(express.static(path.join(__dirname, "public/images")));
 app.use(express.static(path.join(__dirname, "public/js")));
@@ -65,15 +77,10 @@ app.use(express.static(path.join(__dirname, "public/components")));
 app.use(express.static(path.join(__dirname, "../cypress/utilidades")));
 app.use(express.static(path.join(__dirname, "../plugins")));
 
-app.use(session({
-  secret: process.env.SECRET_SESSION,
-  resave: false,
-  saveUninitialized: false
-}));
-app.use(flash());
-app.use(passport.initialize());
-app.use(passport.session());
-
+app.use(session({ secret: process.env.SECRET_SESSION, resave: false, saveUninitialized: false }));
+app.use(flash())
+app.use(passport.initialize())
+app.use(passport.session())
 
 // routes
 app.use('/', require('./routes/index'));
@@ -86,9 +93,7 @@ app.use('/configuraciones', require('./routes/configuraciones'));
 app.use('/analisis', require('./routes/analisis'));
 app.use('/extras', require('./routes/extras'));
 
-
-
 // Starting the server
 app.listen(app.get('port'), () => {
   console.log('servidor funcionando en el puerto: ', app.get('port'));
-});
+})

@@ -1,4 +1,4 @@
-<html>
+<!DOCTYPE html>
 
 <head>
   <title>Registrar ventas</title>
@@ -29,8 +29,8 @@
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script> -->
   <script>
     let camioneros = [];
-    "<% camioneros.forEach(camionero => { %>"
-      camioneros.push("<%= camionero %>")
+    "<% camioneros?.forEach(camionero => { %>"
+      camioneros?.push("<%= camionero %>")
     "<% }) %>"
   </script>
   <script defer src="/tecladoTabla.js"></script>
@@ -105,7 +105,7 @@
                       <div class="btn-group dropend">
                         <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                          <% camioneros.forEach(camionero => { %>
+                          <% camioneros?.forEach(camionero => { %>
                             <li class="dropdown-item"><%= camionero %></li>
                           <% }) %>
                         </ul>
@@ -167,16 +167,16 @@
           <article>
             <div class="titulosecundarioconfiguraciones">¿Cómo prefiere borrar los camiones?</div>
             <custom-radiogroup id="borrarcamiones">
-              <custom-radiobutton data-id="camionespresionar1segundo">Presionando la pestaña por 1 segundo</custom-radiobutton>
-              <custom-radiobutton data-id="camionespresionarx" data-checked="1">Presionando un botón con una X</custom-radiobutton>
+              <custom-radiobutton data-id="camionespresionar1segundo">Presionando la pestaña a borrar por 1 segundo</custom-radiobutton>
+              <custom-radiobutton data-id="camionespresionarx" data-checked="1">Pulsando un botón con una X</custom-radiobutton>
               <custom-radiobutton data-id="camionesdesactivar">Desactivar</custom-radiobutton>
             </custom-radiogroup>
           </article>
           <article>
             <div class="titulosecundarioconfiguraciones">¿Cómo prefiere borrar filas y columnas en las tablas?</div>
             <custom-radiogroup id="borrarfilasycolumnas">
-              <custom-radiobutton data-id="filasycolumnaspresionar1segundo">Presionando una celda por 1 segundo</custom-radiobutton>
-              <custom-radiobutton data-id="filasycolumnaspresionarx" data-checked="1">Presionando un botón con una X</custom-radiobutton>
+              <custom-radiobutton data-id="filasycolumnaspresionar1segundo">Presionando la última celda por 1 segundo</custom-radiobutton>
+              <custom-radiobutton data-id="filasycolumnaspresionarx" data-checked="1">Pulsando un botón con una X</custom-radiobutton>
               <custom-radiobutton data-id="filasycolumnasdesactivar">Desactivar</custom-radiobutton>
             </custom-radiogroup>
           </article>
@@ -184,14 +184,14 @@
             <div class="grupomodal">Exportar tablas</div>
           <hr>
           <article>
-            <div class="titulosecundarioconfiguraciones">¿Cuál desesa que sea el comportamiento por defecto del botón exportar a PDF?</div>
+            <div class="titulosecundarioconfiguraciones">¿Cuál desea que sea el comportamiento por defecto del botón exportar a PDF?</div>
             <custom-radiogroup id="exportarpdf">
               <custom-radiobutton data-id="exportarpdfactual">Exportar solo la tabla actual</custom-radiobutton>
               <custom-radiobutton data-id="exportarpdftodo" data-checked="1">Exportar todas las tablas</custom-radiobutton>
             </custom-radiogroup>
           </article>
           <article>
-            <div class="titulosecundarioconfiguraciones">¿Cuál desesa que sea el comportamiento por defecto del botón exportar a Excel?</div>
+            <div class="titulosecundarioconfiguraciones">¿Cuál desea que sea el comportamiento por defecto del botón exportar a Excel?</div>
             <custom-radiogroup id="exportarexcel">
               <custom-radiobutton data-id="exportarexcelactual">Exportar solo la tabla actual</custom-radiobutton>
               <custom-radiobutton data-id="exportarexceltodo" data-checked="1">Exportar todas las tablas</custom-radiobutton>

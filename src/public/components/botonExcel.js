@@ -42,33 +42,12 @@ class botonExcel extends HTMLButtonElement {
   }
 
   ajustesCeldasExcel(cell) {
+    let borde = { style: "thin", color: { rgb: '000000' } }
     cell.s = {
-      alignment: {
-        horizontal: "center",
-        vertical: "center",
-      },
-      font: {
-        color: { rgb: "FFFFFF" }
-      },
-      border: {
-        right: {
-          style: "thin",
-          color: { rgb: '000000' }
-        },
-        left: {
-          style: "thin",
-          color: { rgb: '000000' }
-        },
-        bottom: {
-          style: "thin",
-          color: { rgb: '000000' }
-        },
-        top: {
-          style: "thin",
-          color: { rgb: '000000' }
-        },
-      }
-    };
+      alignment: { horizontal: "center", vertical: "center" },
+      font: { color: { rgb: "FFFFFF" } },
+      border: { right: borde, left: borde, bottom: borde, top: borde }
+    }
   }
 
   async pedirExcel() {

@@ -3,16 +3,14 @@ const Respaldos = require("../models/respaldos");
 const RegistroVentas = require("../models/registroventas");
 const devuelveNuevasTablas = require("./devuelveNuevasTablas");
 
-async function convertirRespaldos(){
+async function convertirRespaldos() {
   let registrosEliminados = await Respaldos.find()
-  registrosEliminados.forEach(async registro => {
+  for (const registro of registrosEliminados) {
     let venta = registro.ventaspordia
     let tablas = devuelveNuevasTablas(venta)
-    let nuevoRegistro = new RegistroVentas({_id: venta.fecha, usuario: venta.usuario || "usuariodesconocido", ultimocambio: venta.fechaultimocambio, tablas })
-
-    let nuevoRegistroEliminado = new RegistrosEliminados({borradoEl: registro.fechaeliminacion, registro: nuevoRegistro })
-    await nuevoRegistroEliminado.save()
-  });
+    let nuevoRegistro = new RegistroVentas({ _id: venta.fecha, usuario: venta.usuario || "usuariodesconocido", ultimocambio: venta.fechaultimocambio, tablas })
+    await new RegistrosEliminados({ registro: nuevoRegistro, borradoEl: registro.fechaeliminacion, usuario: venta.usuario || "usuariodesconocido", motivo: 0 }).save()
+  }
 }
 
 module.exports = convertirRespaldos

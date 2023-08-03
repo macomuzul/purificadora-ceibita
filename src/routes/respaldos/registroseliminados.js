@@ -22,18 +22,17 @@ router.post("/restaurarregistro", async (req, res) => {
     let registroanterior = await RegistroVentas.findById(fecha) //si ya existe un registro anterior lo guarda en la parte de respaldos
     let { tablas } = registrorecuperado.registro
     let ahora = new Date()
-    let nuevosDatos = { usuario: req.user?.usuario ?? "usuariodesconocido", ultimocambio: ahora, tablas }
+    let usuario = req.user?.usuario ?? "usuariodesconocido"
+    let nuevosDatos = { usuario, ultimocambio: ahora, tablas }
     if (registroanterior) {
       if (!sobreescribir)
         return res.send(registroanterior);
 
-      const respaldo = new RegistrosEliminados({ registro: registroanterior, borradoEl: ahora });
-      await respaldo.save();
+      await new RegistrosEliminados({ registro: registroanterior, borradoEl: ahora, usuario, motivo: 2 }).save()
       Object.assign(registroanterior, nuevosDatos)
       await registroanterior.save()
     } else {
-      let registroNuevo = new RegistroVentas({ _id: fecha, ...nuevosDatos });
-      await registroNuevo.save();
+      await new RegistroVentas({ _id: fecha, ...nuevosDatos }).save();
     }
     await registrorecuperado.deleteOne();
     res.send("Se ha restaurado con éxito");

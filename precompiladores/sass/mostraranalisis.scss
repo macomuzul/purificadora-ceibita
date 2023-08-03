@@ -7,6 +7,7 @@ body {
   padding: 0;
   color: white;
   min-width: 1200px;
+  width: fit-content;
 }
 
 .botonpdf {
@@ -14,6 +15,7 @@ body {
   right: 0;
   bottom: 0;
 }
+
 .botonexcel {
   position: absolute;
   left: 0;
@@ -52,6 +54,7 @@ label {
   color: #dfdfdf;
   padding: 8px 10px;
   cursor: pointer;
+
   &.active,
   &:active,
   &:hover {
@@ -77,6 +80,7 @@ article {
   font-size: 20px;
   box-shadow: var(--bs-accordion-btn-focus-box-shadow) !important;
   border-radius: 5px !important;
+
   &:not(.collapsed) {
     color: white;
     background: #192435;
@@ -183,7 +187,7 @@ article {
 .contenedorotrasopciones {
   background: #14213a;
 
-  & > .tituloopciones{
+  &>.tituloopciones {
     box-shadow: 0 0 2px white;
   }
 }
@@ -203,6 +207,10 @@ article {
 custom-radiobutton {
   padding: 15px 20px;
   margin-right: 0;
+}
+
+.form-check-inline {
+  margin-right: 5px;
 }
 
 .tituloopciones {
@@ -233,12 +241,20 @@ hr {
 .botonreset {
   padding: 15px;
   background: #081038;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 1fr 1fr;
+
+  button {
+    width: fit-content;
+  }
 }
 
 .margenbotonswal {
   width: 140;
   height: 50;
   font-weight: 500;
+
   &:not(.btn-success) {
     margin-left: 40;
   }
@@ -260,7 +276,9 @@ hr {
 
 custom-graficos {
   display: inline-block;
-  width: 100% !important;
+  width: fit-content;
+  min-width: 1179px;
+  margin-bottom: 5px;
 }
 
 .convertira {
@@ -281,9 +299,7 @@ td {
 
 th {
   min-width: 140px;
-  &:first-child {
-    min-width: 200px;
-  }
+  max-width: 240px;
 }
 
 table {
@@ -294,6 +310,7 @@ table {
 .multiple td:last-child,
 tfoot td:not(:first-child) {
   position: relative;
+
   &::after {
     content: "";
     height: 1px;
@@ -312,4 +329,160 @@ tfoot td:not(:first-child) {
   text-align: center;
   margin-top: 20px;
   font-size: 26px;
+}
+
+.btnTamaño {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 25px;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #0b2346;
+  height: 45px;
+  cursor: pointer;
+  width: 45px;
+  transition: border-color 0.25s;
+  color: white;
+}
+
+.contenedorAbajoDeLosDatos {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  height: 75px;
+}
+
+.gridBotonesTamaño {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  column-gap: 5px;
+  width: 100px;
+}
+
+.textoTamaño {
+  grid-column: 1/3;
+  text-align: center;
+  font-size: 20px;
+}
+
+.restaurarTamaño {
+  width: 90px;
+  font-size: 16px;
+  display: none;
+}
+
+.uneOSeparaDatos {
+  padding: 0 20px;
+  font-size: 18px;
+}
+
+.primeraCelda {
+  min-width: 250px;
+}
+
+.seleccionarTodos {
+  font-size: 18px;
+  justify-self: flex-start;
+}
+
+.contenedorEliminarData {
+  font-size: 18px;
+  margin-top: 8px;
+}
+
+.separadorCharts {
+  margin: 20px 0;
+  box-shadow: 0 0 10px 3px blue;
+}
+
+////////////////////////////////////CSS PODIO////////////////////////////////////////////////////
+
+#podium-box {
+  display: flex;
+  height: 250px;
+}
+
+#first-step {
+  height: 65%;
+}
+
+#second-step {
+  height: 45.5%;
+}
+
+#third-step {
+  height: 39%;
+}
+
+.podium-number {
+  font-family: DaggerSquare;
+  font-weight: bold;
+  font-size: 4em;
+  background-color: #051624;
+  color: white;
+  text-align: center;
+}
+
+.step-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.step-container> :first-child {
+  margin-top: auto;
+}
+
+.titulopodio {
+  font-size: 24px;
+  text-align: center;
+}
+
+.canvaspodio {
+  position: absolute;
+  z-index: 99999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.contenedorPodio {
+  width: 580px;
+  height: fit-content;
+  position: relative;
+}
+
+.tituloGrupoPodios {
+  text-align: center;
+}
+
+.grupoPodios {
+  display: flex;
+  gap: 15px;
+}
+
+.tituloSalonDeLaFama {
+  text-align: center;
+  font-weight: 600;
+  background: radial-gradient(ellipse at center, #443501 0%,#000000 100%);
+  span {
+    font-size: 45px;
+    background-image: linear-gradient(to right, #a57c3e 0, #cb9b51 22%, #f6e27a 45%, #f6f2c0 50%, #f6e27a 55%, #cb9b51 78%, #a57c3e 100%);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
+
+.tituloGrupoPodios{
+  font-size: 35px;
+  margin: 20px 0;
+  color: aquamarine;
+  box-shadow: 0 0 10px;
+}
+
+.checkboxAnimacion{
+  margin: 20px 0;
 }

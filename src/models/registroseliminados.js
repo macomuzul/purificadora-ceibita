@@ -5,7 +5,9 @@ _ = require('lodash');
 
 const registroseliminadosSchema = new Schema({
   registro: RegistroVentas.schema,
-  borradoEl: Date
+  borradoEl: Date,
+  usuario: String,
+  motivo: Number
 });
 
 _.each(_.keys(registroseliminadosSchema.paths), attr => registroseliminadosSchema.path(attr).required(true));

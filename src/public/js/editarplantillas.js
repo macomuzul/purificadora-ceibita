@@ -18,23 +18,21 @@ $(".contenedoreliminar").on('click', async function () {
         await Swal.fire("Se ha borrado la plantilla exitosamente", "Ahora será redireccionado al menú de plantillas", "success");
         window.location = "/plantillas"
       },
-      error: res => {
-        mostrarError(res.responseText)
-      },
+      error: res => mostrarError(res.responseText)
     });
   }
 })
 
-//TODO ver si son necesarios estos trims
 
 $("body").on('click', "#guardar", async function () {
   if (!await validarPlantillas())
     return
+  let nombrePlantilla = $("#nombreplantilla").val()
   let data = JSON.stringify({
-    nombre: $("#nombreplantilla").val().trim(),
-    productos: [...$("tbody tr")].map(fila => ({
-      producto: fila.cells[0].innerText.trim(),
-      precio: parseFloat(fila.cells[1].innerText.trim())
+    nombre: nombrePlantilla,
+    productos: [...$("tbody tr")].map(({ cells }) => ({
+      producto: cells[0].innerText,
+      precio: parseFloat(cells[1].innerText)
     }))
   })
 
@@ -43,12 +41,10 @@ $("body").on('click', "#guardar", async function () {
     method: "PATCH",
     contentType: "application/json",
     data,
-    success: async res => {
+    success: async q => {
       await Swal.fire("Se ha guardado exitosamente", "El archivo se ha almacenado en la base de datos", "success");
       window.location = (url + nombrePlantilla);
     },
-    error: res => {
-      Swal.fire("Ups...", res.responseText, "error");
-    },
-  });
+    error: res => Swal.fire("Ups...", res.responseText, "error")
+  })
 })

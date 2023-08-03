@@ -1,40 +1,27 @@
-let navbar = document.getElementById("navbar");
-document.addEventListener("click", esconderNavbar());
+let navbar = $("#navbar")[0]
+$(document).on("click", esconderNavbar())
 
 //TODO hacer que la seccion de usuarios no sea visible para el usuario empleado
 function esconderNavbar() {
-  $(navbar).find(".presionado").each((i, el) => {
-    let submenu = $(el).find(".submenu")[0];
-    $(submenu).slideUp();
-    el.classList.remove("presionado")
-  })
-  navbar.classList.remove("presionado");
+  $(navbar).find(".presionado").removeClass("presionado").find(".submenu").slideUp()
+  navbar.classList.remove("presionado")
 }
 
-document.getElementById("logoNav").addEventListener("click", e => {
-  e.preventDefault();
-  e.stopPropagation();
+$("#logoNav").on("click", e => {
+  e.preventDefault()
+  e.stopPropagation()
   if (navbar.classList.contains("presionado"))
-    esconderNavbar();
+    esconderNavbar()
   else
-    navbar.classList.add("presionado");
-});
+    navbar.classList.add("presionado")
+})
 
-let navLinkCompuestos = document.querySelectorAll(".nav-item-compuesto");
+$("body").on("click", ".nav-item-compuesto", e => {
+  let el = e.currentTarget
+  navbar.classList.add("presionado")
+  el.classList.toggle("presionado")
+  $(el).find(".submenu").slideToggle()
+})
 
-for (const nav of navLinkCompuestos) {
-  nav.addEventListener("click", e => {
-    if (!navbar.classList.contains("presionado"))
-      navbar.classList.add("presionado")
-    nav.classList.toggle("presionado")
-    $(nav).find(".submenu").slideToggle();
-  });
-}
-
-navbar.addEventListener("mouseenter", function (e) {
-  navbar.classList.add("presionado");
-});
-
-navbar.addEventListener("mouseleave", function (e) {
-  esconderNavbar();
-});
+navbar.addEventListener("mouseenter", e => navbar.classList.add("presionado"))
+navbar.addEventListener("mouseleave", esconderNavbar)

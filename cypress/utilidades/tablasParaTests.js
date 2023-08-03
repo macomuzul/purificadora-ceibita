@@ -9,13 +9,13 @@ let tablaNormal = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">
@@ -80,13 +80,13 @@ export let tablaAñadirProductos = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">
@@ -160,16 +160,16 @@ export let tablaAñadirViajes = `<table>
 <tr>
   <th rowspan="2" class="prod">Productos</th>
   <th rowspan="2" class="tr">Precio</th>
-  <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
-  <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 2</th>
+  <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
+  <th colspan="2" class="borrarcolumnas">Viaje No. 2</th>
   <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
   <th rowspan="2" class="tr">Ingresos</th>
 </tr>
 <tr class="saleYEntra">
-  <th scope="col">Sale</th>
-  <th scope="col">Entra</th>
-  <th scope="col">Sale</th>
-  <th scope="col">Entra</th>
+  <th>Sale</th>
+  <th>Entra</th>
+  <th>Sale</th>
+  <th>Entra</th>
 </tr>
 </tbody>
 <tbody class="cuerpo">
@@ -240,13 +240,13 @@ export let tablaValidarProductos = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">
@@ -311,13 +311,13 @@ export let tablaValidarVariosProductos = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">
@@ -382,13 +382,13 @@ export let tablaValidarPrecios = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">
@@ -453,13 +453,13 @@ export let tablaValidarVariosPrecios = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">
@@ -524,13 +524,13 @@ export let tablaValidarPreciosYProductosUnaVez = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">
@@ -595,13 +595,13 @@ export let tablaAñadeCeros = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">
@@ -666,13 +666,13 @@ export let tablaEntraMasDeLoQueSale = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">
@@ -737,13 +737,13 @@ export let tablaBorrarFilasVacias1 = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">
@@ -787,13 +787,13 @@ export let tablaBorrarFilasTotalmenteVacias = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">
@@ -858,13 +858,13 @@ export let tablaNormalAbajo = `<table>
   <tr>
     <th rowspan="2" class="prod">Productos</th>
     <th rowspan="2" class="tr">Precio</th>
-    <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. 1</th>
+    <th colspan="2" class="borrarcolumnas">Viaje No. 1</th>
     <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
     <th rowspan="2" class="tr">Ingresos</th>
   </tr>
   <tr class="saleYEntra">
-    <th scope="col">Sale</th>
-    <th scope="col">Entra</th>  
+    <th>Sale</th>
+    <th>Entra</th>  
   </tr>
   </tbody>
   <tbody class="cuerpo">

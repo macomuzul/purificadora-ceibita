@@ -2,9 +2,6 @@ let dropdownSeleccionado = null
 $(window).on("click", e => dropdownSeleccionado?.cambiarEstado(-1));
 
 class customDropdown extends HTMLElement {
-  cosa() {
-    console.log("jeje")
-  }
   connectedCallback() {
     let { idmenu, idseleccionado, textopordefecto } = this.dataset
     this.innerHTML = `<div class="dropdown">
@@ -32,7 +29,7 @@ class customDropdown extends HTMLElement {
       dropdownSeleccionado = this
     });
 
-    let cambiarEstado = (i) => {
+    let cambiarEstado = i => {
       if (!estaActivo && i === -1) return
       estaActivo = i === 0 ? true : false
       cambiarClase(select, "select-clicked", i)

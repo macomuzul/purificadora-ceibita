@@ -17,8 +17,8 @@ const plantillaSchema = new Schema({
     productos: [productoSchema]
 });
 
-_.each(_.keys(productoSchema.paths), attr => productoSchema.path(attr).required(true));
-_.each(_.keys(plantillaSchema.paths), attr => plantillaSchema.path(attr).required(true));
-plantillaSchema.path("esdefault").required(false);
+_.each(_.keys(productoSchema.paths), attr => productoSchema.path(attr).required(true))
+_.each(_.keys(plantillaSchema.paths), attr => plantillaSchema.path(attr).required(true))
+plantillaSchema.path("esdefault").required(false)
 
-module.exports = mongoose.model('plantilla', plantillaSchema);
+module.exports = mongoose.model('plantilla', plantillaSchema)

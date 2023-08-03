@@ -33,12 +33,12 @@ $("body").on("click", ".svgeliminar", async function () {
     cancelButtonText: "No",
   })
   if (result.isConfirmed) {
-    funcionEnviar = devuelveBorrarUsuario(`{"usuario": "${usuario}"}`, this.closest("tr"), this.closest("tbody"));
-    modal.show();
+    funcionEnviar = devuelveBorrarUsuario(`{"usuario": "${usuario}"}`, this.closest("tr"))
+    modal.show()
   }
 })
 
-function devuelveBorrarUsuario(data, fila, cuerpo){
+function devuelveBorrarUsuario(data, fila){
   return function(){
     modal.hide();
     $.ajax({
@@ -48,11 +48,11 @@ function devuelveBorrarUsuario(data, fila, cuerpo){
       data,
       success: res => {
         // toastr["success"]("Se ha borrado el usuario con éxito", "Éxito");
-        Swal.fire("Éxito", "Se ha borrado el usuario con éxito", "success");
-        cuerpo.removeChild(fila);
+        Swal.fire("Éxito", "Se ha borrado el usuario con éxito", "success")
+        fila.remove()
       },
       error: res => {
-        Swal.fire("Error", res.responseText, "error");
+        Swal.fire("Error", res.responseText, "error")
         // toastr["error"](res.responseText, "Error");
       },
     });

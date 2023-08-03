@@ -14,15 +14,15 @@
         <th rowspan="2" class="prod">Productos</th>
         <th rowspan="2" class="tr">Precio</th>
         <%for(k=0; k < cantidadViajes; k++) { %>
-        <th colspan="2" scope="colgroup" class="borrarcolumnas">Viaje No. <%= (k+1) %></th>
+        <th colspan="2" class="borrarcolumnas">Viaje No. <%= (k+1) %></th>
         <% }%>
         <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
         <th rowspan="2" class="tr">Ingresos</th>
       </tr>
       <tr class="saleYEntra">
         <%for(k=0; k < cantidadViajes; k++) { %>
-        <th scope="col">Sale</th>
-        <th scope="col">Entra</th>
+        <th>Sale</th>
+        <th>Entra</th>
         <% }%>
       </tr>
     </thead>

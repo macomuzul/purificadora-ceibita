@@ -19,9 +19,9 @@ async function actualizarSiHuboCambiosSemanaOMes(tiempo) {
 
   if (resumenSemanaOMes.length > 0) {
     let grupodias = resumenSemanaOMes.map(x => {
-      const fecha = DateTime.fromJSDate(x);
-      return fecha.until(fecha.endOf(tiempo)).splitBy({ days: 1 }).map(x => x.start.toISO());
-    });
+      const fecha = DateTime.fromJSDate(x)
+      return fecha.until(fecha.endOf(tiempo)).splitBy({ days: 1 }).map(x => x.start.toISO())
+    })
 
     let resumenDias = await ResumenDia.find({ _id: { $in: grupodias } })
     let agrupados = _.groupBy(resumenDias, x => DateTime.fromJSDate(new Date(x._id)).startOf(tiempo).toISO())
@@ -150,7 +150,7 @@ router.get("/:agruparPor&:rango&:fecha", async (req, res) => {
           fecha = finAño.plus(1)
         }
         if (diasSueltos.length > 0 || mesesSueltos.length > 0)
-          diasYMesesSueltos = devuelveObjDiasSueltos([...diasSueltos, ...mesesSueltos], inicio, fecha)
+          diasYMesesSueltos = devuelveObjDiasSueltos([...diasSueltos, ...mesesSueltos], inicio, fecha.minus(1))
         datos = [...diasYMesesSueltos, ...await ResumenAño.where("_id").gte(fecha).sort("_id")]
       }
       else if (rango === "menor") {
@@ -167,7 +167,7 @@ router.get("/:agruparPor&:rango&:fecha", async (req, res) => {
           fecha = inicioAño.minus(1)
         }
         if (diasSueltos.length > 0 || mesesSueltos.length > 0)
-          diasYMesesSueltos = devuelveObjDiasSueltos([...diasSueltos, ...mesesSueltos], fecha, fin)
+          diasYMesesSueltos = devuelveObjDiasSueltos([...diasSueltos, ...mesesSueltos], fecha.plus(1), fin)
         datos = [...await ResumenAño.where("_id").lte(fecha).sort("_id"), ...diasYMesesSueltos]
       }
       else if (rango === "igual")
@@ -212,8 +212,10 @@ router.get("/:agruparPor&:rango&:fecha", async (req, res) => {
 });
 
 
+
 async function agrupar(fechas, tiempo) {
   let fechasEncontradas = await ResumenDia.find({ _id: { $in: fechas } })
+  //TODO este creo que se puede cambiar a datetime.fromISO en vez de DateTime.fromJSDate(new Date(x._id))
   let agrupados = _.groupBy(fechasEncontradas, x => DateTime.fromJSDate(new Date(x._id)).startOf(tiempo).toISO())
   let dias = Object.entries(agrupados).map(([k, v]) => ({ _id: DateTime.fromISO(k).startOf(tiempo), ...devuelveValoresSumados(v), f: DateTime.fromISO(k).endOf(tiempo) }))
   return dias.sort((a, b) => a - b)
