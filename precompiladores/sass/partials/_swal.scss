@@ -26,14 +26,11 @@
   margin-right: 10px;
 }
 
-.textovista {
-  text-align: center;
-  font-size: 22px;
-  color: #545151;
+.margenbotonswal{
+  width: 140px;
+  height: 50px;
   font-weight: 500;
-  margin-bottom: 17px;
-}
-
-#mostrartabla {
-  margin: 0 auto;
+  &:not(.btn-success){
+    margin-left: 40px;
+  }
 }

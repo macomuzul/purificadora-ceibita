@@ -1,13 +1,12 @@
 let tabla = $("table")[0]
+let nombreplantilla = $('#nombreplantilla')
 async function validarPlantillas() {
   let productos = [...$("tbody td:nth-child(1)")]
   let precios = [...$("tbody td:nth-child(2)")]
-  $('#nombreplantilla').val((_, val) => val.trim())
-  if ($('#nombreplantilla').val() === "")
-    return mostrarError("El nombre de la plantilla está vacío")
-
-  if (productos.length < 1)
-    return mostrarError("No hay productos qué guardar")
+  nombreplantilla.val((_, val) => val.trim())
+  
+  if (nombreplantilla.val() === "") return mostrarError("El nombre de la plantilla está vacío")
+  if (productos.length < 1) return mostrarError("No hay productos qué guardar")
 
   productos.forEach(x => x.textContent = x.innerText.trim())
   if (productos.some(x => x.textContent === "")) {
@@ -25,12 +24,12 @@ async function validarPlantillas() {
       x.textContent = numeroParseado.normalizarPrecio()
   })
 
-  if (precios.some(x => x.innerText === "")){
+  if (precios.some(x => x.innerText === "")) {
     let tablaCopia = tabla.cloneNode(true);
     [...$(tablaCopia).find("tbody td:nth-child(2)")].forEach(x => x.textContent === "" ? x.classList.add("enfocar") : "")
     return mostrarErrorSwal(tablaCopia, "Hay precios vacíos")
   }
-  if (precios.some(x => x.innerText === "0")){
+  if (precios.some(x => x.innerText === "0")) {
     let tablaCopia = tabla.cloneNode(true);
     [...$(tablaCopia).find("tbody td:nth-child(2)")].forEach(x => x.textContent === "0" ? x.classList.add("enfocar") : "")
     return mostrarErrorSwal(tablaCopia, "Hay precios con valor igual a 0")
@@ -66,6 +65,6 @@ String.prototype.normalizarPrecio = function () { return parseFloat(this).toFixe
 Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }
 
 function mostrarError(error) {
-  Swal.fire("Error", error, "error");
-  return false;
+  Swal.fire("Error", error, "error")
+  return false
 }

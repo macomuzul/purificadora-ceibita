@@ -46,16 +46,13 @@ class datepickerSimple extends HTMLElement {
     </div>
   </div>`;
     let opciones = { weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" };
-    $(this.shadowRoot).find("#datepickerSimple").datepicker(opciones).on("show", (e) => {
-      if ($(".datepicker").is(":offscreen")) {
-        $(".datepicker")[0].scrollIntoView();
-      }
-    });
+    $(this.shadowRoot).find("#datepickerSimple").datepicker(opciones).on("show", q => mostrarOffscreen($(".datepicker")[0]))
   }
 }
-jQuery.expr.filters.offscreen = function (el) {
-  var rect = el.getBoundingClientRect();
-  return ((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight);
-};
 
-customElements.define("datepicker-simple", datepickerSimple);
+let mostrarOffscreen = x => {
+  let rect = x.getBoundingClientRect()
+  if(((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight)) x.scrollIntoView()
+}
+
+customElements.define("datepicker-simple", datepickerSimple)

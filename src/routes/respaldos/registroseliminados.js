@@ -4,20 +4,25 @@ const RegistrosEliminados = require("../../models/registroseliminados");
 const RegistroVentas = require("../../models/registroventas");
 const { DateTime } = require("luxon");
 let vencerEn = 900 //quince minutos
+const redis = require("../../redis")
 
-//TODO hacer esto de los reroutes 
-router.get("/", async (req, res) => {
-  res.render("registroseliminados");
-});
+let devuelveRegistroRedis = async url => await redis.get(devuelveURL(url))
+let guardarRegistroRedis = async (url, resultado) => await redis.setEx(devuelveURL(url), vencerEn, JSON.stringify(resultado))
 
+let validarPagina = (req, res, next) => (/^pag=[0-9]+$/.test(req.params.pag)) ? next() : res.send("página inválida")
+let devuelveURL = url => `registroseliminados:${url.split("pag")[0]}`
+let mandarError = (res, mensaje) => res.status(400).send(mensaje)
 
+router.get("/", (_, res) => res.render("registroseliminados"))
+
+//ver si este se puede combinar con el de registrar
 //TODO este tal vez se pueda mezclar con el de registrarventas
 router.post("/restaurarregistro", async (req, res) => {
   try {
     let { id, fecha, sobreescribir } = req.body;
     let registrorecuperado = await RegistrosEliminados.findById(id);
     if (registrorecuperado == null)
-      return res.status(400).send("Registro no existe");
+      return mandarError(res, "Registro no existe");
 
     let registroanterior = await RegistroVentas.findById(fecha) //si ya existe un registro anterior lo guarda en la parte de respaldos
     let { tablas } = registrorecuperado.registro
@@ -25,64 +30,35 @@ router.post("/restaurarregistro", async (req, res) => {
     let usuario = req.user?.usuario ?? "usuariodesconocido"
     let nuevosDatos = { usuario, ultimocambio: ahora, tablas }
     if (registroanterior) {
-      if (!sobreescribir)
-        return res.send(registroanterior);
-
-      await new RegistrosEliminados({ registro: registroanterior, borradoEl: ahora, usuario, motivo: 2 }).save()
+      if (!sobreescribir) return res.send(registroanterior);
+      await RegistrosEliminados.create({ registro: registroanterior, borradoEl: ahora, usuario, motivo: 2 })
       Object.assign(registroanterior, nuevosDatos)
       await registroanterior.save()
-    } else {
-      await new RegistroVentas({ _id: fecha, ...nuevosDatos }).save();
-    }
-    await registrorecuperado.deleteOne();
-    res.send("Se ha restaurado con éxito");
+    } else
+      await RegistroVentas.create({ _id: fecha, ...nuevosDatos })
+    await registrorecuperado.deleteOne()
+    res.send("Éxito")
   } catch (e) {
     console.log(e)
-    res.status(400).send("No se pudo restaurar");
+    mandarError(res, "No se pudo restaurar")
   }
-});
+})
 
 router.delete("/borrarregistros", async (req, res) => {
   try {
     let { registros } = req.body;
     let contador = 0;
-    await Promise.all(registros.map(async el => {
-      let borrado = await RegistrosEliminados.findByIdAndDelete(el)
-      if (!borrado)
-        contador++
-    }));
-    if (contador !== 0)
-      res.status(400).send("Error");
-    else
-      res.send("Se ha borrado con éxito");
-  } catch {
-    res.status(400).send("No se pudo eliminar uno o más de los registros");
+    //TODO este falta
+    let eliminados = await Promise.all(registros.map(async el => !(await RegistrosEliminados.findByIdAndDelete(el))))
+    contador !== 0 ? mandarError(res, "Error") : res.send("Se ha borrado con éxito")
+  } catch (e) {
+    console.log(e)
+    mandarError(res, "No se pudo eliminar uno o más de los registros");
   }
-});
+})
 
-router.get("/masrecientes&:pag", validarPagina, async (req, res) => {
-  await masRecientesYMasAntiguos(req, res, 1);
-});
-
-router.get("/masantiguos&:pag", validarPagina, async (req, res) => {
-  await masRecientesYMasAntiguos(req, res, 2);
-});
-
-function validarPagina(req, res, next) {
-  let { pag } = req.params;
-  if (!(/^pag=[0-9]+$/.test(pag)))
-    return res.send("página inválida");
-  return next();
-}
-
-async function devuelveRegistroRedis(url) {
-  let resultado = await redis.get(devuelveURL(url));
-  return resultado;
-}
-async function guardarRegistroRedis(url, resultado) {
-  await redis.setEx(devuelveURL(url), vencerEn, JSON.stringify(resultado))
-}
-let devuelveURL = url => `registroseliminados:${url.split("pag")[0]}`;
+router.get("/masrecientes&:pag", validarPagina, async (req, res) => masRecientesYMasAntiguos(req, res, 1))
+router.get("/masantiguos&:pag", validarPagina, async (req, res) => masRecientesYMasAntiguos(req, res, 2))
 
 async function masRecientesYMasAntiguos(req, res, opcion) {
   try {
@@ -90,8 +66,8 @@ async function masRecientesYMasAntiguos(req, res, opcion) {
     if (!resultado) {
       resultado = await RegistrosEliminados.find()
       if (opcion === 1)
-        resultado.reverse();
-      await guardarRegistroRedis(req.url, resultado);
+        resultado.reverse()
+      await guardarRegistroRedis(req.url, resultado)
     }
     else
       resultado = JSON.parse(resultado).map(el => new RegistrosEliminados(el));
@@ -102,16 +78,12 @@ async function masRecientesYMasAntiguos(req, res, opcion) {
   }
 }
 
-router.get("/:buscarpor&:rango&:fechaP&:pag", validarPagina, async (req, res) => {
+router.get("/:buscarpor(fecha|fechaeliminacion)&:rango(igual|mayor|menor|entre)&:fechaP&:pag", validarPagina, async (req, res) => {
   try {
-    let resultado = await devuelveRegistroRedis(req.url);
+    let resultado = await devuelveRegistroRedis(req.url)
     if (!resultado) {
-      let { buscarpor, rango, fechaP } = req.params;
+      let { buscarpor, rango, fechaP } = req.params
       let [fecha, fecha2] = fechaP.split("y")
-      if (!["fecha", "fechaeliminacion"].includes(buscarpor))
-        return res.send("búsqueda inválida");
-      if (!["igual", "mayor", "menor", "entre"].includes(rango))
-        return res.send("rango inválido");
       if (buscarpor === "fecha") {
         let fechaiso = fecha.aFechaUTC()
         buscarpor = "registro._id"
@@ -146,18 +118,15 @@ router.get("/:buscarpor&:rango&:fechaP&:pag", validarPagina, async (req, res) =>
 });
 
 function mostrarPagina(resultado, req, res) {
-  let limite = 10;
-  let [url, pagina] = req.originalUrl.split('pag=');
-  pagina = parseInt(pagina);
+  let limite = 10
+  let [url, pagina] = req.originalUrl.split('pag=')
+  pagina = parseInt(pagina)
   let totalPaginas = Math.ceil(resultado.length / limite);
-  if (totalPaginas === 0)
-    return res.send("no hay ningún registro");
-  else if (pagina < 1)
-    return res.send("numero de búsqueda inválido");
-  else if (pagina > totalPaginas)
-    return res.redirect(url + "pag=" + totalPaginas)
-  let datostablas = resultado.slice(limite * (pagina - 1), limite * pagina);
-  res.render("mostrarregistroseliminados", { datostablas, pagina, totalPaginas, DateTime });
+  if (totalPaginas === 0) return res.send("no hay ningún registro")
+  else if (pagina < 1) return res.send("numero de búsqueda inválido")
+  else if (pagina > totalPaginas) return res.redirect(url + "pag=" + totalPaginas)
+  let datostablas = resultado.slice(limite * (pagina - 1), limite * pagina)
+  res.render("mostrarregistroseliminados", { datostablas, pagina, totalPaginas, DateTime })
 }
 
 String.prototype.aFechaUTC = function () { return DateTime.fromFormat(this, "d-M-y") }

@@ -8,7 +8,7 @@ const passport = require('passport');
 const morgan = require('morgan');
 const { Settings } = require('luxon');
 const estaAutenticado = require("./security/estaAutenticado");
-const pruebasvalidaciones = require('./models/pruebasvalidaciones');
+const pruebasvalidaciones2 = require('./models/pruebasvalidaciones');
 
 require("./listenersDB");
 require("./redis");
@@ -38,7 +38,14 @@ require("./redis");
 
 async function crearPruebasValidacion(){
   try {
-    pruebasvalidaciones.create({nombre: "masmfnvcnv",precio: 1200, viajes: [2,5,5,51,1,4]})
+    // let j = await pruebasvalidaciones.create({nombre: "masmfnvcnv",precio: 1200, viajes: [2,5,5,51,1,4], turbokike: 29939})
+    // console.log(j)
+    // let a = await pruebasvalidaciones.updateOne({}, {nombre: "manganeso"})
+    // console.log(a)
+    // let b = await pruebasvalidaciones.findOneAndUpdate({}, {nombre: "putito"})
+    
+    // let j = await pruebasvalidaciones2.updateOne({nombre: "masmfnvcnv"}, {nombre: "masmfnvcnv",precio: -1500, viajes: [40], turbokike: 29939}, {runValidators: true})
+    // console.log(j)
   } catch (error) {
     console.log(error)
   }

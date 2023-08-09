@@ -1,7 +1,3 @@
-const moduloRedis = require("redis");
-global.redis = moduloRedis.createClient();
-redis.connect().then(() => {
-  console.log("conectado a redis")
-});
-
-module.exports = redis;
+const redis = require("redis").createClient()
+redis.connect().then(() => console.log("conectado a redis")).catch(err => console.log(err))
+module.exports = redis

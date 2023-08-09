@@ -1,26 +1,19 @@
 dayjs.extend(window.dayjs_plugin_utc);
 let colsinicio = 2, colsfinal = 2;
-let [dia, mes, año] = document.querySelector(".fechanum").textContent.split("/"); //este hay que ponerle textcontent porque si esta escondido con innertext no lo agarra
-let hoy = dayjs(año + "-" + mes + "-" + dia).utc(true);
-let timer;
-let tablaValida = false;
-let touchduration = 600;
-let listaplantillas = [];
-let objReordenarPlantillas = [];
-let tablaParaValidacion;
-let resPlantillas = {};
-let yaSeRecibioTouch = false;
-let permitirFilasVacias = false;
-let fechastr = hoy.format("D-M-YYYY");
-let opcionSwal = false;
+let [dia, mes, año] = document.querySelector(".fechanum").textContent.split("/") //este hay que ponerle textcontent porque si esta escondido con innertext no lo agarra
+let hoy = dayjs(año + "-" + mes + "-" + dia).utc(true)
+let fechastr = hoy.format("D-M-YYYY")
+let timer, touchduration = 600
+let tablaValida = false, yaSeRecibioTouch = false, permitirFilasVacias = false, opcionSwal = false
+let listaplantillas = {}, objReordenarPlantillas = [], tablaParaValidacion, plantillaSeleccionada = {}
 
 // let desdeElMobil = function () { return /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent) }
 let desdeElMobil = () => (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0))
-let devuelveListaTablas = q => [...$(".grupotabs .tabs__radio")].map(el => document.querySelector(`.contenidotabs [data-tabid="${el.dataset.tabid}"] table`))
+let devuelveListaTablas = q => [...$(".grupotabs .tabs__radio")].map(x => document.querySelector(`.contenidotabs [data-tabid="${x.dataset.tabid}"] table`))
 let borrarListaOrdenarPlantillasTablaActual = q => borrarListaOrdenarPlantillas(_tabla(), _idTab())
-let devuelveCamioneros = q => camioneros.map(el => `<li class="dropdown-item">${el}</li>`).join("")
+let devuelveCamioneros = q => camioneros.map(x => `<li class="dropdown-item">${x}</li>`).join("")
 let devuelveProductoVacio = producto => `<tr><td contenteditable="true">${producto.producto}</td><td contenteditable="true">${producto.precio.normalizarPrecio()}</td>${[...Array(_cantidadSaleYEntra() - 4)].map(_ => `<td contenteditable="true"></td>`).join("")} <td></td><td class="borrarfilas"></td></tr>`
-let borrarEnfocarFilas = tabla => $(tabla).find(".cuerpo td").each((_, el) => el.classList.remove("enfocar"))
+let borrarEnfocarFilas = tabla => $(tabla).find(".cuerpo td").each((_, x) => x.classList.remove("enfocar"))
 
 $(async function () {
   setTimeout(async () => {
@@ -46,10 +39,10 @@ let _saleYEntra = () => _tabla().querySelector(".saleYEntra")
 let _cantidadSaleYEntra = () => (_pintarColumnas().children.length * 2 + colsinicio + colsfinal)
 
 $(".cuerpo td:not(:nth-last-child(1), :nth-last-child(2))").prop("contentEditable", true)
-$(".cuerpo td:last-child").each((_, el) => el.classList.add("borrarfilas"))
-$(".tabs__label").each((_, el) => el.classList.add("borrarcamiones"))
+$(".cuerpo td:last-child").each((_, x) => x.classList.add("borrarfilas"))
+$(".tabs__label").each((_, x) => x.classList.add("borrarcamiones"))
 
-$("body").on("click", ".fecha", () => $(".fecha").each((_, el) => el.classList.toggle("esconder")))
+$("body").on("click", ".fecha", () => $(".fecha").each((_, x) => $(x).toggle()))
 let opcionBorrarFilasYColumnas = -1
 let opcionBorrarCamiones = -1
 let opcionExportarPDF = -1
@@ -67,12 +60,10 @@ $("body").on("click", ".grupotabs .tabs__label", function (e) {
 })
 
 $("body").on("click", ".restaurarplantilla", function (e) {
-  let tabla = _tabla();
-  let cuerpo = $(tabla).find(".cuerpo")[0];
-  let id = _idTab();
-  let ordenAnterior = objReordenarPlantillas[id];
-  let html = restaurarOrdenPlantilla(ordenAnterior, cuerpo);
-  cuerpo.innerHTML = html;
+  let tabla = _tabla()
+  let cuerpo = $(tabla).find(".cuerpo")[0]
+  let id = _idTab()
+  cuerpo.innerHTML = restaurarOrdenPlantilla(objReordenarPlantillas[id], cuerpo)
   borrarListaOrdenarPlantillas(tabla, id)
 })
 
@@ -80,24 +71,21 @@ function borrarListaOrdenarPlantillas(tabla, id) {
   $(tabla).find(`th:not([colspan="2"])`).each((_, el) => el.style.setProperty("--flecha", '"↓"'));
   tabla.querySelector('.activo')?.classList.remove("activo");
   $(".restaurarplantilla").css("display", "none");
-  delete objReordenarPlantillas[id];
+  delete objReordenarPlantillas[id]
 }
 
 function restaurarOrdenPlantilla(ordenAnterior, cuerpo) {
-  let filas = [...cuerpo.rows];
-  let formatoTablaLlena = "";
-  let ordenNuevo = filas.map(el => el.cells[0].innerText.normalizar());
+  let filas = [...cuerpo.rows]
+  let formatoTablaLlena = ""
+  let ordenNuevo = filas.map(x => x.cells[0].innerText.normalizar())
   ordenAnterior.forEach(producto => {
-    let indice = ordenNuevo.findIndex(el => el === producto);
-    if (indice >= 0)
-      formatoTablaLlena += filas[indice].outerHTML;
-  });
+    let i = ordenNuevo.findIndex(x => x === producto)
+    if (i >= 0)
+      formatoTablaLlena += filas[i].outerHTML
+  })
 
-  ordenNuevo.forEach((prod, i) => {
-    if (!ordenAnterior.includes(prod))
-      formatoTablaLlena += filas[i].outerHTML;
-  });
-  return formatoTablaLlena;
+  ordenNuevo.forEach((prod, i) => !ordenAnterior.includes(prod) ? formatoTablaLlena += filas[i].outerHTML : "")
+  return formatoTablaLlena
 }
 
 async function guardarValoresConfig() {
@@ -507,7 +495,7 @@ $("#guardar").on("click", async function () {
       productos: [...$(tabla).find(".cuerpo tr")].map(fila => ({
         nombre: fila.cells[0].textContent,
         precio: fila.cells[1].innerText.aFloat(),
-        viajes: [...Array($(tabla).find(".pintarColumnas>*").length * 2)].map((_, j) => fila.cells[j + colsinicio].innerText.aInt()),
+        viajes: [...Array($(tabla).find(".pintarcolumnas>*").length * 2)].map((_, j) => fila.cells[j + colsinicio].innerText.aInt()),
         vendidos: fila.querySelector("td:nth-last-child(2)").innerText.aInt(),
         ingresos: fila.querySelector("td:nth-last-child(1)").innerText.aFloat()
       })),
@@ -1191,35 +1179,28 @@ $("#exportarpdf")[0].inicializar(() => {
 }, `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}`)
 
 async function pidePlantilla(nombre) {
-  let plantilla = listaplantillas.find(el => el.nombre === nombre)
-  if (!plantilla) {
-    let data = JSON.stringify({ nombre })
+  if (!listaplantillas[nombre]) {
     await $.ajax({
-      url: "/plantillas/devuelveplantilla",
+      url: `/plantillas/devuelveplantilla/${nombre}`,
       method: "POST",
       contentType: "application/json",
-      data,
-      success: async function (res) {
-        plantilla = { nombre, plantilla: res };
-        listaplantillas.push(plantilla);
-      },
-      error: function () { Swal.fire("Ups...", "Ha habido un error", "error") }
-    });
+      success: p => listaplantillas[nombre] = p,
+      error: q => Swal.fire("Ups...", "Ha habido un error", "error")
+    })
   }
-  return plantilla.plantilla;
+  return listaplantillas[nombre]
 }
 
 async function metododropdown(option) {
-  let res = await pidePlantilla(option.textContent)
-  if (!res)
-    return
-  resPlantillas = res
+  let p = await pidePlantilla(option.textContent)
+  if (!p) return
+  plantillaSeleccionada = p
   let html = `<table style="margin: 0 auto;">
   <thead><tr><th class="prod">Productos</th><th class="tr">Precio</th></tr></thead>
-  <tbody>${res.productos.map(x => `<tr><td>${x.producto}</td><td>${x.precio.normalizarPrecio()}</td></tr>`).join("")}</tbody>
+  <tbody>${p.map(x => `<tr><td>${x.producto}</td><td>${x.precio.normalizarPrecio()}</td></tr>`).join("")}</tbody>
   </table>`
   if (await swalSíNo("Estás seguro que deseas utilizar esta plantilla?", html, null))
-    await opcionesPlantilla();
+    await opcionesPlantilla()
 }
 
 async function opcionesPlantilla() {
@@ -1240,7 +1221,7 @@ async function opcionesPlantilla() {
 }
 
 async function crearPlantillaVacia() {
-  let formatotablavacia = creaTablaVacia(resPlantillas)
+  let formatotablavacia = creaTablaVacia(plantillaSeleccionada)
   if (await swalSíNo("Estás seguro que deseas utilizar esta plantilla?", formatotablavacia, 850)) {
     _tabla().outerHTML = formatotablavacia
     borrarListaOrdenarPlantillasTablaActual()
@@ -1276,7 +1257,7 @@ async function mezclarHandler(callbackConfirmado, callbackDenegado) {
 }
 
 async function ordenPlantillaHandler(callback, callbackConfirmado, callbackDenegado) {
-  let productos = resPlantillas.productos;
+  let productos = plantillaSeleccionada.productos;
   let formatoTablaLlena = callback(productos);
   let tabla = _tabla();
   let tablaCopia = tabla.cloneNode(true);
@@ -1426,7 +1407,7 @@ function cancelarSwal() {
   Swal.close();
 }
 
-function creaTablaVacia(res) {
+function creaTablaVacia(plantilla) {
   return `<table>
   <thead>
     <col><col><colgroup class="pintarcolumnas"><col span="2"></colgroup><col><col>
@@ -1438,7 +1419,7 @@ function creaTablaVacia(res) {
     <tr class="saleYEntra"><th>Sale</th><th>Entra</th></tr>
   </thead>
   <tbody class="cuerpo">
-  ${res.productos.map(x => `<tr><td contenteditable="true">${x.producto}</td><td contenteditable="true">${x.precio.normalizarPrecio()}</td><td contenteditable="true"></td><td contenteditable="true"></td><td></td><td class="borrarfilas"></td></tr>`).join("")}
+  ${plantilla.map(x => `<tr><td contenteditable="true">${x.producto}</td><td contenteditable="true">${x.precio.normalizarPrecio()}</td><td contenteditable="true"></td><td contenteditable="true"></td><td></td><td class="borrarfilas"></td></tr>`).join("")}
   </tbody>
     <tfoot>
       <tr><td colspan="4">Total:</td><td></td><td></td></tr>
@@ -1572,27 +1553,21 @@ function enviar(atributo, texto) {
         await Swal.fire("ÉXITO", texto, "success")
         location.reload()
       },
-      error: res => Swal.fire("Error", res.responseText, "error")
-    });
+      error: r => Swal.fire("Error", r.responseText, "error")
+    })
   }
 }
 
-function preguntarSiQuiereRedireccionar(fecha) {
-  return new Promise((_, reject) => {
-    swalConfirmarYCancelar.fire({
-      title: "Se ha restaurado correctamente",
-      text: `El registro se ha restaurado correctamente. Deseas ser redireccionado para ver los cambios?`,
-      icon: "info",
-      showCancelButton: true,
-      confirmButtonText: "Sí",
-      cancelButtonText: "No",
-    }).then((result) => {
-      if (result.isConfirmed)
-        window.location = `/registrarventas/${devuelveFechaFormateada(fecha)}`;
-      else
-        reject("false");
-    })
+async function preguntarSiQuiereRedireccionar(fecha) {
+  let { isConfirmed } = await swalConfirmarYCancelar.fire({
+    title: "Se ha restaurado correctamente",
+    text: `El registro se ha restaurado correctamente. Deseas ser redireccionado para ver los cambios?`,
+    icon: "info",
+    showCancelButton: true,
+    confirmButtonText: "Sí",
+    cancelButtonText: "No",
   })
+  if (isConfirmed) window.location = `/registrarventas/${devuelveFechaFormateada(fecha)}`
 }
 
 function devuelveFechaFormateada(fecha) {

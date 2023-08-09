@@ -7,12 +7,9 @@ class customModal extends HTMLElement {
       'data-bs-backdrop': 'static',
       'data-bs-keyboard': 'false',
       'tabindex': '-1'
-    };
-
-    for (let [key, value] of Object.entries(attributes)) {
-      this.setAttribute(key, value);
     }
 
+    Object.entries(attributes).forEach(([k, v]) => this.setAttribute(k, v))
     this.innerHTML = `<div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -35,31 +32,37 @@ class customModal extends HTMLElement {
     </div>`
 
     setTimeout(() => {
-      modal = new bootstrap.Modal(this)
-      this.inputJQ = $(this).find("input")
-      this.input = this.inputJQ[0]
+      modal = this
+      this.btModal = new bootstrap.Modal(this)
+      this.input = $(this).find("input")[0]
 
-      $(this).on("hide.bs.modal", function () {
-        let {input, inputJQ} = this
-        input.value = "";
-        if (input.type === "text")
-          inputJQ.next().click();
-      });
+      
+      $(this).on("hide.bs.modal", q => {
+        this.input.value = ""
+        this.input.type === "text" ? $(this).find("input-contraseña")[0].clickOjo(0) : ""
+      })
 
-      $(this).on('click', '#enviarVerificacion', () => {
-        let {input} = this;
+      $(this).on('click', '#enviarVerificacion', q => {
+        let { input } = this
         if (input.value === "") {
           input.setCustomValidity('Por favor escribe una contraseña')
           input.reportValidity()
         }
-        else
-          funcionEnviar();
-      });
-    }, 5);
+        else {
+          this.ajax()
+          this.btModal.hide()
+        }
+      })
+    }, 5)
+  }
+
+  mostrar(ajax){
+    this.btModal.show()
+    this.ajax = ajax
   }
 }
 
-customElements.define("custom-modal", customModal);
+customElements.define("custom-modal", customModal)
 
 class inputContraseña extends HTMLElement {
   connectedCallback() {
@@ -70,22 +73,14 @@ class inputContraseña extends HTMLElement {
     <i class="fa-sharp fa-solid fa-eye" style="display: none;"></i>
     <i class="fa-sharp fa-solid fa-eye-slash"></i>`
 
-    let ojoNormal = $(this).find(".fa-eye")
-    let ojoCerrado = $(this).find(".fa-eye-slash")
-    let input = $(this).find("input")
+    $(this).on("click", ".fa-eye", q => this.clickOjo(0))
+    $(this).on("click", ".fa-eye-slash", q => this.clickOjo(1))
+  }
 
-    $(this).on("click", ".fa-eye", () => {
-      ojoNormal.toggle()
-      ojoCerrado.toggle()
-      input.attr("type", "password")
-    })
-
-    $(this).on("click", ".fa-eye-slash", () => {
-      ojoNormal.toggle()
-      ojoCerrado.toggle()
-      input.attr("type", "text")
-    })
+  clickOjo(texto){
+    $(this).find("i").toggle()
+    $(this).find("input").attr("type", texto ? "text" : "password")
   }
 }
 
-customElements.define("input-contraseña", inputContraseña);
+customElements.define("input-contraseña", inputContraseña)

@@ -82,19 +82,12 @@ async function rangoEntre(fecha1, fecha2, tiempo, resumen) {
   return [...diasAlPrincipio, ...await resumen.where("_id").gte(fecha1).lte(fecha2).sort("_id"), ...diasAlFinal]
 }
 
-router.get("/:agruparPor&:rango&:fecha", async (req, res) => {
+router.get("/:agruparPorP(agruparpor=semanas)&:rangoP(rango=(mayor|menor|libre|entre))&:fechaP", async (req, res) => {
   try {
-    let { rango: rangoP, agruparPor: agruparPorP, fecha: fechaP } = req.params;
+    let { rangoP, agruparPorP, fechaP } = req.params;
     let [, rango] = rangoP.split("rango=")
     let [, agruparPor] = agruparPorP.split("agruparpor=")
     let [, fecha] = fechaP.split("dias=")
-
-    if (!rango || !agruparPor || !fecha)
-      return res.send("búsqueda inválida");
-    if (!["dias", "semanas", "meses", "años"].includes(agruparPor))
-      return res.send("búsqueda inválida");
-    if (!["mayor", "menor", "libre", "entre"].includes(rango))
-      return res.send("búsqueda inválida");
 
     let fechas, fecha1, fecha2
     if (rango === "libre")
@@ -103,7 +96,7 @@ router.get("/:agruparPor&:rango&:fecha", async (req, res) => {
       [fecha1, fecha2] = fecha.split("y").map(x => DateTime.fromFormat(x, "d-M-y"))
     else
       fecha = DateTime.fromFormat(fecha, "d-M-y")
-    let datos;
+    let datos
     if (["semanas", "meses"].includes(agruparPor))
       await actualizarSiHuboCambiosSemanaOMes(agruparPor === "semanas" ? "week" : "month")
     if (agruparPor === "años")
@@ -202,8 +195,6 @@ router.get("/:agruparPor&:rango&:fecha", async (req, res) => {
         datos = [...diasYMesesSueltosInicio, ...await ResumenAño.where("_id").lte(fecha).sort("_id"), ...diasYMesesSueltosFin]
       }
     }
-    // res.send(datos)
-    datos = JSON.stringify(datos)
     res.render("mostraranalisis", { datos })
   } catch (error) {
     console.log(error)

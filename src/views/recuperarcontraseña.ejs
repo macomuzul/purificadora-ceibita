@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <%- include("layouts/global") %>
@@ -33,40 +34,28 @@
   </div>
 
   <script>
-    let usuario = document.getElementById("usuario");
-    usuario.addEventListener('input', function (event) {
-      if (correo.validity.valueMissing)
-        correo.setCustomValidity('Por favor escribe un nombre de usuario');
-      else
-        correo.setCustomValidity('');
-    });
+    let usuario = document.getElementById("usuario")
+    let correo = document.getElementById("correo")
     
-    let correo = document.getElementById("correo");
-    correo.addEventListener('input', function (event) {
-      if (correo.validity.valueMissing)
-        correo.setCustomValidity('Por favor escribe un correo válido');
-      if (correo.validity.typeMismatch)
-        correo.setCustomValidity('Por favor escribe un correo válido por ejemplo: usuario@dominio.com');
-      else
-        correo.setCustomValidity('');
-    });
+    usuario.addEventListener('input', q => usuario.setCustomValidity(usuario.validity.valueMissing ? 'Por favor escribe un nombre de usuario' : ''))
+    correo.addEventListener('input', q => correo.setCustomValidity((correo.validity.valueMissing || correo.validity.typeMismatch) ?'Por favor escribe un correo válido por ejemplo: usuario@dominio.com' : ''))
   </script>
   <%if (errorRecuperarContraseña.length> 0 && String(errorRecuperarContraseña) === "El usuario que has ingresado no existe") {%>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <script>
-      window.addEventListener("load", (event) => {
-        usuario.setCustomValidity('El usuario que has ingresado no existe');
-        usuario.reportValidity();
-      });
+      window.addEventListener("load", q => {
+        usuario.setCustomValidity('El usuario que has ingresado no existe')
+        usuario.reportValidity()
+      })
     </script>
   <% } %>
   <%if (errorRecuperarContraseña.length> 0 && String(errorRecuperarContraseña) === 'El correo ingresado no está en la lista permitida de correos') {%>
     <script>
-      window.addEventListener("load", (event) => {
-        correo.setCustomValidity('El correo ingresado no está en la lista permitida de correos');
-        correo.reportValidity();
-      });
+      window.addEventListener("load", q => {
+        correo.setCustomValidity('El correo ingresado no está en la lista permitida de correos')
+        correo.reportValidity()
+      })
     </script>
   <% } %>
 </body>

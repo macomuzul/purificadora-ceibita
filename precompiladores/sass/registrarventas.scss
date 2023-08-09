@@ -122,7 +122,7 @@ h4 {
 
 .calendario {
   background: #23242a;
-  height: 50px;
+  height: 55px;
   color: #45f3ff;
   display: flex;
 
@@ -130,6 +130,7 @@ h4 {
     width: 40px;
     height: inherit;
     fill: #45f3ff;
+    vertical-align: text-bottom;
     &:hover {
       fill: #00adb5;
       cursor: pointer;
@@ -147,12 +148,6 @@ h4 {
   flex-basis: 0;
 }
 
-.esconder {
-  position: absolute;
-  opacity: 0;
-  visibility: hidden;
-}
-
 .fecha {
   transform: translateY(-3px);
   cursor: pointer;
@@ -167,26 +162,17 @@ h4 {
 
 .botonexcel {
   position: absolute;
-  bottom: 10;
-  right: 0;
+  bottom: 10px;
+  right: 0px;
 }
 
 .botonpdf {
   position: absolute;
-  bottom: 10;
-  right: 180;
+  bottom: 10px;
+  right: 180px;
 }
 .contenedorsuperior {
   position: relative;
-}
-
-.margenbotonswal{
-  width: 140;
-  height: 50;
-  font-weight: 500;
-  &:not(.btn-success){
-    margin-left: 40;
-  }
 }
 
 .botonconfirm {
@@ -325,8 +311,8 @@ th {
 .restaurarplantilla {
   width: 262px;
   position: absolute;
-  bottom: -50;
-  right: 0;
+  bottom: -50px;
+  right: 0px;
   display: none;
 }
 .modal-backdrop {
@@ -497,4 +483,16 @@ th {
 iframe{
   width: 100%;
   height: 400px;
+}
+
+.textovista {
+  text-align: center;
+  font-size: 22px;
+  color: #545151;
+  font-weight: 500;
+  margin-bottom: 17px;
+}
+
+#mostrartabla {
+  margin: 0 auto;
 }

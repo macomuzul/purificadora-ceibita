@@ -1,13 +1,13 @@
 require('dotenv').config()
-const router = require("express").Router();
+const router = require("express").Router()
 const Respaldo = require("../../models/registroseliminados");
 const RegistroVentas = require("../../models/registroventas");
-const { DateTime } = require("luxon");
+const { DateTime } = require("luxon")
 const { google } = require("googleapis")
 const stream = require("stream")
-const BSON = require('bson');
-const nodemailer = require("nodemailer");
-const { send } = require('process');
+const BSON = require('bson')
+const nodemailer = require("nodemailer")
+const { send } = require('process')
 
 let clientId = process.env.CLIENT_ID
 let clientSecret = process.env.CLIENT_SECRET

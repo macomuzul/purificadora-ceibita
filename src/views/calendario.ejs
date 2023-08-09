@@ -22,13 +22,13 @@
             <div id="listaCamioneros" class="accordion-collapse collapse">
               <div class="accordion-body">
                 <div class="camioneros">
-                  <% camioneros.forEach(camionero => { %>
+                  <% camioneros.forEach(camionero=> { %>
                     <article class="camionero">
                       <div class="contenedor-color"><div class="color"></div></div>
                       <div class="textoCamionero">Nombre:</div>
-                      <div class="nombreCamionero"><%= camionero.nombre %></div>
+                      <div class="nombreCamionero"><%=camionero.nombre%></div>
                     </article>
-                  <% }) %>
+                    <% }) %>
                 </div>
               </div>
             </div>
@@ -36,37 +36,19 @@
         </div>
       </section>
       <section id="demos">
-        <div class="section-content">
-          <div class="log-content">
-            <div class="--noshadow" id="demoEvoCalendar"></div>
-          </div>
-        </div>
+        <div class="section-content"><div class="log-content"><div class="--noshadow" id="demoEvoCalendar"></div></div></div>
       </section>
     </main>
-    <script>
-      let camioneros = {}
-      "<%camioneros.forEach(el => {%>"
-        camioneros["<%=el.nombre%>"] = "<%=el.color%>"
-      "<%});%>"
-      $(".camionero").each((i, el) => {
-        let color = camioneros[el.querySelector(".nombreCamionero").innerText];
-        el.querySelector(".color").style.background = color;
-      })
-
-
-      let listaMeses = { "<%=fechaActual%>": 1 };
-      let eventosCalendario = [];
-      "<% let dias = mes?.dias || []; dias.forEach(dia => { dia.camioneros.forEach((camionero, i) => { %>"
-      eventosCalendario.push({ name: `Camión ${"<%=i+1%>"}`, description: `Conductor: ${"<%=camionero%>"}`, date: "<%=DateTime.fromJSDate(dia._id).toFormat('y/M/d')%>", type: "<%=i%>", ultimocambio: "<%=DateTime.fromJSDate(dia.ultimocambio).setZone('America/Guatemala').toFormat('y/M/d')%>", usuario: "<%=dia.usuario%>", color: camioneros["<%=camionero%>"] })
-      "<% }); }) %>"
-    </script>
+    <script src="/he-1.2.0.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/timezone.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      let camionerosEJS = `<%= JSON.stringify(camioneros)%>`
+      let diasEJS = `<%=JSON.stringify(mes?.dias || [])%>`
+      let listaMeses = { "<%=fechaActual%>": 1 }
+    </script>
     <script src="calendario1.js"></script>
     <script src="calendario2.js"></script>

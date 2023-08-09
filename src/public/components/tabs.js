@@ -6,7 +6,7 @@ class label extends HTMLElement {
   }
 }
 
-customElements.define("custom-label", label);
+customElements.define("custom-label", label)
 
 class contenedorAcciones extends HTMLElement {
   connectedCallback() {
@@ -33,7 +33,7 @@ customElements.define("contenedor-acciones", contenedorAcciones);
 
 class tabContent extends HTMLElement {
   connectedCallback() {
-    $(this).addClass("tabs__content");
+    $(this).addClass("tabs__content")
     this.innerHTML = `${this.innerHTML}`
   }
 }
@@ -48,33 +48,29 @@ class botonRestaurar extends HTMLElement {
   }
 }
 
-customElements.define("boton-restaurar", botonRestaurar);
+customElements.define("boton-restaurar", botonRestaurar)
 
 class customTabs extends HTMLElement {
   connectedCallback() {
     requestAnimationFrame(() => {
       try {
-        $(this).find("custom-label input")[0].checked = true;
-        $(this).find("tab-content")[0].style.display = "initial";
-        $(this).find("custom-label label").each((_, el) => {
-          el.addEventListener("click", () => {
-            let checkeado = $(this).find("custom-label input:checked");
-            checkeado[0].checked = false;
-            let indice = $(checkeado).parent().index();
-            $(this).find(`tab-content:nth-child(${indice + 1})`).css("display", "none");
+        $(this).find("custom-label input")[0].checked = true
+        $(this).find("tab-content")[0].style.display = "initial"
+        $(this).on("click", "custom-label label", e => {
+          let el = $(e.currentTarget).prev()[0]
+          let checkeado = $(this).find("custom-label input:checked")[0]
+          if (el === checkeado) return
+          checkeado.checked = false
+          $(this).find(`tab-content:nth-child(${$(checkeado).parent().index() + 1})`).css("display", "none")
 
-            let input = $(el).prev();
-            input[0].checked = true;
-            let indice2 = $(el).parent().index();
-            $(this).find(`tab-content:nth-child(${indice2 + 1})`).css("display", "initial");
-          });
-        });
+          el.checked = true
+          $(this).find(`tab-content:nth-child(${$(el).parent().index() + 1})`).css("display", "initial")
+        })
       } catch {
 
       }
-    });
-
+    })
   }
 }
 
-customElements.define("custom-tabs", customTabs);
+customElements.define("custom-tabs", customTabs)

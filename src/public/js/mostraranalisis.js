@@ -1,5 +1,4 @@
-let decodificado = he.decode(datosString);
-let datos = JSON.parse(decodificado);
+let decodificado = he.decode(datosString), datos = JSON.parse(decodificado)
 
 // document.body.style.width = "2000px"
 String.prototype.aFloat = function () { return parseFloat(this) }

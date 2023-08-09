@@ -2,7 +2,6 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login</title>
   <%- include("layouts/global") %>
@@ -34,31 +33,26 @@
     </form>
   </div>
   <script>
-    let usuario = document.getElementById("usuario");
-    usuario.addEventListener('input', function (event) {
-      if (usuario.validity.valueMissing)
-        usuario.setCustomValidity('Por favor escribe un nombre de usuario');
-      else
-        usuario.setCustomValidity('');
-    });
-
-    let contraseña = document.getElementById("contraseña");
-    contraseña.addEventListener('input', function (event) {
-      if (contraseña.validity.valueMissing)
-        contraseña.setCustomValidity('Por favor escribe una contraseña');
-      else
-        contraseña.setCustomValidity('');
-    });
-
-    usuario.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        contraseña.focus();
+    let usuario = document.getElementById("usuario")
+    let contraseña = document.getElementById("contraseña")
+    let validarUsuario = q => usuario.setCustomValidity(usuario.validity.valueMissing ? 'Por favor escribe un nombre de usuario' : '')
+    let validarContraseña = q => contraseña.setCustomValidity(contraseña.validity.valueMissing ? 'Por favor escribe una contraseña' : '')
+    usuario.addEventListener('input', validarUsuario)
+    contraseña.addEventListener('input', validarContraseña)
+    usuario.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault()
+        contraseña.focus()
       }
-    });
+    })
+
+    document.querySelector('[type="submit"]').addEventListener("click", q => {
+      validarUsuario()
+      validarContraseña()
+    })
   </script>
 
-  <% if (cantidadMaximaInicioSesion.length> 0) { %>
+<% if (cantidadMaximaInicioSesion.length> 0) { %>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
       body>#toast-container>div:hover {
@@ -80,33 +74,30 @@
         "timeOut": "100000",
         "extendedTimeOut": "100000",
       }
-    </script>
-    <% if (String(cantidadMaximaInicioSesion)==="Solo te queda un intento" ) { %>
-      <script defer>
-        toastr["warning"]("Solo te queda un intento inválido más, si escribes mal este intento tendrás que esperar 15 minutos para volver a intentarlo de nuevo", "Atención");
+      
+      '<% if (String(cantidadMaximaInicioSesion)==="Solo te queda un intento" ) { %>'
+        toastr["warning"]("Solo te queda un intento inválido más, si escribes mal este intento tendrás que esperar 15 minutos para volver a intentarlo de nuevo", "Atención")
+      '<% } %>'
       </script>
-      <% } %>
-      <% if (String(cantidadMaximaInicioSesion)==="Se ha superado la cantidad maxima" ) { %>
-        <%- include('layouts/toastIntentosMaximosError.ejs', {tiempoQueQueda}) %>
-      <% } %>
-    <% } %>
-
-
-  <% if (errorInicioSesion.length> 0) { %>
-    <script>
-      window.addEventListener("load", (event) => {
-        '<%if (String(errorInicioSesion) === "El usuario al que desea acceder no existe") {%>'
-        usuario.setCustomValidity('El usuario al que desea acceder no existe');
-        usuario.reportValidity();
-        '<% } %>'
-
-        '<%if (String(errorInicioSesion) === "Contraseña incorrecta") {%>'
-        contraseña.setCustomValidity('Contraseña incorrecta');
-        contraseña.reportValidity();
-        '<% } %>'
-      });
-    </script>
+  <% if (String(cantidadMaximaInicioSesion)==="Se ha superado la cantidad maxima" ) { %>
+    <%- include("layouts/toastIntentosMaximosError.ejs", {tiempoQueQueda}) %>
   <% } %>
-</body>
+<% } %>
 
+<% if (errorInicioSesion.length> 0) { %>
+  <script>
+    window.addEventListener("load", q => {
+      '<%if (String(errorInicioSesion) === "El usuario al que desea acceder no existe") {%>'
+      usuario.setCustomValidity('El usuario al que desea acceder no existe');
+      usuario.reportValidity();
+      '<% } %>'
+
+      '<%if (String(errorInicioSesion) === "Contraseña incorrecta") {%>'
+      contraseña.setCustomValidity('Contraseña incorrecta');
+      contraseña.reportValidity();
+      '<% } %>'
+    })
+  </script>
+<% } %>
+</body>
 </html>

@@ -1,5 +1,6 @@
 @use "./partials/botonazul";
 @use "./partials/tablassimples";
+@use "./partials/swal";
 
 body {
   background: #191d31;
@@ -247,16 +248,6 @@ hr {
 
   button {
     width: fit-content;
-  }
-}
-
-.margenbotonswal {
-  width: 140;
-  height: 50;
-  font-weight: 500;
-
-  &:not(.btn-success) {
-    margin-left: 40;
   }
 }
 

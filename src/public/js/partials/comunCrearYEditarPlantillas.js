@@ -12,8 +12,7 @@ $('#añadirproducto').on('click', () => $("#cuerpotabla").append(`<tr><td conten
 
 $("body").on('click', ".botoneliminar", async function () {
   if (switchOrdenarFilas.checked) return
-  if (!switchModoSeguro.checked)
-    return this.closest("tr").remove()
+  if (!switchModoSeguro.checked) return this.closest("tr").remove()
   let html = `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${this.closest("tr").children[0].innerText}</span>`
   let result = await swalConfirmarYCancelar.fire({
     icon: "warning",

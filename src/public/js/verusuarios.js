@@ -14,94 +14,76 @@ const swalConfirmarYCancelar = Swal.mixin({
     cancelButton: "btn btn-danger botoncancel margenbotonswal",
   },
   buttonsStyling: false,
-});
-
-$("body").on("click", ".svgeditar", function () {
-  window.location = "/empleados/usuarios/editar/" + $(this).closest("tr")[0].cells[0].innerText;
 })
 
+$("body").on("click", ".svgeditar", e => location = "/empleados/usuarios/editar/" + $(e.currentTarget).closest("tr")[0].cells[0].innerText)
+
 $("body").on("click", ".svgeliminar", async function () {
-  let usuario = this.closest("tr").cells[0].innerText;
+  let usuario = this.closest("tr").cells[0].innerText
   let html = `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${usuario}</span>`
-  let result = await swalConfirmarYCancelar.fire({
+  let { isConfirmed } = await swalConfirmarYCancelar.fire({
     title: "Estás seguro que deseas borrar este usuario?",
     icon: "warning",
     width: window.innerWidth / 2,
-    html: html,
+    html,
     showCancelButton: true,
     confirmButtonText: "Sí",
     cancelButtonText: "No",
   })
-  if (result.isConfirmed) {
-    funcionEnviar = devuelveBorrarUsuario(`{"usuario": "${usuario}"}`, this.closest("tr"))
-    modal.show()
-  }
+  isConfirmed ? modal.mostrar(devuelveBorrarUsuario(JSON.parse({ usuario }), this.closest("tr"))) : ""
 })
 
-function devuelveBorrarUsuario(data, fila){
-  return function(){
-    modal.hide();
+function devuelveBorrarUsuario(data, fila) {
+  return f => {
     $.ajax({
       url: `/empleados/usuarios`,
       method: "DELETE",
       contentType: "application/json",
       data,
-      success: res => {
-        // toastr["success"]("Se ha borrado el usuario con éxito", "Éxito");
+      // toastr["success"]("Se ha borrado el usuario con éxito", "Éxito");
+      success: q => {
         Swal.fire("Éxito", "Se ha borrado el usuario con éxito", "success")
         fila.remove()
       },
-      error: res => {
-        Swal.fire("Error", res.responseText, "error")
-        // toastr["error"](res.responseText, "Error");
-      },
-    });
+      // toastr["error"](res.responseText, "Error");
+      error: r => Swal.fire("Error", r.responseText, "error")
+    })
   }
 }
 
 $("body").on("click", "td .fa-eye", function () {
-  let counter = $(this).prev()[0];
-  if(counter.style.display !== "none")
-    counter.parar();
-  $(this).closest("td").prev().text("********");
-  $(this).toggle();
-  $(this).next().toggle();
-});
+  let counter = $(this).prev()[0]
+  if (counter.style.display !== "none") counter.parar()
+  $(this).closest("td").prev().text("********")
+  $(this).parent().find("i").toggle()
+})
 
-$("body").on("click", "td .fa-eye-slash", function () {
-  funcionEnviar = devuelvePedirContraseña(this);
-  modal.show();
-});
+$("body").on("click", "td .fa-eye-slash", e => modal.mostrar(devuelvePedirContraseña(e.currentTarget)))
 
 function devuelvePedirContraseña(ojo) {
-  return function () {
-    let usuario = ojo.closest("tr").cells[0].innerText;
-    let contraseñaVerificacion = $("#verificacionIdentidad").val();
-    let data = JSON.stringify({usuario, contraseñaVerificacion})
-    modal.hide();
+  return f => {
+    let usuario = ojo.closest("tr").cells[0].innerText
+    let contraseñaVerificacion = $("#verificacionIdentidad").val()
     $.ajax({
       url: `/empleados/usuarios`,
       method: "POST",
       contentType: "application/json",
-      data,
-      success: res => {
-        toastr["success"]("Se ha realizado la petición con éxito", "Éxito");
-        $(ojo).toggle();
-        $(ojo).prev().toggle();
-        ojo.closest("tr").cells[1].textContent = res;
-        let funcionCountdown = devuelveFuncionCountdown(ojo);
-        $(ojo).prev().prev()[0].resetear(funcionCountdown);
+      data: JSON.stringify({ usuario, contraseñaVerificacion }),
+      success: s => {
+        toastr["success"]("Se ha realizado la petición con éxito", "Éxito")
+        $(ojo).parent().find("i").toggle()
+        ojo.closest("tr").cells[1].textContent = s
+        let funcionCountdown = devuelveFuncionCountdown(ojo)
+        $(ojo).prev().prev()[0].resetear(funcionCountdown)
       },
-      error: res => {
-        toastr["error"](res.responseText, "Error");
-      },
-    });
+      error: r => toastr["error"](r.responseText, "Error")
+    })
   }
 }
 
-function devuelveFuncionCountdown(ojo){
-  return function(){
-    $(ojo).closest("td").prev()[0].textContent = "********";
-    $(ojo).prev().click();
+function devuelveFuncionCountdown(ojo) {
+  return f => {
+    $(ojo).closest("td").prev()[0].textContent = "********"
+    $(ojo).prev().click()
   }
 }

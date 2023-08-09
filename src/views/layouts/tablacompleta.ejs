@@ -1,29 +1,20 @@
 <% let cantidadViajes = (registro?.tablas[j].productos[0].viajes.length ?? 1); if (cantidadViajes !== 1) cantidadViajes /= 2 %>
 <table>
     <thead>
-      <col>
-      <col>
+      <col><col>
       <colgroup class="pintarcolumnas">
-        <% for(k=0; k < cantidadViajes; k++) {%>
-        <col span="2">
-        <% }%>
+        <% for(k=0; k < cantidadViajes; k++) {%> <col span="2"> <% }%>
       </colgroup>
-      <col>
-      <col>
+      <col><col>
       <tr>
         <th rowspan="2" class="prod">Productos</th>
         <th rowspan="2" class="tr">Precio</th>
-        <%for(k=0; k < cantidadViajes; k++) { %>
-        <th colspan="2" class="borrarcolumnas">Viaje No. <%= (k+1) %></th>
-        <% }%>
+        <%for(k=0; k < cantidadViajes; k++) { %> <th colspan="2" class="borrarcolumnas">Viaje No. <%= (k+1) %></th> <% }%>
         <th rowspan="2" class="tr columnaVendidos">Vendidos</th>
         <th rowspan="2" class="tr">Ingresos</th>
       </tr>
       <tr class="saleYEntra">
-        <%for(k=0; k < cantidadViajes; k++) { %>
-        <th>Sale</th>
-        <th>Entra</th>
-        <% }%>
+        <%for(k=0; k < cantidadViajes; k++) { %> <th>Sale</th> <th>Entra</th> <% }%>
       </tr>
     </thead>
     <tbody class="cuerpo">
@@ -32,24 +23,22 @@
         <tr>
           <td><%= registro.tablas[j].productos[k].nombre %></td>
           <td><%= registro.tablas[j].productos[k].precio.toFixed(2).replace(/[.,]00$/, "") %></td>
-          <% registro?.tablas[j].productos[k].viajes.forEach(x => { %>
-            <td><%= x %></td>
-          <% }) %>
+          <% registro?.tablas[j].productos[k].viajes.forEach(x => { %> <td><%= x %></td> <% }) %>
           <td><%= registro.tablas[j].productos[k].vendidos %></td>
           <td><%= registro.tablas[j].productos[k].ingresos.toFixed(2).replace(/[.,]00$/, "") %></td>
         </tr>
         <% }%>
       <% } else { %>
-        <%for(k=0; k < plantillaDefault.productos.length; k++) { %>
+        <% plantillaDefault.productos.forEach(x => { %>
           <tr>
-            <td><%= plantillaDefault.productos[k].producto %></td>
-            <td><%= plantillaDefault.productos[k].precio.toFixed(2).replace(/[.,]00$/, "") %></td>
+            <td><%= x.producto %></td>
+            <td><%= x.precio.toFixed(2).replace(/[.,]00$/, "") %></td>
             <td></td>
             <td></td>
             <td></td>
             <td></td>
           </tr>
-          <% }%>
+          <% }) %>
       <% } %>
     </tbody>
     <tfoot>

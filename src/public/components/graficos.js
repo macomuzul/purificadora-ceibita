@@ -210,7 +210,7 @@ class graficos extends HTMLElement {
     }
     else {
       let data = datasets[0].data
-      html = `<table><thead><tr><th colspan="${(labels.length+1)}">${this.titulo.split("agrupado")[0]}durante el período del ${formatearFecha(this.fechaOpcion, tiempoMenor)} al ${formatearFecha(this.fechaOpcion, tiempoMayor)}</th></tr><tr><th colspan="${data.length}">${this.devuelveFechaOProducto(1)}</th><th rowspan="2">Total ${this.devuelveSonIngresos()}:</th></tr>
+      html = `<table><thead><tr><th colspan="${(labels.length + 1)}">${this.titulo.split("agrupado")[0]}durante el período del ${formatearFecha(this.fechaOpcion, tiempoMenor)} al ${formatearFecha(this.fechaOpcion, tiempoMayor)}</th></tr><tr><th colspan="${data.length}">${this.devuelveFechaOProducto(1)}</th><th rowspan="2">Total ${this.devuelveSonIngresos()}:</th></tr>
       <tr>${labels.map(x => `<th>${x}</th>`).join("")}</tr></thead><tbody><tr>
         ${data.map(el => `<td>${el}</td>`).join("")}
         <td>${data.reduce((a, t) => a += t)}</td></tr></tbody></table>`
@@ -408,21 +408,21 @@ class graficos extends HTMLElement {
       x.addEventListener("click", e => {
         let el = e.currentTarget
         let checkboxes = $(el).closest(".accordion-body").find(".camioneros input")
-        $(el).find("input")[0].checked ? checkboxes.prop("checked", false) : checkboxes.prop("checked", true)
+        checkboxes.prop("checked", !$(el).find("input")[0].checked)
       }, { capture: true })
     })
   }
 
   async resetearColores(el) {
-    let result = await swalConfirmarYCancelar.fire({
+    let { isConfirmed } = await swalConfirmarYCancelar.fire({
       title: "Estás seguro que deseas resetear los colores a los valores de default?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Sí",
       cancelButtonText: "No",
     })
-    if (result.isConfirmed) {
-      $(el).find("[type='color']").each((i, el) => el.value = colores[i]);
+    if (isConfirmed) {
+      $(el).find("[type='color']").each((i, x) => x.value = colores[i]);
       Swal.fire("Se han reseteado los colores correctamente", "Para visualizar los cambios presionar el botón de actualizar gráfico", "success");
     }
   }

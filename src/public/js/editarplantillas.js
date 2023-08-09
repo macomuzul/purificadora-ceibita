@@ -1,5 +1,5 @@
-let url = "/plantillas/editar/";
-let nombrePlantillaURL = window.location.pathname.replace(url, '');
+let url = "/plantillas/editar/"
+let nombrePlantillaURL = window.location.pathname.replace(url, '')
 
 $(".contenedoreliminar").on('click', async function () {
   let result = await swalConfirmarYCancelar.fire({
@@ -14,27 +14,20 @@ $(".contenedoreliminar").on('click', async function () {
       url: `/plantillas/${nombrePlantillaURL}`,
       method: "DELETE",
       contentType: "application/json",
-      success: async res => {
+      success: async q => {
         await Swal.fire("Se ha borrado la plantilla exitosamente", "Ahora será redireccionado al menú de plantillas", "success");
         window.location = "/plantillas"
       },
-      error: res => mostrarError(res.responseText)
+      error: r => mostrarError(r.responseText)
     });
   }
 })
 
 
 $("body").on('click', "#guardar", async function () {
-  if (!await validarPlantillas())
-    return
-  let nombrePlantilla = $("#nombreplantilla").val()
-  let data = JSON.stringify({
-    nombre: nombrePlantilla,
-    productos: [...$("tbody tr")].map(({ cells }) => ({
-      producto: cells[0].innerText,
-      precio: parseFloat(cells[1].innerText)
-    }))
-  })
+  if (!await validarPlantillas()) return
+  let nombre = $("#nombreplantilla").val()
+  let data = JSON.stringify({ nombre, productos: [...$("tbody tr")].map(x => ({ producto: x.cells[0].innerText, precio: parseFloat(x.cells[1].innerText) })) })
 
   $.ajax({
     url: `/plantillas/${nombrePlantillaURL}`,
@@ -45,6 +38,6 @@ $("body").on('click', "#guardar", async function () {
       await Swal.fire("Se ha guardado exitosamente", "El archivo se ha almacenado en la base de datos", "success");
       window.location = (url + nombrePlantilla);
     },
-    error: res => Swal.fire("Ups...", res.responseText, "error")
+    error: r => Swal.fire("Ups...", r.responseText, "error")
   })
 })

@@ -11,8 +11,7 @@ customElements.define("custom-radiobutton", radiobutton);
 
 class radiogroup extends HTMLElement {
   connectedCallback() {
-    let {id} = this
-    requestAnimationFrame(() => $(this).find("input").attr("name", id))
+    requestAnimationFrame(() => $(this).find("input").attr("name", this.id))
   }
 }
 

@@ -1,66 +1,80 @@
-.pagination ul {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  background: rgb(1, 1, 75);
-  padding: 8px;
-  border-radius: 50px;
-  box-shadow: 0px 0px 10px #040127;
+.pagination {
+  ul {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    background: rgb(1, 1, 75);
+    padding: 8px;
+    border-radius: 50px;
+    box-shadow: 0px 0px 10px #040127;
+  }
+
+  li {
+    list-style: none;
+    line-height: 45px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+    font-family: "Poppins", sans-serif;
+
+    &.numb {
+      list-style: none;
+      height: 45px;
+      width: 45px;
+      margin: 0 3px;
+      line-height: 45px;
+      border-radius: 50%;
+
+      &.first {
+        margin: 0px 3px 0 -5px;
+      }
+
+      &.last {
+        margin: 0px -5px 0 3px;
+      }
+    }
+  }
+
+  .dots {
+    font-size: 22px;
+    cursor: default;
+  }
+
+  .btn {
+    border-radius: 50px;
+  }
+
+  li.active,
+  .numb:hover,
+  li:first-child:hover,
+  li:last-child:hover {
+    color: #fff;
+    background: #0a038d;
+  }
 }
-.pagination li {
-  list-style: none;
-  line-height: 45px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 500;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.3s ease;
-  font-family: "Poppins", sans-serif;
-}
-.pagination li.numb {
-  list-style: none;
-  height: 45px;
-  width: 45px;
-  margin: 0 3px;
-  line-height: 45px;
-  border-radius: 50%;
-}
-.pagination li.numb.first {
-  margin: 0px 3px 0 -5px;
-}
-.pagination li.numb.last {
-  margin: 0px -5px 0 3px;
-}
-.pagination .dots {
-  font-size: 22px;
-  cursor: default;
-}
-.pagination .btn {
-  border-radius: 50px;
-}
+
 .prev {
   padding: 0px 10px 0px 20px;
 }
+
 .next {
   padding: 0 20px 0 10px;
 }
-.pagination li.active,
-.pagination .numb:hover,
-.pagination li:first-child:hover,
-.pagination li:last-child:hover {
-  color: #fff;
-  background: #0a038d;
-}
+
 .flechanumeracion {
   width: 24px;
   height: 24px;
   fill: white;
 }
+
 .rotado {
   transform: rotate(180deg);
   margin-left: 5px;
 }
+
 .normal {
   margin-right: 5px;
 }

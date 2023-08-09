@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<html>
 <head>
   <title>Análisis de datos</title>
   <%- include("layouts/global") %>
@@ -19,8 +19,8 @@
   <script defer src="/chartjs-3.9.1.js"></script>
 
   <script>
-    let datosString = `<%= datos %>`;
-    </script>
+    let datosString = `<%=JSON.stringify(datos)%>`
+  </script>
   <script defer src="/podio.js"></script>
   <script defer src="/botonPDF.js"></script>
   <script defer src="/botonExcel.js"></script>

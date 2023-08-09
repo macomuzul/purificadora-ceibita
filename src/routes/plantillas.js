@@ -1,84 +1,89 @@
-const router = require('express').Router();
-const Plantilla = require('../models/plantillas');
+const router = require('express').Router()
+const Plantilla = require('../models/plantillas')
+
+let mandarError = (res, mensaje) => res.status(400).send(mensaje)
+let objUpdate = (_id, update) => ({ updateOne: { filter: { _id }, update } })
 
 router.route('/').get(async (req, res) => {
-  const plantillas = await Plantilla.find().sort("orden")
+  let plantillas = await Plantilla.find({}, { productos: 0, _id: 0, orden: 0 }).sort("orden")
   res.render('verplantillas', { plantillas })
 }).patch(async (req, res) => {
   try {
-    let { plantilladefault, plantillasorden } = req.body;
-    await Plantilla.updateOne({ esdefault: true }, { $unset: { esdefault: true } })
-    await Plantilla.updateOne({ nombre: plantilladefault }, { esdefault: true })
-    plantillasorden.forEach(async (el, i) => await Plantilla.updateOne(el, { orden: i }))
+    let { nombreDefault, nombrePlantillas } = req.body
+    let plantillas = await Plantilla.find({}, { orden: 1, nombre: 1, esdefault: 1 }).sort("orden")
+    if (nombrePlantillas.length !== plantillas.length) mandarError(res, "La cantidad de plantillas que enviaste no coincide con la cantidad actual, por favor recarga la página e inténtalo de nuevo")
+
+    //verifica si tienen los mismos nombres las plantilla en la base de datos y las enviadas
+    if (!nombrePlantillas.every(x => plantillas.map(x => x.nombre).includes(x))) mandarError(res, "Hay nombres de plantilla que no coinciden, por favor recarga la página e inténtalo de nuevo")
+
+    let plantillasAActualizar = []
+    let plantillaDefault = plantillas.find(x => x.esdefault)
+    if (plantillaDefault.nombre !== nombreDefault)
+      plantillasAActualizar.push(objUpdate(plantillaDefault._id, { $unset: { esdefault: true } }), objUpdate(plantillas.find(x => x.nombre === nombreDefault)._id, { esdefault: true }))
+
+    nombrePlantillas.forEach((x, i) => x !== plantillas[i].nombre ? plantillasAActualizar.push(objUpdate(plantillas[i]._id, { orden: i })) : "")
+    await Plantilla.bulkWrite(plantillasAActualizar)
     res.send("Se ha actualizado con exito")
   }
   catch (error) {
-    res.status(400).send("No se pudieron guardar los cambios");
+    mandarError(res, "No se pudieron guardar los cambios")
   }
-});
+})
 
 router.route('/crear').get(async (req, res) => {
-  const plantillas = await Plantilla.find({}, { nombre: 1, _id: 0 }).sort("orden");
-  res.render('crearplantillas', { plantillas });
+  let plantillas = await Plantilla.nombrePlantillas()
+  res.render('crearplantillas', { plantillas })
 }).post(async (req, res) => {
   try {
-    if (await Plantilla.findOne({ nombre: req.body.nombre }))
-      return res.status(400).send('La plantilla ya existe');
-    await Plantilla.create({ ...req.body, orden: await Plantilla.count(), ultimaedicion: req.user?.usuario ?? "usuariodesconocido" })
+    if (await Plantilla.exists({ nombre: req.body.nombre }))
+      return mandarError(res, 'La plantilla ya existe');
+    await Plantilla.create({ ...req.body, orden: await Plantilla.countDocuments({}), ultimaedicion: req.user?.usuario ?? "usuariodesconocido" })
     res.send("plantilla guardada")
   } catch {
-    res.status(400).send('Error al guardar la plantilla');
+    mandarError(res, 'Error al guardar la plantilla')
   }
-});
+})
 
 router.get('/editar/:id', async (req, res) => {
   try {
-    let datosplantilla = await Plantilla.findOne({ nombre: req.params.id });
-    if (datosplantilla)
-      res.render('editarplantillas', { datosplantilla });
-    else
-      res.status(400).send("Error, la plantilla que deseas acceder no existe");
+    let datosplantilla = await Plantilla.findOne({ nombre: req.params.id })
+    datosplantilla ? res.render('editarplantillas', { datosplantilla }) : mandarError(res, "Error, la plantilla que deseas acceder no existe")
   } catch (error) {
-    res.status(400).send("Error, la plantilla que deseas acceder no existe");
+    mandarError(res, "Error, la plantilla que deseas acceder no existe")
   }
 });
 
-router.post('/devuelveplantilla', async (req, res) => {
+router.post('/devuelveplantilla/:nombre', async (req, res) => {
   try {
-    const datosplantilla = await Plantilla.findOne(req.body, { productos: 1, _id: 0 });
-    if (datosplantilla)
-      res.send(datosplantilla);
-    else
-      res.status(400).send('Plantilla no existe');
+    const plantilla = await Plantilla.findOne({ nombre: req.params.nombre }, { productos: 1, _id: 0 })
+    plantilla ? res.send(plantilla.productos) : mandarError(res, 'Plantilla no existe')
   } catch (error) {
-    res.status(400).send('Error al procesar la petición');
+    mandarError(res, 'Error al procesar la petición');
   }
-});
+})
 
 
 router.route('/:id').patch(async (req, res) => {
   try {
     req.body.usuario = req.user?.usuario ?? "usuariodesconocido";
-    await Plantilla.updateOne({ nombre: req.params.id }, req.body);
-    res.send("Se ha actualizado con exito");
+    await Plantilla.findOneAndUpdate({ nombre: req.params.id }, req.body, { runValidators: true })
+    res.send("Se ha actualizado con exito")
   } catch (error) {
-    res.status(400).send("Error al actualizar la plantilla");
+    mandarError(res, "Error al actualizar la plantilla")
   }
 }).delete(async (req, res) => {
   try {
-    var plantilla = await Plantilla.findOne({ nombre: req.params.id });
-    if (!plantilla)
-      return res.status(400).send("La plantilla no existe")
-    if (plantilla.esdefault)
-      return res.status(400).send("No puedes borrar la plantilla de default")
+    let plantilla = await Plantilla.findOne({ nombre: req.params.id }, { orden: 1, esdefault: 1 })
+    if (!plantilla) return mandarError(res, "La plantilla no existe")
+    if (plantilla.esdefault) return mandarError(res, "No puedes borrar la plantilla de default")
+
+    let ordenPlantillaBorrada = plantilla.orden
     await plantilla.deleteOne()
-    const plantillas = await Plantilla.find().sort("orden");
-    plantillas.forEach(async (el, i) => await el.updateOne({ orden: i }))
-
-    res.send("Se ha borrado con exito");
+    await Plantilla.updateMany({ orden: { $gte: ordenPlantillaBorrada } }, { $inc: { orden: -1 } })
+    res.send("Se ha borrado con exito")
   } catch (error) {
-    res.status(400).send("No existe la plantilla que deseas borrar");
+    mandarError(res, "No existe la plantilla que deseas borrar")
   }
-});
+})
 
-module.exports = router;
+module.exports = router

@@ -12,7 +12,7 @@ body {
 }
 
 
-.tippy-box{
+.tippy-box {
   background-color: transparent !important;
 }
 
@@ -21,20 +21,23 @@ th {
   resize: none !important;
   font-size: 15px;
 }
+
 .contenedormedio {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   margin-bottom: 15px;
 }
+
 .nombreplantilla {
   width: 250px;
 }
+
 .ultimaedicion {
   width: 400px;
 }
 
-td{
+td {
   padding: 10px 15px;
 }
 
@@ -98,18 +101,23 @@ td svg:hover {
   opacity: 0.8;
   cursor: pointer;
 }
+
 td button:hover {
   opacity: 0.8;
 }
 
-table{
-    margin-bottom: 20px;
+table {
+  margin-bottom: 20px;
 }
 
 .custom-switch .custom-control-label::before {
   width: 2rem;
 }
 
-.custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+.custom-switch .custom-control-input:checked~.custom-control-label::after {
   transform: translateX(1rem);
+}
+
+#cuerpotabla td {
+  min-height: 70px;
 }

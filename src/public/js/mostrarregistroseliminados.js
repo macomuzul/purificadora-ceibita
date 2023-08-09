@@ -1,9 +1,7 @@
 const botonSubir = $("#back-to-top-btn")[0]
 let checkboxes = $(".check")
 
-$("#seleccionarTodos").on("change", function () {
-  this.checked ? checkboxes.prop("checked", true) : checkboxes.prop("checked", false)
-})
+$("#seleccionarTodos").on("change", e => checkboxes.prop("checked", e.currentTarget.checked))
 
 window.addEventListener("scroll", scrollFunction);
 
@@ -84,7 +82,7 @@ $("body").on("click", ".btnrestaurar", async function (e) {
             return contenidoIframe.querySelector("#validadorIframe").className = "invalid-feedback"
           }
           moverRegistro(id, parseDate(fecha).valueOf(), 0)
-        });
+        })
         $("#cancelarIframe")[0].addEventListener("click", () => Swal.close())
       },
     })
@@ -92,30 +90,24 @@ $("body").on("click", ".btnrestaurar", async function (e) {
 })
 
 
-function preguntarSiQuiereRedireccionar(fecha) {
-  return new Promise((_, reject) => {
-    swalConfirmarYCancelar.fire({
-      title: "Se ha restaurado correctamente",
-      text: `El registro se ha restaurado correctamente. Deseas ser redireccionado para ver los cambios?`,
-      icon: "info",
-      showCancelButton: true,
-      confirmButtonText: "Sí",
-      cancelButtonText: "No",
-    }).then((result) => {
-      if (result.isConfirmed)
-        window.location = `/registrarventas/${devuelveFechaFormateada(fecha)}`;
-      else
-        reject("false");
-    })
+async function preguntarSiQuiereRedireccionar(fecha) {
+  let { isConfirmed } = await swalConfirmarYCancelar.fire({
+    title: "Se ha restaurado correctamente",
+    text: `El registro se ha restaurado correctamente. Deseas ser redireccionado para ver los cambios?`,
+    icon: "info",
+    showCancelButton: true,
+    confirmButtonText: "Sí",
+    cancelButtonText: "No",
   })
+  if (isConfirmed) window.location = `/registrarventas/${devuelveFechaFormateada(fecha)}`
 }
 
 function devuelveFechaFormateada(fecha) {
   let date = new Date(fecha)
-  let day = date.getUTCDate();
-  let month = date.getUTCMonth() + 1;
-  let year = date.getUTCFullYear();
-  return `${day}-${month}-${year}`;
+  let day = date.getUTCDate()
+  let month = date.getUTCMonth() + 1
+  let year = date.getUTCFullYear()
+  return `${day}-${month}-${year}`
 }
 
 function moverRegistro(id, fecha, sobreescribir) {
@@ -124,14 +116,13 @@ function moverRegistro(id, fecha, sobreescribir) {
     method: "POST",
     contentType: "application/json",
     data: JSON.stringify({ id, fecha, sobreescribir }),
-    success: async function (res) {
-      if (res === "Se ha restaurado con éxito")
-        return await preguntarSiQuiereRedireccionar(fecha)
-      let { tablas } = res
+    success: async res => {
+      if (res === "Se ha restaurado con éxito") return await preguntarSiQuiereRedireccionar(fecha)
+      let { tablas: t } = res
       let html = `<custom-tabs><div class="tabs">
-      ${tablas.map((_, i) => `<custom-label name="swal" data-id="swal${i}">Camión ${i + 1}</custom-label>`).join('')}
+      ${t.map((_, i) => `<custom-label name="swal" data-id="swal${i}">Camión ${i + 1}</custom-label>`).join('')}
       </div><div class="content">
-      ${tablas.map(({ productos, totalvendidos, totalingresos }) => {
+      ${t.map(({ productos, totalvendidos, totalingresos }) => {
         let cantViajes = productos[0].viajes.length / 2;
         return `<tab-content><table><thead>
           <col><col><colgroup class="pintarcolumnas">${[...Array(cantViajes)].map(_ => `<col span="2">`).join('')}</colgroup><col><col>

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=1100px">
@@ -11,9 +10,9 @@
 
   <script defer src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
-  <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
-  <script src="/spanFechas.js"></script>
+  <script defer src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+  <script defer src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+  <script defer src="/spanFechas.js"></script>
   <script defer src="/tablasortable.js"></script>
   <script defer src="/verplantillas.js"></script>
 </head>
@@ -25,10 +24,7 @@
     <div class="filasuperior">
       <div></div>
       <div class="button2">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span><span></span>
         <input class="botontitulo" type="button" value="Desde aquí puedes ver tus plantillas" />
       </div>
       <div>
@@ -58,7 +54,7 @@
         </tr>
       </thead>
       <tbody id="cuerpotabla">
-        <% plantillas.forEach(function(plantilla){%>
+        <% plantillas.forEach(plantilla => {%>
         <tr>
           <td><%=plantilla.nombre%></td>
           <td>Hecha por: <%=plantilla.ultimaedicion%><br>

@@ -9,7 +9,7 @@ async function convertirRespaldos() {
     let venta = registro.ventaspordia
     let tablas = devuelveNuevasTablas(venta)
     let nuevoRegistro = new RegistroVentas({ _id: venta.fecha, usuario: venta.usuario || "usuariodesconocido", ultimocambio: venta.fechaultimocambio, tablas })
-    await new RegistrosEliminados({ registro: nuevoRegistro, borradoEl: registro.fechaeliminacion, usuario: venta.usuario || "usuariodesconocido", motivo: 0 }).save()
+    await RegistrosEliminados.create({ registro: nuevoRegistro, borradoEl: registro.fechaeliminacion, usuario: venta.usuario || "usuariodesconocido", motivo: 0 })
   }
 }
 

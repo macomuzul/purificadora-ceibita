@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-let { cantidadMinima0, validarString, arregloMayorA0, arregloMenorACustom, cantidadMinima0YEntero } = require("./validaciones/validar")
+let { cantidadMinima0, validarString, arregloMayorA0, arregloMenorACustom, cantidadMinima0YEntero, esPar } = require("./validaciones/validar")
 _ = require('lodash');
 
 const productosSchema = new Schema({
@@ -8,14 +8,7 @@ const productosSchema = new Schema({
   precio: cantidadMinima0,
   viajes: {
     type: [cantidadMinima0YEntero],
-    validate: [
-      arregloMayorA0,
-      {
-        validator: v => v.length % 2 === 0,
-        message: "Se intento pasar numero de viajes impares"
-      },
-      arregloMenorACustom(100, 'El valor maximo de los viajes debe ser 40, se obtuvo {VALUE}')
-    ]
+    validate: [arregloMayorA0, esPar, arregloMenorACustom(100, 'El valor maximo de los viajes debe ser 40 y se obtuvo {VALUE}')]
   },
   vendidos: cantidadMinima0YEntero,
   ingresos: cantidadMinima0,
@@ -26,10 +19,7 @@ const camionesSchema = new Schema({
   trabajador: validarString,
   productos: {
     type: [productosSchema],
-    validate: [
-      arregloMayorA0,
-      arregloMenorACustom(200, 'La maxima cantidad de productos es 200, se obtuvo {VALUE}')
-    ],
+    validate: [arregloMayorA0, arregloMenorACustom(200, 'La maxima cantidad de productos es 200 y se obtuvo {VALUE}')],
   },
   totalvendidos: cantidadMinima0YEntero,
   totalingresos: cantidadMinima0,
@@ -45,7 +35,7 @@ const registroventasSchema = new Schema({
   },
   tablas: {
     type: [camionesSchema],
-    validate: [arregloMayorA0, arregloMenorACustom(20, 'La maxima cantidad de camiones es 20, se obtuvo {VALUE}')],
+    validate: [arregloMayorA0, arregloMenorACustom(20, 'La maxima cantidad de camiones es 20 y se obtuvo {VALUE}')],
   }
 })
 

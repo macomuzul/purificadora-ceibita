@@ -8,9 +8,7 @@ const datosSchema = new Schema({
   fecha2: Date,
 })
 
-const cambiosSchema = new Schema({
-  datos: [datosSchema],
-})
+const cambiosSchema = new Schema({ datos: [datosSchema] })
 
 _.each(_.keys(datosSchema.paths), attr => datosSchema.path(attr).required(true))
 _.each(_.keys(cambiosSchema.paths), attr => cambiosSchema.path(attr).required(true))
