@@ -5,14 +5,9 @@ let mandarError = (res, mensaje) => mandarError(res, mensaje)
 
 // const verificacionIdentidad = require("../security/verificacionIdentidad");
 //TODO hay que poner el de arriba importantisimo
-const verificacionIdentidad = function verificacionIdentidad(req, res, next) {
-  return next();
+let verificacionIdentidad = function verificacionIdentidad(req, res, next) {
+  next()
 }
-
-router.get('/', async (req, res) => {
-  const usuarios = await Usuario.find();
-  res.render('empleados', { usuarios });
-})
 
 router.route('/usuarios').get(async (req, res) => {
   const usuarios = await Usuario.find({}, { _id: 0, contraseña: 0 });
@@ -27,15 +22,13 @@ router.route('/usuarios').get(async (req, res) => {
   }
 }).delete(async (req, res) => {
   try {
-    let { usuario } = req.body;
-    if (!Usuario.exists({ usuario }))
-      return res.send("Error, usuario no existe");
-    await Usuario.deleteOne({ usuario });
-    res.send("Borrado con éxito");
+    let { usuario } = req.body
+    let res = await Usuario.deleteOne({ usuario })
+    res.deletedCount ? res.send("Borrado con éxito") : res.send("Error, usuario no existe")
   } catch {
     mandarError(res, "Error al realizar la petición")
   }
-});
+})
 
 router.route('/usuarios/crear').get(async (req, res) => res.render('crearusuarios'))
 .post(verificacionIdentidad, async (req, res) => {
@@ -45,8 +38,9 @@ router.route('/usuarios/crear').get(async (req, res) => res.render('crearusuario
       return mandarError(res, "Error, usuario ya existe");
     await Usuario.create({ usuario, contraseña, rol, correo })
     res.send("Se guardo el usuario exitosamente");
-  } catch {
-    mandarError(res, "Error al guardar el usuario")
+  } catch(err) {
+    // mandarError(res, "Error al guardar el usuario")
+    mandarError(res, err.message)
   }
 })
 
@@ -66,11 +60,12 @@ router.route('/usuarios/editar/:id').get(async (req, res) => res.render('editaru
 })
 
 router.route('/camioneros').get(async (req, res) => {
-  const camioneros = await Camioneros.findOne()
+  let camioneros = await Camioneros.encontrar()
+  console.log(camioneros)
   res.render('camioneros', { camioneros })
 }).post(async (req, res) => {
   try {
-    await Camioneros.exists({}) ? await Camioneros.updateOne({}, req.body, { runValidators: true }) : await Camioneros.create(req.body)
+    await Camioneros.findOneAndUpdate({}, req.body, {runValidators: true, upsert: true})
     res.send("Se ha guardado correctamente")
   } catch (err) {
     console.log(err)

@@ -22,58 +22,94 @@
   margin-top: 35px;
 }
 
-#sectionUnidadTiempo {
+#sectionAgrupar {
   display: block;
-}
 
-#sectionUnidadTiempo {
-  display: block;
   button {
     display: none;
   }
 }
 
-.divdatepicker{
+.divdatepicker {
   width: 500px;
-  height: 50px;
 }
 
-.btnAnalizar{
+.btnAnalizar {
   position: absolute;
   right: 0;
   top: 0;
   width: 140px;
 }
 
-.divseparador{
+.divseparador {
   display: block;
 }
 
-.custom-control-input:checked~.custom-control-label::before, 
-.custom-switch .custom-control-label::before{
+.custom-control-input:checked~.custom-control-label::before,
+.custom-switch .custom-control-label::before {
   width: 2rem;
   height: 1rem;
 }
 
-.custom-switch .custom-control-input:checked~.custom-control-label::after{
+.custom-switch .custom-control-input:checked~.custom-control-label::after {
   transform: translateX(1rem);
 }
 
-.sections{
+.sections {
   position: relative;
 }
-.switchAnimaciones{
+
+.switchAnimaciones {
   position: absolute;
   top: 0;
   left: 0;
 }
 
-#datepickerEntre{
+#datepickerEntre {
   display: flex;
 }
 
-:disabled{
+:disabled {
   background-color: inherit !important;
   color: inherit !important;
   border-color: black !important;
+}
+
+.btnBorrarFechas {
+  position: absolute;
+  right: 0;
+  bottom: -80px
+}
+
+.textoDatePicker {
+  position: absolute;
+  bottom: -160px;
+  left: 0;
+}
+
+.cambiarUnidadTiempo {
+  position: absolute;
+  bottom: -115px;
+  left: 0;
+}
+
+.unidadesTiempo {
+  color: #007bff;
+  margin-top: 10px;
+}
+
+.margenbotonswal{
+  width: 140px;
+  height: 50px;
+  font-weight: 500;
+  &:not(.btn-success){
+    margin-left: 40px;
+  }
+}
+
+.btnunidadtiempo {
+  padding: 0;
+  width: 100px;
+  height: 50px;
+  margin-left: 0;
 }

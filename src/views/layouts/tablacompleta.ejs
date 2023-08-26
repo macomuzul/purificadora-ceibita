@@ -29,16 +29,9 @@
         </tr>
         <% }%>
       <% } else { %>
-        <% plantillaDefault.productos.forEach(x => { %>
-          <tr>
-            <td><%= x.producto %></td>
-            <td><%= x.precio.toFixed(2).replace(/[.,]00$/, "") %></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <% }) %>
+        <%_ plantillaDefault.productos.forEach(x => { _%>
+          <tr><td><%= x.producto %></td><td><%= x.precio.toFixed(2).replace(/[.,]00$/, "") %></td><td></td><td></td><td></td><td></td></tr>
+        <%_ }) _%>
       <% } %>
     </tbody>
     <tfoot>

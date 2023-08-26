@@ -31,17 +31,13 @@ $("body").on('click', '#guardar', async function () {
   [usuario, contraseña, confirmarContraseña, correo] = ["#usuario", "#contraseña", "#confirmarContraseña", "#correo"].map(id => $(id).val((_, x) => x = x.trim()).val())
   rol = $("#rol")[0].innerText;
   if (!await validarDatos()) return
-  if (correo) {
-    if (!$("#correo")[0].validar())
-      return
-  }
-  modal.show()
+  if (correo && !$("#correo")[0].validar()) return
+  modal.mostrar(crearUsuario())
 })
 
-funcionEnviar = async function () {
+let crearUsuario = async function () {
   let contraseñaVerificacion = $("#verificacionIdentidad")[0].value;
   let data = JSON.stringify({ usuario, contraseña, correo: correo || "-", rol, contraseñaVerificacion })
-  modal.hide();
   $.ajax({
     url: `/empleados/usuarios/crear`,
     method: "POST",

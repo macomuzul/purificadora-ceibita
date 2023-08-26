@@ -23,8 +23,7 @@ class customDropdown extends HTMLElement {
 
     $(this).on("click", function (e) {
       e.stopPropagation()
-      if (dropdownSeleccionado !== this)
-        dropdownSeleccionado?.cambiarEstado(-1)
+      if (dropdownSeleccionado !== this) dropdownSeleccionado?.cambiarEstado(-1)
       this.cambiarEstado(0)
       dropdownSeleccionado = this
     });
@@ -40,10 +39,8 @@ class customDropdown extends HTMLElement {
     this.cambiarEstado = cambiarEstado
 
     let cambiarClase = (el, clase, i) => {
-      if (i === -1)
-        $(el).removeClass(clase);
-      else if (i === 0)
-        $(el).toggleClass(clase);
+      if (i === -1) $(el).removeClass(clase);
+      else if (i === 0) $(el).toggleClass(clase);
     }
 
     $(this).on("click", "li", e => {

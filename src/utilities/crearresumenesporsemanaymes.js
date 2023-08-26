@@ -8,10 +8,9 @@ Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace
 
 
 async function calcularTodosLosResumenesPorSemanaYMes(tiempo, Resumen) {
-  let resumenDia = await ResumenDia.find().sort("_id");
+  let resumenDia = await ResumenDia.ordenado()
   let agrupados = _.groupBy(resumenDia, ({ _id }) => DateTime.fromJSDate(_id).startOf(tiempo))
-  let resumen = Object.entries(agrupados).map(([_id, v]) => ({ _id, ...devuelveValoresSumados(v), f: DateTime.fromISO(_id).endOf(tiempo).valueOf(), c: false }));
-  await Resumen.insertMany(resumen);
+  await Resumen.insertMany(Object.entries(agrupados).map(([_id, v]) => ({ _id, ...devuelveValoresSumados(v), f: DateTime.fromISO(_id).endOf(tiempo).valueOf(), c: false })))
 }
 
 module.exports = calcularTodosLosResumenesPorSemanaYMes

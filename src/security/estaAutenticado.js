@@ -1,6 +1,7 @@
 function estaAutenticado(req, res, next) {
   console.log("buenas noches")
-  req.isAuthenticated() ? next() : res.redirect('/')
-  // return next();
+  //TODO este hay que ponerlo
+  // req.isAuthenticated() ? next() : res.redirect('/')
+  next()
 }
 module.exports = estaAutenticado;

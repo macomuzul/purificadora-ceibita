@@ -1,6 +1,5 @@
 const { DateTime } = require("luxon");
-const ResumenMes = require("../models/resumenMes");
-const ResumenAño = require("../models/resumenAño");
+const { ResumenMes, ResumenAño } = require("../models/resumenes")
 const _ = require("lodash")
 const devuelveValoresSumados = require("./devuelveValoresSumados")
 
@@ -9,10 +8,9 @@ Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace
 
 
 async function calcularTodosLosResumenesPorAño() {
-  let resumenMes = await ResumenMes.find().sort("_id");
-  let agrupados = _.groupBy(resumenMes, ({ _id }) => DateTime.fromJSDate(_id).startOf("year"))
-  let resumen = Object.entries(agrupados).map(([_id, v]) => ({ _id, ...devuelveValoresSumados(v), f: DateTime.fromISO(_id).endOf("year").valueOf(), c: false }));
-  await ResumenAño.insertMany(resumen);
+  let resumenesMes = await ResumenMes.ordenado()
+  let agrupados = _.groupBy(resumenesMes, ({ _id }) => DateTime.fromJSDate(_id).startOf("year"))
+  await ResumenAño.insertMany(Object.entries(agrupados).map(([_id, v]) => ({ _id, ...devuelveValoresSumados(v), f: DateTime.fromISO(_id).endOf("year").valueOf(), c: false })))
 }
 
 module.exports = calcularTodosLosResumenesPorAño

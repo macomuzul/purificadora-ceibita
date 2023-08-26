@@ -23,7 +23,7 @@ toastr.options = {
   "positionClass": "toast-bottom-full-width",
   "preventDuplicates": true,
   "timeOut": "100000",
-  "extendedTimeOut": "100000",
+  "extendedTimeOut": "100000"
 }
 
 window.onload = function () {
@@ -33,6 +33,6 @@ window.onload = function () {
     language: "es",
     firstDayOfWeek: "1",
     calendarEvents: eventosCalendario
-  });
-  $("#demoEvoCalendar").evoCalendar("setTheme", "Midnight Blue");
+  })
+  $("#demoEvoCalendar").evoCalendar("setTheme", "Midnight Blue")
 }

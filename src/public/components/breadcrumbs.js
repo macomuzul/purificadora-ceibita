@@ -3,7 +3,7 @@ let animRemoverBread = "animate__backOutDown"
 class customBreadcrumbs extends HTMLElement {
   connectedCallback() {
     this.style.display = "block"
-    this.innerHTML = `<ul id="breadcrumb">${nivelesBC[0]()}</ul>`
+    this.innerHTML = `<ul id="breadcrumb"><li><a>${nivelesBC[0]()}</a></li></ul>`
     $(this).addClass("animate__animated")
     this.breadcrumbUL = $(this).find("#breadcrumb")
   }
@@ -23,9 +23,9 @@ class customBreadcrumbs extends HTMLElement {
     setTimeout(() => $(this).addClass(animAgregarBread), 50)
   }
 
-  nivel(n, e) {
+  nivel(n) {
     this.animar()
-    this.breadcrumbUL.html([...Array(n).keys()].map(x => nivelesBC[x]()).join(""))
+    this.breadcrumbUL.html([...Array(n).keys()].map(x => `<li><a>${nivelesBC[x]()}</a></li>`).join(""))
   }
 
   mostrar() {
@@ -41,12 +41,11 @@ class customBreadcrumbs extends HTMLElement {
   }
 
   borrarClases() {
-    this.classList.remove(animAgregarBread)
-    this.classList.remove(animRemoverBread)
+    this.classList.remove(animAgregarBread, animRemoverBread)
   }
 }
 
-document.documentElement.style.setProperty('--animate-delay', '0.1s');
-document.documentElement.style.setProperty('--animate-duration', '0.7s');
+document.documentElement.style.setProperty('--animate-delay', '0.1s')
+document.documentElement.style.setProperty('--animate-duration', '0.7s')
 
 customElements.define("custom-breadcrumbs", customBreadcrumbs)

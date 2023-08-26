@@ -40,20 +40,29 @@
     color: white !important;
   }
 
+  tr.active {
+    box-shadow: 0 0 10px 3px;
+
+    td {
+      background: #2013a3 !important;
+      border-radius: 0 !important;
+    }
+  }
+
   td.active,
   span.active,
-  td.active, 
+  td.active,
   .range-start.day,
   .range-end.day {
     background: #2013a3 !important;
     box-shadow: 0 0 10px 3px;
   }
 
-  span.year.focused:has(+ .year.active){
+  span.year.focused:has(+ .year.active) {
     background: inherit !important;
   }
 
-  .datepicker-years span.year.focused:hover{
+  .datepicker-years span.year.focused:hover {
     background: #317da0 !important;
   }
 }
@@ -107,17 +116,16 @@ td.today::after {
 
 .divdatepicker {
   width: 360px;
-  display: inline-block;
 }
 
-.datepicker-dropdown.datepicker-orient-top:after{
+.datepicker-dropdown.datepicker-orient-top:after {
   border-top: 6px solid #ddd;
 }
 
-.range.day{
+.range.day {
   background: #2f78b7 !important;
 }
 
-input{
+input {
   text-align: center !important;
 }

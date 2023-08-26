@@ -5,8 +5,8 @@ let crearDatePicker = idDatePicker => $(`#${idDatePicker}`).datepicker({ weekSta
 function metododropdown(option, menu) {
   if (menu.id === "fechasdropdown") {
     let fechaEntre = option.innerText === "Fecha entre"
-    $("#datepickerEntre").css("display", fechaEntre ? "inline-block" : "none")
-    $("#datepickernormal").css("display", fechaEntre ? "none" : "inline-block")
+    $("#datepickerEntre").css("display", fechaEntre ? "flex" : "none")
+    $("#datepickerNormal").css("display", fechaEntre ? "none" : "flex")
   }
 }
 
@@ -15,7 +15,7 @@ crearDatePicker("datepickerEntre")
 
 let mostrarOffscreen = x => {
   let rect = x.getBoundingClientRect()
-  if(((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight)) x.scrollIntoView()
+  if((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight) x.scrollIntoView()
 }
 
 $("body").on("click", "#btnMasReciente", q => location = `${urlPag}masrecientes&pag=1`)
@@ -48,3 +48,5 @@ $("body").on("click", "#btnbuscar", () => {
   buscarpor = buscar[buscarpor]
   location = `${urlPag}${buscarpor}&${rango}&${rango === "entre" ? `${fecha1}y${fecha2}` : fecha}&pag=1`;
 })
+
+$("body").on("click", ".input-group-append", e => $(e.currentTarget).prev().focus())

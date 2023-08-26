@@ -1,15 +1,14 @@
 
-jQuery.expr.filters.offscreen = x => {
+let mostrarOffscreen = x => {
   let rect = x.getBoundingClientRect()
-  return ((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight)
+  if((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight) x.scrollIntoView()
 }
 
-let validador = $(`#validadorIframe`)[0];
-$(`#datepickerSimple`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" })
-.on("show", q => $(".datepicker").is(":offscreen") ? $(".datepicker")[0].scrollIntoView() : "")
-$(`#datepickerSimple`).datepicker("show")
+let validadorIframe = $(`#validadorIframe`)[0]
+$(`#datepickerNormal`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" }).on("show", q => mostrarOffscreen($(".datepicker")[0]))
+$(`#datepickerNormal`).datepicker("show")
 
-$("#calendario").on("change", q => {
+$("#calendario").on("change", function() {
   this.classList.remove("is-invalid")
-  validador.className = "valid-feedback"
+  validadorIframe.className = "valid-feedback"
 })

@@ -2,37 +2,24 @@
 <html>
 <head>
   <title>Registrar ventas</title>
-  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  //TODO por el momento no hace nada pero tal vez haga despues jquery ui css
-  <link href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" /> -->
   <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"> -->
   <%- include("layouts/global") %>
   <link rel="stylesheet" href="/bootstrap-5.2.3.css">
   <link rel="stylesheet" href="/registrarventas.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <!-- <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
-  <script defer src="https://code.jquery.com/jquery-3.6.0.js"></script>
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
   <!-- <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script> -->
 
-  
   <script defer src="/bootstrap-5.2.3.js"></script>
   <script defer src="/dayjs.js"></script>
   <script defer src="/dayjs-plugin-utc.js"></script>
-  <script defer src="/jquery-3.6.js"></script>
   <script defer src="/sweetalert-2.11.js"></script>
   <!-- //TODO este descomentarlo despues -->
   <!-- <script defer src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
   <script defer src="/jquery-ui-1.13.js"></script>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script> -->
-  <script>
-    let camioneros = [];
-    "<% camioneros?.forEach(camionero => { %>"
-      camioneros?.push("<%= camionero %>")
-    "<% }) %>"
-  </script>
   <script defer src="/tecladoTabla.js"></script>
   <script defer src="/spanFechas.js"></script>
   <script defer src="/colocarDatosTablaTests.js"></script>
@@ -42,12 +29,12 @@
   <script defer src="/radiobuttons.js"></script>
   <script defer src="/switches.js"></script>
   <script defer src="/tabs.js"></script>
+  <script defer src="/moverRegistro.js"></script>
   <script defer src="/registrarventas.js"></script>
   <script defer src="/dropdown.js"></script>
 </head>
 
 <body>
-  
   <%- include("layouts/navbar") %>
   <main>
     <div class="contenedor">
@@ -62,7 +49,7 @@
           <svg id="diasiguiente" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" /></svg>
         </span>
       </div>
-      <article>        
+      <article>
         <div class="grupotabs">
           <div class="tabs">
               <% for (let j=0; j < (registro?.tablas.length ?? 1); j++){ %>
@@ -71,7 +58,7 @@
               <label for="tab<%=j%>" class="tabs__label">Camión <%= (j+1) %></label>
             </div>
             <% } %>
-            <span class="agregarcamion"><span class="mas">+</span></span> 
+            <span class="agregarcamion"><span class="mas">+</span></span>
           </div>
           <div class="contenedorsuperior">
             <button class="configuraciones" data-bs-toggle="modal" data-bs-target="#configs"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ddd" width="30px" height="30px" viewBox="0 0 93.5 93.5" xml:space="preserve"><g><path d="M93.5,40.899c0-2.453-1.995-4.447-4.448-4.447H81.98c-0.74-2.545-1.756-5.001-3.035-7.331l4.998-5    c0.826-0.827,1.303-1.973,1.303-3.146c0-1.19-0.462-2.306-1.303-3.146L75.67,9.555c-1.613-1.615-4.673-1.618-6.29,0l-5,5    c-2.327-1.28-4.786-2.296-7.332-3.037v-7.07C57.048,1.995,55.053,0,52.602,0H40.899c-2.453,0-4.447,1.995-4.447,4.448v7.071    c-2.546,0.741-5.005,1.757-7.333,3.037l-5-5c-1.68-1.679-4.609-1.679-6.288,0L9.555,17.83c-1.734,1.734-1.734,4.555,0,6.289    l4.999,5c-1.279,2.33-2.295,4.788-3.036,7.333h-7.07C1.995,36.452,0,38.447,0,40.899V52.6c0,2.453,1.995,4.447,4.448,4.447h7.071    c0.74,2.545,1.757,5.003,3.036,7.332l-4.998,4.999c-0.827,0.827-1.303,1.974-1.303,3.146c0,1.189,0.462,2.307,1.302,3.146    l8.274,8.273c1.614,1.615,4.674,1.619,6.29,0l5-5c2.328,1.279,4.786,2.297,7.333,3.037v7.071c0,2.453,1.995,4.448,4.447,4.448    h11.702c2.453,0,4.446-1.995,4.446-4.448V81.98c2.546-0.74,5.005-1.756,7.332-3.037l5,5c1.681,1.68,4.608,1.68,6.288,0    l8.275-8.273c1.734-1.734,1.734-4.555,0-6.289l-4.998-5.001c1.279-2.329,2.295-4.787,3.035-7.332h7.071    c2.453,0,4.448-1.995,4.448-4.446V40.899z M62.947,46.75c0,8.932-7.266,16.197-16.197,16.197c-8.931,0-16.197-7.266-16.197-16.197    c0-8.931,7.266-16.197,16.197-16.197C55.682,30.553,62.947,37.819,62.947,46.75z"/></g></svg> Configuraciones</button>
@@ -82,11 +69,11 @@
                 <svg class="svgrestaurar" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M32.5 224H24c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L82.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L169 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H32.5z"/></svg>
                 <span>Restaurar orden de la plantilla</span>
               </div>
-            </div> 
+            </div>
             <custom-dropdown data-idmenu="" data-idseleccionado="selector" data-textopordefecto="Selecciona una plantilla aquí (opcional)">
-              <% plantillas.forEach(plantilla => { %>
+              <%_ plantillas.forEach(plantilla => { _%>
                 <li><%= plantilla.nombre %></li>
-              <% }); %>
+              <%_ }); _%>
             </custom-dropdown>
             <script>
               let plantillaDefault = "<%= plantillas[0].nombre %>";
@@ -105,9 +92,9 @@
                       <div class="btn-group dropend">
                         <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                          <% camioneros?.forEach(camionero => { %>
+                          <%_ camioneros?.forEach(camionero => { _%>
                             <li class="dropdown-item"><%= camionero %></li>
-                          <% }) %>
+                          <%_ }) _%>
                         </ul>
                       </div>
                     </div>
@@ -123,21 +110,21 @@
       </article>
       <div class="contenedorinferior">
         <input class="btn btn-primary añadirproductoyviaje" type="button" value="Guardar" id="guardar">
-        <%# 
+        <%#
         <div class="contenedorrestaurar restaurarsoloestatabla">
           <div class="centrar">
             <svg class="svgrestaurar" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M32.5 224H24c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L82.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L169 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H32.5z"/></svg>
             <span>Deshacer última acción</span>
           </div>
-        </div>  
+        </div>
         <div class="contenedorrestaurar restaurarsoloestatabla">
           <div class="centrar">
             <svg class="svgrestaurar svgrotado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M32.5 224H24c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L82.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L169 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H32.5z"/></svg>
             <span>Rehacer última acción</span>
           </div>
-        </div> 
+        </div>
          %>
-        <input class="btn btn-primary añadirproductoyviaje resumen" type="button" value="Ver resumen del día" id="resumen"> 
+        <input class="btn btn-primary añadirproductoyviaje resumen" type="button" value="Ver resumen del día" id="resumen">
       </div>
     </main>
 
@@ -205,9 +192,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="red" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /></svg>
               <span class="textoeliminar">Eliminar registro de este día</span>
             </div>
-            <div class="contenedormover">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" width="30" height="30" viewBox="0 0 24 24" id="date-alt-right" data-name="Flat Line" class="icon flat-line"><circle cx="12" cy="15" r="6" style="fill: transparent; stroke-width: 2;"/><path d="M7.54,19H4a1,1,0,0,1-1-1V5A1,1,0,0,1,4,4H20a1,1,0,0,1,1,1V18a1,1,0,0,1-1,1H16.46" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/><path id="primary-2" data-name="primary" d="M12,9a6,6,0,1,0,6,6A6,6,0,0,0,12,9ZM3,9H21M16,3V6M8,3V6m6,9H10" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/><polyline id="primary-3" data-name="primary" points="12 17 14 15 12 13" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/></svg> Mover registro a otra fecha
-            </div>
+            <div class="contenedormover"><svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" width="30" height="30" viewBox="0 0 24 24" id="date-alt-right" data-name="Flat Line" class="icon flat-line"><circle cx="12" cy="15" r="6" style="fill: transparent; stroke-width: 2;"/><path d="M7.54,19H4a1,1,0,0,1-1-1V5A1,1,0,0,1,4,4H20a1,1,0,0,1,1,1V18a1,1,0,0,1-1,1H16.46" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/><path id="primary-2" data-name="primary" d="M12,9a6,6,0,1,0,6,6A6,6,0,0,0,12,9ZM3,9H21M16,3V6M8,3V6m6,9H10" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/><polyline id="primary-3" data-name="primary" points="12 17 14 15 12 13" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/></svg> Mover registro a otra fecha</div>
           </article>
         </div>
         <div class="modal-footer">

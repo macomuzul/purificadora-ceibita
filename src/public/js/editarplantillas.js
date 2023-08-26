@@ -15,11 +15,11 @@ $(".contenedoreliminar").on('click', async function () {
       method: "DELETE",
       contentType: "application/json",
       success: async q => {
-        await Swal.fire("Se ha borrado la plantilla exitosamente", "Ahora será redireccionado al menú de plantillas", "success");
+        await Swal.fire("Se ha borrado la plantilla exitosamente", "Ahora será redireccionado al menú de plantillas", "success")
         window.location = "/plantillas"
       },
       error: r => mostrarError(r.responseText)
-    });
+    })
   }
 })
 
@@ -35,8 +35,8 @@ $("body").on('click', "#guardar", async function () {
     contentType: "application/json",
     data,
     success: async q => {
-      await Swal.fire("Se ha guardado exitosamente", "El archivo se ha almacenado en la base de datos", "success");
-      window.location = (url + nombrePlantilla);
+      await Swal.fire("Se ha guardado exitosamente", "El archivo se ha almacenado en la base de datos", "success")
+      window.location = (url + nombrePlantilla)
     },
     error: r => Swal.fire("Ups...", r.responseText, "error")
   })

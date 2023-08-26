@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 _ = require('lodash');
-let { cantidadMinima0, validarString, arregloMayorA0, arregloMenorACustom, cantidadMinima0YEntero } = require("./validaciones/validar")
+let { cantidadMinima0, validarString, arregloMayorA0, arregloMenorACustom, cantidadMinima0YEntero, camposObligatorios } = require("./validaciones/validar")
 
 const productoSchema = new Schema({
   producto: validarString,
@@ -22,14 +22,15 @@ const plantillaSchema = new Schema({
     type: [productoSchema],
     validate: [arregloMayorA0, arregloMenorACustom(500, "La cantidad maxima de productos en una plantilla es 200 y se obtuvo {VALUE}")]
   }
+}, {
+  statics: {
+    ordenado() { return this.find().sort("orden").lean() },
+    nombres() { return this.ordenado().select("nombre -_id") },
+    encontrar(p) { return this.findOne(p).lean() }
+  }
 })
 
-plantillaSchema.statics.nombrePlantillas = function(){
-  return this.find({}, { nombre: 1, _id: 0 }).sort("orden")
-}
-
-_.each(_.keys(productoSchema.paths), attr => productoSchema.path(attr).required(true))
-_.each(_.keys(plantillaSchema.paths), attr => plantillaSchema.path(attr).required(true))
+;[productoSchema, plantillaSchema].forEach(x => camposObligatorios(x))
 plantillaSchema.path("esdefault").required(false)
 
 module.exports = mongoose.model('plantilla', plantillaSchema)

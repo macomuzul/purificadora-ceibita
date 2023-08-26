@@ -22,7 +22,7 @@ class spanFechas extends HTMLElement {
       html += `<span class="spanHoras"> a las ${hora > 13 ? hora - 12 : hora} ${hora === 0 ? "horas" : ""} de la ${tiempo} con ${fecha.getMinutes()} minutos y ${fecha.getSeconds()} segundos </span>`
     }
     this.innerHTML = html
-    
+
     $(this).on("click", ".spanFechaStr,.spanFecha", () => {
       $(this).find(`.spanFecha`).toggle()
       $(this).find(`.spanFechaStr`).toggle()
@@ -31,4 +31,4 @@ class spanFechas extends HTMLElement {
 
 }
 
-customElements.define("span-fechas", spanFechas);
+customElements.define("span-fechas", spanFechas)

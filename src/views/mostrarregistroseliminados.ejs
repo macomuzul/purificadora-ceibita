@@ -11,11 +11,12 @@
     let pag = parseInt(`<%= pagina %>`);
     let totalPags = parseInt(`<%= totalPaginas %>`);
   </script>
-  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script defer src="/spanFechas.js"></script>
   <script defer src="/tabs.js"></script>
+  <script defer src="/accionesRegistrosEliminados.js"></script>
   <script defer src="/mostrarregistroseliminados.js"></script>
+  <script defer src="/moverRegistro.js"></script>
   <script defer src="/paginacion.js"></script>
 </head>
 
@@ -46,7 +47,7 @@
         </div>
       </div>
     </div>
-    <% datostablas.forEach((reg,i)=> { let {registro, borradoEl} = reg; %>
+    <%_ datostablas.forEach((reg,i)=> { let {registro, borradoEl} = reg; _%>
     <hr>
     <article name="<%=reg._id%>">
       <contenedor-acciones data-id="check<%=i%>"></contenedor-acciones>
@@ -54,13 +55,13 @@
       <span>Se eliminó el <span-fechas data-fecha="<%=borradoEl%>"></span-fechas></span>
       <custom-tabs>
         <div class="tabs">
-        <% registro.tablas.forEach((_, j) => {%><custom-label name="<%=i%>tab" data-id="<%=i%>tab<%=j%>">Camión <%= (j+1) %></custom-label><% }); %>
+        <%_ registro.tablas.forEach((_, j) => {%><custom-label name="<%=i%>tab" data-id="<%=i%>tab<%=j%>">Camión <%= (j+1) %></custom-label><% }); _%>
         </div>
         <div class="content"><% registro.tablas.forEach((tabla, j) => {%><tab-content><%- include("layouts/tablas", {j, tabla}) %></tab-content><% }); %></div>
       </custom-tabs>
      <boton-restaurar></boton-restaurar>
     </article>
-    <% }); %>
+    <%_ }); _%>
     <hr>
     <div class="contenedorpaginacion"><div class="pagination"><ul></ul></div></div>
   </main>

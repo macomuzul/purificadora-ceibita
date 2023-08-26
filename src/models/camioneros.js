@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 _ = require('lodash');
-let { validarString, arregloMenorACustom, arregloMayorA0, validadorString, validarColores } = require("./validaciones/validar")
+let { validarString, arregloMenorACustom, arregloMayorA0, validadorString, validarColores, camposObligatorios } = require("./validaciones/validar")
 
 const nombreSchema = new Schema({
   nombre: validarString,
@@ -17,9 +17,14 @@ const camionerosSchema = new Schema({
     type: [nombreSchema],
     validate: [arregloMayorA0, arregloMenorACustom(200, "La cantidad máxima de camioneros es 200")]
   }
+}, {
+  statics: {
+    filtrar(f) { return this.findOne().lean().select(f + " -_id") },
+    async encontrar(f = "") { return (await this.filtrar(f))?.camioneros || [] },
+    async nombres() { return (await this.encontrar("camioneros.nombre")).map(el => el.nombre) || [] }
+  }
 })
 
-_.each(_.keys(nombreSchema.paths), attr => nombreSchema.path(attr).required(true))
-_.each(_.keys(camionerosSchema.paths), attr => camionerosSchema.path(attr).required(true))
+;[nombreSchema, camionerosSchema].forEach(x => camposObligatorios(x))
 
 module.exports = mongoose.model('camioneros', camionerosSchema)

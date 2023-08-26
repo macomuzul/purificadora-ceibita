@@ -7,11 +7,10 @@ const redis = require("../redis")
 
 router.get('/', async (req, res) => {
   try {
-    let errorInicioSesion = req.flash("errorInicioSesion");
-    let cantidadMaximaInicioSesion = req.flash("cantidadMaximaInicioSesion");
-    let ip = req.ip || req.socket.remoteAddress;
-    let textoIP = `ip:${ip}`;
-    console.log(redis)
+    let errorInicioSesion = req.flash("errorInicioSesion")
+    let cantidadMaximaInicioSesion = req.flash("cantidadMaximaInicioSesion")
+    let ip = req.ip || req.socket.remoteAddress
+    let textoIP = `ip:${ip}`
     let numRequestsInvalidas = parseInt(await redis.get(textoIP))
     if (numRequestsInvalidas) {
       if (cantidadMaximaInicioSesion.length === 0 && numRequestsInvalidas > cantidadMaximaPeticionesInvalidas)
@@ -41,19 +40,19 @@ router.route('/recuperarcontrase%C3%B1a').get((req, res) => {
 })
 
 let devuelveMes = (fecha, dias) => ({ _id: fecha, dias: dias.map(({ _id, tablas, usuario, ultimocambio }) => ({ _id, camioneros: tablas.map(x => x.trabajador), usuario, ultimocambio })) })
+let datosMes = async fecha => await RegistroVentas.where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month")).select("tablas.trabajador usuario ultimocambio").lean()
 
 router.route('/calendario').get(async (req, res) => {
-  let tiempoGuatemala = DateTime.now().setZone("America/Guatemala")
-  let fechaActual = tiempoGuatemala.toFormat("y/M")
-  let fecha = DateTime.fromISO(tiempoGuatemala.toISODate())
-  let dias = await RegistroVentas.find().where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month")).select("tablas.trabajador usuario ultimocambio")
-  let camioneros = (await Camioneros.findOne())?.camioneros || []
-  res.render('calendario', { mes: devuelveMes(fechaActual, dias), camioneros, fechaActual })
+  let fecha = DateTime.now().setZone("America/Guatemala")
+  let dias = await datosMes(fecha)
+  let camioneros = await Camioneros.encontrar()
+  fecha = fecha.toFormat("y/M")
+  res.render('calendario', { mes: devuelveMes(fecha, dias), camioneros, fechaActual: fecha })
 }).post(async (req, res) => {
   try {
     fecha = DateTime.fromFormat(req.body.fecha, "y/M")
-    let dias = await RegistroVentas.find().where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month")).select("tablas.trabajador usuario ultimocambio")
-    res.send(devuelveMes(fecha, dias) || [])
+    let dias = await datosMes(fecha)
+    res.send(dias ? devuelveMes(fecha, dias) : [])
   } catch (e) {
     console.log(e)
     res.send("Hubo un error")

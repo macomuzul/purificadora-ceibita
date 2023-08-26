@@ -3,9 +3,8 @@ const ResumenDia = require("../models/resumenDia");
 const sumaResumenDias = require("../utilities/sumaResumenDias")
 
 async function calcularTodosLosResumenesPorDia() {
-  let ventas = await RegistroVentas.find().sort("_id");
-  let resumenDiaArr = ventas.map(x => calcularResumenPorDia(x));
-  await ResumenDia.insertMany(resumenDiaArr);
+  let ventas = await RegistroVentas.ordenado()
+  await ResumenDia.insertMany(ventas.map(x => calcularResumenPorDia(x)))
 }
 
 function calcularResumenPorDia(venta) {

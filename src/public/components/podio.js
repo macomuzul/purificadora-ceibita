@@ -1,6 +1,17 @@
+let listaCanvasConfeti
+function quitarConfeti(w){
+  $(".checkboxPodio").find("input").prop("checked", false)
+  listaCanvasConfeti.forEach(x => x.clear())
+}
+function agregarConfeti(w) {
+  listaCanvasConfeti = [...$("#podios").find("canvas")].map(x => new ConfettiGenerator({ target: x }))
+  listaCanvasConfeti.forEach(x => x.render())
+  setTimeout(q => quitarConfeti(), 10000)
+}
+
 class cPodio extends HTMLElement {
   connectedCallback() {
-    Object.keys(this.dataset).forEach(x => this.dataset[x] === "undefined" ? this.dataset[x] = "Vacío" : "")
+    Object.keys(this.dataset).forEach(x => this.dataset[x] === "undefined" && (this.dataset[x] = "Vacío"))
     let { ar1, ar2, ar3, ab1, ab2, ab3, titulo } = this.dataset
     this.innerHTML = `<div class="contenedorPodio">
     <div class="titulopodio">${titulo}</div>

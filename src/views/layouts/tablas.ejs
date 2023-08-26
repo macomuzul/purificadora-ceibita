@@ -4,17 +4,13 @@
     <col>
     <col>
     <colgroup class="pintarcolumnas">
-      <% for(k=0; k < cantidadViajes; k++) {%>
-      <col span="2">
-      <% }%>
+      <% for(k=0; k < cantidadViajes; k++) {%><col span="2"><% }%>
     </colgroup>
     <col>
     <col>
     <tr>
       <th rowspan="2" class="prod">Productos</th><th rowspan="2" class="tr">Precio</th>
-      <%for(k=0; k < cantidadViajes; k++) { %>
-      <th colspan="2">Viaje No. <%= (k+1) %></th>
-      <% }%>
+      <%_for(k=0; k < cantidadViajes; k++) { %><th colspan="2">Viaje No. <%= (k+1) %></th><% }%>
       <th rowspan="2" class="tr">Vendidos</th><th rowspan="2" class="tr">Ingresos</th>
     </tr>
     <tr>
@@ -25,9 +21,7 @@
   <tr>
     <td><%= producto.nombre %></td>
     <td><%=producto.precio.toFixed(2).replace(/[.,]00$/, "") %></td>
-    <% producto.viajes.forEach(x => { %>
-      <td><%= x %></td>
-    <% }) %>
+    <% producto.viajes.forEach(x => { %> <td><%= x %></td> <% }) %>
     <td><%= producto.vendidos %></td>
     <td><%=producto.ingresos.toFixed(2).replace(/[.,]00$/, "") %></td>
   </tr>

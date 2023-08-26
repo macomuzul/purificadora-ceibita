@@ -41,7 +41,7 @@
     correo.addEventListener('input', q => correo.setCustomValidity((correo.validity.valueMissing || correo.validity.typeMismatch) ?'Por favor escribe un correo válido por ejemplo: usuario@dominio.com' : ''))
   </script>
   <%if (errorRecuperarContraseña.length> 0 && String(errorRecuperarContraseña) === "El usuario que has ingresado no existe") {%>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.css">
 
     <script>
       window.addEventListener("load", q => {

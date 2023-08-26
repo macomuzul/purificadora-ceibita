@@ -1,69 +1,55 @@
 const router = require("express").Router();
 const RegistroVentas = require("../models/registroventas");
-const plantilla = require("../models/plantillas");
+const Plantilla = require("../models/plantillas");
 const RegistrosEliminados = require("../models/registroseliminados");
 const Camioneros = require("../models/camioneros");
 const { DateTime } = require("luxon");
 const _ = require("lodash");
 
 let mandarError = (res, mensaje) => res.status(400).send(mensaje)
+let devuelveUsuario = req => ({ usuario: req.user?.usuario ?? "usuariodesconocido" })
+
 router.post("/guardar", async (req, res) => {
   try {
-    let ventasNuevo = new RegistroVentas(req.body);
-    let usuario = req.user?.usuario ?? "usuariodesconocido"
-    ventasNuevo.usuario = usuario
-    let registroanterior = await RegistroVentas.findById(ventasNuevo._id);
-    if (registroanterior) { //si ya existe un registro anterior lo guarda en la parte de respaldos
-      await RegistrosEliminados.create({ registro: registroanterior, usuario, motivo: 0 })
-      _.extend(registroanterior, _.pick(ventasNuevo, ["usuario", "ultimocambio", "tablas"]))
-      await registroanterior.save()
-    }
-    else
-      await ventasNuevo.save()
+    await RegistroVentas.guardar({ ...req.body, ...devuelveUsuario(req) }, 0)
     res.send("Éxito")
-
   } catch (e) {
-    mandarError(res, "Error al guardar")
+    console.log("nombre", e.name)
     console.log(e)
+    mandarError(res, e.name === 'ValidationError' ? Object.values(e.errors)[0].message : "Error al guardar")
   }
 })
 
-router.post("/mover", async (req, res) => {
-  try {
-    let { anterior, fecha, sobreescribir } = req.body;
-    let registroAMover = await RegistroVentas.findById(anterior);
-    if (registroAMover == null)
-      return mandarError(res, "Registro no existe")
+router.post("/mover", devuelveFuncionMover(RegistroVentas, "Hubo un error al momento de mover el registro"))
 
-    let registroanterior = await RegistroVentas.findById(fecha) //si ya existe un registro anterior lo guarda en la parte de respaldos
-    let ahora = new Date()
-    let usuario = req.user?.usuario ?? "usuariodesconocido"
-    let nuevosDatos = { usuario, ultimocambio: ahora, tablas: registroAMover.tablas }
-    if (registroanterior) {
-      if (!sobreescribir)
-        return res.send(registroanterior);
+function devuelveFuncionMover(Reg, msg) {
+  return async (req, res) => {
+    try {
+      let { de, a, sobreescribir } = req.body
+      let registroAMover = await Reg.buscarPorID(de)
+      if (!registroAMover) return mandarError(res, "Registro no existe")
+      let registroanterior = await RegistroVentas.buscarPorID(a)
+      if (registroanterior && !sobreescribir) return res.send(registroanterior.tablas)
 
-      await RegistrosEliminados.create({ registro: registroanterior, borradoEl: ahora, usuario, motivo: 1 })
-      await registroanterior.updateOne(nuevosDatos)
-    } else
-      await RegistroVentas.create({ _id: fecha, ...nuevosDatos })
-    await registroAMover.deleteOne()
-    res.send("Éxito")
-  } catch (e) {
-    console.log(e)
-    mandarError(res, "Error al guardar")
+      let { tablas, _id } = registroAMover
+      await RegistroVentas.guardar({ _id: a, tablas, ...devuelveUsuario(req) }, 2)
+      await Reg.findByIdAndDelete(_id)
+      res.send("Éxito")
+    } catch (e) {
+      console.log(e)
+      mandarError(res, 'ValidationError' ? Object.values(e.errors)[0].message : "Error al guardar")
+    }
   }
-});
+}
 
 
 router.route('/:id([0-9]{1,2}-[0-9]{1,2}-[0-9]{4})').get(async (req, res) => {
   try {
     let fecha = DateTime.fromFormat(req.params.id, "d-M-y")
-    let registro = await RegistroVentas.findById(fecha)
-    let plantillas = await plantilla.nombrePlantillas()
-    let plantillaDefault = registro ? plantillas.find(x => x.esdefault) : await plantilla.findOne({ esdefault: 1 }, { nombre: 1, productos: 1, _id: 0 })
-    let listaCamioneros = await Camioneros.findOne({}, { "camioneros.nombre": 1, _id: 0 })
-    let camioneros = listaCamioneros?.camioneros.map(el => el.nombre) || []
+    let registro = await RegistroVentas.buscarPorID(fecha.toJSDate())
+    let plantillas = await Plantilla.nombres()
+    let plantillaDefault = await Plantilla.encontrar({ esdefault: true }).select("nombre productos -_id")
+    let camioneros = await Camioneros.nombres()
     res.render("registrarventas", { fecha: fecha.toFormat("d/M/y"), registro, plantillas, plantillaDefault, fechastr: fecha.toLocaleString(DateTime.DATE_HUGE), camioneros })
   } catch (e) {
     console.log(e)
@@ -71,12 +57,10 @@ router.route('/:id([0-9]{1,2}-[0-9]{1,2}-[0-9]{4})').get(async (req, res) => {
   }
 }).delete(async (req, res) => {
   try {
-    let fecha = DateTime.fromFormat(req.params.id, "d-M-y")
-    let registro = await RegistroVentas.findById(fecha)
-    if (!registro)
-      return mandarError(res, "El registro no existe o ya fue borrado")
-    await RegistrosEliminados.create({ registro, usuario: req.user?.usuario ?? "usuariodesconocido", motivo: 3 })
-    registro.deleteOne()
+    let registro = await RegistroVentas.buscarPorID(DateTime.fromFormat(req.params.id, "d-M-y"))
+    if (!registro) return mandarError(res, "El registro no existe o ya fue borrado")
+    await RegistrosEliminados.create({ registro, ...devuelveUsuario(req), motivo: 3 })
+    await RegistroVentas.findByIdAndDelete(registro._id)
     res.send("Éxito")
   } catch (e) {
     console.log(e)
@@ -85,4 +69,4 @@ router.route('/:id([0-9]{1,2}-[0-9]{1,2}-[0-9]{4})').get(async (req, res) => {
 })
 
 
-module.exports = router;
+module.exports = { router, devuelveUsuario, devuelveFuncionMover }

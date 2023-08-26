@@ -70,7 +70,7 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
         _.initials.weekends = { sun: _.initials.dates[_.options.language].daysShort[0], sat: _.initials.dates[_.options.language].daysShort[6] }
 
         // Format Calendar Events into selected format
-        if (_.options.calendarEvents != null) _.options.calendarEvents.forEach(x => _.isValidDate(x.date) ? x.date = _.formatDate(x.date, _.options.format) : "")
+        if (_.options.calendarEvents != null) _.options.calendarEvents.forEach(x => _.isValidDate(x.date) && (x.date = _.formatDate(x.date, _.options.format)))
 
         // Global variables
         _.startingDay = null
@@ -131,21 +131,6 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
         if (_.options.theme) _.setTheme(_.options.theme); // set calendar theme
         _.buildTheBones(); // start building the calendar components
       }
-    };
-    // v1.0.0 - Destroy plugin
-    EvoCalendar.prototype.destroy = function () {
-      var _ = this;
-      // code here
-      _.destroyEventListener();
-      if (_.$elements.calendarEl) {
-        _.$elements.calendarEl.removeClass('calendar-initialized');
-        _.$elements.calendarEl.removeClass('evo-calendar');
-        _.$elements.calendarEl.removeClass('sidebar-hide');
-        _.$elements.calendarEl.removeClass('event-hide');
-      }
-      _.$elements.calendarEl.empty();
-      _.$elements.calendarEl.attr('class', _.initials.default_class);
-      $(_.$elements.calendarEl).trigger("destroy", [_])
     }
 
     EvoCalendar.prototype.limitTitle = function (title, limit) {
@@ -226,20 +211,6 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
       return sd <= new Date(active_date) && ed >= new Date(active_date)
     }
 
-    // v1.0.0 - Check if event has the same event type in the same date
-    EvoCalendar.prototype.hasSameDayEventType = function (date, type) {
-      var _ = this, eventLength = 0;
-
-      _.options.calendarEvents.forEach(c => {
-        if (_.options.calendarEvents[i].date instanceof Array)
-          _.getBetweenDates(c.date).forEach((x, i) => date === x && type === c.type ? eventLength++ : "")
-        else if (date === c.date && type === c.type)
-          eventLength++
-      })
-
-      return eventLength > 0
-    }
-
     // v1.0.0 - Set calendar theme
     EvoCalendar.prototype.setTheme = function (themeName) {
       var _ = this;
@@ -274,27 +245,10 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
 
       if (_.options.sidebarToggler) _.$elements.sidebarToggler.off('click.evocalendar').on('click.evocalendar', _.toggleSidebar)
       if (_.options.eventListToggler) _.$elements.eventListToggler.off('click.evocalendar').on('click.evocalendar', _.toggleEventList)
-      
+
       _.$elements.sidebarEl.find('[data-month-val]').off('click.evocalendar').on('click.evocalendar', _.selectMonth)
       _.$elements.sidebarEl.find('[data-year-val]').off('click.evocalendar').on('click.evocalendar', _.selectYear)
       _.$elements.eventEl.find('[data-event-index]').off('click.evocalendar').on('click.evocalendar', _.selectEvent)
-    }
-
-    // v1.0.0 - Destroy event listeners
-    EvoCalendar.prototype.destroyEventListener = function () {
-      var _ = this;
-
-      $(window).off('resize.evocalendar.evo-' + _.instanceUid);
-      $(window).off('click.evocalendar.evo-' + _.instanceUid);
-
-      if (_.options.sidebarToggler) _.$elements.sidebarToggler.off('click.evocalendar')
-
-      if (_.options.eventListToggler) _.$elements.eventListToggler.off('click.evocalendar')
-
-      _.$elements.innerEl.find('.calendar-day').children().off('click.evocalendar')
-      _.$elements.sidebarEl.find('[data-month-val]').off('click.evocalendar')
-      _.$elements.sidebarEl.find('[data-year-val]').off('click.evocalendar')
-      _.$elements.eventEl.find('[data-event-index]').off('click.evocalendar')
     }
 
     // v1.0.0 - Calculate days (incl. monthLength, startingDays based on :firstDayOfWeekName)
@@ -383,11 +337,11 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
     }
 
     EvoCalendar.prototype.buildEventList = function () {
-      var _ = this, markup, hasEventToday = false;
-      _.$active.events = [];
+      var _ = this, hasEventToday = false
+      _.$active.events = []
 
-      var title = _.formatDate(_.$active.date, _.options.eventHeaderFormat, _.options.language);
-      _.$elements.eventEl.find('.event-header > p').text(title);
+      var title = _.formatDate(_.$active.date, _.options.eventHeaderFormat, _.options.language)
+      _.$elements.eventEl.find('.event-header > p').text(title)
       // Event list
       var eventListEl = _.$elements.eventEl.find('.event-list');
       // Clear event list item(s)
@@ -409,17 +363,16 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
       function eventAdder(event) {
         hasEventToday = true;
         let dia = eventosCalendario.find(el => new Date(el.date).valueOf() === new Date(_.$active.date).valueOf())
-        $($).find("#ultimaModificacion").text(`Fecha de última modificación: ${devuelveFecha(dia)} por: ${dia.usuario}`);
-        $($).find("#irARegistrarVentas").val("Ir a registro");
+        $($).find("#ultimaModificacion").text(`Fecha de última modificación: ${devuelveFecha(dia)} por: ${dia.usuario}`)
+        $($).find("#irARegistrarVentas").val("Ir a registro")
         _.addEventList(event)
       }
       // IF: no event for the selected date
       if (!hasEventToday) {
         $($).find("#ultimaModificacion").text("");
-        $($).find("#irARegistrarVentas").val("Crear nuevo registro");
-        markup = `<div class="event-empty"><p>${_.initials.dates[_.options.language][_.$active.date === _.$current.date ? "noEventForToday" : "noEventForThisDay"]}</p></div>`
+        $($).find("#irARegistrarVentas").val("Crear nuevo registro")
+        eventListEl.append(`<div class="event-empty"><p>${_.initials.dates[_.options.language][_.$active.date === _.$current.date ? "noEventForToday" : "noEventForThisDay"]}</p></div>`)
       }
-      eventListEl.append(markup)
     }
 
     function pedirCamioneros(_) {
@@ -442,57 +395,27 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
 
     // v1.0.0 - Add single event to event list
     EvoCalendar.prototype.addEventList = function (event_data) {
-      var _ = this, markup;
+      var _ = this
       var eventListEl = _.$elements.eventEl.find('.event-list');
       if (eventListEl.find('[data-event-index]').length === 0) eventListEl.empty();
       _.$active.events.push(event_data);
-      markup = '<div class="event-container" role="button" data-event-index="' + (event_data.id) + '">';
-      markup += '<div class="event-icon"><div class="event-bullet-' + event_data.type + '"';
-      if (event_data.color) {
-        markup += 'style="background-color:' + event_data.color + '"'
-      }
-      markup += '></div></div><div class="event-info"><p class="event-title">' + _.limitTitle(event_data.name);
-      if (event_data.badge) markup += '<span>' + event_data.badge + '</span>';
-      markup += '</p>'
-      if (event_data.description) markup += '<p class="event-desc">' + event_data.description + '</p>';
-      markup += '</div>';
-      markup += '</div>';
-      eventListEl.append(markup);
+      eventListEl.append(`<div class="event-container" role="button" data-event-index="${event_data.id}">
+      <div class="event-icon"><div class="event-bullet-${event_data.type}"${event_data.color ? `style="background-color:${event_data.color}"` : ""}></div></div>
+      <div class="event-info"><p class="event-title">${_.limitTitle(event_data.name)}${event_data.badge ? `<span>${event_data.badge}</span>` : ""}</p>${event_data.description ? `<p class="event-desc">${event_data.description}</p>` : ""}</div>
+      </div>`)
 
-      _.$elements.eventEl.find('[data-event-index="' + (event_data.id) + '"]')
-        .off('click.evocalendar')
-        .on('click.evocalendar', _.selectEvent);
-    }
-    // v1.0.0 - Remove single event to event list
-    EvoCalendar.prototype.removeEventList = function (event_data) {
-      var _ = this, markup;
-      var eventListEl = _.$elements.eventEl.find('.event-list');
-      if (eventListEl.find('[data-event-index="' + event_data + '"]').length === 0) return; // event not in active events
-      eventListEl.find('[data-event-index="' + event_data + '"]').remove();
-      if (eventListEl.find('[data-event-index]').length === 0) {
-        eventListEl.empty();
-        if (_.$active.date === _.$current.date) {
-          markup += '<p>' + _.initials.dates[_.options.language].noEventForToday + '</p>';
-        } else {
-          markup += '<p>' + _.initials.dates[_.options.language].noEventForThisDay + '</p>';
-        }
-        eventListEl.append(markup)
-      }
+      _.$elements.eventEl.find('[data-event-index="' + (event_data.id) + '"]').off('click.evocalendar').on('click.evocalendar', _.selectEvent);
     }
 
     // v1.0.0 - Build Sidebar: Year text
     EvoCalendar.prototype.buildSidebarYear = function () {
-      var _ = this;
-
-      _.$elements.sidebarEl.find('.calendar-year > p').text(_.$active.year);
+      this.$elements.sidebarEl.find('.calendar-year > p').text(this.$active.year)
     }
 
     // v1.0.0 - Build Sidebar: Months list text
     EvoCalendar.prototype.buildSidebarMonths = function () {
-      var _ = this;
-
-      _.$elements.sidebarEl.find('.calendar-months > [data-month-val]').removeClass('active-month');
-      _.$elements.sidebarEl.find('.calendar-months > [data-month-val="' + _.$active.month + '"]').addClass('active-month');
+      this.$elements.sidebarEl.find('.calendar-months > [data-month-val]').removeClass('active-month')
+      this.$elements.sidebarEl.find(`.calendar-months > [data-month-val="${this.$active.month}"]`).addClass('active-month')
     }
 
     // v1.0.0 - Build Calendar: Title, Days
@@ -511,14 +434,9 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
       for (var i = 0; i < 9; i++) { // this loop is for is weeks (rows)
         for (var j = 0; j < _.$label.days.length; j++) { // this loop is for weekdays (cells)
           if (day <= _.monthLength && (i > 0 || j >= _.startingDay)) {
-            var dayClass = "calendar-day";
-            if (_.$label.days[j] === _.initials.weekends.sat || _.$label.days[j] === _.initials.weekends.sun) {
-              dayClass += ' --weekend'; // add '--weekend' to sat sun
-            }
-            markup += '<td class="' + dayClass + '">';
-
-            var thisDay = _.formatDate(_.$label.months[_.$active.month] + ' ' + day + ' ' + _.$active.year, _.options.format);
-            markup += '<div class="day" role="button" data-date-val="' + thisDay + '">' + day + '</div>';
+            // add '--weekend' to sat sun
+            markup += `<td class="calendar-day${_.$label.days[j] === _.initials.weekends.sat || _.$label.days[j] === _.initials.weekends.sun ? " --weekend" : ""}">
+            <div class="day" role="button" data-date-val="${_.formatDate(`${_.$label.months[_.$active.month]} ${day} ${_.$active.year}`, _.options.format)}">${day}</div>`
             day++;
           } else {
             markup += '<td>';
@@ -533,96 +451,55 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
       }
       markup += '</tr>';
       _.$elements.innerEl.find('.calendar-table').append(markup);
-      if (_.options.todayHighlight) {
-        _.$elements.innerEl.find("[data-date-val='" + _.$current.date + "']").addClass('calendar-today');
-      }
+      if (_.options.todayHighlight) _.$elements.innerEl.find(`[data-date-val="${_.$current.date}"]`).addClass('calendar-today')
 
       // set event listener for each day
-      _.$elements.innerEl.find('.calendar-day').children()
-        .off('click.evocalendar')
-        .on('click.evocalendar', _.selectDate)
-      var selectedDate = _.$elements.innerEl.find("[data-date-val='" + _.$active.date + "']");
+      _.$elements.innerEl.find('.calendar-day').children().off('click.evocalendar').on('click.evocalendar', _.selectDate)
+      var selectedDate = _.$elements.innerEl.find(`[data-date-val="${_.$active.date}"]`)
       if (selectedDate) {
         // Remove active class to all
-        _.$elements.innerEl.children().removeClass('calendar-active');
+        _.$elements.innerEl.children().removeClass('calendar-active')
         // Add active class to selected date
-        selectedDate.addClass('calendar-active');
+        selectedDate.addClass('calendar-active')
       }
       if (_.options.calendarEvents != null) { // For event indicator (dots)
-        _.buildEventIndicator();
+        _.$elements.innerEl.find('.calendar-day > day > .event-indicator').empty()
+        _.options.calendarEvents.forEach(x => _.addEventIndicator(x))
       }
-    };
+    }
 
     // v1.0.0 - Add event indicator/s (dots)
     EvoCalendar.prototype.addEventIndicator = function (event) {
-      var _ = this, htmlToAppend, thisDate;
+      var _ = this, thisDate;
       var event_date = event.date
       var type = stringCheck(event.type)
 
       if (event_date instanceof Array) {
         if (event.everyYear) {
-          for (var x = 0; x < event_f.length; x++) {
-            event_date[x] = _.formatDate(new Date(event_date[x]).setFullYear(_.$active.year), _.options.format);
-          }
+          for (var x = 0; x < event_f.length; x++) { event_date[x] = _.formatDate(new Date(event_date[x]).setFullYear(_.$active.year), _.options.format); }
         }
         var active_date = _.getBetweenDates(event_date);
 
-        for (var i = 0; i < active_date.length; i++) {
-          appendDot(active_date[i]);
-        }
+        for (var i = 0; i < active_date.length; i++) { appendDot(active_date[i]); }
       } else {
-        if (event.everyYear) {
-          event_date = _.formatDate(new Date(event_date).setFullYear(_.$active.year), _.options.format);
-        }
+        if (event.everyYear) { event_date = _.formatDate(new Date(event_date).setFullYear(_.$active.year), _.options.format); }
         appendDot(event_date);
       }
 
       function appendDot(date) {
-        thisDate = _.$elements.innerEl.find('[data-date-val="' + date + '"]');
-
-        if (thisDate.find('span.event-indicator').length === 0) {
-          thisDate.append('<span class="event-indicator"></span>');
-        }
+        thisDate = _.$elements.innerEl.find(`[data-date-val="${date}"]`)
+        if (thisDate.find('span.event-indicator').length === 0) thisDate.append('<span class="event-indicator"></span>')
 
         if (thisDate.find('span.event-indicator > .type-bullet > .type-' + type).length === 0) {
-          htmlToAppend = '<div class="type-bullet"><div ';
-
-          htmlToAppend += 'class="type-' + event.type + '"'
-          if (event.color) { htmlToAppend += 'style="background-color:' + event.color + '"' }
-          htmlToAppend += '></div></div>';
-          thisDate.find('.event-indicator').append(htmlToAppend);
+          thisDate.find('.event-indicator').append(`<div class="type-bullet"><div class="type-${event.type}"
+        ${event.color ? `style="background-color:${event.color}"` : ""}></div></div > `);
         }
       }
-    };
-
-    // v1.0.0 - Remove event indicator/s (dots)
-    EvoCalendar.prototype.removeEventIndicator = function (event) {
-      var _ = this
-      var event_date = event.date
-      var type = stringCheck(event.type)
-
-      event_date instanceof Array ? _.getBetweenDates(event_date).forEach(x => removeDot(x)) : removeDot(event_date)
-
-      function removeDot(date) {
-        // Check if no '.event-indicator', 'cause nothing to remove
-        if (_.$elements.innerEl.find('[data-date-val="' + date + '"] span.event-indicator').length === 0) return
-
-        // // If has no type of event, then delete 
-        if (!_.hasSameDayEventType(date, type)) _.$elements.innerEl.find('[data-date-val="' + date + '"] span.event-indicator > .type-bullet > .type-' + type).parent().remove()
-      }
-    };
+    }
 
     /****************
     *    METHODS    *
     ****************/
-
-    // v1.0.0 - Build event indicator on each date
-    EvoCalendar.prototype.buildEventIndicator = function () {
-      var _ = this
-      _.$elements.innerEl.find('.calendar-day > day > .event-indicator').empty()
-      _.options.calendarEvents.forEach(x => _.addEventIndicator(x))
-    };
-
 
     // v1.0.0 - Select year
     EvoCalendar.prototype.selectYear = function (event) {
@@ -637,12 +514,9 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
         yearVal = $(el).data('yearVal');
       }
 
-      if (yearVal == "prev")
-        --_.$active.year
-      else if (yearVal == "next")
-        ++_.$active.year
-      else if (typeof yearVal === 'number')
-        _.$active.year = yearVal
+      if (yearVal == "prev") --_.$active.year
+      else if (yearVal == "next") ++_.$active.year
+      else if (typeof yearVal === 'number') _.$active.year = yearVal
       pedirCamioneros(_)
 
       if (_.windowW <= _.$breakpoints.mobile && _.$UI.hasSidebar) _.toggleSidebar(false)
@@ -674,7 +548,7 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
 
       // EVENT FIRED: selectMonth
       $(_.$elements.calendarEl).trigger("selectMonth", [_.initials.dates[_.options.language].months[_.$active.month], _.$active.month])
-    };
+    }
 
     // v1.0.0 - Select specific date
     EvoCalendar.prototype.selectDate = function (event) {
@@ -706,16 +580,6 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
 
       // EVENT FIRED: selectDate
       $(_.$elements.calendarEl).trigger("selectDate", [_.$active.date, oldDate])
-    };
-
-    // v1.0.0 - Return active date
-    EvoCalendar.prototype.getActiveDate = function () {
-      return this.$active.date;
-    }
-
-    // v1.0.0 - Return active events
-    EvoCalendar.prototype.getActiveEvents = function () {
-      return this.$active.events
     }
 
     // v1.0.0 - Hide Sidebar/Event List if clicked outside
@@ -733,36 +597,26 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
       var _ = this;
 
       if (event === undefined || event.originalEvent) {
-        $(_.$elements.calendarEl).toggleClass('sidebar-hide');
+        $(_.$elements.calendarEl).toggleClass('sidebar-hide')
         _.$UI.hasSidebar = !_.$UI.hasSidebar;
       } else {
-        if (event) {
-          $(_.$elements.calendarEl).removeClass('sidebar-hide');
-          _.$UI.hasSidebar = true;
-        } else {
-          $(_.$elements.calendarEl).addClass('sidebar-hide');
-          _.$UI.hasSidebar = false;
-        }
+        $(_.$elements.calendarEl).toggleClass('sidebar-hide', !event)
+        _.$UI.hasSidebar = event
       }
 
       if (_.windowW <= _.$breakpoints.tablet && _.$UI.hasSidebar && _.$UI.hasEvent) _.toggleEventList()
-    };
+    }
 
     // v1.0.0 - Toggle Event list
     EvoCalendar.prototype.toggleEventList = function (event) {
-      var _ = this;
+      var _ = this
 
       if (event === undefined || event.originalEvent) {
         $(_.$elements.calendarEl).toggleClass('event-hide')
         _.$UI.hasEvent = !_.$UI.hasEvent
       } else {
-        if (event) {
-          $(_.$elements.calendarEl).removeClass('event-hide')
-          _.$UI.hasEvent = true
-        } else {
-          $(_.$elements.calendarEl).addClass('event-hide')
-          _.$UI.hasEvent = false
-        }
+        $(_.$elements.calendarEl).toggleClass('event-hide', !event)
+        _.$UI.hasEvent = event
       }
 
       if (_.windowW <= _.$breakpoints.tablet && _.$UI.hasEvent && _.$UI.hasSidebar) _.toggleSidebar()
@@ -771,13 +625,12 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
     // v1.0.0 - Add Calendar Event(s)
     EvoCalendar.prototype.addCalendarEvent = function (arr) {
       var _ = this
-      var isDateValid = date => _.isValidDate(date) ? true : false
 
       function addEvent(data) {
         let fecha = data.date;
         if (fecha instanceof Array)
-          fecha.forEach((x, i, a) => isDateValid(x) ? a[i] = _.formatDate(new Date(x), _.options.format) : "")
-        else if (isDateValid(fecha))
+          fecha.forEach((x, i, a) => _.isValidDate(x) && (a[i] = _.formatDate(new Date(x), _.options.format)))
+        else if (_.isValidDate(fecha))
           fecha = _.formatDate(new Date(fecha), _.options.format)
 
         if (!_.options.calendarEvents) _.options.calendarEvents = [];
@@ -785,40 +638,9 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
         _.addEventIndicator(data);
         if (_.$active.event_date === fecha) _.addEventList(data);
       }
-      if (arr instanceof Array)
-        arr.forEach(x => addEvent(x))
-      else if (typeof arr === 'object')
-        addEvent(arr)
+      if (arr instanceof Array) arr.forEach(x => addEvent(x))
+      else if (typeof arr === 'object') addEvent(arr)
     }
-
-    // v1.0.0 - Remove Calendar Event(s)
-    EvoCalendar.prototype.removeCalendarEvent = function (arr) {
-      var _ = this;
-
-      function deleteEvent(data) {
-        // Array index
-        var index = _.options.calendarEvents.map(function (event) { return event.id }).indexOf(data);
-
-        if (index >= 0) {
-          var event = _.options.calendarEvents[index];
-          // Remove event from calendar events
-          _.options.calendarEvents.splice(index, 1);
-          // remove to event list
-          _.removeEventList(data);
-          // remove event indicator
-          _.removeEventIndicator(event);
-        } else {
-          console.log("%c " + data + ": ID not found ", "color:white;font-weight:bold;background-color:#e21d1d;");
-        }
-      }
-      if (arr instanceof Array) { // Arrays of index
-        for (var i = 0; i < arr.length; i++) {
-          deleteEvent(arr[i])
-        }
-      } else { // Single index
-        deleteEvent(arr)
-      }
-    };
 
     // v1.0.0 - Check if date is valid
     EvoCalendar.prototype.isValidDate = d => new Date(d) && !isNaN(new Date(d).getTime())
@@ -826,10 +648,8 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
     $.fn.evoCalendar = function () {
       var _ = this, opt = arguments[0], args = Array.prototype.slice.call(arguments, 1), l = _.length, i, ret
       for (i = 0; i < l; i++) {
-        if (typeof opt == 'object' || typeof opt == 'undefined')
-          _[i].evoCalendar = new EvoCalendar(_[i], opt)
-        else
-          ret = _[i].evoCalendar[opt].apply(_[i].evoCalendar, args)
+        if (typeof opt == 'object' || typeof opt == 'undefined') _[i].evoCalendar = new EvoCalendar(_[i], opt)
+        else ret = _[i].evoCalendar[opt].apply(_[i].evoCalendar, args)
         if (typeof ret != 'undefined') return ret
       }
       return _
@@ -837,6 +657,4 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
 
   }))
 
-function irARegistrarVentas() {
-  window.location = `/registrarventas/${fechaseleccionada.getDate()}-${(fechaseleccionada.getMonth() + 1)}-${fechaseleccionada.getFullYear()}`;
-}
+let irARegistrarVentas = q => window.location = `/registrarventas/${fechaseleccionada.getDate()}-${(fechaseleccionada.getMonth() + 1)}-${fechaseleccionada.getFullYear()} `;

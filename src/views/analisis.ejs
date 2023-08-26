@@ -12,8 +12,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <link rel="stylesheet" href="/registroseliminados.min.css"/>
   <link rel="stylesheet" href="/analisis.min.css"/>
-  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.es.min.js"></script>
   <script defer src="/sectionConBotonVolver.js"></script>
@@ -31,17 +31,8 @@
           <label class="custom-control-label" for="switchAnimaciones">Animaciones</label>
         </div>
         <custom-breadcrumbs id="breadcrumbs"></custom-breadcrumbs>
-        <section-volver id="sectionUnidadTiempo">
-          <div class="tituloSeccion">Escoge una unidad de tiempo para hacer el análisis y crear las gráficas</div>
-          <article class="gridUnidadTiempo">
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Crear el análisis en base a días" id="btnDias"/>
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Crear el análisis en base a semanas" id="btnSemanas" disabled/>
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Crear el análisis en base a meses" id="btnMeses" disabled/>
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Crear el análisis en base a años" id="btnAños" disabled/>
-          </article>
-        </section-volver>
-        <section-volver id="sectionAgrupar" data-idboton="volverPrimerNivel">
-          <div class="tituloSeccion">Escoge cómo deseas agrupar los días</div>
+        <section-volver id="sectionAgrupar">
+          <div class="tituloSeccion">Escoge cómo deseas agrupar los datos</div>
           <article class="gridUnidadTiempo">
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por días" id="btnAgruparDias"/>
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por semanas" id="btnAgruparSemanas"/>
@@ -49,8 +40,8 @@
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por años" id="btnAgruparAños"/>
           </article>
         </section-volver>
-        <section-volver id="sectionRangos" data-idboton="volverSegundoNivel">
-          <div class="tituloSeccion">Escoge un rango de fechas para analizar</div>
+        <section-volver id="sectionRangos" data-idboton="volverPrimerNivel">
+          <div class="tituloSeccion">Escoge un rango para analizar las fechas</div>
           <article class="gridUnidadTiempo">
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas mayores o igual que" id="btnMayor"/>
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas menores o igual que" id="btnMenor"/>
@@ -58,15 +49,22 @@
               <input class="btn btn-primary botonazul btnOrden" type="button" value="Selección libre (uno o varios)" id="btnLibre"/>
           </article>
         </section-volver>
-
-        <section-volver id="sectionVarios" data-idboton="volverTercerNivelVarios">
-          <div class="divdatepicker"></div>
+        <section-volver id="sectionVarios" data-idboton="volverSegundoNivelVarios">
+          <div class="input-group date divdatepicker" id="datepickerVarios"><input type="text" class="form-control" readonly id="calendario"><span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>
           <input class="btn btn-primary botonazul btnAnalizar" type="button" value="Analizar" id="analizarVarios"/>
+          <span class="cambiarUnidadTiempo">La selección por día no es suficiente para ti? Prueba seleccionando por: <br><div class="unidadesTiempo"><button class="btn btn-primary botonazul btnunidadtiempo dia">Día</button> <button class="btn btn-primary botonazul btnunidadtiempo semana">Semana</button> <button class="btn btn-primary botonazul btnunidadtiempo mes">Mes</button> <button class="btn btn-primary botonazul btnunidadtiempo año">Año</button></div></span>
+          <input class="btn btn-primary botonazul btnBorrarFechas" type="button" value="Borrar fechas seleccionadas" id="borrarFechas"/>
           <div class="textoDatePicker"></div>
         </section-volver>
-        <section-volver id="sectionEntre" data-idboton="volverTercerNivelEntre">
-          <div class="divdatepicker"></div>
+
+        <section-volver id="sectionEntre" data-idboton="volverSegundoNivelEntre">
+          <div class="input-group input-daterange divdatepicker" id="datepickerEntre">
+            <div class="input-group date"><input type="text" class="form-control" readonly id="calendario1"><span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>
+            <div class="divseparador">y</div>
+            <div class="input-group date"><input type="text" class="form-control" readonly id="calendario2"><span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>
+          </div>
           <input class="btn btn-primary botonazul btnAnalizar" type="button" value="Analizar" id="analizarEntre"/>
+          <input class="btn btn-primary botonazul btnBorrarFechas" type="button" value="Borrar fechas seleccionadas" id="borrarFechas"/>
         </section-volver>
       </div>
     </main>

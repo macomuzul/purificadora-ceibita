@@ -1,6 +1,5 @@
 function devuelveValoresSumados(dias) {
-  if (dias.length === 0)
-    return {}
+  if (dias.length === 0) return {}
   let prods = dias.reduce((acc, curr) => {
     Object.entries(curr.prods).forEach(([k, v]) => {
       if (acc[k]) {

@@ -40,10 +40,10 @@ class graficos extends HTMLElement {
     this.innerHTML = this.html
     this.canvas = $(this).find("canvas")[0];
     this.$chart = this.canvas.getContext('2d')
-    this.metodosOpcionesGrafico();
-    this.metodosBotonesGrafico();
-    this.metodosBotonesAbajo();
-    this.metodosBotonesTabla();
+    this.metodosOpcionesGrafico()
+    this.metodosBotonesGrafico()
+    this.metodosBotonesAbajo()
+    this.metodosBotonesTabla()
   }
 
   metodosBotonesAbajo() {
@@ -102,7 +102,7 @@ class graficos extends HTMLElement {
       }
     })
     $(this).on("click", ".articleGrafico .botonpdf", e => e.currentTarget.exportarGrafico(this.canvas, this.titulo))
-    this.querySelector(".eliminarDataGrafico").addEventListener("click", e => {
+    $(this).on("click", ".eliminarDataGrafico", e => {
       this.chart.options.onClick = $(e.currentTarget).find("input")[0].checked ? () => { } : (event, activeElements) => {
         let { chart } = event
         let { datasets, labels } = structuredClone(chart.data)
@@ -114,7 +114,7 @@ class graficos extends HTMLElement {
           $(this.restaurarDataEliminada).show()
         }
       }
-    }, { capture: true })
+    })
     $(this).on("click", ".dropdown-item", e => {
       let texto = e.currentTarget.innerText
       $(e.currentTarget).closest(".dropdown-menu").prev()[0].innerText = texto
@@ -188,9 +188,9 @@ class graficos extends HTMLElement {
     else {
       colores = devuelveColores(colores)
       let coloresAlfa = devuelveColores(colores, 1)
-      datasets.forEach(el => {
-        el.borderColor = colores
-        el.backgroundColor = coloresAlfa
+      datasets.forEach(x => {
+        x.borderColor = colores
+        x.backgroundColor = coloresAlfa
       })
     }
   }
@@ -217,10 +217,10 @@ class graficos extends HTMLElement {
     }
     $(this).find("table")[0].outerHTML = html
     if (this.multiple) {
-      let totalDerecha = datasets[0].data.map((_, i) => datasets.reduce((p, c) => p += c.data[i], 0));
-      [...$(this).find("tbody td:last-child")].forEach((x, i) => x.textContent = totalDerecha[i])
-      $(this).find("tfoot td:last-child").text(totalDerecha.reduce((p, c) => p += c));
-      [...$(this).find("tfoot td")].slice(1, -1).forEach((x, i) => x.textContent = datasets[i].data.reduce((p, c) => p += c));
+      let totalDerecha = datasets[0].data.map((_, i) => datasets.reduce((p, c) => p += c.data[i], 0))
+      ;[...$(this).find("tbody td:last-child")].forEach((x, i) => x.textContent = totalDerecha[i])
+      $(this).find("tfoot td:last-child").text(totalDerecha.reduce((p, c) => p += c))
+      ;[...$(this).find("tfoot td")].slice(1, -1).forEach((x, i) => x.textContent = datasets[i].data.reduce((p, c) => p += c))
       this.normalizarCeldas([...$(this).find("tbody td:not(:first-child)")])
       this.normalizarCeldas([...$(this).find("tfoot td:not(:first-child)")])
     } else
@@ -248,13 +248,9 @@ class graficos extends HTMLElement {
 
     //ve cuales colores tiene que usar
     let coloresOpcion = $(this).find(".coloresOpcion input:checked")[0]?.id
-    if (coloresOpcion)
-      datasets = datasets.filter((_, i) => checkboxesInternos[i])
+    if (coloresOpcion) datasets = datasets.filter((_, i) => checkboxesInternos[i])
     datasets.forEach(el => el.data = el.data.filter((_, i) => checkboxesExternos[i]))
-    if (coloresOpcion?.includes("color1"))
-      this.colocarColores(this.graficoDias, checkboxesInternos, datasets)
-    else
-      this.colocarColores(this.graficoProductos, checkboxesExternos, datasets)
+    coloresOpcion?.includes("color1") ? this.colocarColores(this.graficoDias, checkboxesInternos, datasets) : this.colocarColores(this.graficoProductos, checkboxesExternos, datasets)
 
     //cambia fechas
     if (unidadTiempoEsDiaOSemana) {
@@ -303,8 +299,7 @@ class graficos extends HTMLElement {
         let data = labels.map((_, i) => parseFloat(datasets.reduce((acc, curr) => acc + curr.data[i], 0).normalizarPrecio()))
         indices.sort((a, b) => data[a] - data[b])
       }
-      else
-        indices.sort(funcionOrdenar)
+      else indices.sort(funcionOrdenar)
       labels = indices.map(i => labels[i]).filter(x => x != null)
       datasets.forEach(el => {
         el.data = indices.map(i => el.data[i]);
@@ -320,10 +315,7 @@ class graficos extends HTMLElement {
 
     this.datasetsActuales = datasets
     this.labelsActuales = labels
-    if (this.chartVisible)
-      this.actualizarChart(datasets, labels)
-    else
-      this.actualizarTabla(datasets, labels)
+    this.chartVisible ? this.actualizarChart(datasets, labels) : this.actualizarTabla(datasets, labels)
   }
 
   actualizarChart(datasets, labels) {
@@ -367,7 +359,7 @@ class graficos extends HTMLElement {
     <hr><div class="contenedoropcion"><custom-radiogroup class="graficoFechaOpcion" id="fechaRadioButton${contador}">
     ${this.radiobutton("fecha1", 'Usar formato: "Lunes, 1 de enero de 2023"') + this.radiobutton("fecha2", 'Usar formato: "1 de enero de 2023"', 1) + this.radiobutton("fecha3", 'Usar formato: "1/1/2023"')}
     </custom-radiogroup></div>` : ""}
-    
+
     <div class="tituloopciones">Ordenar los datos por ${popover(`Las opciones de ordenar por ${this.devuelveSonIngresos()} de mayor a menor y  ${this.devuelveSonIngresos()} de menor a mayor suma todos los datos y luego los ordena de mayor a menor`)}</div>
     <hr><div class="contenedoropcion"><custom-radiogroup class="ordenarOpcion" id="ordenarRadioButton${contador}">
     ${!this.agrupadoPorFecha ? this.radiobutton("ordenar1", "Ordenar productos por orden alfabético ascendentemente A-Z") + this.radiobutton("ordenar2", "Ordenar productos por orden alfabético descendentemente Z-A") : ""}
@@ -375,7 +367,7 @@ class graficos extends HTMLElement {
     ${this.radiobutton("ordenar3", `Ordenar por ${this.devuelveSonIngresos()} de mayor a menor`) + this.radiobutton("ordenar4", `Ordenar por ${this.devuelveSonIngresos()} de menor a mayor`)}
     ${this.radiobutton("ordenardefault", "Restaurar orden original", 1)}
     </custom-radiogroup></div>
-    
+
     <div class="contenedorEscalas">
     <hr>
     <div class="tituloopciones">Escalas ${popover("Permite cambiar cómo se visualiza la data y dar mayor visibilidad a los datos pequeños (solo funciona en gráficos de barra y lineal)")}</div>
@@ -387,7 +379,7 @@ class graficos extends HTMLElement {
     html += `${acordeonItem(htmlOtrasOpciones, `acordeonotrasopciones`, "Otras opciones")}
     <div class="contenedorabajo"><button class="btn btn-primary botonazul actualizarGrafico">Actualizar gráfico</button></div>
     </custom-acordeon></custom-acordeonitem></custom-acordeon>`;
-    this.html = html;
+    this.html = html
   }
 
   metodosOpcionesGrafico() {
@@ -398,19 +390,12 @@ class graficos extends HTMLElement {
     this.graficoFechaOpcion = $(this).find(".graficoFechaOpcion")
     this.tablaFechaOpcion = $(this).find(".tablaFechaOpcion")
     this.restaurarDataEliminada = $(this).find(".restaurarDataEliminada")
-    if (this.multiple)
-      $(this).on("click", ".resetdias button", async () => await this.resetearColores(this.graficoDias))
+    if (this.multiple) $(this).on("click", ".resetdias button", async () => await this.resetearColores(this.graficoDias))
     $(this).on("click", ".resetproductos button", async () => await this.resetearColores(this.graficoProductos))
     $(this).on("click", ".actualizarGrafico", () => this.actualizarDatos())
     $(this).on("click", ".actualizarTabla", () => this.actualizarTabla())
     $(this).on("click", ".restaurarDataEliminada", () => this.actualizarDatos())
-    $(this).find(".seleccionarTodos").each((_, x) => {
-      x.addEventListener("click", e => {
-        let el = e.currentTarget
-        let checkboxes = $(el).closest(".accordion-body").find(".camioneros input")
-        checkboxes.prop("checked", !$(el).find("input")[0].checked)
-      }, { capture: true })
-    })
+    $(this).on("click", ".seleccionarTodos", e => $(e.currentTarget).closest(".accordion-body").find(".camioneros input").prop("checked", !$(e.currentTarget).find("input")[0].checked))
   }
 
   async resetearColores(el) {
@@ -428,11 +413,8 @@ class graficos extends HTMLElement {
   }
 
   crearGrafico(labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, ordenar, type = "bar") {
-    contador++;
-    Object.assign(this, {
-      labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, ordenar, type, multiple: 1,
-      datasetsActuales: datasets, labelsActuales: labels
-    })
+    contador++
+    Object.assign(this, { labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, ordenar, type, multiple: 1, datasetsActuales: datasets, labelsActuales: labels })
     this.agregarOpciones()
     this.colocarHTMLGrafica()
     this.colocarDatos()
@@ -461,7 +443,7 @@ class graficos extends HTMLElement {
                   title = `${!agrupadoPorFecha ? `Producto: ${context.label}, ${sonIngresos ? "vendidos" : "ingresos generados"}: ${this.devuelveCantidadFormateada(context)}` : `Fecha: ${context.label}`}`
                 else
                   title = `${sonIngresos ? "Total de ingresos generados" + (agrupadoPorFecha ? "" : ` por ${context.label}`) : "Cantidad de " + (agrupadoPorFecha ? "productos" : context.label) + " vendidos"}: ${this.devuelveCantidadFormateada(context)} `
-                return title;
+                return title
               },
               label: context => {
                 let { multiple, fechaOpcion } = this
@@ -474,15 +456,15 @@ class graficos extends HTMLElement {
                     label = `Durante el período del ${formatearFecha(fechaOpcion, tiempoMenor)} al ${formatearFecha(fechaOpcion, tiempoMayor)} `
                   }
                 }
-                return label;
+                return label
               },
             }
           }
         }
       }
-    });
+    })
     if (type === "radar") {
-      this.chart.options.scales.r.ticks.backdropColor = "transparent";
+      this.chart.options.scales.r.ticks.backdropColor = "transparent"
     }
   }
 }

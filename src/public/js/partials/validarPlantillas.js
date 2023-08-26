@@ -1,55 +1,60 @@
 let tabla = $("table")[0]
 let nombreplantilla = $('#nombreplantilla')
 async function validarPlantillas() {
+  let tablaCopia = tabla.cloneNode(true)
   let productos = [...$("tbody td:nth-child(1)")]
   let precios = [...$("tbody td:nth-child(2)")]
   nombreplantilla.val((_, val) => val.trim())
-  
+
   if (nombreplantilla.val() === "") return mostrarError("El nombre de la plantilla está vacío")
   if (productos.length < 1) return mostrarError("No hay productos qué guardar")
 
   productos.forEach(x => x.textContent = x.innerText.trim())
   if (productos.some(x => x.textContent === "")) {
-    let tablaCopia = tabla.cloneNode(true);
-    [...$(tablaCopia).find("tbody td:first-child")].forEach(x => x.textContent === "" ? x.classList.add("enfocar") : "")
-    return mostrarErrorSwal(tablaCopia, "Hay productos sin nombre en la tabla")
+    [...$(tablaCopia).find("tbody td:first-child")].forEach(x => x.textContent === "" && x.classList.add("enfocar"))
+    return mostrarErrorHTML(tablaCopia, "Hay productos sin nombre en la tabla")
   }
 
   precios.forEach(x => {
     let precio = x.innerText;
-    if (precio === ".")
-      x.textContent = "";
-    let numeroParseado = parseFloat(precio)
-    if (!isNaN(numeroParseado))
-      x.textContent = numeroParseado.normalizarPrecio()
+    if (precio === ".") x.textContent = ""
+    let p = parseFloat(precio)
+    if (!isNaN(p)) x.textContent = p.normalizarPrecio()
   })
 
   if (precios.some(x => x.innerText === "")) {
-    let tablaCopia = tabla.cloneNode(true);
-    [...$(tablaCopia).find("tbody td:nth-child(2)")].forEach(x => x.textContent === "" ? x.classList.add("enfocar") : "")
-    return mostrarErrorSwal(tablaCopia, "Hay precios vacíos")
+    [...$(tablaCopia).find("tbody td:nth-child(2)")].forEach(x => x.textContent === "" && x.classList.add("enfocar"))
+    return mostrarErrorHTML(tablaCopia, "Hay precios vacíos")
   }
   if (precios.some(x => x.innerText === "0")) {
-    let tablaCopia = tabla.cloneNode(true);
-    [...$(tablaCopia).find("tbody td:nth-child(2)")].forEach(x => x.textContent === "0" ? x.classList.add("enfocar") : "")
-    return mostrarErrorSwal(tablaCopia, "Hay precios con valor igual a 0")
+    [...$(tablaCopia).find("tbody td:nth-child(2)")].forEach(x => x.textContent === "0" && x.classList.add("enfocar"))
+    return mostrarErrorHTML(tablaCopia, "Hay precios con valor igual a 0")
   }
-  let arrayNormalizado = productos.map(x => x.textContent.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, ""));
-  let hayRepetidos = arrayNormalizado.some((item, index) => {
-    if (arrayNormalizado.indexOf(item) !== index) {
-      let tablaCopia = tabla.cloneNode(true)
-      let productosCopia = $(tablaCopia).find("tbody td:first-child")
-      productosCopia[arrayNormalizado.indexOf(item)].classList.add("enfocar")
-      productosCopia[index].classList.add("enfocar")
-      mostrarErrorSwal(tablaCopia, "Se ha encontrado productos con el mismo nombre")
-      return true
+
+  let productosCopia = [...$(tablaCopia).find("tbody tr td:nth-child(1)")]
+  let arrayNormalizado = productos.map(el => el.textContent.normalizar())
+  let hayRepetidos = false
+  arrayNormalizado.forEach((x, i) => {
+    if (arrayNormalizado.indexOf(x) !== i) {
+      let color = colorAleatorio()
+      productosCopia.forEach(p => p.textContent.normalizar() === x && (p.style.background = color))
+      hayRepetidos = true
     }
-    return false
   })
-  return !hayRepetidos
+  if (hayRepetidos) return mostrarErrorHTML(tablaCopia, "Hay productos que tienen el mismo nombre")
+  return true
 }
 
-function mostrarErrorSwal(html, title) {
+function colorAleatorio() {
+  const threshold = 128;
+  const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+  const rgb = color.match(/\d+/g).map(Number);
+  const brightness = (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]);
+  if (brightness > threshold) return colorAleatorio()
+  return color
+}
+
+function mostrarErrorHTML(html, title) {
   $(html).find("tr").each((_, x) => x.lastElementChild.remove())
   $(html).find("td").prop("contenteditable", "false")
   Swal.fire({

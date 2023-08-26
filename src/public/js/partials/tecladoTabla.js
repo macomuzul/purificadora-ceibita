@@ -90,5 +90,5 @@ function getSelectionTextInfo(el) {
 
 let mostrarOffscreen = x => {
   let rect = x.getBoundingClientRect()
-  if(((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight)) x.scrollIntoView()
+  if((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight) x.scrollIntoView()
 }

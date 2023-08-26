@@ -96,7 +96,7 @@ $(".svgver").each(function (e, btn) {
 $("#guardar").on('click', function () {
   let data = JSON.stringify({
     nombreDefault: $(".faved").closest("tr")[0].cells[0].innerText,
-    nombrePlantillas: [...$("#cuerpotabla tr")].map(x => x.cells[0].innerText)
+    nombrePlantillas: [...$("tbody tr")].map(x => x.cells[0].innerText)
   })
   $.ajax({
     url: "/plantillas",

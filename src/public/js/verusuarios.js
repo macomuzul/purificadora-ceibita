@@ -30,7 +30,7 @@ $("body").on("click", ".svgeliminar", async function () {
     confirmButtonText: "Sí",
     cancelButtonText: "No",
   })
-  isConfirmed ? modal.mostrar(devuelveBorrarUsuario(JSON.parse({ usuario }), this.closest("tr"))) : ""
+  if (isConfirmed) modal.mostrar(devuelveBorrarUsuario(JSON.parse({ usuario }), this.closest("tr")))
 })
 
 function devuelveBorrarUsuario(data, fila) {
