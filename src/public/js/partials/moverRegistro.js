@@ -8,7 +8,7 @@ async function moverReg(fecha, url) {
     showConfirmButton: false,
     didOpen: () => {
       $("#continuarIframe")[0].addEventListener("click", () => {
-        let contenidoIframe = $(document).find("iframe")[0].contentDocument
+        let contenidoIframe = $("iframe")[0].contentDocument
         let input = contenidoIframe.querySelector("input")
         if (input.value === "") {
           input.classList.add("is-invalid")
@@ -28,7 +28,7 @@ function moverRegistro(de, a, sobreescribir, url) {
     contentType: "application/json",
     data: JSON.stringify({ de, a, sobreescribir }),
     success: async r => {
-      if (r === "Éxito") return await preguntarSiQuiereRedireccionar(a)
+      if (r === "") return await preguntarSiQuiereRedireccionar(a)
       let html = `<custom-tabs><div class="tabs">
       ${r.map((_, i) => `<custom-label name="swal" data-id="swal${i}">Camión ${i + 1}</custom-label>`).join('')}
       </div><div class="content">
@@ -48,13 +48,13 @@ function moverRegistro(de, a, sobreescribir, url) {
             <td>${nombre}</td><td>${precio.normalizarPrecio()}</td>${viajes.map(x => `<td>${x}</td>`).join('')}<td>${vendidos}</td><td>${ingresos.normalizarPrecio()}</td>
           </tr>`).join('')}
         </tbody>
-        <tfoot><tr><td colspan="${cantViajes * 2 + colsinicio}">Total:</td><td>${totalvendidos}</td><td>${totalingresos.normalizarPrecio()}</td></tr></tfoot>
+        <tfoot><tr><td colspan="${cantViajes * 2 + 2}">Total:</td><td>${totalvendidos}</td><td>${totalingresos.normalizarPrecio()}</td></tr></tfoot>
       </table></tab-content>`}).join("")}
       </div></custom-tabs>`
 
       if (await swalSíNo("Ya existe un registro en esa fecha, deseas sobreescribirlo?", html)) moverRegistro(de, a, 1, url)
     },
-    error: q => Swal.fire("Ups...", "No se pudo restaurar el registro", "error")
+    error: r => Swal.fire("Error", r.responseText, "error")
   })
 }
 
@@ -67,7 +67,7 @@ async function preguntarSiQuiereRedireccionar(fecha) {
     confirmButtonText: "Sí",
     cancelButtonText: "No",
   })
-  if (isConfirmed) window.location = `/registrarventas/${devuelveFechaFormateada(fecha)}`
+  if (isConfirmed) window.location = `/registrarventas/${devuelveFechaFormateada(new Date(fecha))}`
 }
 
 function parseDate(dateString) {

@@ -3,10 +3,10 @@
 <head>
   <%- include("layouts/global") %>
   <title>Recuperar Contraseña</title>
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Poppins" />
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Poppins">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="/login.min.css" />
-  <link rel="stylesheet" href="/recuperarcontraseña.min.css" />
+  <link rel="stylesheet" href="/login.min.css">
+  <link rel="stylesheet" href="/recuperarcontraseña.min.css">
 </head>
 
 <body>
@@ -16,19 +16,15 @@
         <div class="divvolver"><a href="/"><span class="volver"><i class="fa-sharp fa-solid fa-arrow-left"></i> Volver</span></a></div>
         <h2>Recuperar contraseña</h2>
         <div class="inputBox">
-          <label for="usuario">
-            <h3><span style="font-family: FontAwesome;">&#xf007;</span> Usuario</h3>
-          </label>
-          <input type="text" required="required" name="usuario" id="usuario" />
+          <label for="usuario"><h3><span>&#xf007;</span> Usuario</h3></label>
+          <input type="text" required="required" name="usuario" id="usuario">
         </div>
         <div class="inputBox">
-          <label for="contraseña">
-            <h3><span style="font-family: FontAwesome;">&#xf0e0;</span> Correo</h3>
-          </label>
-          <input type="email" title="" required="required" name="correo" id="correo" />
+          <label for="contraseña"><h3><span>&#xf0e0;</span> Correo</h3></label>
+          <input type="email" title="" required="required" name="correo" id="correo">
         </div>
-        <input type="submit" value="Recuperar contraseña" />
-        <div class="divolvidemicontraseña"><a href="/recuperarcontraseña"><span class="olvidemicontraseña"><i class="fa-solid fa-user-slash"></i> Olvidé mi nombre de usuario</span></a></div>
+        <input type="submit" value="Recuperar contraseña">
+        <div><a href="/recuperarcontraseña"><span class="olvidemicontraseña"><i class="fa-solid fa-user-slash"></i> Olvidé mi nombre de usuario</span></a></div>
       </div>
     </form>
   </div>
@@ -36,11 +32,23 @@
   <script>
     let usuario = document.getElementById("usuario")
     let correo = document.getElementById("correo")
-    
-    usuario.addEventListener('input', q => usuario.setCustomValidity(usuario.validity.valueMissing ? 'Por favor escribe un nombre de usuario' : ''))
-    correo.addEventListener('input', q => correo.setCustomValidity((correo.validity.valueMissing || correo.validity.typeMismatch) ?'Por favor escribe un correo válido por ejemplo: usuario@dominio.com' : ''))
+    let validarUsuario = q => usuario.setCustomValidity(usuario.validity.valueMissing ? 'Por favor escribe un nombre de usuario' : '')
+    let validarCorreo = q => correo.setCustomValidity(correo.validity.valueMissing ? 'Por favor escribe un correo' : correo.validity.typeMismatch ? 'Por favor escribe un correo válido por ejemplo: usuario@dominio.com' : '')
+    usuario.addEventListener('input', validarUsuario)
+    correo.addEventListener('input', validarCorreo)
+    usuario.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault()
+        correo.focus()
+      }
+    })
+
+    document.querySelector('[type="submit"]').addEventListener("click", q => {
+      validarUsuario()
+      validarCorreo()
+    })
   </script>
-  <%if (errorRecuperarContraseña.length> 0 && String(errorRecuperarContraseña) === "El usuario que has ingresado no existe") {%>
+  <%if (errorRecuperarContraseña === "Usuario no existe") {%>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.css">
 
     <script>
@@ -50,13 +58,17 @@
       })
     </script>
   <% } %>
-  <%if (errorRecuperarContraseña.length> 0 && String(errorRecuperarContraseña) === 'El correo ingresado no está en la lista permitida de correos') {%>
+  <%if (errorRecuperarContraseña === 'Correo incorrecto') {%>
     <script>
       window.addEventListener("load", q => {
-        correo.setCustomValidity('El correo ingresado no está en la lista permitida de correos')
+        correo.setCustomValidity('El correo del usuario no coincide con el que has escrito')
         correo.reportValidity()
       })
     </script>
+  <% } %>
+
+  <% if (intentosRestantes) { %>
+    <%- include("layouts/toastIntentosMaximosError.ejs", {intentosRestantes, tiempoQueQueda, correoEnviado}) %>
   <% } %>
 </body>
 </html>

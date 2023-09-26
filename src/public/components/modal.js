@@ -17,11 +17,11 @@ class customModal extends HTMLElement {
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div class="cuerpoModal1">Demustra que de verdad eres tú quien intenta realizar esta acción</div>
+          <div class="cuerpoModal1">Demuestra que de verdad eres tú quien intenta realizar esta acción</div>
           <i class="fa-solid fa-lock"></i>
           <div class="cuerpoModal2">Ingresa la contraseña de tu usuario</div>
           <div class="cuerpoModal3">
-            <input-contraseña data-id="verificacionIdentidad" data-focus="1" />
+            <input-password data-id="verificacionIdentidad" data-focus="1" />
           </div>
         </div>
         <div class="modal-footer">
@@ -35,11 +35,9 @@ class customModal extends HTMLElement {
       modal = this
       this.btModal = new bootstrap.Modal(this)
       this.input = $(this).find("input")[0]
-
-      
       $(this).on("hide.bs.modal", q => {
         this.input.value = ""
-        this.input.type === "text" ? $(this).find("input-contraseña")[0].clickOjo(0) : ""
+        this.input.type === "text" ? $(this).find("input-password")[0].clickOjo(0) : ""
       })
 
       $(this).on('click', '#enviarVerificacion', q => {
@@ -57,8 +55,8 @@ class customModal extends HTMLElement {
   }
 
   mostrar(ajax){
-    this.btModal.show()
     this.ajax = ajax
+    this.btModal.show()
   }
 }
 
@@ -83,4 +81,4 @@ class inputContraseña extends HTMLElement {
   }
 }
 
-customElements.define("input-contraseña", inputContraseña)
+customElements.define("input-password", inputContraseña)

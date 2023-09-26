@@ -1,139 +1,88 @@
-export let jsonSimple = `"camiones": [{ "nombretrabajador": "nanard", "filas": [{ "nombreproducto": "garrafón2","precioproducto": 10, "viajes": [{ "sale": 99, "entra": 3 } ],"vendidos": 96, "ingresos": 960 },{ "nombreproducto": "bolsa2","precioproducto": 5.60, "viajes": [{ "sale": 14, "entra": 1 } ],"vendidos": 13, "ingresos": 72.80 },{ "nombreproducto": "boopi","precioproducto": 25, "viajes": [{ "sale": 3, "entra": 2 } ],"vendidos": 1, "ingresos": 25 },{ "nombreproducto": "dispensador","precioproducto": 50, "viajes": [{ "sale": 4134, "entra": 2 } ],"vendidos": 4132, "ingresos": 206600 },{ "nombreproducto": "prueba","precioproducto": 13.43, "viajes": [{ "sale": 134, "entra": 1 } ],"vendidos": 133, "ingresos": 1786.19 } ],"totalvendidos": 4375, "totalingresos": 209443.99 }]`;
-export let jsonUnCamionero = `"camiones": [{ "nombretrabajador": "xeresano", "filas": [{ "nombreproducto": "garrafón2","precioproducto": 10, "viajes": [{ "sale": 99, "entra": 3 } ],"vendidos": 96, "ingresos": 960 },{ "nombreproducto": "bolsa2","precioproducto": 5.60, "viajes": [{ "sale": 14, "entra": 1 } ],"vendidos": 13, "ingresos": 72.80 },{ "nombreproducto": "boopi","precioproducto": 25, "viajes": [{ "sale": 3, "entra": 2 } ],"vendidos": 1, "ingresos": 25 },{ "nombreproducto": "dispensador","precioproducto": 50, "viajes": [{ "sale": 4134, "entra": 2 } ],"vendidos": 4132, "ingresos": 206600 },{ "nombreproducto": "prueba","precioproducto": 13.43, "viajes": [{ "sale": 134, "entra": 1 } ],"vendidos": 133, "ingresos": 1786.19 } ],"totalvendidos": 4375, "totalingresos": 209443.99 }]`;
-export let jsonCambiandoOrdenProductos = `"camiones": [{ "nombretrabajador": "xeresano", "filas": [{ "nombreproducto": "bolsa2","precioproducto": 5.60, "viajes": [{ "sale": 14, "entra": 1 } ],"vendidos": 13, "ingresos": 72.80 },{ "nombreproducto": "boopi","precioproducto": 25, "viajes": [{ "sale": 3, "entra": 2 } ],"vendidos": 1, "ingresos": 25 },{ "nombreproducto": "dispensador","precioproducto": 50, "viajes": [{ "sale": 4134, "entra": 2 } ],"vendidos": 4132, "ingresos": 206600 },{ "nombreproducto": "prueba","precioproducto": 13.43, "viajes": [{ "sale": 134, "entra": 1 } ],"vendidos": 133, "ingresos": 1786.19 }, { "nombreproducto": "garrafón2","precioproducto": 10, "viajes": [{ "sale": 99, "entra": 3 } ],"vendidos": 96, "ingresos": 960 } ],"totalvendidos": 4375, "totalingresos": 209443.99 }]`;
-export let jsonAgregandoProductosYViajes = `"camiones": [{
-  "nombretrabajador": "xeresano",
-  "filas": [{
-      "nombreproducto": "garrafón2",
-      "precioproducto": 10,
-      "viajes": [{
-        "sale": 99,
-        "entra": 3
-      }, {
-        "sale": 124,
-        "entra": 42
-      }],
+export let jsonSimple = `"tablas": [{ "trabajador": "nanard", "productos": [{ "nombre": "garrafón2","precio": 10, "viajes": [99, 3],"vendidos": 96, "ingresos": 960 },{ "nombre": "bolsa2","precio": 5.6, "viajes": [14, 1],"vendidos": 13, "ingresos": 72.8 },{ "nombre": "boopi","precio": 25, "viajes": [3, 2],"vendidos": 1, "ingresos": 25 },{ "nombre": "dispensador","precio": 50, "viajes": [4134, 2],"vendidos": 4132, "ingresos": 206600 },{ "nombre": "prueba","precio": 13.43, "viajes": [134, 1],"vendidos": 133, "ingresos": 1786.19}],"totalvendidos": 4375, "totalingresos": 209443.99 }]`
+export let jsonUnCamionero = `"tablas": [{ "trabajador": "xeresano", "productos": [{ "nombre": "garrafón2","precio": 10, "viajes": [99, 3],"vendidos": 96, "ingresos": 960 },{ "nombre": "bolsa2","precio": 5.6, "viajes": [14, 1],"vendidos": 13, "ingresos": 72.8 },{ "nombre": "boopi","precio": 25, "viajes": [3, 2],"vendidos": 1, "ingresos": 25 },{ "nombre": "dispensador","precio": 50, "viajes": [4134, 2],"vendidos": 4132, "ingresos": 206600 },{ "nombre": "prueba","precio": 13.43, "viajes": [134, 1],"vendidos": 133, "ingresos": 1786.19}],"totalvendidos": 4375, "totalingresos": 209443.99 }]`
+export let jsonCambiandoOrdenProductos = `"tablas": [{ "trabajador": "xeresano", "productos": [{ "nombre": "bolsa2","precio": 5.6, "viajes": [14, 1],"vendidos": 13, "ingresos": 72.8 },{ "nombre": "boopi","precio": 25, "viajes": [3, 2],"vendidos": 1, "ingresos": 25 },{ "nombre": "dispensador","precio": 50, "viajes": [4134, 2],"vendidos": 4132, "ingresos": 206600 },{ "nombre": "prueba","precio": 13.43, "viajes": [134, 1],"vendidos": 133, "ingresos": 1786.19 }, { "nombre": "garrafón2","precio": 10, "viajes": [99, 3],"vendidos": 96, "ingresos": 960}],"totalvendidos": 4375, "totalingresos": 209443.99 }]`
+export let jsonAgregandoProductosYViajes = `"tablas": [{
+  "trabajador": "xeresano",
+  "productos": [{
+      "nombre": "garrafón2",
+      "precio": 10,
+      "viajes": [99, 3, 124, 42],
       "vendidos": 178,
       "ingresos": 1780
     },
     {
-      "nombreproducto": "bolsa2",
-      "precioproducto": 5.60,
-      "viajes": [{
-        "sale": 14,
-        "entra": 1
-      }, {
-        "sale": 125,
-        "entra": 21
-      }],
+      "nombre": "bolsa2",
+      "precio": 5.6,
+      "viajes": [14, 1, 125, 21],
       "vendidos": 117,
-      "ingresos": 655.20
+      "ingresos": 655.2
     },
     {
-      "nombreproducto": "boopi",
-      "precioproducto": 25,
-      "viajes": [{
-        "sale": 3,
-        "entra": 2
-      }, {
-        "sale": 124,
-        "entra": 4
-      }],
+      "nombre": "boopi",
+      "precio": 25,
+      "viajes": [3, 2, 124, 4],
       "vendidos": 121,
       "ingresos": 3025
     },
     {
-      "nombreproducto": "dispensador",
-      "precioproducto": 50,
-      "viajes": [{
-        "sale": 4134,
-        "entra": 2
-      }, {
-        "sale": 2154,
-        "entra": 2
-      }],
+      "nombre": "dispensador",
+      "precio": 50,
+      "viajes": [4134, 2, 2154, 2],
       "vendidos": 6284,
       "ingresos": 314200
     },
     {
-      "nombreproducto": "prueba",
-      "precioproducto": 13.43,
-      "viajes": [{
-        "sale": 134,
-        "entra": 1
-      }, {
-        "sale": 54,
-        "entra": 5
-      }],
+      "nombre": "prueba",
+      "precio": 13.43,
+      "viajes": [134, 1, 54, 5],
       "vendidos": 182,
       "ingresos": 2444.26
     },
     {
-      "nombreproducto": "yami",
-      "precioproducto": 12.4,
-      "viajes": [{
-        "sale": 125,
-        "entra": 32
-      }, {
-        "sale": 12,
-        "entra": 2
-      }],
+      "nombre": "yami",
+      "precio": 12.4,
+      "viajes": [125, 32, 12, 2],
       "vendidos": 103,
-      "ingresos": 1277.20
+      "ingresos": 1277.2
     }
   ],
   "totalvendidos": 6985,
   "totalingresos": 323381.66
-}]`;
-export let jsonDosTablas = `"camiones": [{
-  "nombretrabajador": "xeresano",
-  "filas": [{
-      "nombreproducto": "garrafón2",
-      "precioproducto": 10,
-      "viajes": [{
-        "sale": 99,
-        "entra": 3
-      }],
+}]`
+export let jsonDosTablas = `"tablas": [{
+  "trabajador": "xeresano",
+  "productos": [{
+      "nombre": "garrafón2",
+      "precio": 10,
+      "viajes": [99, 3],
       "vendidos": 96,
       "ingresos": 960
     },
     {
-      "nombreproducto": "bolsa2",
-      "precioproducto": 5.60,
-      "viajes": [{
-        "sale": 14,
-        "entra": 1
-      }],
+      "nombre": "bolsa2",
+      "precio": 5.6,
+      "viajes": [14, 1],
       "vendidos": 13,
-      "ingresos": 72.80
+      "ingresos": 72.8
     },
     {
-      "nombreproducto": "boopi",
-      "precioproducto": 25,
-      "viajes": [{
-        "sale": 3,
-        "entra": 2
-      }],
+      "nombre": "boopi",
+      "precio": 25,
+      "viajes": [3, 2],
       "vendidos": 1,
       "ingresos": 25
     },
     {
-      "nombreproducto": "dispensador",
-      "precioproducto": 50,
-      "viajes": [{
-        "sale": 4134,
-        "entra": 2
-      }],
+      "nombre": "dispensador",
+      "precio": 50,
+      "viajes": [4134, 2],
       "vendidos": 4132,
       "ingresos": 206600
     },
     {
-      "nombreproducto": "prueba",
-      "precioproducto": 13.43,
-      "viajes": [{
-        "sale": 134,
-        "entra": 1
-      }],
+      "nombre": "prueba",
+      "precio": 13.43,
+      "viajes": [134, 1],
       "vendidos": 133,
       "ingresos": 1786.19
     }
@@ -142,339 +91,149 @@ export let jsonDosTablas = `"camiones": [{
   "totalingresos": 209443.99
 },
 {
-  "nombretrabajador": "mostro",
-  "filas": [{
-      "nombreproducto": "garrafón",
-      "precioproducto": 10,
-      "viajes": [{
-        "sale": 123,
-        "entra": 23
-      }],
+  "trabajador": "mostro",
+  "productos": [{
+      "nombre": "garrafón",
+      "precio": 10,
+      "viajes": [123, 23],
       "vendidos": 100,
       "ingresos": 1000
     },
     {
-      "nombreproducto": "bolsa",
-      "precioproducto": 5.60,
-      "viajes": [{
-        "sale": 54,
-        "entra": 21
-      }],
+      "nombre": "bolsa",
+      "precio": 5.6,
+      "viajes": [54, 21],
       "vendidos": 33,
-      "ingresos": 184.80
+      "ingresos": 184.8
     },
     {
-      "nombreproducto": "isomax",
-      "precioproducto": 32,
-      "viajes": [{
-        "sale": 123,
-        "entra": 4
-      }],
+      "nombre": "isomax",
+      "precio": 32,
+      "viajes": [123, 4],
       "vendidos": 119,
       "ingresos": 3808
     },
     {
-      "nombreproducto": "cuco 50",
-      "precioproducto": 15,
-      "viajes": [{
-        "sale": 54,
-        "entra": 5
-      }],
+      "nombre": "cuco 50",
+      "precio": 15,
+      "viajes": [54, 5],
       "vendidos": 49,
       "ingresos": 735
     },
     {
-      "nombreproducto": "cuco 25",
-      "precioproducto": 15,
-      "viajes": [{
-        "sale": 2,
-        "entra": 1
-      }],
+      "nombre": "cuco 25",
+      "precio": 15,
+      "viajes": [2, 1],
       "vendidos": 1,
       "ingresos": 15
     },
     {
-      "nombreproducto": "boopi",
-      "precioproducto": 25,
-      "viajes": [{
-        "sale": 123,
-        "entra": 3
-      }],
+      "nombre": "boopi",
+      "precio": 25,
+      "viajes": [123, 3],
       "vendidos": 120,
       "ingresos": 3000
     },
     {
-      "nombreproducto": "dispensador",
-      "precioproducto": 50,
-      "viajes": [{
-        "sale": 25,
-        "entra": 2
-      }],
+      "nombre": "dispensador",
+      "precio": 50,
+      "viajes": [25, 2],
       "vendidos": 23,
       "ingresos": 1150
     }
   ],
   "totalvendidos": 445,
-  "totalingresos": 9892.80
+  "totalingresos": 9892.8
 }
 ]`
-export let jsonDosTablasAlReves = `"camiones": [{
-  "nombretrabajador": "xeresano",
-  "filas": [
-    {
-      "nombretrabajador": "mostro",
-      "filas": [{
-          "nombreproducto": "garrafón",
-          "precioproducto": 10,
-          "viajes": [{
-            "sale": 123,
-            "entra": 23
-          }],
-          "vendidos": 100,
-          "ingresos": 1000
-        },
-        {
-          "nombreproducto": "bolsa",
-          "precioproducto": 5.60,
-          "viajes": [{
-            "sale": 54,
-            "entra": 21
-          }],
-          "vendidos": 33,
-          "ingresos": 184.80
-        },
-        {
-          "nombreproducto": "isomax",
-          "precioproducto": 32,
-          "viajes": [{
-            "sale": 123,
-            "entra": 4
-          }],
-          "vendidos": 119,
-          "ingresos": 3808
-        },
-        {
-          "nombreproducto": "cuco 50",
-          "precioproducto": 15,
-          "viajes": [{
-            "sale": 54,
-            "entra": 5
-          }],
-          "vendidos": 49,
-          "ingresos": 735
-        },
-        {
-          "nombreproducto": "cuco 25",
-          "precioproducto": 15,
-          "viajes": [{
-            "sale": 2,
-            "entra": 1
-          }],
-          "vendidos": 1,
-          "ingresos": 15
-        },
-        {
-          "nombreproducto": "boopi",
-          "precioproducto": 25,
-          "viajes": [{
-            "sale": 123,
-            "entra": 3
-          }],
-          "vendidos": 120,
-          "ingresos": 3000
-        },
-        {
-          "nombreproducto": "dispensador",
-          "precioproducto": 50,
-          "viajes": [{
-            "sale": 25,
-            "entra": 2
-          }],
-          "vendidos": 23,
-          "ingresos": 1150
-        }
-      ],
-      "totalvendidos": 445,
-      "totalingresos": 9892.80
-    },
-    {
-      "nombreproducto": "garrafón2",
-      "precioproducto": 10,
-      "viajes": [{
-        "sale": 99,
-        "entra": 3
-      }],
-      "vendidos": 96,
-      "ingresos": 960
-    },
-    {
-      "nombreproducto": "bolsa2",
-      "precioproducto": 5.60,
-      "viajes": [{
-        "sale": 14,
-        "entra": 1
-      }],
-      "vendidos": 13,
-      "ingresos": 72.80
-    },
-    {
-      "nombreproducto": "boopi",
-      "precioproducto": 25,
-      "viajes": [{
-        "sale": 3,
-        "entra": 2
-      }],
-      "vendidos": 1,
-      "ingresos": 25
-    },
-    {
-      "nombreproducto": "dispensador",
-      "precioproducto": 50,
-      "viajes": [{
-        "sale": 4134,
-        "entra": 2
-      }],
-      "vendidos": 4132,
-      "ingresos": 206600
-    },
-    {
-      "nombreproducto": "prueba",
-      "precioproducto": 13.43,
-      "viajes": [{
-        "sale": 134,
-        "entra": 1
-      }],
-      "vendidos": 133,
-      "ingresos": 1786.19
-    }
-  ],
-  "totalvendidos": 4375,
-  "totalingresos": 209443.99
-}
-]`
-export let jsonCambiandoPlantilla = `"camiones": [{
-  "nombretrabajador": "xeresano",
-  "filas": [{
-      "nombreproducto": "garrafón",
-      "precioproducto": 10,
-      "viajes": [{
-        "sale": 123,
-        "entra": 12
-      }],
+export let jsonDosTablasAlReves = `"tablas":[{"trabajador":"mostro","productos":[{"nombre":"garrafón","precio":10,"viajes":[123,23],"vendidos":100,"ingresos":1000},{"nombre":"bolsa","precio":5.6,"viajes":[54,21],"vendidos":33,"ingresos":184.8},{"nombre":"isomax","precio":32,"viajes":[123,4],"vendidos":119,"ingresos":3808},{"nombre":"cuco 50","precio":15,"viajes":[54,5],"vendidos":49,"ingresos":735},{"nombre":"cuco 25","precio":15,"viajes":[2,1],"vendidos":1,"ingresos":15},{"nombre":"boopi","precio":25,"viajes":[123,3],"vendidos":120,"ingresos":3000},{"nombre":"dispensador","precio":50,"viajes":[25,2],"vendidos":23,"ingresos":1150}],"totalvendidos":445,"totalingresos":9892.8},{"trabajador":"xeresano","productos":[{"nombre":"garrafón2","precio":10,"viajes":[99,3],"vendidos":96,"ingresos":960},{"nombre":"bolsa2","precio":5.6,"viajes":[14,1],"vendidos":13,"ingresos":72.8},{"nombre":"boopi","precio":25,"viajes":[3,2],"vendidos":1,"ingresos":25},{"nombre":"dispensador","precio":50,"viajes":[4134,2],"vendidos":4132,"ingresos":206600},{"nombre":"prueba","precio":13.43,"viajes":[134,1],"vendidos":133,"ingresos":1786.19}],"totalvendidos":4375,"totalingresos":209443.99}]`
+export let jsonCambiandoPlantilla = `"tablas": [{
+  "trabajador": "xeresano",
+  "productos": [{
+      "nombre": "garrafón",
+      "precio": 10,
+      "viajes": [123, 12],
       "vendidos": 111,
       "ingresos": 1110
     },
     {
-      "nombreproducto": "bolsa",
-      "precioproducto": 5.60,
-      "viajes": [{
-        "sale": 43,
-        "entra": 5
-      }],
+      "nombre": "bolsa",
+      "precio": 5.6,
+      "viajes": [43, 5],
       "vendidos": 38,
-      "ingresos": 212.80
+      "ingresos": 212.8
     },
     {
-      "nombreproducto": "isomax",
-      "precioproducto": 32,
-      "viajes": [{
-        "sale": 1,
-        "entra": 0
-      }],
+      "nombre": "isomax",
+      "precio": 32,
+      "viajes": [1, 0],
       "vendidos": 1,
       "ingresos": 32
     },
     {
-      "nombreproducto": "cuco 50",
-      "precioproducto": 15,
-      "viajes": [{
-        "sale": 3,
-        "entra": 3
-      }],
+      "nombre": "cuco 50",
+      "precio": 15,
+      "viajes": [3, 3],
       "vendidos": 0,
       "ingresos": 0
     },
     {
-      "nombreproducto": "cuco 25",
-      "precioproducto": 15,
-      "viajes": [{
-        "sale": 4,
-        "entra": 1
-      }],
+      "nombre": "cuco 25",
+      "precio": 15,
+      "viajes": [4, 1],
       "vendidos": 3,
       "ingresos": 45
     },
     {
-      "nombreproducto": "boopi",
-      "precioproducto": 25,
-      "viajes": [{
-        "sale": 1,
-        "entra": 1
-      }],
+      "nombre": "boopi",
+      "precio": 25,
+      "viajes": [1, 1],
       "vendidos": 0,
       "ingresos": 0
     },
     {
-      "nombreproducto": "obj1",
-      "precioproducto": 12,
-      "viajes": [{
-        "sale": 4,
-        "entra": 2
-      }],
+      "nombre": "obj1",
+      "precio": 12,
+      "viajes": [4, 2],
       "vendidos": 2,
       "ingresos": 24
     },
     {
-      "nombreproducto": "dispensador",
-      "precioproducto": 50,
-      "viajes": [{
-        "sale": 12,
-        "entra": 5
-      }],
+      "nombre": "dispensador",
+      "precio": 50,
+      "viajes": [12, 5],
       "vendidos": 7,
       "ingresos": 350
     },
     {
-      "nombreproducto": "obj2",
-      "precioproducto": 14.23,
-      "viajes": [{
-        "sale": 4,
-        "entra": 2
-      }],
+      "nombre": "obj2",
+      "precio": 14.23,
+      "viajes": [4, 2],
       "vendidos": 2,
       "ingresos": 28.46
     },
     {
-      "nombreproducto": "obj3",
-      "precioproducto": 31.12,
-      "viajes": [{
-        "sale": 124,
-        "entra": 12
-      }],
+      "nombre": "obj3",
+      "precio": 31.12,
+      "viajes": [124, 12],
       "vendidos": 112,
       "ingresos": 3485.44
     },
     {
-      "nombreproducto": "obj4",
-      "precioproducto": 12,
-      "viajes": [{
-        "sale": 54,
-        "entra": 4
-      }],
+      "nombre": "obj4",
+      "precio": 12,
+      "viajes": [54, 4],
       "vendidos": 50,
       "ingresos": 600
     },
     {
-      "nombreproducto": "obj5",
-      "precioproducto": 14,
-      "viajes": [{
-        "sale": 43,
-        "entra": 12
-      }],
+      "nombre": "obj5",
+      "precio": 14,
+      "viajes": [43, 12],
       "vendidos": 31,
       "ingresos": 434
     }
   ],
   "totalvendidos": 357,
-  "totalingresos": 6321.70
+  "totalingresos": 6321.7
 }]`

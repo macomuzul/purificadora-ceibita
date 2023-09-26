@@ -13,6 +13,11 @@ $("body").on("keydown", "td", function (e) {
     $(this).closest("tr")[0].rowIndex <= $(this).closest("tbody")[0].rows.length ? enfocarCelda($(this).closest("tr").next().find("td").eq(cellindex), e) : enfocarCelda($(this).closest("tbody").find("tr").first().find("td").eq(cellindex + 1), e)
 })
 
+let mostrarOffscreen = x => {
+  let rect = x.getBoundingClientRect()
+  if((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight) x.scrollIntoView()
+}
+
 function enfocarCelda([x], e) {
   e.preventDefault()
   if (x !== undefined && x.contentEditable) {
@@ -69,7 +74,7 @@ $("body").on("keydown", "input", function (e) {
   }
 })
 
-function getSelectionTextInfo(el) {
+function getSelectionTextInfo(x) {
   let atStart = false, atEnd = false
   let selRange, testRange
   let sel = window.getSelection()
@@ -77,18 +82,13 @@ function getSelectionTextInfo(el) {
     selRange = sel.getRangeAt(0)
     testRange = selRange.cloneRange()
 
-    testRange.selectNodeContents(el)
+    testRange.selectNodeContents(x)
     testRange.setEnd(selRange.startContainer, selRange.startOffset)
     atStart = testRange.toString() == ""
 
-    testRange.selectNodeContents(el);
+    testRange.selectNodeContents(x)
     testRange.setStart(selRange.endContainer, selRange.endOffset)
     atEnd = testRange.toString() == ""
   }
   return { atStart, atEnd }
-}
-
-let mostrarOffscreen = x => {
-  let rect = x.getBoundingClientRect()
-  if((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight) x.scrollIntoView()
 }

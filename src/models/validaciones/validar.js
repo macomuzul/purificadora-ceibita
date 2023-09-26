@@ -14,7 +14,8 @@ const esPar = { validator: v => v.length % 2 === 0, message: "Se intento pasar n
 const arregloMenorACustom = (cantidad, message) => ({ validator: v => v.length <= cantidad, message })
 
 //TODO este tal vez solo dejarlo con error fatal
-const camposObligatorios = schema => Object.keys(schema.paths).forEach(p => schema.path(p).required(true, p === "_id" ? "Fatal error" : "Faltó el campo " + p))
+// const camposObligatorios = schema => Object.keys(schema.paths).forEach(p => schema.path(p).required(true, p === "_id" ? "Fatal error" : "Faltó el campo " + p))
+const camposObligatorios = schema => Object.keys(schema.paths).forEach(p => schema.path(p).required(true))
 
 function crearValidationError(message) {
   let e = new ValidationError()

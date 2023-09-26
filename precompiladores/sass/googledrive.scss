@@ -1,0 +1,179 @@
+@use "./partials/fondo";
+
+.button {
+  border: 2px solid #735da3;
+  box-shadow: 0 0 10px #735da3;
+  height: 80px;
+  width: 510px;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  font-family: "Roboto", sans-serif;
+  background: #06223c;
+  margin: 25px auto;
+
+  &::after {
+    content: "Respalda tu información usando Google Drive";
+    font-size: 22px;
+    width: 100%;
+    position: absolute;
+    top: 30%;
+    left: 56%;
+    transform: translate(-50%);
+    color: #FFF;
+    transition: all 0.1s linear;
+    text-shadow: 0 0 7px #fff;
+  }
+
+  &::before {
+    content: "";
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 15px;
+    width: 15px;
+    background: #d2bdff;
+    box-shadow: 0px 0px 10px 3px #0ff;
+    margin-left: -8px;
+    margin-top: -8px;
+    transition: all 0.1s linear;
+    border-radius: 100%;
+    animation: star 3s linear infinite;
+  }
+
+  @keyframes star {
+    0% {
+      margin-left: -8px;
+      margin-top: -8px;
+    }
+
+    43% {
+      margin-left: 504px;
+      margin-top: -8px;
+    }
+
+    50% {
+      margin-left: 504px;
+      margin-top: 75px;
+    }
+
+    93% {
+      margin-left: -8px;
+      margin-top: 75px;
+    }
+
+    100% {
+      margin-left: -8px;
+      margin-top: -8px;
+    }
+  }
+}
+
+.registros {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 1000px;
+  margin: 0 auto;
+}
+
+.titulo {
+  color: white;
+  font-size: 32px;
+  text-align: center;
+  flex-grow: 1;
+  border-left: 1px solid white;
+}
+
+.tituloregistro {
+  display: flex;
+  align-items: center;
+  border: 1px solid white;
+}
+
+.form-check-inline {
+  font-size: 25px;
+  padding-left: 2em;
+  margin-right: 0px;
+}
+
+.nombreCarpeta {
+  width: 350px;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  color: white;
+  font-size: 24px;
+}
+
+.contenido {
+  border: 1px solid white;
+  border-top: none;
+  box-sizing: border-box;
+  height: calc(100% - 48px);
+}
+
+.nombreArchivo {
+  padding: 0 30px 0 20px;
+  display: block;
+  width: 100%;
+
+  & label {
+    font-size: 20px;
+  }
+}
+
+input:disabled {
+  opacity: 0.6 !important;
+}
+
+.opcionesextra {
+  display: grid;
+  grid-template-columns: 35px 70px;
+  align-items: center;
+  height: fit-content;
+  width: 180px;
+  color: white;
+  align-self: flex-end;
+  cursor: pointer;
+
+  & svg {
+    grid-row: span 2;
+  }
+}
+
+.contenidosuperior {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.mensajeOpciones {
+  margin: -5px 25px 15px 20px;
+  color: white;
+  font-size: 18px;
+}
+
+.modal-body{
+  custom-checkbox, custom-radiobutton{
+    font-size: 16px;
+  }
+}
+
+#btnguardar{
+  align-self: center;
+  justify-self: end;
+  width: 165px;
+  height: 55px;
+}
+
+.cajaspinner{
+  transform: translateY(3px);
+  display: inline-block;
+  margin-left: 5px;
+}
+
+.spinner-border{
+  width: 20px;
+  height: 20px;
+}

@@ -1,17 +1,20 @@
 require('dotenv').config()
+require('./db')
+require("./redis")
+
 const express = require('express')
+const app = express()
 const path = require('path')
 const engine = require('ejs-mate')
 const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('passport')
 const morgan = require('morgan')
-const { Settings } = require('luxon')
-const estaAutenticado = require("./security/estaAutenticado")
-const pruebasvalidaciones2 = require('./models/pruebasvalidaciones')
+const pruebasvalidaciones = require('./models/pruebasvalidaciones')
 
+require("./globals/globals")
 require("./listenersDB")
-require("./redis")
+require('./security/authPassport')
 
 // const convertirRegistrosPorDia = require("./utilities/convertirregistrospordia");
 // convertirRegistrosPorDia()
@@ -35,34 +38,24 @@ require("./redis")
 
 
 
-async function crearPruebasValidacion(){
+async function crearPruebasValidacion(nombre){
   try {
-    // let j = await pruebasvalidaciones.create({nombre: "masmfnvcnv",precio: 1200, viajes: [2,5,5,51,1,4], turbokike: 29939})
+    // let j = await pruebasvalidaciones.create({nombre: "masmfnvcnv", fkdk: "kskd", precio: 1200, viajes: [2,5,5,51,1,4], turbokike: 29939})
     // console.log(j)
-    // let a = await pruebasvalidaciones.updateOne({}, {nombre: "manganeso"})
-    // console.log(a)
+    let a = await pruebasvalidaciones.updateOne({}, {fuu: "ewr"})
+    console.log(a)
     // let b = await pruebasvalidaciones.findOneAndUpdate({}, {nombre: "putito"})
     // console.log(b)
     // let j = await pruebasvalidaciones2.updateOne({nombre: "masmfnvcnv"}, {nombre: "masmfnvcnv",precio: -1500, viajes: [40], turbokike: 29939}, {runValidators: true})
     // console.log(j)
+    // let a = await pruebasvalidaciones2.findOneAndDelete({coño: "esumare"}, {nombre: "coñodesumadreverga"})
+    // console.log(a)
   } catch (error) {
     console.log(error)
   }
 }
-crearPruebasValidacion()
 
-global.loginCantMaxPeticionesInvalidas = 3
-global.tiempoTimeoutLoginSegundos = 900 //15 minutos
-Settings.defaultLocale = "es"
-Settings.defaultZone = "UTC"
-
-// initializations
-const app = express();
-require('./db');
-require('./security/authPassport');
-
-// settings
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3000)
 app.set('views', path.join(__dirname, 'views'))
 app.engine('ejs', engine)
 app.set('view engine', 'ejs')
@@ -82,14 +75,22 @@ app.use(express.static(path.join(__dirname, "public/components")))
 app.use(express.static(path.join(__dirname, "../cypress/utilidades")))
 app.use(express.static(path.join(__dirname, "../plugins")))
 
-app.use(session({ secret: process.env.SECRET_SESSION, resave: false, saveUninitialized: false }));
+app.use(session({ secret: process.env.SECRET_SESSION, resave: false, saveUninitialized: false }))
 app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())
 
 // routes
+app.get("/hola", (req, res) => {
+  res.render("renderprueba")
+})
 app.use('/', require('./routes/index'))
-app.use(estaAutenticado)
+app.use((req, res, next) => {
+  console.log("buenas noches")
+  //TODO este hay que ponerlo
+  // req.isAuthenticated() ? next() : res.redirect('/')
+  next()
+})
 app.use('/registrarventas', require('./routes/registrarventas').router)
 app.use('/plantillas', require('./routes/plantillas'))
 app.use('/respaldos', require('./routes/respaldos'))
@@ -98,7 +99,4 @@ app.use('/configuraciones', require('./routes/configuraciones'))
 app.use('/analisis', require('./routes/analisis'))
 app.use('/extras', require('./routes/extras'))
 
-// app.use("/coso", (req, res) => res.render("renderprueba", {mivar: '"feliz": "cumpleaños"', mivar2: '"feliz": "cumpleaños"'}))
-
-// Starting the server
 app.listen(app.get('port'), () => console.log('servidor funcionando en el puerto: ', app.get('port')))

@@ -10,17 +10,14 @@ function esconderNavbar() {
 $("#logoNav").on("click", e => {
   e.preventDefault()
   e.stopPropagation()
-  if (navbar.classList.contains("presionado"))
-    esconderNavbar()
-  else
-    navbar.classList.add("presionado")
+  navbar.classList.contains("presionado") ? esconderNavbar() : navbar.classList.add("presionado")
 })
 
 $("body").on("click", ".nav-item-compuesto", e => {
-  let el = e.currentTarget
+  let el = $(e.currentTarget)
   navbar.classList.add("presionado")
-  el.classList.toggle("presionado")
-  $(el).find(".submenu").slideToggle()
+  el.toggleClass("presionado")
+  el.find(".submenu").slideToggle()
 })
 
 navbar.addEventListener("mouseenter", e => navbar.classList.add("presionado"))

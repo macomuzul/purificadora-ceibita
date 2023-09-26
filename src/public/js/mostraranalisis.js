@@ -1,4 +1,3 @@
-//TODO tengo que poner error cuando los datos sean 0
 let decodificado = he.decode(datosString), datos = JSON.parse(decodificado)
 
 // document.body.style.width = "2000px"
@@ -13,6 +12,7 @@ Number.prototype.aQuetzales = function () { return new Intl.NumberFormat('es-GT'
 Number.prototype.cantidadFormateada = function () { return new Intl.NumberFormat('es-GT').format(this) }
 String.prototype.aQuetzales = function () { return new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(this.aFloat()) }
 String.prototype.cantidadFormateada = function () { return new Intl.NumberFormat('es-GT').format(this.aFloat()) }
+String.prototype.primeraLetraMayuscula = function () { return this.charAt(0).toUpperCase() + this.slice(1); }
 
 Date.prototype.aUTC = function () { return this.toISOString().aUTC() }
 String.prototype.aUTC = function () {
@@ -32,11 +32,13 @@ let [, url] = location.pathname.split("analisis/")
 let [agruparPorP, rangoP, tiempoEscogidoP] = url.split("&")
 let [, unidadTiempo] = agruparPorP.split("=")
 let [, rango] = rangoP.split("=")
+if (unidadTiempo === "a%C3%B1os") unidadTiempo = "años"
 let unidadTiempoEsDia = unidadTiempo === "dias"
 let unidadTiempoEsSemana = unidadTiempo === "semanas"
-let unidadTiempoEsDiaOSemana = unidadTiempoEsDia || unidadTiempoEsSemana
 let unidadTiempoEsMes = unidadTiempo === "meses"
 let unidadTiempoEsAño = unidadTiempo === "años"
+let unidadTiempoEsDiaOSemana = unidadTiempoEsDia || unidadTiempoEsSemana
+
 let tiempoMenor = datos.at(0)._id.aUTC()
 let tiempoMayor = datos.at(-1).f?.aUTC() || datos.at(-1)._id?.aUTC()
 
@@ -119,53 +121,15 @@ productos.forEach((prod, i) => {
   datasetIngresosAgrupadosPorFecha.push(objIngresos)
 })
 
-let unidadTiempoSingularGenero, unidadTiempoPluralGenero, unidadTiempoSingularGeneroEscogido, unidadTiempoPluralGeneroEscogido, unidadTiempoSingular, unidadTiempoSingularMayuscula, unidadTiempoPlural, unidadTiempoPluralMayuscula, unidadTiempoSubunidadPlural
-
-function crearUnidadesTiempo() {
-
-}
-
-if (unidadTiempo === "dias") {
-  unidadTiempoSingularGenero = "el dia"
-  unidadTiempoPluralGenero = "los días"
-  unidadTiempoSingularGeneroEscogido = "el día escogido"
-  unidadTiempoPluralGeneroEscogido = "los días escogidos"
-  unidadTiempoSingular = "día"
-  unidadTiempoSingularMayuscula = "Día"
-  unidadTiempoPlural = "días"
-  unidadTiempoPluralMayuscula = "Días"
-  unidadTiempoSubunidadPlural = "días"
-} if (unidadTiempo === "semanas") {
-  unidadTiempoSingularGenero = "la semana"
-  unidadTiempoPluralGenero = "las semanas"
-  unidadTiempoSingularGeneroEscogido = "la semana escogida"
-  unidadTiempoPluralGeneroEscogido = "las semanas escogidas"
-  unidadTiempoSingular = "semana"
-  unidadTiempoSingularMayuscula = "Semana"
-  unidadTiempoPlural = "semanas"
-  unidadTiempoPluralMayuscula = "Semanas"
-  unidadTiempoSubunidadPlural = "días"
-} if (unidadTiempo === "meses") {
-  unidadTiempoSingularGenero = "el mes"
-  unidadTiempoPluralGenero = "los meses"
-  unidadTiempoSingularGeneroEscogido = "el mes escogido"
-  unidadTiempoPluralGeneroEscogido = "los meses escogidos"
-  unidadTiempoSingular = "mes"
-  unidadTiempoSingularMayuscula = "Mes"
-  unidadTiempoPlural = "meses"
-  unidadTiempoPluralMayuscula = "Meses"
-  unidadTiempoSubunidadPlural = "días"
-} if (unidadTiempo === "a%C3%B1os") {
-  unidadTiempoSingularGenero = "el año"
-  unidadTiempoPluralGenero = "los años"
-  unidadTiempoSingularGeneroEscogido = "el año escogido"
-  unidadTiempoPluralGeneroEscogido = "los años escogidos"
-  unidadTiempoSingular = "año"
-  unidadTiempoSingularMayuscula = "Año"
-  unidadTiempoPlural = "años"
-  unidadTiempoPluralMayuscula = "Años"
-  unidadTiempoSubunidadPlural = "meses"
-}
+let masculino = unidadTiempo !== "semanas"
+let unidadTiempoSingular = unidadTiempo.slice(0, unidadTiempo === "meses" ? -2 : -1)
+let unidadTiempoPlural = unidadTiempoSingular + (unidadTiempo === "meses" ? "e" : "") + "s"
+let unidadTiempoSingularGenero = masculino ? "el" : "la" + unidadTiempoSingular
+let unidadTiempoPluralGenero = `${masculino ? "los" : "las"} ${unidadTiempoPlural}`
+let unidadTiempoPluralMayuscula = unidadTiempoPlural.primeraLetraMayuscula()
+let escogido = " escogid" + (masculino ? "o" : "a")
+let unidadTiempoSingularGeneroEscogido = unidadTiempoSingularGenero + escogido
+let unidadTiempoPluralGeneroEscogido = `${unidadTiempoPluralGenero}${escogido}s`
 
 let devuelveTop3 = (data, indices) => [data, indices.sort((a, b) => data[b] - data[a]).slice(0, 3)]
 
@@ -175,15 +139,15 @@ function crearPodio() {
   let html = `<div class="tituloSalonDeLaFama"><span>Salón de la fama</span></div><div class="tituloGrupoPodios">Productos<hr></div><div class="grupoPodios">
   ${podio("Productos más vendidos", ...primeros3.map(i => productosDesnormalizados[i]), ...primeros3.map(i => data[i]?.cantidadFormateada()))}`
 
-  ;[data, primeros3] = devuelveTop3(productos.map((_, i) => datasetIngresosAgrupadosPorProducto.reduce((acc, curr) => acc + curr.data[i], 0)?.normalizarPrecioNum()), i)
+    ;[data, primeros3] = devuelveTop3(productos.map((_, i) => datasetIngresosAgrupadosPorProducto.reduce((acc, curr) => acc + curr.data[i], 0)?.normalizarPrecioNum()), i)
   html += `${podio("Productos que generaron más ingresos", ...primeros3.map(i => productosDesnormalizados[i]), ...primeros3.map(i => data[i]?.aQuetzales()))}
   </div><div class="tituloGrupoPodios">Fechas<hr></div><div class="grupoPodios">`
 
   i = datos.length < 3 ? [0, 1, 2] : [...datos.keys()]
-  ;[data, primeros3] = devuelveTop3(datos.map(x => x.vt), i)
+    ;[data, primeros3] = devuelveTop3(datos.map(x => x.vt), i)
   html += podio("Fechas en las que se vendio más", ...primeros3.map(i => fechasStr[i]), ...primeros3.map(i => data[i]?.cantidadFormateada()))
 
-  ;[data, primeros3] = devuelveTop3(datos.map(x => x.it), i)
+    ;[data, primeros3] = devuelveTop3(datos.map(x => x.it), i)
   html += `${podio("Fechas en la que se generaron más ingresos", ...primeros3.map(i => fechasStr[i]), ...primeros3.map(i => data[i]?.aQuetzales()))}
     </div>${checkbox("Animación", 1, "checkboxPodio")}`
 

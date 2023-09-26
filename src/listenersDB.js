@@ -2,25 +2,24 @@ const RegistroVentas = require("./models/registroventas")
 const ResumenDia = require("./models/resumenDia")
 const { ResumenSemana, ResumenMes, ResumenAño } = require("./models/resumenes")
 const sumaResumenDias = require("./utilities/sumaResumenDias")
-const RegistrosEliminados = require("./models/registroseliminados")
-let borrarLlaves = require("./utilities/borrarLlavesRedis")
-const { DateTime } = require("luxon");
+const nodemailer = require("nodemailer")
+const { DateTime } = require("luxon")
 
 let actualizarResumenesEnDelete = async (Resumen, tipo, id) => await Resumen.findByIdAndUpdate(DateTime.fromJSDate(id).startOf(tipo), { c: true })
 
 RegistroVentas.watch().on('change', async cambio => {
   try {
-    console.log('Change detected:', cambio)
-    if (["insert", "update"].includes(cambio.operationType)) {
-      let objcambiado = await RegistroVentas.buscarPorID(cambio.documentKey._id)
-      if (cambio.operationType === "insert" || "tablas" in cambio.updateDescription.updatedFields) await calcularResumenPorDia(objcambiado)
-    } else if (cambio.operationType === "delete") await ResumenDia.findByIdAndDelete(cambio.documentKey._id)
+    let { operationType, documentKey: { _id } } = cambio
+    console.log(`TCL: RegistroVentas cambio`, cambio)
+    if (operationType === "delete") await ResumenDia.deleteOne({ _id })
+    else if (operationType === "insert" || "tablas" in cambio.updateDescription.updatedFields) await calcularResumenPorDia(await RegistroVentas.buscarPorID(_id))
   } catch (error) {
     console.log(error)
   }
 })
 
-//v es vendidos, i es ingresos, p es productoDesnormalizado, vt es ventasTotales, it es ingresosTotales, prods es productos 
+
+//v es vendidos, i es ingresos, p es productoDesnormalizado, vt es ventasTotales, it es ingresosTotales, prods es productos
 async function calcularResumenPorDia(venta) {
   try {
     let { prods, vt, it } = sumaResumenDias(venta)
@@ -30,7 +29,6 @@ async function calcularResumenPorDia(venta) {
   }
 }
 
-RegistrosEliminados.watch().on('change', borrarLlaves("registroseliminados"))
 ResumenDia.watch().on('change', async cambio => {
   let { _id } = cambio.documentKey
   let promesas = [[ResumenSemana, "week"], [ResumenMes, "month"], [ResumenAño, "year"]]

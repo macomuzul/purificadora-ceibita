@@ -8,11 +8,12 @@
   grid-template-columns: 1fr 1fr;
 }
 
-.divusuario, .divcontraseña{
+.divinput{
   width: 300px;
+  position: relative;
 }
 
-.divcontraseña .fa-eye-slash{
+.divinput .fa-eye-slash{
   transform: translateX(2px);
 }
 

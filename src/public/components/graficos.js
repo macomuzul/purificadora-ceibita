@@ -8,20 +8,17 @@ class graficos extends HTMLElement {
   multiple = true
   fechaOpcion = "long"
   colocarHTMLGrafica() {
-    let graficas = ['De barra', 'Circular 1', 'Circular 2', 'De línea', 'De radar']
-    let { titulo } = this
-
     let html = `<article class="articleGrafico"><div class="contenedormedio"><div class="dropdown">
     <label for="rol">Tipo de gráfico</label>
     <button class="btn dropdown-toggle form-control" type="button" data-bs-toggle="dropdown">De barra</button>
     <ul class="dropdown-menu">
-      ${graficas.map(el => `<li><a class="dropdown-item">${el}</a></li>`).join('')}
+      ${['De barra', 'Circular 1', 'Circular 2', 'De línea', 'De radar'].map(el => `<li><a class="dropdown-item">${el}</a></li>`).join('')}
     </ul></div>
-    <button is="boton-convertira">Convertir a tabla</button>
-    <button is="boton-pdf"></button></div><div class="contenedorCanvas"><canvas id="canvas${contador}"></canvas></div></article>
+    <boton-convertira>Convertir a tabla</boton-convertira>
+    <boton-pdf></boton-pdf></div><div class="contenedorCanvas"><canvas id="canvas${contador}"></canvas></div></article>
     <article class="articleTabla" style="display: none;">
-    <div class="contenedormedio" style="align-items: center;"><button is="boton-excel" id="a"></button><button is="boton-convertira">Convertir a gráfico</button><button is="boton-pdf" id="b"></button></div>
-    <div class="contenedortabla"><div class="tituloTabla">${titulo}</div>
+    <div class="contenedormedio" style="align-items: center;"><boton-excel id="a"></boton-excel><boton-convertira>Convertir a gráfico</boton-convertira><boton-pdf id="b"></boton-pdf></div>
+    <div class="contenedortabla"><div class="tituloTabla">${this.titulo}</div>
     <table></table>
     </div>
     </article>
@@ -147,9 +144,9 @@ class graficos extends HTMLElement {
       titulo.style.background = "#0f0924";
       titulo.style.padding = "15px";
       return contenedorClon.outerHTML;
-    }, this.titulo);
-    let titulo = this.titulo;
-    let that = this;
+    }, this.titulo)
+    let titulo = this.titulo
+    let that = this
     $(this).find(".botonexcel")[0].inicializar(function () {
       let nombre = `${titulo}.xlsx`;
       let workbook = XLSX.utils.book_new();
@@ -173,7 +170,7 @@ class graficos extends HTMLElement {
       }
       XLSX.utils.book_append_sheet(workbook, ws, `Resumen del día de hoy`)
       XLSX.writeFile(workbook, nombre)
-    });
+    })
   }
 
   colocarColores(contenedorColores, checkboxes, datasets) {
@@ -218,9 +215,9 @@ class graficos extends HTMLElement {
     $(this).find("table")[0].outerHTML = html
     if (this.multiple) {
       let totalDerecha = datasets[0].data.map((_, i) => datasets.reduce((p, c) => p += c.data[i], 0))
-      ;[...$(this).find("tbody td:last-child")].forEach((x, i) => x.textContent = totalDerecha[i])
+        ;[...$(this).find("tbody td:last-child")].forEach((x, i) => x.textContent = totalDerecha[i])
       $(this).find("tfoot td:last-child").text(totalDerecha.reduce((p, c) => p += c))
-      ;[...$(this).find("tfoot td")].slice(1, -1).forEach((x, i) => x.textContent = datasets[i].data.reduce((p, c) => p += c))
+        ;[...$(this).find("tfoot td")].slice(1, -1).forEach((x, i) => x.textContent = datasets[i].data.reduce((p, c) => p += c))
       this.normalizarCeldas([...$(this).find("tbody td:not(:first-child)")])
       this.normalizarCeldas([...$(this).find("tfoot td:not(:first-child)")])
     } else
@@ -258,17 +255,14 @@ class graficos extends HTMLElement {
       let opcion = fechaOpcion.includes("fecha1") ? "full" : fechaOpcion.includes("fecha2") ? "long" : "short"
       this.fechaOpcion = opcion
       if (unidadTiempoEsDia) {
-        if (agrupadoPorFecha)
-          labels = labels.map(x => formatearFecha(opcion, x))
-        else
-          datasets.forEach(x => x.label = formatearFecha(opcion, fechas[x.indice]))
+        if (agrupadoPorFecha) labels = labels.map(x => formatearFecha(opcion, x))
+        else datasets.forEach(x => x.label = formatearFecha(opcion, fechas[x.indice]))
       } else {
         if (agrupadoPorFecha) {
           let indices = [...Array(checkboxesExternos.length).keys()].filter((_, i) => checkboxesExternos[i])
           labels = labels.map((x, i) => formatearRango(opcion, x, indices[i]))
         }
-        else
-          datasets.forEach(x => x.label = formatearRango(opcion, fechas[x.indice], x.indice))
+        else datasets.forEach(x => x.label = formatearRango(opcion, fechas[x.indice], x.indice))
       }
     }
 
@@ -453,7 +447,9 @@ class graficos extends HTMLElement {
                 }
                 else {
                   if (rango !== "libre") {
-                    label = `Durante el período del ${formatearFecha(fechaOpcion, tiempoMenor)} al ${formatearFecha(fechaOpcion, tiempoMayor)} `
+                    label = `Durante el período de${agrupadoPorFecha ? " " + context.label : `l ${formatearFecha(fechaOpcion, tiempoMenor)} al ${formatearFecha(fechaOpcion, tiempoMayor)}`} `
+                  } else {
+                    label = `Durante las fechas ${formatearFecha(fechaOpcion, tiempoMenor)} al ${formatearFecha(fechaOpcion, tiempoMayor)} `
                   }
                 }
                 return label

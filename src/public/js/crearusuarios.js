@@ -1,14 +1,5 @@
-let usuario, contraseña, confirmarContraseña, rol, correo;
-
-toastr.options = {
-  "closeButton": true,
-  "progressBar": true,
-  "positionClass": "toast-bottom-right",
-  "preventDuplicates": false,
-  "timeOut": "100000",
-  "extendedTimeOut": "100000",
-}
-
+let usuario, contraseña, confirmarContraseña, rol, correo
+toastr.options.positionClass = "toast-bottom-right"
 
 $("body").on('click', '.dropdown-item', function () {
   $(this).closest(".dropdown-menu").prev()[0].innerText = this.innerText
@@ -32,7 +23,7 @@ $("body").on('click', '#guardar', async function () {
   rol = $("#rol")[0].innerText;
   if (!await validarDatos()) return
   if (correo && !$("#correo")[0].validar()) return
-  modal.mostrar(crearUsuario())
+  modal.mostrar(crearUsuario)
 })
 
 let crearUsuario = async function () {

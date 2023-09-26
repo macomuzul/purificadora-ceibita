@@ -62,7 +62,7 @@ input {
 }
 
 .dropdown-toggle-split {
-  height: 35px;
+  height: 34px;
   width: 28px;
   border-radius: 0;
   border: none;
@@ -493,6 +493,6 @@ iframe{
   margin-bottom: 17px;
 }
 
-#mostrartabla {
-  margin: 0 auto;
+.dropend .dropdown-toggle::after{
+  border-right: .3em solid transparent;
 }

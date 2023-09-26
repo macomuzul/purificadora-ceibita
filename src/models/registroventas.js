@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const { Schema, model } = mongoose
 const { cantidadMinima0, validarString, arregloMayorA0, arregloMenorACustom, cantidadMinima0YEntero, esPar, camposObligatorios, crearValidationError } = require("./validaciones/validar")
 _ = require('lodash')
+let { editarborrar } = require("./metodos/metodos")
 
 const productosSchema = new Schema({
   nombre: validarString,
@@ -39,19 +40,22 @@ const registroventasSchema = new Schema({
   }
 }, {
   statics: {
+    buscarPorID(id) { return this.findById(id).lean() },
     async guardar(ventasNuevo, motivo) {
       let { _id, usuario, ultimocambio } = ventasNuevo
-      let registro = await this.findById(_id).lean()
+      let registro = await this.buscarPorID(_id)
       if (registro) await RegistrosEliminados.create({ registro, borradoEl: ultimocambio, usuario, motivo })
-      await this.findOneAndUpdate({ _id }, ventasNuevo, { runValidators: true, upsert: true })
+      let a = await this.updateOne({ _id }, ventasNuevo, { upsert: true })
+      if (a.modifiedCount === 0 && a.upsertedCount === 0) throw new Error()
+      return a
     },
-    buscarPorID(id) { return this.findById(id).lean() },
-    ordenado() { return this.find().sort("_id").lean() }
+    ordenado() { return this.find().sort("_id").lean() },
+    ...editarborrar
   },
 })
 
 
-registroventasSchema.pre("findOneAndUpdate", function (next) {
+registroventasSchema.pre("updateOne", function (next) {
   try {
     this._update.tablas.forEach(({ productos }) => {
       let viajes = productos[0].viajes.length
@@ -64,14 +68,14 @@ registroventasSchema.pre("findOneAndUpdate", function (next) {
   next()
 })
 
-registroventasSchema.post("findOneAndUpdate", function (doc, next) {
+registroventasSchema.post("updateOne", function (doc, next) {
   console.log("despues de actualizar")
 
   next()
 })
 
-;[productosSchema, camionesSchema, registroventasSchema].forEach(x => camposObligatorios(x))
-registroventasSchema.path("_id").required(true, "Fatal error")
+  ;[productosSchema, camionesSchema, registroventasSchema].forEach(x => camposObligatorios(x))
 
 module.exports = model('registroventas', registroventasSchema)
+
 let RegistrosEliminados = require("./registroseliminados")

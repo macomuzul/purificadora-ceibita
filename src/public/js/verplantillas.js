@@ -8,8 +8,6 @@ const swalConfirmarYCancelar = Swal.mixin({
   buttonsStyling: false,
 })
 
-onload = () => $(".spanHoras").toggle()
-
 $(".vermas").on("click", function () {
   $(this).parent().find(".spanHoras").toggle()
   this.style.rotate = this.style.rotate === "180deg" ? "0deg" : "180deg"
@@ -17,7 +15,6 @@ $(".vermas").on("click", function () {
 
 $('.fave').on("click", function () {
   if (timeout || $(this).hasClass("faved")) return
-
   clickeado.toggleClass('faved')
   $(this).toggleClass('faved')
   timeout = true
@@ -51,7 +48,6 @@ $(".svgeliminar").on('click', async function () {
   }
 })
 
-
 $(".svgver").each(function (e, btn) {
   tippy(this, {
     trigger: 'click',
@@ -61,35 +57,27 @@ $(".svgver").each(function (e, btn) {
     arrow: false,
     content: "Cargando...",
     onCreate(instance) {
-      instance._isFetching = false
-      instance._src = null
-      instance._error = null
+      Object.assign(instance, { _isFetching: false, _src: null, _error: null })
     },
-    onShow(instance) {
+    async onShow(instance) {
       if (instance._isFetching || instance._src) return
       instance._isFetching = true
-      $.ajax({
-        url: `/plantillas/devuelveplantilla/${btn.closest("tr").cells[0].innerText}`,
-        method: "POST",
-        contentType: "application/json",
-        success: p => {
-          plantilla = `<table>
-          <thead><tr><th class="productos">Productos</th><th class="precio">Precio</th></tr></thead>
-            <tbody>
-              ${p.map(x => `<tr><td>${x.producto}</td><td>${x.precio.toFixed(2).replace(/[.,]00$/, "")}</td></tr>`).join("")}
-            </tbody>
-          </table>`
-          instance._src = plantilla
-          instance.setContent(plantilla)
-          instance.popperInstance.update()
-        },
-        error: q => {
-          instance._error = "Error al cargar la plantilla";
-          instance.setContent("Error al cargar la plantilla");
-        },
-        complete: q => instance._isFetching = false
-      })
-    },
+      let r = await fetch(`/plantillas/devuelveplantilla/${btn.closest("tr").cells[0].innerText}`)
+      if (r.ok) {
+        let p = await r.json()
+        plantilla = `<table>
+        <thead><tr><th class="productos">Productos</th><th class="precio">Precio</th></tr></thead>
+        <tbody>${p.map(x => `<tr><td>${x.producto}</td><td>${x.precio.toFixed(2).replace(/[.,]00$/, "")}</td></tr>`).join("")}</tbody>
+      </table>`
+        instance._src = plantilla
+        instance.setContent(plantilla)
+        instance.popperInstance.update()
+      } else {
+        instance._error = "Error al cargar la plantilla"
+        instance.setContent("Error al cargar la plantilla")
+      }
+      instance._isFetching = false
+    }
   })
 })
 

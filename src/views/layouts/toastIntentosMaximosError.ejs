@@ -1,48 +1,19 @@
-<style>
-  li {
-    font-size: 18px;
-    padding: 4px;
-  }
-
-  #toast-container>.toast-warning:before {
-    content: "\f003";
-  }
-
-  #toast-container>.toast::before {
-    position: absolute;
-    font-family: FontAwesome;
-    font-size: 24px;
-    top: calc(50% - 12px);
-    float: left;
-    color: #FFF;
-    padding-right: 0.5em;
-    margin: auto 0.5em auto -1.5em;
-  }
-
-  body>#toast-container>.toast-error {
-    background-image: none !important;
-  }
-
-  #toast-container>.toast-error::before{
-    content: "\f06a";
-    animation-name: fa-bounce;
-    animation-direction: normal;
-    animation-duration: 1s;
-    animation-timing-function: cubic-bezier(.28, .84, .42, 1);
-    animation-iteration-count: 1;
-    animation-delay: 500ms;
-  }
-  
-  body>#toast-container>.toast-info {
-  background-image: none !important;
-  }
-
-  #toast-container>.toast-info:before {
-    content: "\f0e0";
-  }
-</style>
+<%- include('toastr') %>
 <script defer>
-  const minutos = Math.floor("<%= tiempoQueQueda %>" / 60);
-  const segundos = "<%= tiempoQueQueda %>" % 60;
-  toastr["error"](`Has superado la cantidad máxima de intentos incorrectos, la cantidad de tiempo que te queda para volver a intentarlo son: ${minutos} minutos y ${segundos} segundos`, "Alerta");
+  "<% if (correoEnviado) { %>"
+  toastr["info"]("Se ha enviado la información de tu usuario a tu correo, por favor revisa tu bandeja de entrada para ver tus datos", "Se encontró un usuario vinculado a ese correo")
+  "<% } else { %>"
+  "<% if (intentosRestantes === '1') { %>"
+  toastr["warning"]("Solo te queda un intento inválido más, si escribes mal este intento tendrás que esperar 6 horas para volver a intentarlo de nuevo", "Atención")
+  "<% } %>"
+
+  "<% if (intentosRestantes === '0') { %>"
+  let tiempoQueQueda = parseInt("<%= tiempoQueQueda %>")
+  let horas = Math.floor(tiempoQueQueda / 3600)
+  tiempoQueQueda %= 3600;
+  let minutos = Math.floor(tiempoQueQueda / 60)
+  let segundos = tiempoQueQueda % 60
+  toastr["error"](`Has superado la cantidad máxima de intentos incorrectos, el tiempo que te queda para volver a intentarlo son: ${horas ? `${horas} horas ` : ""}${minutos} minutos y ${segundos} segundos`, "Alerta")
+  "<% } %>"
+  "<% } %>"
 </script>

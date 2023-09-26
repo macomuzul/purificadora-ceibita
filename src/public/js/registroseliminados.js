@@ -1,6 +1,10 @@
 let urlPag = location.pathname + "/"
 let mostrarError = (titulo, texto) => Swal.fire(titulo, texto, "error")
-let crearDatePicker = idDatePicker => $(`#${idDatePicker}`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" }).on("show", q => mostrarOffscreen($(".datepicker")[0]))
+let crearDatePicker = idDatePicker => $(`#${idDatePicker}`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" }).on("show", q => {
+  let x = $(".datepicker")[0]
+  let rect = x.getBoundingClientRect()
+  if((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight) x.scrollIntoView()
+})
 
 function metododropdown(option, menu) {
   if (menu.id === "fechasdropdown") {
@@ -13,20 +17,16 @@ function metododropdown(option, menu) {
 crearDatePicker("datepickerNormal")
 crearDatePicker("datepickerEntre")
 
-let mostrarOffscreen = x => {
-  let rect = x.getBoundingClientRect()
-  if((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight) x.scrollIntoView()
-}
-
 $("body").on("click", "#btnMasReciente", q => location = `${urlPag}masrecientes&pag=1`)
 $("body").on("click", "#btnMasAntiguo", q => location = `${urlPag}masantiguos&pag=1`)
 
 $("body").on("click", "#btnbuscar", () => {
-  let buscarpor = $("#buscarpor")[0].innerText
-  let rango = $("#rangofecha")[0].innerText
-  let fecha = $("#calendario").val().replaceAll("/", "-")
-  let fecha1 = $("#calendario1").val().replaceAll("/", "-")
-  let fecha2 = $("#calendario2").val().replaceAll("/", "-")
+  let buscarpor = $("#buscarpor").text()
+  let rango = $("#rangofecha").text()
+  let formatear = x => $(x).val().replaceAll("/", "-")
+  let fecha = formatear($("#calendario"))
+  let fecha1 = formatear($("#calendario1"))
+  let fecha2 = formatear($("#calendario2"))
 
   if (buscarpor === "Buscar por") return mostrarError("Campo de buscar por vacío", "Por favor selecciona un campo en la sección de buscar por para continuar")
   if (rango === "Elige un rango") return mostrarError("Campo de rango vacío", "Por favor selecciona un campo en la sección de rango para continuar")

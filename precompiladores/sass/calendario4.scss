@@ -111,41 +111,6 @@ li {
   padding: 4px;
 }
 
-#toast-container > .toast-warning:before {
-  content: "\f003";
-}
-
-#toast-container > .toast::before {
-  position: absolute;
-  font-family: FontAwesome;
-  font-size: 24px;
-  top: calc(50% - 12px);
-  float: left;
-  color: #fff;
-  padding-right: 0.5em;
-  margin: auto 0.5em auto -1.5em;
-}
-
-body > #toast-container > .toast-error {
-  background-image: none !important;
-}
-
-#toast-container > .toast-error::before {
-  content: "\f06a";
-  animation-name: fa-bounce;
-  animation-direction: normal;
-  animation-duration: 1s;
-  animation-timing-function: cubic-bezier(0.28, 0.84, 0.42, 1);
-  animation-iteration-count: 1;
-  animation-delay: 500ms;
-}
-
-body > #toast-container > div:hover {
-  -webkit-box-shadow: 0 0 12px #999;
-  box-shadow: 0 0 12px #999;
-  opacity: 0.9;
-}
-
 .toast {
   font-size: 18px;
 }

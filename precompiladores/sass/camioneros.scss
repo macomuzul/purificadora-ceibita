@@ -2,6 +2,7 @@
 @use "./partials/tituloplantillas";
 @use "./partials/dropdown";
 @use "./partials/botonazul";
+@use "./partials/swal";
 
 body {
   background: #191d31;
@@ -42,10 +43,6 @@ td {
   margin-top: 5px;
 }
 
-.switchmodoseguro {
-  margin-left: auto;
-}
-
 .contenedorsuperior {
   margin: 20px 0 5px;
 }
@@ -58,20 +55,12 @@ td {
   margin-right: 12px;
 }
 
-.switchmodoseguro {
-  margin-left: auto;
-}
-
 .contenedorayuda {
   display: flex;
   flex-direction: column;
   justify-content: end;
   margin-left: auto;
   transform: translateY(10px);
-}
-
-.piedepagina {
-  font-size: 12px;
 }
 
 .botontitulo {

@@ -10,26 +10,25 @@ btnSubir.on("click", q => window.scrollTo(0, 0))
 
 window.addEventListener("scroll", q => {
   let seVeElBoton = btnSubir.hasClass("btnEntrance")
-  if (window.scrollY > 0) {
-    if (!seVeElBoton) {
-      btnSubir.removeClass("btnExit")
-      btnSubir.addClass("btnEntrance")
-      btnSubir[0].style.display = "block"
-    }
-  } else if (seVeElBoton) {
+  if (scrollY === 0 && seVeElBoton) {
     btnSubir.removeClass("btnEntrance")
     btnSubir.addClass("btnExit")
     setTimeout(q => btnSubir[0].style.display = "none", 250)
+  }
+  else if (!seVeElBoton) {
+    btnSubir.removeClass("btnExit")
+    btnSubir.addClass("btnEntrance")
+    btnSubir[0].style.display = "block"
   }
 })
 
 function devuelveTabla(article) {
   let registro = $(article).find(".content")[0].cloneNode(true)
-  $(registro).find("tab-content").each((_, el) => el.style.display = "none")
+  $(registro).find("tab-content").each((_, x) => x.style.display = "none")
   let html = `<custom-tabs><div class="tabs">
   ${[...$(registro).find("table")].map((_, i) => `<custom-label name="swal" data-id="swal${i}">Camión ${(i + 1)}</custom-label>`).join("")}
   </div> ${registro.outerHTML}</custom-tabs>`
-  return { html, fecha: $(article).find(`.fecharegistro .spanFechaStr`).text(), fechaDate: parseDate($(article).find(`.fecharegistro .spanFecha`).text()) }
+  return { html, fecha: $(article).find(`.fecharegistro .spanFechaStr`).text(), fechaDate: new Date($(article).find("span-fechas")[0].dataset.fecha) }
 }
 
 $("body").on("click", ".btnrestaurar", async function (e) {
@@ -55,7 +54,7 @@ $("body").on("click", ".btneliminar", async function (e) {
   let registro = this.closest("article")
   let { html, fecha } = devuelveTabla(registro)
 
-  let regs = JSON.stringify({ registros: [registro.getAttribute("name") + "jiji"] })
+  let regs = JSON.stringify({ registros: [registro.getAttribute("name")] })
   if (await swalSíNo("Estás seguro que deseas borrar este registro?", html)) borrarRegistros(regs, `El registro con fecha: ${fecha} se ha borrado correctamente`)
 })
 
@@ -98,19 +97,14 @@ function borrarRegistros(data, texto) {
     method: "DELETE",
     contentType: "application/json",
     data,
-    success: async q => {
-      let { isConfirmed } = await swalConfirmarYCancelar.fire({
-        title: "Se ha borrado correctamente",
-        text: texto + ", deseas refrescar la página?",
-        icon: "success",
-        showCancelButton: true,
-        confirmButtonText: "Sí",
-        cancelButtonText: "No",
-      })
-      if (isConfirmed) location.reload()
-    },
-    error: r => r.status === 400 ? Swal.fire("Error", r.responseText, "error") : Swal.fire("Atención", r.responseText, "warning")
+    success: async q => await preguntarSiQuiereRefrescar("Se ha borrado correctamente", texto, "success"),
+    error: async r => r.status === 400 ? Swal.fire("Error", r.responseText, "error") : await preguntarSiQuiereRefrescar("Atención", r.responseText, "warning")
   })
+}
+
+async function preguntarSiQuiereRefrescar(title, text, icon) {
+  let { isConfirmed } = await swalConfirmarYCancelar.fire({ title: title + ", deseas refrescar la página?", text, icon, showCancelButton: true, confirmButtonText: "Sí", cancelButtonText: "No" })
+  if (isConfirmed) location.reload()
 }
 
 async function swalSíNo(title, html, width = window.innerWidth * 3 / 4) {
@@ -122,3 +116,6 @@ async function swalSíNo(title, html, width = window.innerWidth * 3 / 4) {
   })
   return isConfirmed
 }
+
+String.prototype.normalizarPrecio = function () { return this.aFloat().toFixed(2).replace(/[.,]00$/, "") }
+Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }

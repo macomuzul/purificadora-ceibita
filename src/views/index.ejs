@@ -1,5 +1,5 @@
-<html lang="es">
-
+<!DOCTYPE html>
+<html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,18 +16,14 @@
       <div class="form">
         <h2>Iniciar sesión</h2>
         <div class="inputBox">
-          <label for="usuario">
-            <h3><span style="font-family: FontAwesome;">&#xf007;</span> Usuario</h3>
-          </label>
-          <input title="Ingresa tu usuario" type="text" required="required" name="usuario" id="usuario" />
+          <label for="usuario"><h3><span>&#xf007;</span> Usuario</h3></label>
+          <input title="Ingresa tu usuario" type="text" required name="usuario" id="usuario">
         </div>
         <div class="inputBox">
-          <label for="contraseña">
-            <h3><span style="font-family: FontAwesome;">&#xf084;</span> Contraseña</h3>
-          </label>
-          <input title="Ingresa tu contraseña" type="password" required="required" name="contraseña" id="contraseña" />
+          <label for="contraseña"><h3><span>&#xf084;</span> Contraseña</h3></label>
+          <input title="Ingresa tu contraseña" type="password" required name="contraseña" id="contraseña">
         </div>
-        <input type="submit" value="Ingresar" />
+        <input type="submit" value="Ingresar">
         <div class="divolvidemicontraseña"><a href="/recuperarcontraseña"><span class="olvidemicontraseña"><i class="fa-solid fa-key"></i> Olvidé mi contraseña</span></a></div>
       </div>
     </form>
@@ -52,52 +48,24 @@
     })
   </script>
 
-<% if (cantidadMaximaInicioSesion.length> 0) { %>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.css">
-    <style>
-      body>#toast-container>div:hover {
-        -webkit-box-shadow: 0 0 12px #999;
-        box-shadow: 0 0 12px #999;
-        opacity: 0.9;
-      }
-    </style>
-
-    <script src="/jquery-3.6.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.js"></script>
-
-    <script defer>
-      toastr.options = {
-        "closeButton": true,
-        "progressBar": true,
-        "positionClass": "toast-bottom-full-width",
-        "preventDuplicates": true,
-        "timeOut": "100000",
-        "extendedTimeOut": "100000",
-      }
-      
-      '<% if (String(cantidadMaximaInicioSesion)==="Solo te queda un intento" ) { %>'
-        toastr["warning"]("Solo te queda un intento inválido más, si escribes mal este intento tendrás que esperar 15 minutos para volver a intentarlo de nuevo", "Atención")
-      '<% } %>'
-      </script>
-  <% if (String(cantidadMaximaInicioSesion)==="Se ha superado la cantidad maxima" ) { %>
-    <%- include("layouts/toastIntentosMaximosError.ejs", {tiempoQueQueda}) %>
-  <% } %>
-<% } %>
-
-<% if (errorInicioSesion.length> 0) { %>
+<% if (errorInicioSesion) { %>
   <script>
     window.addEventListener("load", q => {
-      '<%if (String(errorInicioSesion) === "El usuario al que desea acceder no existe") {%>'
-      usuario.setCustomValidity('El usuario al que desea acceder no existe');
-      usuario.reportValidity();
-      '<% } %>'
+    '<%if (errorInicioSesion === "Usuario no existe") {%>'
+      usuario.setCustomValidity('El usuario al que desea acceder no existe')
+      usuario.reportValidity()
+    '<% } %>'
 
-      '<%if (String(errorInicioSesion) === "Contraseña incorrecta") {%>'
-      contraseña.setCustomValidity('Contraseña incorrecta');
-      contraseña.reportValidity();
-      '<% } %>'
+    '<%if (errorInicioSesion === "Contraseña incorrecta") {%>'
+      contraseña.setCustomValidity('Contraseña incorrecta')
+      contraseña.reportValidity()
+    '<% } %>'
     })
   </script>
+<% } %>
+
+<% if (intentosRestantes) { %>
+  <%- include("layouts/toastIntentosMaximosError.ejs", {intentosRestantes, tiempoQueQueda, correoEnviado: undefined}) %>
 <% } %>
 </body>
 </html>

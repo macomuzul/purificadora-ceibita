@@ -3,17 +3,16 @@
 <head>
   <title>Crear Plantillas</title>
   <%- include("layouts/global") %>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/comunCrearYEditarPlantillas.min.css">
-  <link rel="stylesheet" href="/crearplantillas.min.css" />
+  <link rel="stylesheet" href="/crearplantillas.min.css">
 
   <script defer src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script defer src="/tablasortable.js"></script>
   <script defer src="/tecladoTabla.js"></script>
+  <script defer src="/switchSortableTabla.js"></script>
   <script defer src="/crearplantillas.js"></script>
   <script defer src="/comunCrearYEditarPlantillas.js"></script>
-  <script defer src="/validarPlantillas.js"></script>
   <script defer src="/dropdown.js"></script>
 </head>
 
@@ -22,19 +21,17 @@
     <main>
       <section>
       <div class="filasuperior">
-        <div class="volver">
-          <a href="/plantillas">
+        <div class="volver"><a href="/plantillas">
           <button type="button" type="button" class="btn btn-primary botonazul botoncrear">
             <span class="flecha rotado"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white"><path d="M20 0zm-8.344 14.709-1.41-1.418L12.547 11H4V9h8.673l-2.38-2.379 1.414-1.414 4.737 4.736z" /></svg></span>
             Volver al menú principal
           </button>
-        </a>
-        </div>
+        </a></div>
           <div class="button2">
             <span></span><span></span><span></span><span></span>
             <input class="botontitulo" type="button" value="Desde aquí puedes crear tus plantillas" />
           </div>
-        <div></div><div></div>
+        <div></div>
       </div>
       <div class="contenedorsuperior">
         <label for="selector" class="label">Crear plantilla en base a otra plantilla</label>
@@ -46,21 +43,12 @@
       </div>
       <br>
       <div class="contenedormedio">
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="switchOrdenarFilas"/>
-          <label class="form-check-label" for="switchOrdenarFilas">Reordenar filas</label>
-        </div>
+        <switch-sortable></switch-sortable>
         <div class="nombreplantilla">
           <label for="nombreplantilla">Nombre de la plantilla:</label>
           <input type="text" id="nombreplantilla"/>
         </div>
-        <div class="contenedorayuda">
-          <div class="form-check form-switch switchmodoseguro">
-            <input class="form-check-input" type="checkbox" id="switchModoSeguro" checked/>
-            <label id="modosegurolabel" class="form-check-label" for="switchModoSeguro">Modo seguro</label>
-          </div>
-          <label class="form-check-label piedepagina">(preguntar antes de borrar)</label>
-        </div>
+        <switch-preguntar></switch-preguntar>
       </div>
       <table>
         <thead>

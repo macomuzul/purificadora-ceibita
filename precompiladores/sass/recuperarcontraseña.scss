@@ -4,12 +4,14 @@
 
 .olvidemicontraseña{
   transform: translateX(60px);
+  margin-top: 30px;
+  translate: 0;
 }
 
 .divvolver{
   position: absolute;
-  top: 5;
-  left: 7;
+  top: 15px;
+  left: 15px;
 
   a{
     text-decoration: none;
@@ -17,6 +19,6 @@
 }
 
 .volver{
-  color: #0dd2db;
+  color: #09c5c5;
   font-size: 20px;
 }

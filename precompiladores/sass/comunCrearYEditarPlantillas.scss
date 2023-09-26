@@ -27,6 +27,7 @@ body {
 
 td {
   line-height: 35px;
+  min-width: 100px;
 }
 
 .form-switch,
@@ -57,29 +58,28 @@ td {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  flex-wrap: wrap;
   margin-top: 5px;
 }
 
-.switchmodoseguro {
-  margin-left: auto;
+.filasuperior > *{
+  flex-grow: 1;
+  width: fit-content;
+  max-width: fit-content;
 }
 
 .contenedorayuda {
   display: flex;
   flex-direction: column;
-  justify-content: end;
   margin-left: auto;
-}
-
-.piedepagina {
-  font-size: 12px;
+  margin-right: 2px;
 }
 
 .swal2-actions {
   margin: 0 !important;
   margin-top: 30px !important;
-  justify-content: space-evenly !important;
+  & .btn-success{
+    margin-right: 20px;
+  }
 }
 
 .margenboton {
@@ -87,10 +87,15 @@ td {
   width: 120px;
 }
 
-.botonazul{
-  margin-right: 12px;
-}
-
 .enfocar {
   background: #24c2ce !important;
+}
+
+.swal2-title,
+.swal2-html-container span{
+  color: #4e4e4e !important;
+}
+
+.swal2-html-container span{
+  font-size: 40px;
 }

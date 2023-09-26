@@ -15,11 +15,11 @@ let tablaNormal = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">garrafón2</td>
     <td contenteditable="true">10</td>
     <td contenteditable="true">99</td>
@@ -86,11 +86,11 @@ export let tablaAñadirProductos = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">garrafón2</td>
     <td contenteditable="true">10</td>
     <td contenteditable="true">99</td>
@@ -246,11 +246,11 @@ export let tablaValidarProductos = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">aguitas</td>
     <td contenteditable="true">10</td>
     <td contenteditable="true">99</td>
@@ -317,11 +317,11 @@ export let tablaValidarVariosProductos = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">producto1</td>
     <td contenteditable="true">10</td>
     <td contenteditable="true">99</td>
@@ -388,11 +388,11 @@ export let tablaValidarPrecios = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">garrafón2</td>
     <td contenteditable="true">12.23</td>
     <td contenteditable="true">99</td>
@@ -459,11 +459,11 @@ export let tablaValidarVariosPrecios = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">garrafón2</td>
     <td contenteditable="true">15</td>
     <td contenteditable="true">99</td>
@@ -530,11 +530,11 @@ export let tablaValidarPreciosYProductosUnaVez = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">prod1</td>
     <td contenteditable="true">10</td>
     <td contenteditable="true">99</td>
@@ -601,11 +601,11 @@ export let tablaAñadeCeros = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">garrafón2</td>
     <td contenteditable="true">10</td>
     <td contenteditable="true">99</td>
@@ -672,11 +672,11 @@ export let tablaEntraMasDeLoQueSale = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">garrafón2</td>
     <td contenteditable="true">10</td>
     <td contenteditable="true">20</td>
@@ -743,11 +743,11 @@ export let tablaBorrarFilasVacias1 = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">garrafón2</td>
     <td contenteditable="true">10</td>
     <td contenteditable="true">99</td>
@@ -773,7 +773,7 @@ export let tablaBorrarFilasVacias1 = `<table>
 </tfoot>
 </table>`
 
-export let tablaBorrarFilasVacias2 = `<table><thead></thead><colgroup><col><col></colgroup><colgroupclass="pintarcolumnas"><colspan="2"></colgroup><colgroup><col><col></colgroup><tbody><tr><throwspan="2"class="prod">Productos</th><throwspan="2"class="tr">Precio</th><thcolspan="2"scope="colgroup"class="borrarcolumnas">ViajeNo.1</th><throwspan="2"class="trcolumnaVendidos">Vendidos</th><throwspan="2"class="tr">Ingresos</th></tr><trclass="saleYEntra"><thscope="col">Sale</th><thscope="col">Entra</th></tr></tbody><tbodyclass="cuerpo"><tr><tdcontenteditable="true">garrafón2</td><tdcontenteditable="true">10</td><tdcontenteditable="true">99</td><tdcontenteditable="true">3</td><td>96</td><tdclass="borrarfilas">960</td></tr><tr><tdcontenteditable="true">boopi</td><tdcontenteditable="true">25</td><tdcontenteditable="true">3</td><tdcontenteditable="true">2</td><td>1</td><tdclass="borrarfilas">25</td></tr></tbody><tfoot><tr><tdcolspan="4">Total:</td><td>97</td><td>985</td></tr></tfoot></table>`
+export let tablaBorrarFilasVacias2 = `<table><thead></thead><colgroup><col><col></colgroup><colgroupclass="pintarcolumnas"><colspan="2"></colgroup><colgroup><col><col></colgroup><tbody><tr><throwspan="2"class="prod">Productos</th><throwspan="2"class="tr">Precio</th><thcolspan="2"class="borrarcolumnas">ViajeNo.1</th><throwspan="2"class="trcolumnaVendidos">Vendidos</th><throwspan="2"class="tr">Ingresos</th></tr><trclass="saleYEntra"><th>Sale</th><th>Entra</th></tr></tbody><tbodyclass="cuerpo"><tr><tdcontenteditable="true">garrafón2</td><tdcontenteditable="true">10</td><tdcontenteditable="true">99</td><tdcontenteditable="true">3</td><td>96</td><tdclass="borrarfilas">960</td></tr><tr><tdcontenteditable="true">boopi</td><tdcontenteditable="true">25</td><tdcontenteditable="true">3</td><tdcontenteditable="true">2</td><td>1</td><tdclass="borrarfilas">25</td></tr></tbody><tfoot><tr><tdcolspan="4">Total:</td><td>97</td><td>985</td></tr></tfoot></table>`
 
 
 export let tablaBorrarFilasTotalmenteVacias = `<table>
@@ -793,11 +793,11 @@ export let tablaBorrarFilasTotalmenteVacias = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">garrafón2</td>
     <td contenteditable="true">10</td>
     <td contenteditable="true">0</td>
@@ -864,11 +864,11 @@ export let tablaNormalAbajo = `<table>
   </tr>
   <tr class="saleYEntra">
     <th>Sale</th>
-    <th>Entra</th>  
+    <th>Entra</th>
   </tr>
   </tbody>
   <tbody class="cuerpo">
-  <tr> 
+  <tr>
     <td contenteditable="true">garrafón2</td>
     <td contenteditable="true">10</td>
     <td contenteditable="true">99</td>

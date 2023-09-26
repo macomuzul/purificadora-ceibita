@@ -1,5 +1,4 @@
-let url = "/plantillas/editar/"
-let nombrePlantillaURL = window.location.pathname.replace(url, '')
+let nombrePlantillaURL = location.pathname.split("/").at(-1)
 
 $(".contenedoreliminar").on('click', async function () {
   let result = await swalConfirmarYCancelar.fire({
@@ -30,7 +29,7 @@ $("body").on('click', "#guardar", async function () {
   let data = JSON.stringify({ nombre, productos: [...$("tbody tr")].map(x => ({ producto: x.cells[0].innerText, precio: parseFloat(x.cells[1].innerText) })) })
 
   $.ajax({
-    url: `/plantillas/${nombrePlantillaURL}`,
+    url: location.pathname,
     method: "PATCH",
     contentType: "application/json",
     data,

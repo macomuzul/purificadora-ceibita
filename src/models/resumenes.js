@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
-_ = require('lodash')
 
 let statics = {
   statics: {
@@ -11,7 +10,7 @@ let statics = {
     entreOrdenado(f1, f2) { return this.entre(f1, f2).sort("_id") },
     mayor(f) { return this.ordenado().gte(f) },
     menor(f) { return this.ordenado().lte(f) },
-  }
+  }, strict: false, strictQuery: false
 }
 
 let resumenes = new Schema({
@@ -24,8 +23,6 @@ let resumenes = new Schema({
   it: Number,
   c: Boolean
 }, { ...statics })
-
-_.each(_.keys(resumenes.paths), attr => resumenes.path(attr).required(true))
 
 let ResumenSemana = mongoose.model('resumenSemana', resumenes)
 let ResumenMes = mongoose.model('resumenMes', resumenes)

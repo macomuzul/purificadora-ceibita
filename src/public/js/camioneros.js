@@ -31,7 +31,7 @@ function validarCamioneros() {
   let tablaCopia = tabla.cloneNode(true)
   if(nombres.length === 0) return mostrarError("Error, la tabla está vacía, por favor agrega un camionero")
   nombres.forEach(x => x.textContent = x.innerText.trim())
-  
+
   if (nombres.some(x => x.textContent === "")) {
     [...$(tablaCopia).find("tbody td:first-child")].forEach(x => x.textContent === "" && x.classList.add("enfocar"))
     return mostrarErrorHTML(tablaCopia, "Hay camioneros sin nombre")

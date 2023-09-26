@@ -14,7 +14,7 @@ $(q => {
     beforePage -= afterPage - totalPags + 1
     afterPage = totalPags
   }
-  
+
   let liTag = `${pag > 1 ? `<li class="btn prev" onclick="irAPagina(${pag - 1})"><span>${svgPaginacion("normal")}Ant</span></li>` : ""}
   <li class="numb ${pag === 1 ? "active" : "first"}" onclick="irAPagina(1)"><span>1</span></li>
   ${pag > cantNumsMitad && totalPags > cantNums ? `<li class="dots"><span>...</span></li>` : ""}
@@ -22,6 +22,6 @@ $(q => {
   ${pag < totalPags - (cantNumsMitad - 1) && totalPags > cantNums ? `<li class="dots"><span>...</span></li>` : ""}
   ${totalPags > 1 ? `<li class="numb ${pag === totalPags ? "active" : "last"}" onclick="irAPagina(${totalPags})"><span>${totalPags}</span></li>` : ""}
   ${pag < totalPags ? `<li class="btn next" onclick="irAPagina(${pag + 1})"><span>Sig${svgPaginacion("rotado")}</span></li>` : ""}`
-  
+
   $(".pagination ul").html(liTag)
 })

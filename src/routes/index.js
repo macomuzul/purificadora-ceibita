@@ -3,23 +3,23 @@ const passport = require('passport');
 const { DateTime } = require('luxon');
 const RegistroVentas = require("../models/registroventas");
 const Camioneros = require("../models/camioneros");
+const Usuarios = require("../models/usuario");
 const redis = require("../redis")
 
 router.get('/', async (req, res) => {
   try {
-    let errorInicioSesion = req.flash("errorInicioSesion")
-    let cantidadMaximaInicioSesion = req.flash("cantidadMaximaInicioSesion")
-    let ip = req.ip || req.socket.remoteAddress
-    let textoIP = `ip:${ip}`
-    let numRequestsInvalidas = parseInt(await redis.get(textoIP))
-    if (numRequestsInvalidas) {
-      if (cantidadMaximaInicioSesion.length === 0 && numRequestsInvalidas > cantidadMaximaPeticionesInvalidas)
-        return res.render('index', { errorInicioSesion: [], cantidadMaximaInicioSesion: ["Se ha superado la cantidad maxima"], tiempoQueQueda: await redis.ttl(textoIP) })
+    let errorInicioSesion = req.flash("errorInicioSesion")[0]
+    let intentosRestantes = req.flash("intentosRestantesLogin")[0]
+    let tiempoQueQueda = tiempoTimeoutLoginSegundos
+    if (!errorInicioSesion) {
+      let textoIP = `loginip:${req.ip || req.socket.remoteAddress}`
+      let numRequestsInvalidas = parseInt(await redis.get(textoIP))
+      if (numRequestsInvalidas && numRequestsInvalidas >= loginCantMaxPeticionesInvalidas) {
+        intentosRestantes = "0"
+        tiempoQueQueda = await redis.ttl(textoIP)
+      }
     }
-
-    // let cantidadMaximaInicioSesion = "Solo te queda un intento";
-    // let cantidadMaximaInicioSesion = "Se ha superado la cantidad maxima";
-    res.render('index', { errorInicioSesion, cantidadMaximaInicioSesion, tiempoQueQueda: tiempoTimeoutLoginSegundos })
+    res.render('index', { errorInicioSesion, intentosRestantes, tiempoQueQueda })
   } catch (error) {
     console.log(error)
     res.status(400).send("Errorazo")
@@ -32,11 +32,37 @@ router.post('/iniciarSesion', passport.authenticate('iniciarSesion', {
   failureFlash: true
 }))
 
-router.route('/recuperarcontrase%C3%B1a').get((req, res) => {
-  let errorRecuperarContraseña = "El usuario que has ingresado no existe"
-  res.render('recuperarcontraseña', { errorRecuperarContraseña })
-}).post((req, res) => {
+router.route('/recuperarcontrase%C3%B1a').get(async (req, res) => {
+  let errorRecuperarContraseña = req.flash("errorRecuperarContraseña")[0]
+  let intentosRestantes = req.flash("intentosRestantesRecuperarContraseña")[0]
+  let correoEnviado = req.flash("correoEnviado")[0]
+  let tiempoQueQueda = tiempoTimeoutRecuperarContraseñaSegundos
+  if (!errorRecuperarContraseña) {
+    let textoIP = `recuperarcontip:${req.ip || req.socket.remoteAddress}`
+    let numRequestsInvalidas = parseInt(await redis.get(textoIP))
+    if (numRequestsInvalidas && numRequestsInvalidas >= recuperarContraseñaCantMaxPeticionesInvalidas) {
+      intentosRestantes = "0"
+      tiempoQueQueda = await redis.ttl(textoIP)
+    }
+  }
 
+  res.render('recuperarcontraseña', { errorRecuperarContraseña, intentosRestantes, tiempoQueQueda, correoEnviado })
+}).post(async (req, res) => {
+  let textoIP = `recuperarcontip:${req.ip || req.socket.remoteAddress}`
+  await redis.setNX(textoIP, "0")
+  let numRequestsInvalidas = parseInt(await redis.getEx(textoIP, { EX: tiempoTimeoutRecuperarContraseñaSegundos }))
+
+  if (numRequestsInvalidas > recuperarContraseñaCantMaxPeticionesInvalidas) return req.flash('intentosRestantesRecuperarContraseña', '0')
+  if (numRequestsInvalidas === recuperarContraseñaCantMaxPeticionesInvalidas) req.flash('intentosRestantesRecuperarContraseña', '0')
+  else if (numRequestsInvalidas === recuperarContraseñaCantMaxPeticionesInvalidas - 1) req.flash('intentosRestantesRecuperarContraseña', '1')
+  await redis.incr(textoIP)
+
+  let { usuario, correo } = req.body
+  let us = await Usuarios.findOne({ usuario })
+  if (!us) req.flash('errorRecuperarContraseña', 'Usuario no existe')
+  else if (us.correo !== correo) req.flash('errorRecuperarContraseña', 'Correo incorrecto')
+  else req.flash('correoEnviado', '1')
+  res.redirect("/recuperarcontraseña")
 })
 
 let devuelveMes = (fecha, dias) => ({ _id: fecha, dias: dias.map(({ _id, tablas, usuario, ultimocambio }) => ({ _id, camioneros: tablas.map(x => x.trabajador), usuario, ultimocambio })) })

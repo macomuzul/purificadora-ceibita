@@ -23,17 +23,17 @@
     "express-session": "^1.17.3",
     "googleapis": "^124.0.0",
     "lodash": "^4.17.21",
-    "luxon": "^3.4.1",
-    "mongoose": "^7.4.5",
+    "luxon": "^3.4.3",
+    "mongoose": "^7.5.3",
     "morgan": "^1.10.0",
-    "nodemailer": "^6.9.4",
+    "nodemailer": "^6.9.5",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "redis": "^4.6.8"
+    "redis": "^4.6.10"
   },
   "devDependencies": {
-    "@playwright/test": "^1.37.0",
-    "cypress": "^12.17.3",
+    "@playwright/test": "^1.37.1",
+    "cypress": "^13.1.0",
     "nodemon": "^3.0.1"
   }
 }

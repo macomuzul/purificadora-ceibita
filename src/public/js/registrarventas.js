@@ -7,14 +7,14 @@ let timer, touchduration = 600
 let tablaValida = false, yaSeRecibioTouch = false, permitirFilasVacias = false, opcionSwal = false
 let listaplantillas = {}, objReordenarPlantillas = [], tablaParaValidacion, plantillaSeleccionada = {}
 
-// let desdeElMobil = function () { return /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent) }
-let desdeElMobil = () => (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0))
+// let esTouch = function () { return /Android|webOS|iPhone|iPad|tablet/i.test(navigator.userAgent) }
+let esTouch = () => (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0))
 let devuelveListaTablas = q => [...$(".grupotabs .tabs__radio")].map(x => document.querySelector(`.contenidotabs [data-tabid="${x.dataset.tabid}"] table`))
 let borrarListaOrdenarPlantillasTablaActual = q => borrarListaOrdenarPlantillas(_tabla(), _idTab())
 let devuelveCamioneros = q => $(".dropdown-menu").clone()[0].outerHTML
 let borrarEnfocarFilas = tabla => $(tabla).find(".cuerpo td").each((_, x) => x.classList.remove("enfocar"))
 let soloHayUnCamion = async q => $(".grupotabs table").length === 1 ? (await mostrarError("No se puede borrar, debe haber al menos un camión"), true) : false
-let mostrarError = async e => (await Swal.fire("Error", e, "error"), false)
+let mostrarError = async (e, titulo = "Error") => (await Swal.fire(titulo, e, "error"), false)
 let tablasSortable = q => $(".grupotabs table .cuerpo").sortable({ axis: "y", disabled: !switchReordenarProductos })
 
 let cerrarSwal = q => Swal.close()
@@ -30,16 +30,15 @@ let borrarFilasHandler = e => borrarElementos(e, opcionBorrarFilasYColumnas, bor
 let borrarCamionesHandler = e => borrarElementos(e, opcionBorrarCamiones, borrarCamiones, e.currentTarget)
 let borrarEnfocarPreciosYProductos = tabla => $(tabla).find(".cuerpo tr").each((_, x) => $(x.cells).slice(0, 2).removeClass("enfocar"))
 
-$(async function () {
-  setTimeout(async q => {
-    colocarValoresConfig()
-    guardarValoresConfig()
-    if(desdeElMobil()) await $.getScript('/touch.js')
-  }, 5)
-})
+onload = q => {
+  if (esTouch()) $.getScript('/touch.js')
+  colocarValoresConfig()
+  guardarValoresConfig()
+}
 
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]') //estos son para el bootstrap
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
 
 let _cantidadTabs = () => $(".contenidotabs").children().length
 let _idTab = () => $(".grupotabs .tabs__radio:checked")[0].dataset.tabid
@@ -103,7 +102,7 @@ async function guardarValoresConfig() {
   })
 
   $(".tabs").sortable({
-    axis: "x", stop: q => $(".tabs label").each((i, tab) => tab.innerText = `Camión ${i + 1}`),
+    axis: "x",
     items: "> div:not(:last-child)",
     disabled: !switchReordenarCamiones,
     stop: q => {
@@ -174,8 +173,8 @@ function reseteaValoresConfig() {
 
 const configs = $("#configs")[0]
 configs.addEventListener('hidden.bs.modal', reseteaValoresConfig)
+let esconderOpciones = q => bootstrap.Modal.getInstance(configs).hide()
 
-//ordenar alfabeticamente ordenar por orden alfabetico
 $("body").on("click", '.grupotabs th:not([colspan="2"]), #tablaresumen th', function () {
   if (switchOrdenarOrdenAlfabetico) {
     let tabla = this.closest("table")
@@ -241,7 +240,7 @@ $("body").on("keyup", "td", function () {
   let keycode = event.keyCode || event.which
   if ((keycode >= 48 && keycode <= 57) || keycode === 229 || keycode === 8) {
     let cuerpo = this.closest(".cuerpo")
-    ;[...cuerpo.rows].forEach(x => calcularvendidoseingresos(x))
+      ;[...cuerpo.rows].forEach(x => calcularvendidoseingresos(x))
     calcularvendidoseingresostotal(cuerpo)
   }
 })
@@ -264,19 +263,19 @@ function calcularvendidoseingresos({ cells }) {
 
 function calcularvendidoseingresostotal(cuerpo) {
   let sumaVendidos = 0, sumaIngresos = 0, hayUnNumero = false
-  ;[...$(cuerpo).find("td:nth-last-child(2)")].forEach(x => {
-    let texto = x.innerText.aFloat()
-    if (!isNaN(texto)) {
-      hayUnNumero = true;
-      sumaVendidos += texto;
-    }
-  })
+    ;[...$(cuerpo).find("td:nth-last-child(2)")].forEach(x => {
+      let texto = x.innerText.aFloat()
+      if (!isNaN(texto)) {
+        hayUnNumero = true;
+        sumaVendidos += texto;
+      }
+    })
 
-  ;[...$(cuerpo).find("td:nth-last-child(1)")].forEach(x => {
-    let texto = x.innerText.aFloat()
-    if (!isNaN(texto))
-      sumaIngresos += texto;
-  })
+    ;[...$(cuerpo).find("td:nth-last-child(1)")].forEach(x => {
+      let texto = x.innerText.aFloat()
+      if (!isNaN(texto))
+        sumaIngresos += texto;
+    })
 
   if (!isNaN(sumaVendidos)) $(cuerpo).parent().find("tfoot td")[1].innerText = (sumaVendidos === 0 && !hayUnNumero) ? "" : sumaVendidos
   if (!isNaN(sumaIngresos)) $(cuerpo).parent().find("tfoot td")[2].innerText = (sumaIngresos === 0 && !hayUnNumero) ? "" : sumaIngresos.normalizarPrecio()
@@ -443,8 +442,8 @@ $("#resumen").on("click", async () => {
   <td class="totalresumen"></td><td class="totalresumen"></td></tr></tfoot></table>
   <div class="contenedorflex">
     <button class="btn btn-primary margenbotonswal btncontinuar2" onclick="cerrarSwal()">Continuar</button>
-    <button is="boton-pdf" id="exportarAPDFResumen"></button>
-    <button is="boton-excel" id="exportarAExcelResumen"></button>
+    <boton-pdf id="exportarAPDFResumen"></boton-pdf>
+    <boton-excel id="exportarAExcelResumen"></boton-excel>
   </div>`
 
   await swal.fire({
@@ -455,14 +454,14 @@ $("#resumen").on("click", async () => {
     didOpen: () => {
       let cuerpo = $("#tablaresumen tbody")[0]
       calcularvendidoseingresostotal(cuerpo)
-      ;[...cuerpo.rows].forEach(fila => formatearCeldas(fila))
+        ;[...cuerpo.rows].forEach(fila => formatearCeldas(fila))
       formatearCeldas($("#tablaresumen tfoot tr")[0])
 
       $("#exportarAPDFResumen")[0].inicializar(() => {
-        let tabla = $("#tablaresumen")[0];
-        let tablaClon = tabla.cloneNode(true);
-        tablaClon.id = "tablaresumenclon";
-        return `<div class="tituloresumen" style="margin-left: ${tabla.clientWidth / 2 - 150}px">Resumen	&nbsp;del día ${fechastr}</div>${tablaClon.outerHTML}<br><br>`;
+        let tabla = $("#tablaresumen")[0]
+        let tablaClon = tabla.cloneNode(true)
+        tablaClon.id = "tablaresumenclon"
+        return `<div class="tituloresumen" style="margin-left: ${tabla.clientWidth / 2 - 150}px">Resumen	&nbsp;del día ${fechastr}</div>${tablaClon.outerHTML}<br><br>`
       }, `Resumen de ventas ${fechastr}`)
 
       $("#exportarAExcelResumen")[0].inicializar(function () {
@@ -474,16 +473,16 @@ $("#resumen").on("click", async () => {
         ws['!rows'] = [{ hpt: 35 }, ...[...Array(range.e.r - range.s.r)].map(x => ({ hpt: 24 }))]
         for (let i = range.s.r; i <= range.e.r; i++) {
           for (let j = range.s.c; j <= range.e.c; j++) {
-            let cell_address = XLSX.utils.encode_cell({ r: i, c: j });
-            let cell = ws[cell_address];
+            let cell_address = XLSX.utils.encode_cell({ r: i, c: j })
+            let cell = ws[cell_address]
             if (cell) {
               this.ajustesCeldasExcel(cell)
               cell.s.fill = { fgColor: { rgb: i === 0 ? "192435" : "0f0d35" } }
             }
           }
         }
-        XLSX.utils.book_append_sheet(workbook, ws, `Resumen	del día ${fechastr}`);
-        XLSX.writeFile(workbook, nombre);
+        XLSX.utils.book_append_sheet(workbook, ws, `Resumen	del día ${fechastr}`)
+        XLSX.writeFile(workbook, nombre)
       })
     }
   })
@@ -495,7 +494,7 @@ $("#resumen").on("click", async () => {
 //   filename: "archivohtml2pdf.pdf"
 // })
 // let nombre = `registro ventas ${fechastr} ${document.querySelector(".grupotabs .tabs__radio:checked + label").innerText}.pdf`;
-// if (desdeElMobil()) {
+// if (esTouch()) {
 //   var blob = doc.output("blob", {
 //     filename: nombre
 //   });
@@ -544,7 +543,7 @@ async function borrarFilasVacias(tabla, numtabla) {
       if (res) $(fila).children().each((_, celda) => celda.classList.add("enfocar"))
       return res
     })
-    filasVacias.forEach(fila => fila.remove)
+    filasVacias.forEach(fila => fila.remove())
     return clonaValores(tabla, tablaCopia)
   }
   else if (opcionSwal === "conservarFilasVacias") {
@@ -580,7 +579,7 @@ async function entraMasDeLoQueSale(tabla, numtabla) {
     return true
   }
 
-  let result = await swalConfirmarYCancelar.fire({
+  let { isConfirmed } = await swalConfirmarYCancelar.fire({
     title: `<h3>Se ha detectado filas en la tabla ${numtabla} donde lo que sale es mayor que lo que entra, por favor corrígelos para poder guardar los datos</h3>`,
     icon: "error",
     width: window.innerWidth * 3 / 4,
@@ -591,9 +590,9 @@ async function entraMasDeLoQueSale(tabla, numtabla) {
     cancelButtonText: "Volver",
   })
 
-  if (result.isConfirmed) {
+  if (isConfirmed) {
     borrarEnfocarFilas(tablaCopia)
-    return await validarDatosTabla(tablaCopia, numtabla);
+    return await validarDatosTabla(tablaCopia, numtabla)
   }
   else return false
 }
@@ -784,8 +783,8 @@ async function borrarTablasVacias() {
 
     tablasVacias.forEach(tabla => {
       let contenidoTab = $(tabla).closest(".tabs__content")
-      $(contenidoTab).remove()
       $(`.tab:has([data-tabid=${contenidoTab[0].dataset.tabid}])`).remove()
+      contenidoTab.remove()
     })
 
     reacomodarCamiones()
@@ -944,10 +943,10 @@ $("#exportarpdf")[0].inicializar(() => {
   listaTablas.forEach((tabla, indice) => {
     let copiaTabla = tabla.cloneNode(true);
     let medirTabla = copiaTabla.cloneNode(true);
-    $(document.body).append(medirTabla)
+    $("body").append(medirTabla)
     $(medirTabla).css({ position: "absolute", visibility: "hidden", display: "table" });
     html += `<div class="titulopdf" style="margin-left: ${(medirTabla.clientWidth / 2 - 55)}px">Camión ${(opcionExportarPDF === 0) ? (tabla.closest(".tabs__content").dataset.tabid.aInt() + 1) : (indice + 1)}</div>`;
-    $(medirTabla).remove()
+    medirTabla.remove()
     copiaTabla.querySelector(".pintarcolumnas").innerHTML = ""
 
     html += `${copiaTabla.outerHTML}<br><br>`
@@ -957,13 +956,9 @@ $("#exportarpdf")[0].inicializar(() => {
 
 async function pidePlantilla(nombre) {
   if (!listaplantillas[nombre]) {
-    await $.ajax({
-      url: `/plantillas/devuelveplantilla/${nombre}`,
-      method: "POST",
-      contentType: "application/json",
-      success: p => listaplantillas[nombre] = p,
-      error: q => mostrarError("No se pudo recuperar la plantilla")
-    })
+    let r = await fetch(`/plantillas/devuelveplantilla/${nombre}`)
+    if (!r.ok) return mostrarError("No se pudo recuperar la plantilla", "Error de conexión")
+    listaplantillas[nombre] = await r.json()
   }
   return listaplantillas[nombre]
 }
@@ -1156,7 +1151,6 @@ $("body").on('click', '.swal2-html-container .dropdown-toggle', function (e) {
   this.closest(".swal2-html-container").style.minHeight = `${altura}px`;
 })
 
-///TODO Aqui tengo que ver que pedo con el correo
 $("body").on('click', '.contenedoreliminar', async function () {
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     title: "Estás seguro que deseas borrar este registro?",
@@ -1166,32 +1160,29 @@ $("body").on('click', '.contenedoreliminar', async function () {
     cancelButtonText: "No",
   })
   if (isConfirmed) {
-    modal.mostrar(borrar({ correo: "jajaj" }, "Se ha borrado el registro exitosamente"))
-    bootstrap.Modal.getInstance(configs).hide()
+    modal.mostrar(function () {
+      let contraseñaVerificacion = $("#verificacionIdentidad").val()
+      let data = JSON.stringify({ contraseñaVerificacion })
+      $.ajax({
+        url: window.location.pathname,
+        method: "DELETE",
+        contentType: "application/json",
+        data,
+        success: async q => {
+          await Swal.fire("ÉXITO", "Se ha borrado el registro exitosamente, cuando cierres este diálogo se refrescará la página", "success")
+          location.reload()
+        },
+        error: r => mostrarError(r.responseText)
+      })
+    })
+    esconderOpciones()
   }
 })
 
 $("body").on('click', '.contenedormover', async q => {
-  bootstrap.Modal.getInstance(configs).hide()
-  await moverReg(hoy, "/registrarventas/mover")
+  esconderOpciones()
+  await moverReg(hoy.valueOf(), "/registrarventas/mover")
 })
 
-function borrar(obj, texto) {
-  return function () {
-    let contraseñaVerificacion = $("#verificacionIdentidad").val()
-    let data = JSON.stringify({ ...obj, contraseñaVerificacion })
-    $.ajax({
-      url: window.location.pathname,
-      method: "DELETE",
-      contentType: "application/json",
-      data,
-      success: async q => {
-        await Swal.fire("ÉXITO", texto, "success")
-        location.reload()
-      },
-      error: r => mostrarError(r.responseText)
-    })
-  }
-}
 
 // colocarDatosTabla()

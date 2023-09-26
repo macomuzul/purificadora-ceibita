@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-_ = require('lodash');
-let { validarString, validarCorreo, validadorString } = require("./validaciones/validar")
+let { validarString, validarCorreo, validadorString, camposObligatorios } = require("./validaciones/validar")
 
 const usuarioSchema = new Schema({
   usuario: validarString,
@@ -11,13 +10,17 @@ const usuarioSchema = new Schema({
     enum: { values: ['Administrador', 'Empleado'], message: '{VALUE} no es un rol' }
   },
   correo: { type: String, validate: [validadorString, validarCorreo] }
+}, {
+  statics: {
+    buscarPorID(id) { return this.findById(id).lean() },
+  }
 })
 
 usuarioSchema.pre("save", function (next) {
 
 })
 
-_.each(_.keys(usuarioSchema.paths), attr => usuarioSchema.path(attr).required(true))
+camposObligatorios(usuarioSchema)
 usuarioSchema.path("correo").required(false)
 
 module.exports = mongoose.model('usuarios', usuarioSchema)

@@ -1,5 +1,5 @@
 let dropdownSeleccionado = null
-$(window).on("click", e => dropdownSeleccionado?.cambiarEstado(-1));
+$(window).on("click", e => dropdownSeleccionado?.cambiarEstado(-1))
 
 class customDropdown extends HTMLElement {
   connectedCallback() {
@@ -26,7 +26,7 @@ class customDropdown extends HTMLElement {
       if (dropdownSeleccionado !== this) dropdownSeleccionado?.cambiarEstado(-1)
       this.cambiarEstado(0)
       dropdownSeleccionado = this
-    });
+    })
 
     let cambiarEstado = i => {
       if (!estaActivo && i === -1) return
@@ -38,9 +38,9 @@ class customDropdown extends HTMLElement {
 
     this.cambiarEstado = cambiarEstado
 
-    let cambiarClase = (el, clase, i) => {
-      if (i === -1) $(el).removeClass(clase);
-      else if (i === 0) $(el).toggleClass(clase);
+    let cambiarClase = (x, clase, i) => {
+      if (i === -1) $(x).removeClass(clase)
+      else if (i === 0) $(x).toggleClass(clase)
     }
 
     $(this).on("click", "li", e => {
@@ -55,4 +55,4 @@ class customDropdown extends HTMLElement {
   }
 }
 
-customElements.define("custom-dropdown", customDropdown);
+customElements.define("custom-dropdown", customDropdown)

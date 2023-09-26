@@ -11,10 +11,9 @@
   <script defer src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script defer src="/editarplantillas.js"></script>
-  <script defer src="/tablasortable.js"></script>
+  <script defer src="/switchSortableTabla.js"></script>
   <script defer src="/tecladoTabla.js"></script>
   <script defer src="/comunCrearYEditarPlantillas.js"></script>
-  <script defer src="/validarPlantillas.js"></script>
 </head>
 
 <body>
@@ -39,26 +38,16 @@
             <span></span><span></span><span></span><span></span>
             <input class="botontitulo" type="button" value="Desde aquí puedes editar tus plantillas"/>
         </div>
-      <div></div><div></div>
+      <div></div>
     </div>
       <br>
       <div class="contenedormedio">
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="switchOrdenarFilas"/>
-          <label class="form-check-label" for="switchOrdenarFilas">Reordenar filas</label>
-        </div>
+        <switch-sortable></switch-sortable>
         <div class="nombreplantilla">
           <label for="nombreplantilla">Nombre de la plantilla:</label>
           <input type="text" id="nombreplantilla" name="fname" value="<%=datosplantilla.nombre%>"/>
         </div>
-        <div class="contenedorayuda">
-          <div class="form-check form-switch switchmodoseguro">
-            <input class="form-check-input" type="checkbox" id="switchModoSeguro" checked />
-  
-            <label id="modosegurolabel" class="form-check-label" for="switchModoSeguro">Modo seguro</label>
-          </div>
-          <label class="form-check-label piedepagina">(preguntar antes de borrar)</label>
-        </div>
+        <switch-preguntar></switch-preguntar>
       </div>
 
       <table>
