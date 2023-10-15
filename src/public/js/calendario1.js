@@ -150,8 +150,6 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
       var _ = this;
       if (typeof format.toValue === 'function' && typeof format.toDisplay === 'function') return format
       var separators = format.replace(_.initials.validParts, '\0').split('\0'), parts = format.match(_.initials.validParts)
-      if (!separators || !separators.length || !parts || parts.length === 0)
-        console.log("%c Invalid date format ", "color:white;font-weight:bold;background-color:#e21d1d;")
       return { separators, parts }
     }
 

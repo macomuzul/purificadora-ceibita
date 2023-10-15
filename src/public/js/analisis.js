@@ -1,5 +1,5 @@
 let unidadTiempo = "dias", agruparPor = "", rango = ""
-String.prototype.capitalizar = function () { return this.charAt(0).toUpperCase() + this.slice(1) }
+String.prototype.capitalizar = function () { return this[0].toUpperCase() + this.slice(1) }
 
 let calendario = $('#calendario')
 let nivelesBC = [w => `<span class="fa fa-home" style="font-size: 18px;"></span>`, w => `<span class="fa fa-sort-numeric-asc"></span> ${agruparPor.capitalizar()}</a>`, w => `<span class="fa fa-sort"></span> ${rango.capitalizar()}`]

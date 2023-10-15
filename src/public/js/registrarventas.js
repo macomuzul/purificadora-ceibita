@@ -941,6 +941,7 @@ $("#exportarpdf")[0].inicializar(() => {
   let listaTablas = opcionExportarPDF === 0 ? [_tabla()] : devuelveListaTablas()
   let html = ``;
   listaTablas.forEach((tabla, indice) => {
+    debugger
     let copiaTabla = tabla.cloneNode(true);
     let medirTabla = copiaTabla.cloneNode(true);
     $("body").append(medirTabla)
@@ -1169,7 +1170,7 @@ $("body").on('click', '.contenedoreliminar', async function () {
         contentType: "application/json",
         data,
         success: async q => {
-          await Swal.fire("ÉXITO", "Se ha borrado el registro exitosamente, cuando cierres este diálogo se refrescará la página", "success")
+          await Swal.fire("ÉXITO", "Se ha borrado el registro exitosamente", "success")
           location.reload()
         },
         error: r => mostrarError(r.responseText)

@@ -2,32 +2,23 @@ const RegistroVentas = require("./models/registroventas")
 const ResumenDia = require("./models/resumenDia")
 const { ResumenSemana, ResumenMes, ResumenAño } = require("./models/resumenes")
 const sumaResumenDias = require("./utilities/sumaResumenDias")
-const nodemailer = require("nodemailer")
 const { DateTime } = require("luxon")
 
 let actualizarResumenesEnDelete = async (Resumen, tipo, id) => await Resumen.findByIdAndUpdate(DateTime.fromJSDate(id).startOf(tipo), { c: true })
 
+//v es vendidos, i es ingresos, p es productoDesnormalizado, vt es ventasTotales, it es ingresosTotales, prods es productos
 RegistroVentas.watch().on('change', async cambio => {
   try {
     let { operationType, documentKey: { _id } } = cambio
-    console.log(`TCL: RegistroVentas cambio`, cambio)
     if (operationType === "delete") await ResumenDia.deleteOne({ _id })
-    else if (operationType === "insert" || "tablas" in cambio.updateDescription.updatedFields) await calcularResumenPorDia(await RegistroVentas.buscarPorID(_id))
+    else if (operationType === "insert" || "tablas" in cambio.updateDescription.updatedFields) {
+      let venta = await RegistroVentas.buscarPorID(_id)
+      await ResumenDia.findByIdAndUpdate(venta._id, sumaResumenDias(venta), { upsert: true })
+    }
   } catch (error) {
     console.log(error)
   }
 })
-
-
-//v es vendidos, i es ingresos, p es productoDesnormalizado, vt es ventasTotales, it es ingresosTotales, prods es productos
-async function calcularResumenPorDia(venta) {
-  try {
-    let { prods, vt, it } = sumaResumenDias(venta)
-    await ResumenDia.findByIdAndUpdate(venta._id, { prods, vt, it }, { upsert: true })
-  } catch (e) {
-    console.log(e)
-  }
-}
 
 ResumenDia.watch().on('change', async cambio => {
   let { _id } = cambio.documentKey

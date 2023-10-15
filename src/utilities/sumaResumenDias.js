@@ -6,13 +6,13 @@ function sumaResumenDias(venta) {
         acc[prod.producto].v += prod.v;
         acc[prod.producto].i += prod.i;
       } else {
-        acc[prod.producto] = { v: prod.v, i: prod.i, p: prod.p };
+        acc[prod.producto] = { v: prod.v, i: prod.i, p: prod.p }
       }
-    });
-    return acc;
-  }, {});
-  let vt = 0;
-  let it = 0;
+    })
+    return acc
+  }, {})
+  let vt = 0
+  let it = 0
   Object.values(prods).forEach(x => {
     x.i = parseFloat(x.i.normalizarPrecio())
     vt += x.v

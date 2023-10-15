@@ -1,6 +1,6 @@
 let contador = 0;
 class graficos extends HTMLElement {
-  devuelveSonIngresos = () => this.sonIngresos ? "ingresos" : "ventas";
+  devuelveSonIngresos = () => this.sonIngresos ? "ingresos" : "ventas"
   radiobutton = (id, label, checked) => `<custom-radiobutton data-id="${id}${contador}" ${checked ? `data-checked="1"` : ""}>${label}</custom-radiobutton>`
   acordeonItem = (html, id, titulo) => `<custom-acordeonitem data-id="${id}${contador}" data-titulo="${titulo}">${html}</custom-acordeonitem>`
   devuelveCantidadFormateada = context => this.sonIngresos ? context.raw.aQuetzales() : context.formattedValue
@@ -32,10 +32,10 @@ class graficos extends HTMLElement {
     ${popover(`La eliminación de data usando este método es temporal, la próxima vez que actualices volverá a aparecer, si no quieres que aparezcan quítalos desde las opciones del gráfico. <br><strong>Importante: </strong> borra los datos en base a las etiquetas que están abajo de los datos. Si solo hay una etiqueta borrará todos los datos en esa etiqueta (no te preocupes los datos no se pierden) solo presiona restaurar datos o actualizar y volverán a aparecer`)}
     </div>
     <div class="restaurarDataEliminada" style="display: none"><button class="btn btn-primary botonazul">Restaurar datos borrados</button></div>`
-    this.html += html;
+    this.html += html
 
     this.innerHTML = this.html
-    this.canvas = $(this).find("canvas")[0];
+    this.canvas = $(this).find("canvas")[0]
     this.$chart = this.canvas.getContext('2d')
     this.metodosOpcionesGrafico()
     this.metodosBotonesGrafico()
@@ -75,28 +75,30 @@ class graficos extends HTMLElement {
       this.uneOSeparaDatosTexto = textoAnterior
       this.multiple = !this.multiple
       this.actualizarDatos()
+      $(this).find(".contenedortabla")[0].scrollIntoView({ behavior: "smooth", block: "start", inline: "start" })
     })
   }
 
   metodosBotonesGrafico() {
     $(this).on("click", ".convertira", () => {
-      this.chartVisible = !this.chartVisible
       $(this).find(".articleGrafico").toggle()
       $(this).find(".articleTabla").toggle()
       $(this).find(".gridBotonesTamaño").toggle()
       $(this).find(".contenedorEliminarData").toggle()
       if (this.chartVisible) {
-        this.actualizarChart(this.datasetsActuales, this.labelsActuales)
-        $(this).find(".camioneros label").text("Poner en el gráfico")
-        $(this).find(".actualizarGrafico").text("Actualizar gráfico")
-        $(this).find(".acordeonPrincipal > .headeracordeon .tituloProductos").text("Opciones del gráfico")
-      }
-      else {
         this.actualizarTabla(this.datasetsActuales, this.labelsActuales)
         $(this).find(".camioneros label").text("Poner en la tabla")
         $(this).find(".actualizarGrafico").text("Actualizar tabla")
         $(this).find(".acordeonPrincipal > .headeracordeon .tituloProductos").text("Opciones de la tabla")
       }
+      else {
+        this.actualizarChart(this.datasetsActuales, this.labelsActuales)
+        $(this).find(".camioneros label").text("Poner en el gráfico")
+        $(this).find(".actualizarGrafico").text("Actualizar gráfico")
+        $(this).find(".acordeonPrincipal > .headeracordeon .tituloProductos").text("Opciones del gráfico")
+      }
+      $(this).find(".convertira")[this.chartVisible ? 1 : 0].scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" })
+      this.chartVisible = !this.chartVisible
     })
     $(this).on("click", ".articleGrafico .botonpdf", e => e.currentTarget.exportarGrafico(this.canvas, this.titulo))
     $(this).on("click", ".eliminarDataGrafico", e => {
@@ -129,34 +131,30 @@ class graficos extends HTMLElement {
         this.chart.destroy()
         this.colocarDatos()
         this.actualizarDatos(this.datasetsActuales, this.labelsActuales)
-      } else
-        this.chart.update()
+      } else this.chart.update()
     })
   }
 
 
   metodosBotonesTabla() {
     $(this).find(".botonpdf")[1].inicializar(() => {
-      let contenedor = $(this).find(".contenedorTabla")[0];
-      let contenedorClon = contenedor.cloneNode(true);
-      contenedorClon.style.width = contenedor.offsetWidth;
-      let titulo = $(contenedorClon).find(".tituloTabla")[0];
-      titulo.style.background = "#0f0924";
-      titulo.style.padding = "15px";
-      return contenedorClon.outerHTML;
+      let contenedor = $(this).find(".contenedorTabla")[0]
+      let contenedorClon = contenedor.cloneNode(true)
+      contenedorClon.style.width = contenedor.offsetWidth
+      let titulo = $(contenedorClon).find(".tituloTabla")[0]
+      titulo.style.background = "#0f0924"
+      titulo.style.padding = "15px"
+      return contenedorClon.outerHTML
     }, this.titulo)
     let titulo = this.titulo
     let that = this
     $(this).find(".botonexcel")[0].inicializar(function () {
-      let nombre = `${titulo}.xlsx`;
-      let workbook = XLSX.utils.book_new();
+      let nombre = `${titulo}.xlsx`
+      let workbook = XLSX.utils.book_new()
       let tabla = $(that).find("table")[0]
       let ws = XLSX.utils.table_to_sheet(tabla, { raw: true })
       var range = XLSX.utils.decode_range(ws["!ref"])
-      if (that.multiple)
-        ws['!cols'] = [that.agrupadoPorFecha ? { wch: Math.max(...[...$(tabla).find("tbody td:first-child")].map(x => x.textContent.length)) } : { width: 24 }, ...[...tabla.rows[1].cells].map(x => (that.agrupadoPorFecha ? { width: 18 } : { wch: x.textContent.length })), { width: 19 }]
-      else
-        ws['!cols'] = [...[...tabla.rows[2].cells].map(x => (that.agrupadoPorFecha ? { wch: x.textContent.length } : { width: 18 })), { width: 20 }]
+      ws['!cols'] = that.multiple ? [that.agrupadoPorFecha ? { wch: Math.max(...[...$(tabla).find("tbody td:first-child")].map(x => x.textContent.length)) } : { width: 24 }, ...[...tabla.rows[1].cells].map(x => (that.agrupadoPorFecha ? { width: 18 } : { wch: x.textContent.length })), { width: 19 }] : [...[...tabla.rows[2].cells].map(x => (that.agrupadoPorFecha ? { wch: x.textContent.length } : { width: 18 })), { width: 20 }]
       ws['!rows'] = [{ hpt: 35 }, ...[...Array(range.e.r - range.s.r)].map(x => ({ hpt: 24 }))]
       for (var i = range.s.r; i <= range.e.r; i++) {
         for (var j = range.s.c; j <= range.e.c; j++) {
@@ -191,37 +189,36 @@ class graficos extends HTMLElement {
       })
     }
   }
-  devuelveFechaOProducto = siEsAgrupadoPorFecha => siEsAgrupadoPorFecha === this.agrupadoPorFecha ? unidadTiempoPluralMayuscula : "Productos"
-  devuelveFechaOProductoSingular = siEsAgrupadoPorFecha => siEsAgrupadoPorFecha === this.agrupadoPorFecha ? unidadTiempoSingular : "Producto"
+  devuelveFechaOProducto = siEsAgrupadoPorFecha => siEsAgrupadoPorFecha === this.agrupadoPorFecha ? UTPluralMayuscula : "Productos"
+  devuelveFechaOProductoSingular = siEsAgrupadoPorFecha => siEsAgrupadoPorFecha === this.agrupadoPorFecha ? UTSingular : "Producto"
 
   actualizarTabla(datasets, labels) {
     let html
     if (this.multiple) {
-      html = `<table class="multiple"><thead><tr><th class="primeraCelda" rowspan="2">${this.devuelveFechaOProducto(1)}</th>
-      <th colspan="${datasets.length}">${this.devuelveFechaOProducto(0)}</th>
+      html = `<table class="multiple"><thead><tr><th class="primeraCelda" rowspan="2">${this.devuelveFechaOProducto(0)}</th>
+      <th colspan="${labels.length}">${this.devuelveFechaOProducto(1)}</th>
       ${`<th rowspan="2">Total ${this.devuelveSonIngresos()}:</th>`}</tr>
-      <tr>${datasets.map(el => `<th>${el.label}</th>`).join("")}</tr></thead>
-      <tbody>${datasets[0].data.map((_, i) => `<tr><td>${labels[i].partirFechas()}</td>${datasets.map(x => `<td>${x.data[i]}</td>`).join("")}<td></td></tr>`).join("")}</tbody>
-    <tfoot><tr><td>Total:</td>${datasets.map(() => "<td></td>").join("")}<td></td></tr></tfoot>
+      <tr>${labels.map(x => `<th>${x.partirFechas()}</th>`).join("")}</tr></thead>
+      <tbody>${datasets.map((d, i) => `<tr><td>${d.label}</td>${d.data.map(x => `<td>${x}</td>`).join("")}<td></td></tr>`).join("")}</tbody>
+    <tfoot><tr><td>Total:</td>${labels.map(() => "<td></td>").join("")}<td></td></tr></tfoot>
   </table>`
     }
     else {
       let data = datasets[0].data
       html = `<table><thead><tr><th colspan="${(labels.length + 1)}">${this.titulo.split("agrupado")[0]}durante el período del ${formatearFecha(this.fechaOpcion, tiempoMenor)} al ${formatearFecha(this.fechaOpcion, tiempoMayor)}</th></tr><tr><th colspan="${data.length}">${this.devuelveFechaOProducto(1)}</th><th rowspan="2">Total ${this.devuelveSonIngresos()}:</th></tr>
       <tr>${labels.map(x => `<th>${x}</th>`).join("")}</tr></thead><tbody><tr>
-        ${data.map(el => `<td>${el}</td>`).join("")}
+        ${data.map(x => `<td>${x}</td>`).join("")}
         <td>${data.reduce((a, t) => a += t)}</td></tr></tbody></table>`
     }
     $(this).find("table")[0].outerHTML = html
     if (this.multiple) {
-      let totalDerecha = datasets[0].data.map((_, i) => datasets.reduce((p, c) => p += c.data[i], 0))
+      let totalDerecha = datasets.map(x => x.data.reduce((p, c) => p + c))
         ;[...$(this).find("tbody td:last-child")].forEach((x, i) => x.textContent = totalDerecha[i])
-      $(this).find("tfoot td:last-child").text(totalDerecha.reduce((p, c) => p += c))
-        ;[...$(this).find("tfoot td")].slice(1, -1).forEach((x, i) => x.textContent = datasets[i].data.reduce((p, c) => p += c))
+      $(this).find("tfoot td:last-child").text(totalDerecha.reduce((p, c) => p + c))
+        ;[...$(this).find("tfoot td")].slice(1, -1).forEach((x, i) => x.textContent = datasets.reduce((p, c) => p + c.data[i], 0))
       this.normalizarCeldas([...$(this).find("tbody td:not(:first-child)")])
       this.normalizarCeldas([...$(this).find("tfoot td:not(:first-child)")])
-    } else
-      this.normalizarCeldas([...$(this).find("tbody td")])
+    } else this.normalizarCeldas([...$(this).find("tbody td")])
   }
 
   normalizarCeldas(arr) {
@@ -230,31 +227,26 @@ class graficos extends HTMLElement {
 
   actualizarDatos() {
     let { multiple, agrupadoPorFecha } = this
-    let checkboxesInternos = [...$(this.graficoDias).find(".form-check-input")].map(el => el.checked);
-    let checkboxesExternos = [...$(this.graficoProductos).find(".form-check-input")].map(el => el.checked);
-    if (multiple && checkboxesInternos.every(x => !x))
-      return Swal.fire("Error", "Por favor seleccionar por lo menos un elemento", "error")
-    if (checkboxesExternos.every(x => !x))
-      return Swal.fire("Error", "Por favor seleccionar por lo menos un elemento", "error")
+    let checkboxesInternos = [...$(this.graficoDias).find(".form-check-input")].map(x => x.checked)
+    let checkboxesExternos = [...$(this.graficoProductos).find(".form-check-input")].map(x => x.checked)
+    if (multiple && checkboxesInternos.every(x => !x)) return Swal.fire("Error", "Por favor seleccionar por lo menos un elemento", "error")
+    if (checkboxesExternos.every(x => !x)) return Swal.fire("Error", "Por favor seleccionar por lo menos un elemento", "error")
 
-    let labels = unidadTiempoEsDiaOSemana ? agrupadoPorFecha ? fechas.filter((_, i) => checkboxesExternos[i]) : this.labels.filter((_, i) => checkboxesExternos[i]) : this.labels
+    let labels = UTDiaOSemana && agrupadoPorFecha ? fechas.filter((_, i) => checkboxesExternos[i]) : this.labels.filter((_, i) => checkboxesExternos[i])
     let datasets = structuredClone(this.datasets)
 
-    if (this.chartVisible)
-      this.chart.options.scales.y.type = $(this).find(".escalaOpcion input:checked")[0].id.includes("linear") ? "linear" : "logarithmic"
+    if (this.chartVisible) this.chart.options.scales.y.type = $(this).find(".escalaOpcion input:checked")[0].id.includes("linear") ? "linear" : "logarithmic"
 
-    //ve cuales colores tiene que usar
     let coloresOpcion = $(this).find(".coloresOpcion input:checked")[0]?.id
     if (coloresOpcion) datasets = datasets.filter((_, i) => checkboxesInternos[i])
     datasets.forEach(el => el.data = el.data.filter((_, i) => checkboxesExternos[i]))
     coloresOpcion?.includes("color1") ? this.colocarColores(this.graficoDias, checkboxesInternos, datasets) : this.colocarColores(this.graficoProductos, checkboxesExternos, datasets)
 
-    //cambia fechas
-    if (unidadTiempoEsDiaOSemana) {
+    if (UTDiaOSemana) {
       let fechaOpcion = $(this.graficoFechaOpcion).find("input:checked")[0]?.id
       let opcion = fechaOpcion.includes("fecha1") ? "full" : fechaOpcion.includes("fecha2") ? "long" : "short"
       this.fechaOpcion = opcion
-      if (unidadTiempoEsDia) {
+      if (UTDia) {
         if (agrupadoPorFecha) labels = labels.map(x => formatearFecha(opcion, x))
         else datasets.forEach(x => x.label = formatearFecha(opcion, fechas[x.indice]))
       } else {
@@ -272,7 +264,6 @@ class graficos extends HTMLElement {
       datasets = nuevoDataset
     }
 
-    //ordenar
     let ordenarOpcion = $(this).find(".ordenarOpcion input:checked")[0].id
     if (!ordenarOpcion.includes("default")) {
       const funcionesOrdenar = {
@@ -345,11 +336,11 @@ class graficos extends HTMLElement {
     <hr>
     <div class="contenedoropcion">
     <custom-radiogroup class="coloresOpcion" id="coloresRadioButton${contador}">
-      ${this.radiobutton("color1", `Utilizar los colores de ${unidadTiempoPluralGenero}`, 1)}
+      ${this.radiobutton("color1", `Utilizar los colores de ${UTPluralGenero}`, 1)}
       ${this.radiobutton("color2", "Utilizar colores de los productos")}
     </custom-radiogroup></div>
 
-    ${unidadTiempoEsDiaOSemana ? `<div class="tituloopciones">Cambiar formato de la fecha</div>
+    ${UTDiaOSemana ? `<div class="tituloopciones">Cambiar formato de la fecha</div>
     <hr><div class="contenedoropcion"><custom-radiogroup class="graficoFechaOpcion" id="fechaRadioButton${contador}">
     ${this.radiobutton("fecha1", 'Usar formato: "Lunes, 1 de enero de 2023"') + this.radiobutton("fecha2", 'Usar formato: "1 de enero de 2023"', 1) + this.radiobutton("fecha3", 'Usar formato: "1/1/2023"')}
     </custom-radiogroup></div>` : ""}
@@ -372,7 +363,7 @@ class graficos extends HTMLElement {
 
     html += `${acordeonItem(htmlOtrasOpciones, `acordeonotrasopciones`, "Otras opciones")}
     <div class="contenedorabajo"><button class="btn btn-primary botonazul actualizarGrafico">Actualizar gráfico</button></div>
-    </custom-acordeon></custom-acordeonitem></custom-acordeon>`;
+    </custom-acordeon></custom-acordeonitem></custom-acordeon>`
     this.html = html
   }
 
@@ -401,8 +392,8 @@ class graficos extends HTMLElement {
       cancelButtonText: "No",
     })
     if (isConfirmed) {
-      $(el).find("[type='color']").each((i, x) => x.value = colores[i]);
-      Swal.fire("Se han reseteado los colores correctamente", "Para visualizar los cambios presionar el botón de actualizar gráfico", "success");
+      $(el).find("[type='color']").each((i, x) => x.value = colores[i])
+      Swal.fire("Se han reseteado los colores correctamente", "Para visualizar los cambios presionar el botón de actualizar gráfico", "success")
     }
   }
 
@@ -425,35 +416,32 @@ class graficos extends HTMLElement {
         responsiveAnimationDuration: 0,
         responsive: true,
         maintainAspectRatio: false,
-        scales: { y: { beginAtZero: true } },
+        scales: {
+          y: { beginAtZero: true }
+        },
         plugins: {
           title: { display: true, text: titulo, font: { size: 28, weight: 500 }, padding: 30 },
           tooltip: {
+            enabled: false,
+            external: externalTooltipHandler,
             callbacks: {
               title: ([context]) => {
                 let { multiple, fechaOpcion } = this
-                let title = ""
-                if (multiple)
-                  title = `${!agrupadoPorFecha ? `Producto: ${context.label}, ${sonIngresos ? "vendidos" : "ingresos generados"}: ${this.devuelveCantidadFormateada(context)}` : `Fecha: ${context.label}`}`
-                else
-                  title = `${sonIngresos ? "Total de ingresos generados" + (agrupadoPorFecha ? "" : ` por ${context.label}`) : "Cantidad de " + (agrupadoPorFecha ? "productos" : context.label) + " vendidos"}: ${this.devuelveCantidadFormateada(context)} `
+                let title = `${!agrupadoPorFecha ? `Producto: ${context.label}` : `Fecha: ${context.label}`}`
                 return title
               },
               label: context => {
-                let { multiple, fechaOpcion } = this
+                let { multiple } = this
                 let label = ""
+
                 if (multiple) {
-                  label = `${agrupadoPorFecha ? `Producto: ${context.dataset.label}, ${sonIngresos ? "ingresos generados" : "vendidos"}: ${this.devuelveCantidadFormateada(context)}` : `Fecha: ${context.dataset.label}`} `
+                  label = [agrupadoPorFecha ? `Producto: ${context.dataset.label}` : `Fecha: ${context.dataset.label}`, `${sonIngresos ? "Ingresos generados" : "Cantidad vendidos"}: ${this.devuelveCantidadFormateada(context)}`]
                 }
                 else {
-                  if (rango !== "libre") {
-                    label = `Durante el período de${agrupadoPorFecha ? " " + context.label : `l ${formatearFecha(fechaOpcion, tiempoMenor)} al ${formatearFecha(fechaOpcion, tiempoMayor)}`} `
-                  } else {
-                    label = `Durante las fechas ${formatearFecha(fechaOpcion, tiempoMenor)} al ${formatearFecha(fechaOpcion, tiempoMayor)} `
-                  }
+                  label = `${sonIngresos ? "Total ingresos generados" : `Cantidad ${agrupadoPorFecha ? "de productos " : ""}vendidos`}: ${this.devuelveCantidadFormateada(context)}`
                 }
                 return label
-              },
+              }
             }
           }
         }
@@ -464,4 +452,31 @@ class graficos extends HTMLElement {
     }
   }
 }
+function getOrCreateTooltip(chart) {
+  let tooltipEl = chart.canvas.parentNode.querySelector('div')
+  if (!tooltipEl) {
+    $(chart.canvas.parentNode).append(`<div style="background: rgba(0, 0, 0, 0.7); border-radius: 3px; color: white; opacity: 1; pointer-events: none; position: absolute; transform: translate(-50%, 0px); transition: all 0.1s ease 0s;"></div>`)
+    tooltipEl = chart.canvas.parentNode.querySelector('div')
+  }
+  return tooltipEl
+}
+
+function externalTooltipHandler(context) {
+  const { chart, tooltip } = context
+  const tooltipEl = getOrCreateTooltip(chart)
+  if (tooltip.opacity === 0) return tooltipEl.style.opacity = 0
+  if (tooltip.body) {
+    $(tooltipEl).html(`<div style="font-size: 14px;">${(tooltip.title || []).map((title, i) => `<span style="background: ${tooltip.labelColors[i].backgroundColor.slice(0, -2) + "40"}; border: 1px solid ${tooltip.labelColors[i].borderColor}; margin-right: 5px; height: 10px; width: 10px; display: inline-block;"></span>${title}`).join("")}</div>
+    ${tooltip.body.map(b => b.lines).map(body => body.map(x => `<div style="font-size: 14px;">${x}</div>`).join("")).join("")}`)
+  }
+
+  const { offsetLeft, offsetTop } = chart.canvas
+  tooltipEl.style.opacity = 1
+  let long = tooltipEl.getBoundingClientRect().width / 2 + 5
+  tooltipEl.style.left = offsetLeft + tooltip.caretX + (tooltip.caretX > chart.width / 2 ? -long : long) + 'px'
+  tooltipEl.style.top = offsetTop + tooltip.caretY + 'px'
+  tooltipEl.style.font = tooltip.options.bodyFont.string
+  tooltipEl.style.padding = '5px 10px 7px'
+}
+
 customElements.define("custom-graficos", graficos)

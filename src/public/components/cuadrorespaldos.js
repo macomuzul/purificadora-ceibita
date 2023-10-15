@@ -10,7 +10,6 @@ $("head").append(`<style>
   align-content: center;
 }
 
-
 .gridCheckbox{
   justify-items: flex-end;
   position: relative;
@@ -85,6 +84,11 @@ $("head").append(`<style>
 
 .form-check-reverse{
   font-size: 16px;
+}
+
+.contenidoOpciones{
+  position: relative;
+  margin-top: 10px;
 }
 
 </style>`)
@@ -242,7 +246,7 @@ class cuadroRespaldos extends HTMLElement {
               <custom-radiobutton data-id="guardartodoslosregistros${contador}" data-checked="1">Guardar todos los registros</custom-radiobutton>
               <custom-radiobutton data-id="escogerregistros${contador}">Escoger qué registros guardar</custom-radiobutton>
             </custom-radiogroup>
-            <div class="contenidoOpciones" style="position: relative;"></div>
+            <div class="contenidoOpciones"></div>
           </div>
           <div class="modal-footer">
             <div style="flex-grow: 1;"><button type="button" class="btn btn-primary btn-config botonazul restaurarconfig" data-bs-dismiss="modal">Restaurar los valores de default</button></div>

@@ -10,9 +10,12 @@ const { DateTime } = require("luxon")
 const { google } = require("googleapis")
 const BSON = require('bson')
 const nodemailer = require("nodemailer")
+const cron = require('node-cron')
+const redis = require("../../redis")
 
 let correo = process.env.CORREO
 let folderVentas = process.env.FOLDER_VENTAS
+let folderRespaldoMensual = process.env.FOLDER_RESPALDO_MENSUAL
 
 let buscarFolder = async (name, folderPadre) => await buscarDrive(name, folderPadre, 1)
 let buscarArchivo = async (name, folderPadre) => await buscarDrive(name, folderPadre, 0)
@@ -131,39 +134,7 @@ async function guardarDias(ventas, creadoEl, tipo, borrados = []) {
   return true
 }
 
-async function mandarCorreoCambioRegistro(opcion, usuario, fecha1, fecha2) {
-  try {
-    let colores = ["green", "black", "red", "orange", "blue", "rebeccapurple"]
-    let opciones = ["creado", "sobreescrito", "eliminado", "movido", "recuperado", "sobreescrito por un registro recuperado"]
-    let html = `El registro con fecha <strong>${fecha1}</strong> ha sido <span style="font-weight:600; color: ${colores[opcion]};">${opciones[opcion]}</span>
-    ${(opcion === 3 || opcion === 4 || opcion === 5) ? ` ${opcion === 3 ? "a la" : `${opcion === 4 ? "desde otro registro anterior" : ""} con`} fecha <strong>${fecha2}</strong>` : ""} por el usuario <strong>${usuario}</strong>
-    <div>Haz click aqui para ir al registro ➔ http://localhost:3000/registrarventas/3-4-2023</div>
-    <img src="https://lh3.googleusercontent.com/u/0/drive-viewer/AITFw-xt_PXzBn-AiMOJJGFpu0cXoaC-GUBhXChgaJJEmwwPwG5Fe2Q1sEH-0_2I8HZxMg9W_DmUl3Tb3rNENogESc5IUSP-=w811-h643">`
-    let accessToken = await oauth2Client.getAccessToken()
-    let transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        type: "OAuth2",
-        user: correo,
-        clientId, clientSecret, refreshToken, accessToken,
-      },
-    })
-    let { accepted } = await transporter.sendMail({
-      from: `<${correo}>`,
-      to: correo,
-      subject: `${!opcion ? "Se ha agregado un nuevo registro" : `Un registro ha sido ${opciones[opcion]}`}!`,
-      html
-    })
-    if (!accepted.length)
-      console.log("Error al mandar correo")
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-router.route("/").get((req, res) => res.render("googledrive", { fecha: DateTime.now().setZone("America/Guatemala").toFormat("d/M/y") })).post(async (req, res) => {
+router.route("/").get((req, res) => res.render("googledrive", { fecha: DateTime.now().setZone("America/Guatemala").toFormat("d/M/y"), esAdmin: esAdmin(req) })).post(async (req, res) => {
   try {
     let { datos, sobreescribir, nombreCarpeta } = req.body
     let folder = await buscarFolder(nombreCarpeta, folderVentas)
@@ -171,25 +142,25 @@ router.route("/").get((req, res) => res.render("googledrive", { fecha: DateTime.
     if (!folder) folder = await crearFolder(nombreCarpeta, folderVentas)
     folder = folder.id
 
+    let o = {
+      "mayores o iguales que": v => ({ $gte: v.formatearFecha() }),
+      "menores o iguales que": v => ({ $lte: v.formatearFecha() }),
+      "entre el": v => {
+        let [menor, mayor] = v.split(" y ")
+        return { $gte: menor.formatearFecha(), $lte: mayor.formatearFecha() }
+      },
+      "": v => {
+        let fechas = v.split(", ")
+        fechas = fechas.map(v => v.formatearFecha())
+        return { $in: fechas }
+      },
+    }
     await Promise.all(datos.map(async x => {
       let { nombre, archivos, guardar, nombreArchivo } = x
       let regs = await ({
         Ventas: async g => {
           if (g === "todos") return await RegistroVentas.find().lean()
           let { rango, valor } = g
-          let o = {
-            "mayores o iguales que": v => ({ $gte: v.formatearFecha() }),
-            "menores o iguales que": v => ({ $lte: v.formatearFecha() }),
-            "entre el": v => {
-              let [menor, mayor] = v.split(" y ")
-              return { $gte: menor.formatearFecha(), $lte: mayor.formatearFecha() }
-            },
-            "": v => {
-              let fechas = v.split(", ")
-              fechas = fechas.map(v => v.formatearFecha())
-              return { $in: fechas }
-            },
-          }
           return await RegistroVentas.find({ _id: o[rango](valor) }).lean()
         },
         Plantillas: async g => {
@@ -207,19 +178,6 @@ router.route("/").get((req, res) => res.render("googledrive", { fecha: DateTime.
         "Registros eliminados": async g => {
           if (g === "todos") return await Registroseliminados.find().lean()
           let { rango, valor } = g
-          let o = {
-            "mayores o iguales que": v => ({ $gte: v.formatearFecha() }),
-            "menores o iguales que": v => ({ $lte: v.formatearFecha() }),
-            "entre el": v => {
-              let [menor, mayor] = v.split(" y ")
-              return { $gte: menor.formatearFecha(), $lte: mayor.formatearFecha() }
-            },
-            "": v => {
-              let fechas = v.split(", ")
-              fechas = fechas.map(v => v.formatearFecha())
-              return { $in: fechas }
-            },
-          }
           return await Registroseliminados.find({ borradoEl: o[rango](valor) }).lean()
         },
       })[nombre](guardar)
@@ -233,6 +191,37 @@ router.route("/").get((req, res) => res.render("googledrive", { fecha: DateTime.
     res.status(400).send("")
   }
 })
+
+
+cron.schedule('0 0 1 * *', async () => {
+  try {
+    let registros = await RegistroVentas.find().lean()
+    let fecha = DateTime.now().minus({ days: 1 })
+    await crearArchivo(`Respaldo mensual del mes de ${fecha.monthLong} del ${fecha.year}`, folderRespaldoMensual, registros, "ambos")
+    await crearMesGoogleSheets()
+    await crearMesGoogleDocs()
+  } catch (error) {
+    console.log(error)
+    await mandarCorreoError("Error", "Ocurrió un error al crear el respaldo mensual")
+  }
+}, { timezone: "America/Guatemala" })
+
+
+cron.schedule('0 0 * * *', async () => {
+  try {
+    await redis.set("hubocambioshoy", "0")
+    if (DateTime.now().day !== 1) await crearDiaGoogleSheets()
+    await guardarCambiosDiaGoogleDrive()
+  } catch (error) {
+    console.log(error)
+    await mandarCorreoError("Error", "Ocurrió un error al crear el respaldo diario")
+  }
+}, { timezone: "America/Guatemala" })
+
+
+async function guardarCambiosDiaGoogleDrive() {
+  console.log("guardando los cambios")
+}
 
 String.prototype.formatearFecha = function () { return DateTime.fromFormat(this, "d/M/y") }
 

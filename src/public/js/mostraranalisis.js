@@ -12,7 +12,7 @@ Number.prototype.aQuetzales = function () { return new Intl.NumberFormat('es-GT'
 Number.prototype.cantidadFormateada = function () { return new Intl.NumberFormat('es-GT').format(this) }
 String.prototype.aQuetzales = function () { return new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(this.aFloat()) }
 String.prototype.cantidadFormateada = function () { return new Intl.NumberFormat('es-GT').format(this.aFloat()) }
-String.prototype.primeraLetraMayuscula = function () { return this.charAt(0).toUpperCase() + this.slice(1); }
+String.prototype.primeraLetraMayuscula = function () { return this[0].toUpperCase() + this.slice(1); }
 
 Date.prototype.aUTC = function () { return this.toISOString().aUTC() }
 String.prototype.aUTC = function () {
@@ -33,14 +33,14 @@ let [agruparPorP, rangoP, tiempoEscogidoP] = url.split("&")
 let [, unidadTiempo] = agruparPorP.split("=")
 let [, rango] = rangoP.split("=")
 if (unidadTiempo === "a%C3%B1os") unidadTiempo = "años"
-let unidadTiempoEsDia = unidadTiempo === "dias"
-let unidadTiempoEsSemana = unidadTiempo === "semanas"
-let unidadTiempoEsMes = unidadTiempo === "meses"
-let unidadTiempoEsAño = unidadTiempo === "años"
-let unidadTiempoEsDiaOSemana = unidadTiempoEsDia || unidadTiempoEsSemana
+let UTDia = unidadTiempo === "dias"
+let UTSemana = unidadTiempo === "semanas"
+let UTMes = unidadTiempo === "meses"
+let UTAño = unidadTiempo === "años"
+let UTDiaOSemana = UTDia || UTSemana
 
 let tiempoMenor = datos.at(0)._id.aUTC()
-let tiempoMayor = datos.at(-1).f?.aUTC() || datos.at(-1)._id?.aUTC()
+let tiempoMayor = datos.at(-1).f?.aUTC() || datos.at(-1)._id.aUTC()
 
 let datasetVendidosAgrupadosPorProducto = [], datasetIngresosAgrupadosPorProducto = [], datasetVendidosAgrupadosPorFecha = [], datasetIngresosAgrupadosPorFecha = []
 //TODO este no se si dejarle el .sort al final
@@ -62,7 +62,7 @@ function devuelveColores(colores = ["#ff6384", "#136ba7", "#ffce56", "#4bc0c0", 
 let colores = devuelveColores()
 let coloresAlfa = devuelveColores(undefined, 1)
 let fechas = datos.map(x => x._id.aUTC())
-let fechasFin = unidadTiempoEsDia ? null : datos.map(x => x.f.aUTC())
+let fechasFin = UTDia ? null : datos.map(x => x.f.aUTC())
 let unirTexto = arr => arr.length === 1 ? arr[0] : `Dias: ${arr.slice(0, -1).join(" - ")} y ${arr.at(-1)}`
 
 let formatearFechaObj = (opciones, fecha) => new Intl.DateTimeFormat('es', opciones).format(fecha.aUTC())
@@ -75,10 +75,10 @@ let popover = contenido => `<custom-popover>${contenido}</custom-popover>`
 let checkbox = (html, checked, clase) => `<custom-checkbox ${checked ? `data-checked="1"` : ""} ${clase ? `data-clase="${clase}"` : ""}>${html}</custom-checkbox>`
 let podio = (titulo, ar1, ar2, ar3, ab1, ab2, ab3) => `<custom-podio data-titulo="${titulo}" data-ar1="${ar1}" data-ar2="${ar2}" data-ar3="${ar3}" data-ab1="${ab1}" data-ab2="${ab2}" data-ab3="${ab3}"></custom-podio>`
 
-let opcionesFechaDefault = unidadTiempoEsMes ? { month: "long", year: "numeric" } : { year: "numeric" }
+let opcionesFechaDefault = UTMes ? { month: "long", year: "numeric" } : { year: "numeric" }
 let fechasStr = fechas.map((x, i) => {
-  if (unidadTiempoEsDia) return formatearFecha("long", x)
-  if (unidadTiempoEsSemana) return formatearRango("long", x, i)
+  if (UTDia) return formatearFecha("long", x)
+  if (UTSemana) return formatearRango("long", x, i)
   else return x.getDate() === 1 && esFinDeMes(datos[i].f) ? formatearFechaObj(opcionesFechaDefault, x) : formatearRango("long", x, i)
 })
 
@@ -122,14 +122,14 @@ productos.forEach((prod, i) => {
 })
 
 let masculino = unidadTiempo !== "semanas"
-let unidadTiempoSingular = unidadTiempo.slice(0, unidadTiempo === "meses" ? -2 : -1)
-let unidadTiempoPlural = unidadTiempoSingular + (unidadTiempo === "meses" ? "e" : "") + "s"
-let unidadTiempoSingularGenero = masculino ? "el" : "la" + unidadTiempoSingular
-let unidadTiempoPluralGenero = `${masculino ? "los" : "las"} ${unidadTiempoPlural}`
-let unidadTiempoPluralMayuscula = unidadTiempoPlural.primeraLetraMayuscula()
+let UTSingular = unidadTiempo.slice(0, unidadTiempo === "meses" ? -2 : -1)
+let UTPlural = UTSingular + (unidadTiempo === "meses" ? "e" : "") + "s"
+let UTSingularGenero = `${masculino ? "el" : "la"} ${UTSingular}`
+let UTPluralGenero = `${masculino ? "los" : "las"} ${UTPlural}`
+let UTPluralMayuscula = UTPlural.primeraLetraMayuscula()
 let escogido = " escogid" + (masculino ? "o" : "a")
-let unidadTiempoSingularGeneroEscogido = unidadTiempoSingularGenero + escogido
-let unidadTiempoPluralGeneroEscogido = `${unidadTiempoPluralGenero}${escogido}s`
+let UTSingularGeneroEscogido = UTSingularGenero + escogido
+let UTPluralGeneroEscogido = `${UTPluralGenero}${escogido}s`
 
 let devuelveTop3 = (data, indices) => [data, indices.sort((a, b) => data[b] - data[a]).slice(0, 3)]
 
@@ -159,7 +159,7 @@ crearPodio()
 
 
 //labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, type
-$("#chartVendidosAgrupadosPorFecha")[0].crearGrafico(fechasStr, datasetVendidosAgrupadosPorFecha, `Cantidad de productos vendidos agrupados por ${unidadTiempoSingular}`, `total vendidos durante ${unidadTiempoSingularGenero}`, 1, 0,)
-$("#chartIngresosAgrupadosPorFecha")[0].crearGrafico(fechasStr, datasetIngresosAgrupadosPorFecha, `Ingresos generados agrupados por ${unidadTiempoSingular}`, `total ingresos durante ${unidadTiempoSingularGenero}`, 1, 1)
+$("#chartVendidosAgrupadosPorFecha")[0].crearGrafico(fechasStr, datasetVendidosAgrupadosPorFecha, `Cantidad de productos vendidos agrupados por ${UTSingular}`, `total vendidos durante ${UTSingularGenero}`, 1, 0,)
+$("#chartIngresosAgrupadosPorFecha")[0].crearGrafico(fechasStr, datasetIngresosAgrupadosPorFecha, `Ingresos generados agrupados por ${UTSingular}`, `total ingresos durante ${UTSingularGenero}`, 1, 1)
 $("#chartVendidosAgrupadosPorProducto")[0].crearGrafico(productosDesnormalizados, datasetVendidosAgrupadosPorProducto, "Cantidad de productos vendidos agrupados por producto", "vendidos", 0, 0)
 $("#chartIngresosAgrupadosPorProducto")[0].crearGrafico(productosDesnormalizados, datasetIngresosAgrupadosPorProducto, "Ingresos generados agrupados por producto", "ingresos", 0, 1)

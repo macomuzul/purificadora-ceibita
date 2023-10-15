@@ -6,19 +6,17 @@ const devuelveValoresSumados = require("../utilities/devuelveValoresSumados")
 
 String.prototype.normalizarPrecio = function () { return parseFloat(this).toFixed(2).replace(/[.,]00$/, "") }
 Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }
-router.get('/', async (req, res) => res.render('analisis'))
+router.get('/', async (req, res) => res.render('analisis', { esAdmin: esAdmin(req) }))
 
 let objResumenes = { day: ResumenDia, week: ResumenSemana, month: ResumenMes, year: ResumenAño }
 
 async function actualizarSiHuboCambios(tiempo) {
   let resumenModelo = objResumenes[tiempo]
   let resumen = await resumenModelo.find({ c: true })
-  if (resumen.length > 0) {
-    resumen.forEach(async x => {
-      let buscar = tiempo === "year" ? ResumenMes : ResumenDia
-      let dias = devuelveValoresSumados(await buscar.entre(x._id, x.f))
-      await resumenModelo.findByIdAndUpdate(x._id, { ...dias, c: false })
-    })
+  for (const x of resumen) {
+    let buscar = tiempo === "year" ? ResumenMes : ResumenDia
+    let dias = devuelveValoresSumados(await buscar.entre(x._id, x.f))
+    await resumenModelo.findByIdAndUpdate(x._id, { ...dias, c: false })
   }
 }
 
@@ -75,77 +73,72 @@ async function rangoEntreAños(fecha1, fecha2) {
   return [...diasYMesesSueltosInicio, ...await ResumenAño.entreOrdenado(fecha1, fecha2), ...diasYMesesSueltosFin]
 }
 
-router.get("/:agruparPorP(agruparpor=(dias|semanas|meses|a%C3%B1os))&:rangoP(rango=(mayor|menor|libre|entre))&:fechaP", async (req, res) => {
-  try {
-    let { rangoP, agruparPorP, fechaP } = req.params;
-    if (!/^(dias|semanas|meses|años)=.*/.test(fechaP)) throw new Error()
+router.get("/:agruparPorP(agruparpor=(dias|semanas|meses|a%C3%B1os))&:rangoP(rango=(mayor|menor|libre|entre))&:fechaP", tcrutas(async (req, res) => {
+  let { rangoP, agruparPorP, fechaP } = req.params;
+  if (!/^(dias|semanas|meses|años)=.*/.test(fechaP)) throw new Error()
 
-    let [, rango] = rangoP.split("=")
-    let [, agruparPor] = agruparPorP.split("=")
-    let [unidadTiempo, fecha] = fechaP.split("=")
-    let valorIngles = x => ({ dias: "day", semanas: "week", meses: "month", "años": "year" }[x])
-    agruparPor = valorIngles(agruparPor)
-    unidadTiempo = valorIngles(unidadTiempo)
-    let resumen = objResumenes[agruparPor]
+  let [, rango] = rangoP.split("=")
+  let [, agruparPor] = agruparPorP.split("=")
+  let [unidadTiempo, fecha] = fechaP.split("=")
+  let valorIngles = x => ({ dias: "day", semanas: "week", meses: "month", "años": "year" }[x])
+  agruparPor = valorIngles(agruparPor)
+  unidadTiempo = valorIngles(unidadTiempo)
+  let resumen = objResumenes[agruparPor]
 
-    let fechas, fecha1, fecha2, datos
-    let devuelveDateTime = x => DateTime.fromFormat(x, "d-M-y")
-    if (rango === "libre") fechas = fecha.split(",").map(x => devuelveDateTime(x))
-    else if (rango === "entre") [fecha1, fecha2] = fecha.split("&y&").map(x => devuelveDateTime(x))
-    else fecha = devuelveDateTime(fecha)
+  let fechas, fecha1, fecha2, datos
+  let devuelveDateTime = x => DateTime.fromFormat(x, "d-M-y")
+  if (rango === "libre") fechas = fecha.split(",").map(x => devuelveDateTime(x))
+  else if (rango === "entre") [fecha1, fecha2] = fecha.split("&y&").map(x => devuelveDateTime(x))
+  else fecha = devuelveDateTime(fecha)
 
-    if (agruparPor !== "day") await actualizarSiHuboCambios(agruparPor)
+  if (agruparPor !== "day") await actualizarSiHuboCambios(agruparPor)
 
-    if (unidadTiempo === agruparPor) {
-      datos = await resumen.ordenado().in(fechas)
-      datos = await agrupar(datos, agruparPor)
-    } else if (unidadTiempo !== "day" && rango === "libre") {
-      let rangoFunc = agruparPor === "year" ? rangoEntreAños : rangoEntre
-      datos = await Promise.all(fechas.map(async x => await rangoFunc(x.startOf(unidadTiempo), x.endOf(unidadTiempo), agruparPor, resumen)))
-      datos = datos.flat()
-      // datos = await agrupar(datos, agruparPor)
-      datos = await agruparMultiple(datos, agruparPor)
-    }
-    else {
-      if (agruparPor === "day") {
-        let regs = ResumenDia.ordenado()
-        let funcs = {
-          mayor: q => regs.gte(fecha),
-          menor: q => regs.lte(fecha),
-          entre: q => regs.gte(fecha1).lte(fecha2)
-        }
-        datos = await funcs[rango]()
-      }
-      else if (agruparPor === "year") {
-        if (rango === "mayor") {
-          let inicio = fecha.startOf("day")
-            ;[diasYMesesSueltos, fecha] = await añoDatosSueltos(1, fecha)
-          if (diasYMesesSueltos.length > 0) diasYMesesSueltos = devuelveObjDiasSueltos(diasYMesesSueltos, inicio, fecha.minus(1))
-          datos = [...diasYMesesSueltos, ...await ResumenAño.mayor(fecha)]
-        }
-        else if (rango === "menor") {
-          let fin = fecha.startOf("day")
-            ;[diasYMesesSueltos, fecha] = await añoDatosSueltos(0, fecha)
-          if (diasYMesesSueltos.length > 0) diasYMesesSueltos = devuelveObjDiasSueltos(diasYMesesSueltos, fecha.plus(1), fin)
-          datos = [...await ResumenAño.menor(fecha), ...diasYMesesSueltos]
-        }
-        else datos = await rangoEntreAños(fecha1, fecha2)
-      } else {
-        let funcsSemanasMeses = {
-          mayor: (...d) => rangoMayor(fecha, ...d),
-          menor: (...d) => rangoMenor(fecha, ...d),
-          entre: (...d) => rangoEntre(fecha1, fecha2, ...d)
-        }
-        datos = await funcsSemanasMeses[rango](agruparPor, resumen)
-      }
-    }
-
-    res.render("mostraranalisis", { datos })
-  } catch (error) {
-    console.log(error)
-    res.send("Error, página inválida")
+  if (unidadTiempo === agruparPor) {
+    datos = await resumen.ordenado().in(fechas)
+    datos = await agrupar(datos, agruparPor)
+  } else if (unidadTiempo !== "day" && rango === "libre") {
+    let rangoFunc = agruparPor === "year" ? rangoEntreAños : rangoEntre
+    datos = await Promise.all(fechas.map(async x => await rangoFunc(x.startOf(unidadTiempo), x.endOf(unidadTiempo), agruparPor, resumen)))
+    datos = datos.flat()
+    // datos = await agrupar(datos, agruparPor)
+    datos = await agruparMultiple(datos, agruparPor)
   }
-})
+  else {
+    if (agruparPor === "day") {
+      let regs = ResumenDia.ordenado()
+      let funcs = {
+        mayor: q => regs.gte(fecha),
+        menor: q => regs.lte(fecha),
+        entre: q => regs.gte(fecha1).lte(fecha2)
+      }
+      datos = await funcs[rango]()
+    }
+    else if (agruparPor === "year") {
+      if (rango === "mayor") {
+        let inicio = fecha.startOf("day")
+          ;[diasYMesesSueltos, fecha] = await añoDatosSueltos(1, fecha)
+        if (diasYMesesSueltos.length > 0) diasYMesesSueltos = devuelveObjDiasSueltos(diasYMesesSueltos, inicio, fecha.minus(1))
+        datos = [...diasYMesesSueltos, ...await ResumenAño.mayor(fecha)]
+      }
+      else if (rango === "menor") {
+        let fin = fecha.startOf("day")
+          ;[diasYMesesSueltos, fecha] = await añoDatosSueltos(0, fecha)
+        if (diasYMesesSueltos.length > 0) diasYMesesSueltos = devuelveObjDiasSueltos(diasYMesesSueltos, fecha.plus(1), fin)
+        datos = [...await ResumenAño.menor(fecha), ...diasYMesesSueltos]
+      }
+      else datos = await rangoEntreAños(fecha1, fecha2)
+    } else {
+      let funcsSemanasMeses = {
+        mayor: (...d) => rangoMayor(fecha, ...d),
+        menor: (...d) => rangoMenor(fecha, ...d),
+        entre: (...d) => rangoEntre(fecha1, fecha2, ...d)
+      }
+      datos = await funcsSemanasMeses[rango](agruparPor, resumen)
+    }
+  }
+
+  res.render("mostraranalisis", { datos, esAdmin: esAdmin(req) })
+}, "Página inválida"))
 
 async function agrupar(fechas, tiempo) {
   let agrupados = _.groupBy(fechas, x => DateTime.fromJSDate(x._id).startOf(tiempo).toISO())

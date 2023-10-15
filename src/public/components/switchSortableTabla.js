@@ -1,10 +1,12 @@
 onload = q => { if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) $.getScript('/touch.js') }
 
 class switchSortable extends HTMLElement {
-  connectedCallback() {
+  async connectedCallback() {
+    await Promise.all([$.getScript('/popover.js'), $.getScript('/bootstrap-5.2.3.js')])
     this.className = "form-check form-switch"
     this.innerHTML = `<input class="form-check-input" type="checkbox" id="switchOrdenarFilas">
-    <label class="form-check-label" for="switchOrdenarFilas">Reordenar filas</label>`
+    <label class="form-check-label" for="switchOrdenarFilas">Reordenar filas</label>
+    <custom-popover data-alineacion="text-top"><strong>A tomar en cuenta:</strong><br>Mientras la opción de reordenar filas esté activa no puedes escribir en las celdas, tienes que desactivarlo para poder volver a escribir en ellas</custom-popover>`
     $("body").on("click", "#switchOrdenarFilas", async q => $("tbody").sortable({ axis: "y", disabled: !q.currentTarget.checked }))
     var switchOrdenarFilas = $("#switchOrdenarFilas")[0]
   }
