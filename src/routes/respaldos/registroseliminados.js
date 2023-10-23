@@ -1,17 +1,17 @@
 require('dotenv').config()
-const router = require("express").Router();
-const RegistrosEliminados = require("../../models/registroseliminados");
-const { DateTime } = require("luxon");
+const router = require("express").Router()
+const RegistrosEliminados = require("../../models/registroseliminados")
+const { DateTime } = require("luxon")
 
 let validarPagina = (req, res, next) => (/^pag=[0-9]+$/.test(req.params.pag)) ? next() : res.send("página inválida")
 let { devuelveFuncionMover } = require("../registrarventas")
 
-router.get("/", (_, res) => res.render("registroseliminados", { esAdmin: esAdmin(req) }))
+router.get("/", (req, res) => res.render("registroseliminados", { esAdmin: esAdmin(req) }))
 router.post("/restaurarregistro", devuelveFuncionMover(RegistrosEliminados, "No se pudo restaurar el registro"))
 
 router.delete("/borrarregistros", tcaccion(async (req, res) => {
   let { registros } = req.body
-  let eliminados = await RegistrosEliminados.deleteMany({ _id: { $in: registros } })
+  let eliminados = await RegistrosEliminados.deleteMany({ _id: { $in: registros } }, { sanitizeFilter: true })
   if (eliminados.deletedCount === registros.length) return res.send()
   if (!eliminados.acknowledged) throw new Error()
   if (eliminados.deletedCount === 0) throw new errorDB(registros.length === 1 ? "El registro a borrar ya no existe" : "No se pudo borrar ninguno de los registros porque ya no existen")

@@ -199,6 +199,7 @@ $("body").on("click", "#analizarEntre", function () {
 
 function antesDeCambiarPagina() {
   agruparPor = agruparPor.replace("días", "dias")
+  unidadTiempo = unidadTiempo.replace("días", "dias")
   agruparPor = "agruparpor=" + agruparPor
   rango = "rango=" + rango
 }
@@ -239,3 +240,8 @@ function construirDatePicker(UT) {
   crearDatePicker(opciones)
   datepickerMultidate()
 }
+
+setTimeout(() => {
+  const popoverTriggerList = document.querySelectorAll('[data-toggle="popover"]')
+  const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, { html: true }))
+}, 500)

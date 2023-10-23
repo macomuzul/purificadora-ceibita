@@ -207,8 +207,8 @@ function crearContenidoOpciones() {
     else {
       ({
         Ventas: htmlCalendario,
-        Plantillas: q => htmlNombres("/plantillas/devuelvenombreplantillas", "plantillas"),
-        Camioneros: q => htmlNombres("/empleados/devuelvenombrescamioneros", "camioneros"),
+        Plantillas: q => htmlNombres("/plantillas/devuelvenombres", "plantillas"),
+        Camioneros: q => htmlNombres("/empleados/camioneros/devuelvenombres", "camioneros"),
         "Registros eliminados": htmlCalendario,
       })[seleccionado.titulo]()
     }

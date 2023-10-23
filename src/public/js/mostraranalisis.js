@@ -131,6 +131,9 @@ let escogido = " escogid" + (masculino ? "o" : "a")
 let UTSingularGeneroEscogido = UTSingularGenero + escogido
 let UTPluralGeneroEscogido = `${UTPluralGenero}${escogido}s`
 
+$("#cargando").html("")
+$("resumen-datos")[0].agregarCantidad()
+
 let devuelveTop3 = (data, indices) => [data, indices.sort((a, b) => data[b] - data[a]).slice(0, 3)]
 
 function crearPodio() {

@@ -56,6 +56,5 @@ class botonExcel extends HTMLElement {
     this.crear = crear
   }
 }
-//TODO cambiar las librerias de plugins a las desargadas de internet
 
 customElements.define("boton-excel", botonExcel)

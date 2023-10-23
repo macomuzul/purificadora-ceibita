@@ -1,12 +1,23 @@
+$("head").append(`<style>
+.contenedorayuda {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  margin-left: auto;
+  transform: translateY(10px);
+}
+</style>`)
 onload = q => { if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) $.getScript('/touch.js') }
 
 class switchSortable extends HTMLElement {
   async connectedCallback() {
-    await Promise.all([$.getScript('/popover.js'), $.getScript('/bootstrap-5.2.3.js')])
+    //TODO estos poner el bootstrap dde internet
+    await Promise.all(['/popover.js', '/bootstrap-5.2.3.js'].map(x => $.getScript(x)))
     this.className = "form-check form-switch"
     this.innerHTML = `<input class="form-check-input" type="checkbox" id="switchOrdenarFilas">
     <label class="form-check-label" for="switchOrdenarFilas">Reordenar filas</label>
-    <custom-popover data-alineacion="text-top"><strong>A tomar en cuenta:</strong><br>Mientras la opción de reordenar filas esté activa no puedes escribir en las celdas, tienes que desactivarlo para poder volver a escribir en ellas</custom-popover>`
+    <custom-popover data-alineacion="text-top"><strong>Importante:</strong><br>Mientras la opción de reordenar filas esté activa no puedes escribir en las celdas, tienes que desactivarlo para poder volver a escribir en ellas</custom-popover>`
     $("body").on("click", "#switchOrdenarFilas", async q => $("tbody").sortable({ axis: "y", disabled: !q.currentTarget.checked }))
     var switchOrdenarFilas = $("#switchOrdenarFilas")[0]
   }
@@ -17,7 +28,8 @@ customElements.define("switch-sortable", switchSortable)
 class preguntarAntesDeBorrar extends HTMLElement {
   connectedCallback() {
     this.className = "contenedorayuda"
-    this.innerHTML = `<div class="form-check form-switch">
+    this.innerHTML = `<custom-popover style="position: absolute; top: 10px; left:-30px;"><b>Activado</b><br>Te preguntará si estás seguro que deseas borrar ese elemento<br><b>Desactivado</b><br>Borrará el elemento sin preguntarte nada</custom-popover>
+    <div class="form-check form-switch">
       <input class="form-check-input" type="checkbox" id="switchModoSeguro" checked>
       <label class="form-check-label" for="switchModoSeguro">Modo seguro</label>
     </div>

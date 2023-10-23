@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200px">
+  <title>Registros eliminados</title>
+  <%- include("layouts/global") %>
+    <link rel="stylesheet" href="/comofuncionaanalisis.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <%- include("layouts/navbar") %>
+    <main>
+      <div class="titulo">¿Para qué sirve cada una de las opciones del menú de análisis?</div>
+      <div>Existen 2 opciones principales:</div>
+      <ul style="margin-top: 8px;">
+        <li>Cómo se agrupar los datos</li>
+        <li>Rango de fechas para analizar</li>
+      </ul>
+      <div>La primera opción de cómo se agrupan los datos indica cómo aparecen los datos en la gráfica. Se puede agrupar por día, por semana, por mes y por año.<br>Acá unos ejemplos tomados desde la fecha 1 de abril al 31 de junio de 2023: </div>
+      <div class="subtituloagrupados">Datos agrupados por día</div>
+      <img class="primeraopcion" src="/ejemplodiasanalisis.png">
+      <div class="subtituloagrupados">Datos agrupados por semana</div>
+      <img class="primeraopcion" src="/ejemplosemanasanalisis.png">
+      <div class="subtituloagrupados">Datos agrupados por mes</div>
+      <img class="primeraopcion" src="/ejemplomesesanalisis.png">
+      <div class="subtituloagrupados">Datos agrupados por año</div>
+      <img class="primeraopcion" src="/ejemploañosanalisis.png">
+      <br>
+      <br>
+      <div>La segunda opción indica cómo deseas buscar los datos. Hay 4 opciones: mayor o igual que, menor o igual que, entre y selección libre<br>Acá unos ejemplos tomados desde la fecha 1 de abril al 31 de junio de 2023: </div>
+      <div class="subtituloagrupados">Menor o igual que <span class="minifecha">(el 3 de marzo del 2023)</span></div>
+      <img class="primeraopcion" src="/ejemplomenoroigualqueanalisis.png">
+      <div class="subtituloagrupados">Mayor o igual que <span class="minifecha">(el 5 de marzo del 2023)</span></div>
+      <img class="primeraopcion" src="/ejemplomayoroigualqueanalisis.png">
+      <div class="subtituloagrupados">Entre <span class="minifecha">(el 5 de marzo del 2023 y el 8 de mayo del 2023)</span></div>
+      <img class="primeraopcion" src="/ejemploentreanalisis.png">
+      <div class="subtituloagrupados">Selección libre <span class="minifecha">(dias 5 de julio, 14 de julio, 15 de julio, 18 de julio, 19 de julio, 21 de julio)</span></div>
+      <img class="primeraopcion" src="/ejemploseleccionlibreanalisis.png">
+    </main>
+</body>
+
+</html>

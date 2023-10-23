@@ -7,6 +7,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="/login.min.css">
   <link rel="stylesheet" href="/recuperarcontraseña.min.css">
+  <style>
+    .divvolver{
+      top: 18px;
+      left: 20px;
+    }
+    .form{
+      padding: 60px 40px 20px;
+    }
+  </style>
 </head>
 
 <body>
@@ -24,7 +33,7 @@
           <input type="email" title="" required="required" name="correo" id="correo">
         </div>
         <input type="submit" value="Recuperar contraseña">
-        <div><a href="/recuperarcontraseña"><span class="olvidemicontraseña"><i class="fa-solid fa-user-slash"></i> Olvidé mi nombre de usuario</span></a></div>
+        <!-- <div><a href="/recuperarcontraseña"><span class="olvidemicontraseña"><i class="fa-solid fa-user-slash"></i> Olvidé mi nombre de usuario</span></a></div> -->
       </div>
     </form>
   </div>
@@ -52,7 +61,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.css">
 
     <script>
-      window.addEventListener("load", q => {
+      addEventListener("load", q => {
         usuario.setCustomValidity('El usuario que has ingresado no existe')
         usuario.reportValidity()
       })
@@ -60,14 +69,14 @@
   <% } %>
   <%if (errorRecuperarContraseña === 'Correo incorrecto') {%>
     <script>
-      window.addEventListener("load", q => {
+      addEventListener("load", q => {
         correo.setCustomValidity('El correo del usuario no coincide con el que has escrito')
         correo.reportValidity()
       })
     </script>
   <% } %>
 
-  <% if (intentosRestantes) { %>
+  <% if (intentosRestantes || correoEnviado) { %>
     <%- include("layouts/toastIntentosMaximosError.ejs", {intentosRestantes, tiempoQueQueda, correoEnviado}) %>
   <% } %>
 </body>

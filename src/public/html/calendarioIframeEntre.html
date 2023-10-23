@@ -9,10 +9,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.es.min.js"></script>
   <script>
-    window.onload = function() {   
+    onload = function() {   
     let mostrarOffscreen = x => {
       let rect = x.getBoundingClientRect()
-      if((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight) x.scrollIntoView()
+      if((rect.x + rect.width) > innerWidth || (rect.y + rect.height) > innerHeight) x.scrollIntoView()
     }
     $(`#datepickerEntre`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" }).on("show", q => mostrarOffscreen($(".datepicker")[0]))
     $(`#datepickerEntre`).datepicker("show")

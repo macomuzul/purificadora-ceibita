@@ -1,6 +1,6 @@
 const { DateTime } = require('luxon')
 const redis = require("../redis")
-let spreadsheetId = "1ebf6rLQLsRw7uqnz3Vu3JhyiHg7kXu33ySHJ718iq0U"
+let spreadsheetId = process.env.DOC_GSHEETS
 let sheetId = '0'
 let startColumnIndex = '0', endColumnIndex = '3'
 
@@ -20,6 +20,7 @@ let titulosGoogleSheets = tcgoogle(async (titulo, esDia, backgroundColor, fontSi
               {
                 userEnteredValue: { stringValue: titulo },
                 userEnteredFormat: {
+                  wrapStrategy: "WRAP",
                   horizontalAlignment: 'CENTER',
                   verticalAlignment: 'MIDDLE',
                   backgroundColor,
@@ -29,7 +30,7 @@ let titulosGoogleSheets = tcgoogle(async (titulo, esDia, backgroundColor, fontSi
             ]
           }
         ],
-        fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment),userEnteredValue(stringValue)',
+        fields: 'userEnteredFormat(backgroundColor,textFormat,wrapStrategy,horizontalAlignment,verticalAlignment),userEnteredValue(stringValue)',
         range
       }
     }
@@ -41,7 +42,7 @@ let titulosGoogleSheets = tcgoogle(async (titulo, esDia, backgroundColor, fontSi
 
 global.agregarFilaGoogleSheets = tcgoogle(async data => {
   let filagsheets = parseInt(await redis.get("filagsheets"))
-  if (await redis.get("hubocambioshoy") === "1") filagsheets--
+  if (await redis.get("hubocambioshoy") === "0") filagsheets--
   let startRowIndex = filagsheets, endRowIndex = filagsheets + 1
   let range = { sheetId, startRowIndex, endRowIndex, startColumnIndex, endColumnIndex }
   let requests = [{
@@ -51,13 +52,14 @@ global.agregarFilaGoogleSheets = tcgoogle(async data => {
           values: [data.map(x => ({
             userEnteredValue: { stringValue: x },
             userEnteredFormat: {
+              wrapStrategy: "WRAP",
               horizontalAlignment: 'CENTER',
               verticalAlignment: 'MIDDLE',
             }
           }))]
         }
       ],
-      fields: 'userEnteredFormat(horizontalAlignment,verticalAlignment),userEnteredValue(stringValue)',
+      fields: 'userEnteredFormat(wrapStrategy,horizontalAlignment,verticalAlignment),userEnteredValue(stringValue)',
       range
     }
   }]
@@ -66,8 +68,8 @@ global.agregarFilaGoogleSheets = tcgoogle(async data => {
 }, "google sheets agregarFilaGoogleSheets")
 
 global.crearMesGoogleSheets = async function () {
-  let ahora = DateTime.now()
-  await titulosGoogleSheets(`Mes: ${primeraLetraMayuscula(ahora.monthLong)} de ${ahora.year}`, 0, { red: 0.62, green: 0.77, blue: 0.91 }, 14)
+  let f = DateTime.now()
+  await titulosGoogleSheets(`${primeraLetraMayuscula(f.monthLong)} de ${f.year}`, 0, { red: 0.62, green: 0.77, blue: 0.91 }, 14)
   await crearDiaGoogleSheets()
 }
 

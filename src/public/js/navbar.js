@@ -1,7 +1,6 @@
 let navbar = $("#navbar")[0]
 $(document).on("click", esconderNavbar())
 
-//TODO hacer que la seccion de usuarios no sea visible para el usuario empleado
 function esconderNavbar() {
   $(navbar).find(".presionado").removeClass("presionado").find(".submenu").slideUp()
   navbar.classList.remove("presionado")

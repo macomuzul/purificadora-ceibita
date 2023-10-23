@@ -1,3 +1,14 @@
+const fs = require("fs")
+process.on('uncaughtException', async error => {
+  try {
+    await LogsGraves.log("Error fatal", error)
+    await mandarCorreoError("Error fatal importantisimo", "Ha ocurrido un error fatal", process.env.MI_CORREO)
+  } catch (err) {
+    console.log(JSON.stringify(err, ["name", "message", "arguments", "type", "error", "stack"]))
+    fs.writeFile('./logsfatales.log', JSON.stringify(err, ["name", "message", "arguments", "type", "error", "stack"]), e => console.log(e))
+    console.log(err)
+  }
+})
 require('dotenv').config()
 require('./db')
 
@@ -11,6 +22,8 @@ const passport = require('passport')
 const pruebasvalidaciones = require('./models/pruebasvalidaciones')
 const RedisStore = require('connect-redis')
 const redis = require("./redis")
+const { sanitizeFilter } = require("mongoose")
+const { LogsGraves } = require("./models/loggers")
 require("./globals/globals")
 require("./listenersDB")
 require('./security/authPassport')
@@ -41,8 +54,17 @@ async function crearPruebasValidacion(nombre) {
   try {
     // let j = await pruebasvalidaciones.create({nombre: "masmfnvcnv", fkdk: "kskd", precio: 1200, viajes: [2,5,5,51,1,4], turbokike: 29939})
     // console.log(j)
-    let a = await pruebasvalidaciones.updateOne({}, { fuu: "ewr" })
-    console.log(a)
+    // let a = await pruebasvalidaciones.updateOne({}, { fuu: "ewr" })
+    // console.log(a)
+    let req = {}
+    req.body = { apellido: "vergazo" }
+    req.body = { nombre: { $ne: 1 } }
+    // sanitizeFilter(req.body)
+    let { nombre } = req.body
+    let cambios = { nombre: "chimadaamigo" }
+    console.log(nombre)
+    let r = await pruebasvalidaciones.updateOne({ nombre }, cambios, { sanitizeFilter: true })
+    console.log(r)
     // let b = await pruebasvalidaciones.findOneAndUpdate({}, {nombre: "putito"})
     // console.log(b)
     // let j = await pruebasvalidaciones2.updateOne({nombre: "masmfnvcnv"}, {nombre: "masmfnvcnv",precio: -1500, viajes: [40], turbokike: 29939}, {runValidators: true})
@@ -53,7 +75,10 @@ async function crearPruebasValidacion(nombre) {
     console.log(error)
   }
 }
-
+// crearPruebasValidacion()
+// crearDiaGoogleSheets()
+//TODO este quitarlo despues
+app.set('view cache', false)
 app.set('port', process.env.PORT || 3000)
 app.set('views', path.join(__dirname, 'views'))
 app.engine('ejs', engine)
@@ -85,12 +110,12 @@ app.use(session({
   rolling: true,
   store: new RedisStore.default({
     client: redis,
-    prefix: "cookies:",
+    prefix: "cookiesceibita:",
     disableTouch: false
   }),
   cookie: {
-    // maxAge: 5 * 3600000,
-    maxAge: 30000,
+    maxAge: 24 * 3600000,
+    // maxAge: 30000,
   }
 }))
 app.use(flash())
@@ -99,17 +124,7 @@ app.use(passport.session())
 
 // routes
 app.use('/', require('./routes/index'))
-if (enDesarrollo) {
-  app.use((req, res, next) => {
-    console.log("buenas noches")
-    next()
-  })
-} else {
-  app.use((req, res, next) => {
-    console.log("buenas noches produccion")
-    req.isAuthenticated() ? next() : res.redirect('/')
-  })
-}
+enDesarrollo ? app.use((req, res, next) => next()) : app.use((req, res, next) => req.isAuthenticated() ? next() : res.redirect('/'))
 app.use('/', require('./routes/calendario'))
 
 app.use('/registrarventas', require('./routes/registrarventas').router)
@@ -142,6 +157,14 @@ app.get('*', (req, res) => res.send("La página a la que deseas acceder no exist
 // crearMesGoogleSheets()
 // agregarFilaGoogleSheets(["8:32 a. m.", "adm", "Movió un registro con fecha 20/10/2023 y sobreescribió otro registro con fecha 20/10/2023"])
 // agregarTextoDocs("coño de su madre marico no joda")
+// haceloPa()
+// crearDiaGoogleSheets()
+// async function guardarGD() {
+//   let r = await guardarDias()
+//   console.log(r ? "Se crearon con éxito" : "Falló al crearse")
+// }
+// guardarGD()
+
 app.listen(app.get('port'), () => console.log('servidor funcionando en el puerto: ', app.get('port')))
 
 // TODO hay que poner en la variable de entorno del servidor NODE_ENV="production"

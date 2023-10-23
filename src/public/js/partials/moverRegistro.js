@@ -67,7 +67,7 @@ async function preguntarSiQuiereRedireccionar(fecha) {
     confirmButtonText: "Sí",
     cancelButtonText: "No",
   })
-  if (isConfirmed) window.location = `/registrarventas/${devuelveFechaFormateada(new Date(fecha))}`
+  if (isConfirmed) location = `/registrarventas/${devuelveFechaFormateada(new Date(fecha))}`
 }
 
 function parseDate(dateString) {

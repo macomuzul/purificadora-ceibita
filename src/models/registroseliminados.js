@@ -3,6 +3,7 @@ const { Schema } = mongoose;
 const RegistroVentas = require('./registroventas');
 _ = require('lodash');
 let { validarString, cantidadMinima0YEntero, camposObligatorios } = require("./validaciones/validar")
+let { editarborrar } = require("./metodos/metodosschema")
 
 const registroseliminadosSchema = new Schema({
   registro: RegistroVentas.schema,
@@ -15,6 +16,7 @@ const registroseliminadosSchema = new Schema({
 }, {
   statics: {
     buscarPorID(id) { return this.findById(id).lean() },
+    ...editarborrar
   }
 })
 

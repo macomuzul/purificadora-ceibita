@@ -6,9 +6,9 @@ const swalConfirmarYCancelar = estilosSwal("btn btn-success margenbotonswal", "b
 const swalSobreescribir = estilosSwal("btn btn-success margenbotonswal2 botonconfirm", "btn margenbotonswal2 botondeny")
 
 $("#seleccionarTodos").on("change", e => checkboxes.prop("checked", e.currentTarget.checked))
-btnSubir.on("click", q => window.scrollTo(0, 0))
+btnSubir.on("click", q => scrollTo(0, 0))
 
-window.addEventListener("scroll", q => {
+addEventListener("scroll", q => {
   let seVeElBoton = btnSubir.hasClass("btnEntrance")
   if (scrollY === 0 && seVeElBoton) {
     btnSubir.removeClass("btnEntrance")
@@ -39,7 +39,7 @@ $("body").on("click", ".btnrestaurar", async function (e) {
   let { isConfirmed, dismiss } = await swalSobreescribir.fire({
     title: `Estás seguro que deseas restaurar este registro con fecha ${fecha}?`,
     icon: "warning",
-    width: (window.innerWidth * 3) / 4,
+    width: (innerWidth * 3) / 4,
     html,
     showCancelButton: true,
     confirmButtonText: "Restaurar usando esta fecha",
@@ -107,7 +107,7 @@ async function preguntarSiQuiereRefrescar(title, text, icon) {
   if (isConfirmed) location.reload()
 }
 
-async function swalSíNo(title, html, width = window.innerWidth * 3 / 4) {
+async function swalSíNo(title, html, width = innerWidth * 3 / 4) {
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     title, icon: "warning", width, html,
     showCancelButton: true,

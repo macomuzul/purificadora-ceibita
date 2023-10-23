@@ -41,82 +41,82 @@ describe('validaciones antes de guardar', () => {
     })
   })
 
-  // describe(("Valida que los precios esten llenos"), () => {
-  //   it("validacion un solo precio una vez", async () => {
-  //     let resultado = await validarUnSoloPrecio(0)
-  //     expect(resultado).to.be.true
-  //   })
+  describe(("Valida que los precios esten llenos"), () => {
+    it("validacion un solo precio una vez", async () => {
+      let resultado = await validarUnSoloPrecio(0)
+      expect(resultado).to.be.true
+    })
 
-  //   it("validacion varios precios una vez", async () => {
-  //     let resultado = await validarVariosPrecios(0)
-  //     expect(resultado).to.be.true
-  //   })
+    it("validacion varios precios una vez", async () => {
+      let resultado = await validarVariosPrecios(0)
+      expect(resultado).to.be.true
+    })
 
-  //   it("validacion un solo precio varias veces", async () => {
-  //     let resultado = await validarUnSoloPrecio(4)
-  //     expect(resultado).to.be.true
-  //   })
+    it("validacion un solo precio varias veces", async () => {
+      let resultado = await validarUnSoloPrecio(4)
+      expect(resultado).to.be.true
+    })
 
-  //   it("validacion varios precios varias veces", async () => {
-  //     let resultado = await validarVariosPrecios(4)
-  //     expect(resultado).to.be.true
-  //   })
-  // })
+    it("validacion varios precios varias veces", async () => {
+      let resultado = await validarVariosPrecios(4)
+      expect(resultado).to.be.true
+    })
+  })
 
-  // describe("Mezcla validar productos y validar precios", () => {
-  //   it("Valida productos y precios una vez", async () => {
-  //     let resultado = await validarPreciosYProductosUnaVez()
-  //     expect(resultado).to.be.true
-  //   })
-  //   it("Valida productos y precios varias veces", async () => {
-  //     let resultado = await validarPreciosYProductosVariasVeces()
-  //     expect(resultado).to.be.true
-  //   })
-  // })
+  describe("Mezcla validar productos y validar precios", () => {
+    it("Valida productos y precios una vez", async () => {
+      let resultado = await validarPreciosYProductosUnaVez()
+      expect(resultado).to.be.true
+    })
+    it("Valida productos y precios varias veces", async () => {
+      let resultado = await validarPreciosYProductosVariasVeces()
+      expect(resultado).to.be.true
+    })
+  })
 
-  // it("Añade ceros", async () => {
-  //   let resultado = await añadeCeros()
-  //   expect(resultado).to.be.true
-  // })
+  it("Añade ceros", async () => {
+    let resultado = await añadeCeros()
+    expect(resultado).to.be.true
+  })
 
-  // it("Entra mas de lo que sale", async () => {
-  //   let resultado = await entraMasDeLoQueSale()
-  //   expect(resultado).to.be.true
-  // })
+  it("Entra mas de lo que sale", async () => {
+    let resultado = await entraMasDeLoQueSale()
+    expect(resultado).to.be.true
+  })
 
-  // describe("Borra filas vacias", () => {
-  //   it("Borra algunas filas", async () => {
-  //     let resultado = await borrarFilasVacias()
-  //     expect(resultado).to.be.true
-  //   })
-  // })
+  describe("Borra filas vacias", () => {
+    it("Borra algunas filas", async () => {
+      let resultado = await borrarFilasVacias()
+      expect(resultado).to.be.true
+    })
+  })
 })
 
-// describe("configuraciones", () => {
-//   it("muestra x en filas y columnas", async () => {
-//     let resultado = await filasycolumnaspresionarx()
-//     expect(resultado).to.be.true
-//   })
-//   it("esconde x en filas y columnas1", async () => {
-//     let resultado = await filasycolumnasdesactivar()
-//     expect(resultado).to.be.true
-//   })
-//   it("esconde x en filas y columnas2", async () => {
-//     let resultado = await filasycolumnaspresionar1segundo()
-//     expect(resultado).to.be.true
-//   })
-// })
+describe("configuraciones", () => {
+  it("muestra x en filas y columnas", async () => {
+    let resultado = await filasycolumnaspresionarx()
+    expect(resultado).to.be.true
+  })
+  it("esconde x en filas y columnas1", async () => {
+    let resultado = await filasycolumnasdesactivar()
+    expect(resultado).to.be.true
+  })
+  it("esconde x en filas y columnas2", async () => {
+    let resultado = await filasycolumnaspresionar1segundo()
+    expect(resultado).to.be.true
+  })
+})
 
-// describe('añadir producto y viajes', () => {
-//   it('añade producto', async () => {
-//     let resultado = await añadirProducto()
-//     expect(resultado).to.be.true
-//   })
-//   it('añade viajes', async () => {
-//     let resultado = await añadirViaje()
-//     expect(resultado).to.be.true
-//   })
-// })
+describe('añadir producto y viajes', () => {
+  it('añade producto', async () => {
+    let resultado = await añadirProducto()
+    expect(resultado).to.be.true
+  })
+  it('añade viajes', async () => {
+    let resultado = await añadirViaje()
+    expect(resultado).to.be.true
+  })
+})
 
 function comparar(t1, t2) {
   t1 = t1.replaceAll(/\n| /g, "").replaceAll(/ui-sortableui-sortable-disabled/g,"").replaceAll(/class="ui-sortable-handle"/g,"").replaceAll(/class=""/g,"")
@@ -129,11 +129,11 @@ function filasycolumnasdesactivar() {
   return new Promise(resolve => {
     cy.get('.configuraciones').click()
     cy.wait(500)
-    cy.contains("Ordenar alfabéticamente").should("be.visible")
+    cy.contains("Ordenar columnas").should("be.visible")
     cy.get('#filasycolumnasdesactivar').check()
     cy.get('.modal-footer .guardarconfig').click()
     cy.wait(500)
-    cy.contains("Ordenar alfabéticamente").should("not.be.visible")
+    cy.contains("Ordenar columnas").should("not.be.visible")
     cy.get('[data-tabid="0"] > table > :nth-child(5) > :nth-child(1) > .borrarcolumnas').then(el => {
       const win = el[0].ownerDocument.defaultView
       const after = win.getComputedStyle(el[0], 'after')
@@ -150,11 +150,11 @@ function filasycolumnaspresionar1segundo() {
   return new Promise(resolve => {
     cy.get('.configuraciones').click()
     cy.wait(500)
-    cy.contains("Ordenar alfabéticamente").should("be.visible")
+    cy.contains("Ordenar columnas").should("be.visible")
     cy.get('#filasycolumnaspresionar1segundo').check()
     cy.get('.modal-footer .guardarconfig').click()
     cy.wait(500)
-    cy.contains("Ordenar alfabéticamente").should("not.be.visible")
+    cy.contains("Ordenar columnas").should("not.be.visible")
     cy.get('[data-tabid="0"] > table > :nth-child(5) > :nth-child(1) > .borrarcolumnas').then(el => {
       const win = el[0].ownerDocument.defaultView
       const after = win.getComputedStyle(el[0], 'after')
@@ -171,11 +171,11 @@ function filasycolumnaspresionarx() {
   return new Promise(resolve => {
     cy.get('.configuraciones').click()
     cy.wait(500)
-    cy.contains("Ordenar alfabéticamente").should("be.visible")
+    cy.contains("Ordenar columnas").should("be.visible")
     cy.get('#filasycolumnaspresionarx').check()
     cy.get('.modal-footer .guardarconfig').click()
     cy.wait(500)
-    cy.contains("Ordenar alfabéticamente").should("not.be.visible")
+    cy.contains("Ordenar columnas").should("not.be.visible")
     cy.get('.contenidotabs').should("have.class", "cerrarconboton")
     cy.get('[data-tabid="0"] > table > :nth-child(5) > :nth-child(1) > .borrarcolumnas').then(el => {
       const win = el[0].ownerDocument.defaultView
@@ -217,11 +217,11 @@ function borrarCamiones() {
     try {
       cy.get('.configuraciones').click()
       cy.wait(500)
-      cy.contains("Ordenar alfabéticamente").should("be.visible")
+      cy.contains("Ordenar columnas").should("be.visible")
       cy.get('#filasycolumnasdesactivar').check()
       cy.get('.modal-footer .guardarconfig').click()
       cy.wait(500)
-      cy.contains("Ordenar alfabéticamente").should("not.be.visible")
+      cy.contains("Ordenar columnas").should("not.be.visible")
       cy.get(".grupotabs .tabs__label").click('topRight')
       cy.get(".swal2-confirm").click()
       cy.contains("No se puede borrar, debe haber al menos un camión")

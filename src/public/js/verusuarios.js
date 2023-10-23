@@ -24,7 +24,7 @@ $("body").on("click", ".svgeliminar", async function () {
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     title: "Estás seguro que deseas borrar este usuario?",
     icon: "warning",
-    width: window.innerWidth / 2,
+    width: innerWidth / 2,
     html,
     showCancelButton: true,
     confirmButtonText: "Sí",

@@ -1,28 +1,29 @@
 let nombrePlantillaURL = location.pathname.split("/").at(-1)
 
 $(".contenedoreliminar").on('click', async function () {
-  let result = await swalConfirmarYCancelar.fire({
+  let { isConfirmed } = await swalConfirmarYCancelar.fire({
     icon: "warning",
     text: "Estas seguro que deseas borrar esta plantilla?",
     showCancelButton: true,
     confirmButtonText: "Continuar",
     cancelButtonText: "No continuar",
   })
-  if (result.isConfirmed) {
+  if (isConfirmed) {
     $.ajax({
       url: `/plantillas/${nombrePlantillaURL}`,
       method: "DELETE",
       contentType: "application/json",
       success: async q => {
         await Swal.fire("Se ha borrado la plantilla exitosamente", "Ahora será redireccionado al menú de plantillas", "success")
-        window.location = "/plantillas"
+        location = "/plantillas"
       },
       error: r => mostrarError(r.responseText)
     })
   }
 })
 
-
+//TODO revisar que los resumenesdia hacen que cambios sean true en las semanas meses y años, revisar los crons y los mensajes a docs y sheets
+//TODO ver que funciona el location
 $("body").on('click', "#guardar", async function () {
   if (!await validarPlantillas()) return
   let nombre = $("#nombreplantilla").val()
@@ -35,7 +36,7 @@ $("body").on('click', "#guardar", async function () {
     data,
     success: async q => {
       await Swal.fire("Se ha guardado exitosamente", "El archivo se ha almacenado en la base de datos", "success")
-      window.location = (url + nombrePlantilla)
+      if(nombrePlantillaURL !== nombre) location = "/plantillas/editar/" + nombre
     },
     error: r => Swal.fire("Ups...", r.responseText, "error")
   })

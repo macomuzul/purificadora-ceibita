@@ -399,8 +399,8 @@ th {
 .dropdown-toggle-split::after,
 .dropend .dropdown-toggle-split::after,
 .dropup .dropdown-toggle-split::after {
-  font-size: 22px;
-  transform: rotate(90deg);
+  font-size: 23px;
+  transform: rotate(90deg) translate(-2px, 0px);
 }
 
 .contenedorflex {

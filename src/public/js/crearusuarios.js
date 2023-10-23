@@ -18,17 +18,26 @@ function mostrarError(error) {
   return false
 }
 
+let c = $("#correo")[0]
 $("body").on('click', '#guardar', async function () {
   [usuario, contraseña, confirmarContraseña, correo] = ["#usuario", "#contraseña", "#confirmarContraseña", "#correo"].map(id => $(id).val((_, x) => x = x.trim()).val())
   rol = $("#rol")[0].innerText;
   if (!await validarDatos()) return
-  if (correo && !$("#correo")[0].validar()) return
+  if (correo) {
+    validarCorreo()
+    if (!c.checkValidity()) return c.reportValidity()
+  }
   modal.mostrar(crearUsuario)
 })
 
+let validarCorreo = q => c.setCustomValidity(c.validity.valueMissing ? 'Por favor escribe un correo' : c.validity.typeMismatch ? 'Por favor escribe un correo válido por ejemplo: usuario@dominio.com' : '')
+c.addEventListener('input', validarCorreo)
+
+
+
 let crearUsuario = async function () {
   let contraseñaVerificacion = $("#verificacionIdentidad")[0].value;
-  let data = JSON.stringify({ usuario, contraseña, correo: correo || "-", rol, contraseñaVerificacion })
+  let data = JSON.stringify({ usuario, contraseña, ...(correo ? { correo } : {}), rol, contraseñaVerificacion })
   $.ajax({
     url: `/empleados/usuarios/crear`,
     method: "POST",
@@ -36,8 +45,8 @@ let crearUsuario = async function () {
     data,
     success: q => {
       Swal.fire("ÉXITO", "Se ha guardado el usuario correctamente", "success");
-      if (correo)
-        toastr.info("Se ha enviado un mensaje a tu correo para validarlo", "Atención")
+      // if (correo)
+      //   toastr.info("Se ha enviado un mensaje a tu correo para validarlo", "Atención")
     },
     error: r => Swal.fire("Ups...", r.responseText, "error")
   })

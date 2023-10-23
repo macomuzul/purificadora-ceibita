@@ -655,4 +655,4 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
 
   }))
 
-let irARegistrarVentas = q => window.location = `/registrarventas/${fechaseleccionada.getDate()}-${(fechaseleccionada.getMonth() + 1)}-${fechaseleccionada.getFullYear()} `;
+let irARegistrarVentas = q => location = `/registrarventas/${fechaseleccionada.getDate()}-${(fechaseleccionada.getMonth() + 1)}-${fechaseleccionada.getFullYear()} `;

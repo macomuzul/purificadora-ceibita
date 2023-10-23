@@ -65,16 +65,22 @@ async function rangoEntre(fecha1, fecha2, tiempo, resumen) {
 }
 
 async function rangoEntreAños(fecha1, fecha2) {
+  let diasYMesesSueltosInicio = [], diasYMesesSueltosFin = []
   let inicio = fecha1.startOf("day"), fin = fecha2.startOf("day")
+  if (inicio.hasSame(fin, "year")) {
+    let año = await rangoEntre(fecha1, fecha2, "month", ResumenMes)
+    return [({ _id: fecha1, ...devuelveValoresSumados(año), f: fecha2 })]
+  } else {
     ;[diasYMesesSueltosInicio, fecha1] = await añoDatosSueltos(1, fecha1)
-    ;[diasYMesesSueltosFin, fecha2] = await añoDatosSueltos(0, fecha2)
-  if (diasYMesesSueltosInicio.length > 0) diasYMesesSueltosInicio = devuelveObjDiasSueltos(diasYMesesSueltosInicio, inicio, fecha1.minus(1))
-  if (diasYMesesSueltosFin.length > 0) diasYMesesSueltosFin = devuelveObjDiasSueltos(diasYMesesSueltosFin, fecha2.plus(1), fin)
-  return [...diasYMesesSueltosInicio, ...await ResumenAño.entreOrdenado(fecha1, fecha2), ...diasYMesesSueltosFin]
+      ;[diasYMesesSueltosFin, fecha2] = await añoDatosSueltos(0, fecha2)
+    if (diasYMesesSueltosInicio.length > 0) diasYMesesSueltosInicio = devuelveObjDiasSueltos(diasYMesesSueltosInicio, inicio, fecha1.minus(1))
+    if (diasYMesesSueltosFin.length > 0) diasYMesesSueltosFin = devuelveObjDiasSueltos(diasYMesesSueltosFin, fecha2.plus(1), fin)
+    return [...diasYMesesSueltosInicio, ...await ResumenAño.entreOrdenado(fecha1, fecha2), ...diasYMesesSueltosFin]
+  }
 }
 
 router.get("/:agruparPorP(agruparpor=(dias|semanas|meses|a%C3%B1os))&:rangoP(rango=(mayor|menor|libre|entre))&:fechaP", tcrutas(async (req, res) => {
-  let { rangoP, agruparPorP, fechaP } = req.params;
+  let { rangoP, agruparPorP, fechaP } = req.params
   if (!/^(dias|semanas|meses|años)=.*/.test(fechaP)) throw new Error()
 
   let [, rango] = rangoP.split("=")
@@ -92,8 +98,7 @@ router.get("/:agruparPorP(agruparpor=(dias|semanas|meses|a%C3%B1os))&:rangoP(ran
   else fecha = devuelveDateTime(fecha)
 
   if (agruparPor !== "day") await actualizarSiHuboCambios(agruparPor)
-
-  if (unidadTiempo === agruparPor) {
+  if (unidadTiempo === agruparPor && rango === "libre") {
     datos = await resumen.ordenado().in(fechas)
     datos = await agrupar(datos, agruparPor)
   } else if (unidadTiempo !== "day" && rango === "libre") {
@@ -150,5 +155,7 @@ async function agruparMultiple(fechas, tiempo) {
   let dias = Object.entries(agrupados).map(([k, v]) => v.length > 1 ? ({ _id: DateTime.fromISO(k).startOf(tiempo), ...devuelveValoresSumados(v), f: DateTime.fromISO(k).endOf(tiempo) }) : v[0])
   return dias.sort((a, b) => a._id - b._id)
 }
+
+router.get("/comofunciona", (req, res) => res.render("comofuncionaanalisis", { esAdmin: esAdmin(req) }))
 
 module.exports = router

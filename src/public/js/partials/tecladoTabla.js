@@ -15,7 +15,7 @@ $("body").on("keydown", "td", function (e) {
 
 let mostrarOffscreen = x => {
   let rect = x.getBoundingClientRect()
-  if((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight) x.scrollIntoView()
+  if ((rect.x + rect.width) > innerWidth || (rect.y + rect.height) > innerHeight) x.scrollIntoView()
 }
 
 function enfocarCelda([x], e) {
@@ -30,7 +30,7 @@ function enfocarCelda([x], e) {
 
 function irAlFinalDelTexto(elem) {
   let range = document.createRange()
-  let sel = window.getSelection()
+  let sel = getSelection()
   if (elem.innerText == "") return
   range.setStart(elem.childNodes[0], elem.innerText.length)
   range.collapse(false)
@@ -77,7 +77,7 @@ $("body").on("keydown", "input", function (e) {
 function getSelectionTextInfo(x) {
   let atStart = false, atEnd = false
   let selRange, testRange
-  let sel = window.getSelection()
+  let sel = getSelection()
   if (sel.rangeCount) {
     selRange = sel.getRangeAt(0)
     testRange = selRange.cloneRange()

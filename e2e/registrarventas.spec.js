@@ -175,8 +175,9 @@ test.describe("prueba console", () => {
 function log(objJSON) {
   return msg => {
     if (msg.type() === 'log') {
-      console.log("funciona")
       let result = contiene(msg.text(), objJSON)
+      console.log("1",objJSON)
+      console.log("2",msg.text())
       expect(result).toBeTruthy()
     }
   }

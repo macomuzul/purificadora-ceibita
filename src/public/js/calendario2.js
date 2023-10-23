@@ -15,7 +15,7 @@ camionerosEJS.forEach(x => camioneros[x.nombre] = x.color)
 $(".camionero").each((i, x) => x.querySelector(".color").style.background = camioneros[x.querySelector(".nombreCamionero").innerText])
 
 let eventosCalendario = []
-diasEJS.forEach(({ camioneros, _id, ultimocambio, usuario }) => { camioneros.forEach((c, i) => eventosCalendario.push({ name: `Camión ${(i + 1)}`, description: `Conductor: ${c}`, date: _id.aUTC().toDateString(), type: i + "", ultimocambio, usuario, color: camioneros[c] })) })
+diasEJS.forEach(({ camioneros: cam, _id, ultimocambio, usuario }) => cam.forEach((c, i) => eventosCalendario.push({ name: `Camión ${(i + 1)}`, description: `Conductor: ${c}`, date: _id.aUTC().toDateString(), type: i + "", ultimocambio, usuario, color: camioneros[c] })))
 
 toastr.options = {
   "closeButton": true,
@@ -26,7 +26,7 @@ toastr.options = {
   "extendedTimeOut": "100000"
 }
 
-window.onload = function () {
+onload = function () {
   $("#demoEvoCalendar").evoCalendar({
     format: "D M dd yyyy",
     titleFormat: "MM",

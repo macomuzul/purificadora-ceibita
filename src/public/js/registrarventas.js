@@ -36,10 +36,6 @@ onload = q => {
   guardarValoresConfig()
 }
 
-const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]') //estos son para el bootstrap
-const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-
-
 let _cantidadTabs = () => $(".contenidotabs").children().length
 let _idTab = () => $(".grupotabs .tabs__radio:checked")[0].dataset.tabid
 let _tabla = () => $(`.contenidotabs [data-tabid="${_idTab()}"] table`)[0]
@@ -352,8 +348,8 @@ async function borrarColumnas(colborrar) {
   }
 }
 
-$("#diaanterior").on("click", q => window.location = `/registrarventas/${hoy.subtract("1", "day").format("D-M-YYYY")}`)
-$("#diasiguiente").on("click", q => window.location = `/registrarventas/${hoy.add("1", "day").format("D-M-YYYY")}`)
+$("#diaanterior").on("click", q => location = `/registrarventas/${hoy.subtract("1", "day").format("D-M-YYYY")}`)
+$("#diasiguiente").on("click", q => location = `/registrarventas/${hoy.add("1", "day").format("D-M-YYYY")}`)
 
 function añadirceros(cuerpo) {
   cuerpo.querySelectorAll("td:not(:nth-child(1),:nth-child(2))").forEach(celda => celda.innerText ||= 0)
@@ -448,7 +444,7 @@ $("#resumen").on("click", async () => {
 
   await swal.fire({
     title: "Resumen de todo lo que vendiste durante el día",
-    width: window.innerWidth * 0.6,
+    width: innerWidth * 0.6,
     html,
     showConfirmButton: false,
     didOpen: () => {
@@ -528,7 +524,7 @@ async function borrarFilasVacias(tabla, numtabla) {
   await swal3Botones.fire({
     title: "Se han detectado filas vacias",
     icon: "warning",
-    width: window.innerWidth * 3 / 4,
+    width: innerWidth * 3 / 4,
     html: `<div class="textovista">Se han detectado filas vacias en la tabla ${numtabla}, qué desea hacer?</div>
     ${tabsTexto(tablaCopia, tablaCopiaSinFilasVacias, "Ver filas vacías")}${botones}`,
     showCancelButton: false,
@@ -582,7 +578,7 @@ async function entraMasDeLoQueSale(tabla, numtabla) {
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     title: `<h3>Se ha detectado filas en la tabla ${numtabla} donde lo que sale es mayor que lo que entra, por favor corrígelos para poder guardar los datos</h3>`,
     icon: "error",
-    width: window.innerWidth * 3 / 4,
+    width: innerWidth * 3 / 4,
     html: tablaCopia,
     showCancelButton: true,
     stopKeydownPropagation: false,
@@ -613,7 +609,7 @@ async function validarQueTablaNoTengaMismoNombre(tabla, numtabla) {
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     title: `Error, hay productos que tienen el mismo nombre en la tabla ${numtabla}`,
     icon: "error",
-    width: window.innerWidth * 3 / 4,
+    width: innerWidth * 3 / 4,
     html: tablaCopia,
     showCancelButton: true,
     stopKeydownPropagation: false,
@@ -651,7 +647,7 @@ async function validarQueLosPreciosNoTenganPuntoAlFinal(tabla, numtabla) {
   let result = await swal3BotonesInvertido.fire({
     title: `Hay valores que terminan en . en la tabla ${numtabla}, te faltó escribir un número? Qué deseas hacer?`,
     icon: "error",
-    width: window.innerWidth * 3 / 4,
+    width: innerWidth * 3 / 4,
     html: tablaCopia,
     showCancelButton: true,
     showDenyButton: true,
@@ -695,7 +691,7 @@ async function validarQueLosPreciosNoSeanMenorAUno(tabla, numtabla) {
   await swal3Botones.fire({
     title: `Hay valores menores a 1, en la tabla ${numtabla} estás seguro que no es un error? Deseas continuar?`,
     icon: "error",
-    width: window.innerWidth * 3 / 4,
+    width: innerWidth * 3 / 4,
     html,
     stopKeydownPropagation: false,
     showCancelButton: false,
@@ -751,7 +747,7 @@ async function validarProductosYPrecios(tabla, numtabla) {
   let result = await swalConfirmarYCancelar.fire({
     title: titulo,
     icon: "error",
-    width: window.innerWidth * 3 / 4,
+    width: innerWidth * 3 / 4,
     html: tablaCopia,
     showCancelButton: true,
     stopKeydownPropagation: false,
@@ -796,14 +792,14 @@ async function borrarTablasVacias() {
 
 async function swalContinuarNoContinuar(title, html) {
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
-    title, icon: "warning", width: window.innerWidth * 3 / 4, html,
+    title, icon: "warning", width: innerWidth * 3 / 4, html,
     showCancelButton: true,
     confirmButtonText: "Continuar",
     cancelButtonText: "No continuar",
   })
   return isConfirmed
 }
-async function swalSíNo(title, html, width = window.innerWidth * 3 / 4) {
+async function swalSíNo(title, html, width = innerWidth * 3 / 4) {
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     title, icon: "warning", width, html,
     showCancelButton: true,
@@ -866,7 +862,7 @@ ${devuelveCamioneros()}
 </div></div>`
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     icon: "warning",
-    width: window.innerWidth * 3 / 4,
+    width: innerWidth * 3 / 4,
     html,
     showCancelButton: true,
     confirmButtonText: "Continuar",
@@ -941,7 +937,6 @@ $("#exportarpdf")[0].inicializar(() => {
   let listaTablas = opcionExportarPDF === 0 ? [_tabla()] : devuelveListaTablas()
   let html = ``;
   listaTablas.forEach((tabla, indice) => {
-    debugger
     let copiaTabla = tabla.cloneNode(true);
     let medirTabla = copiaTabla.cloneNode(true);
     $("body").append(medirTabla)
@@ -984,7 +979,7 @@ async function opcionesPlantilla() {
       <button class="botonswal4 botoncancel" onclick="cerrarSwal()">Cancelar</button>
     </div>`
   await swal.fire({
-    width: window.innerWidth / 2,
+    width: innerWidth / 2,
     focusConfirm: false,
     icon: "question",
     title: 'Qué deseas hacer con esta plantilla?',
@@ -1010,7 +1005,7 @@ async function ordenHandler(sinEliminar) {
   let result = await swal3Botones.fire({
     title: "Qué orden desea utilizar?",
     icon: "question",
-    width: window.innerWidth / 2,
+    width: innerWidth / 2,
     showCancelButton: true,
     showDenyButton: true,
     confirmButtonText: "Usar orden de la tabla",
@@ -1034,7 +1029,7 @@ async function mezclarHandler(sinEliminar, ordenTabla) {
   let result = await swalConfirmarYCancelar.fire({
     title: "Aquí puedes ver las diferencias entre la tabla original y el resultado final",
     icon: "warning",
-    width: window.innerWidth * 3 / 4,
+    width: innerWidth * 3 / 4,
     html: tabsTexto(tabla, tablaCopia, "Ver tabla original") + `<br><br><h2>Deseas conservar los cambios?</h2>`,
     showCancelButton: true,
     confirmButtonText: "Conservar",
@@ -1165,7 +1160,7 @@ $("body").on('click', '.contenedoreliminar', async function () {
       let contraseñaVerificacion = $("#verificacionIdentidad").val()
       let data = JSON.stringify({ contraseñaVerificacion })
       $.ajax({
-        url: window.location.pathname,
+        url: location.pathname,
         method: "DELETE",
         contentType: "application/json",
         data,

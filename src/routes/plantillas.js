@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const Plantilla = require('../models/plantillas')
 
-let objUpdate = (_id, update) => ({ updateOne: { filter: { _id }, update } })
+let objUpdate = (nombre, update) => ({ updateOne: { filter: { nombre }, update } })
 
 router.route('/').get(async (req, res) => {
   let plantillas = await Plantilla.ordenado().select("-productos -_id -orden")
@@ -10,14 +10,13 @@ router.route('/').get(async (req, res) => {
   let { nombreDefault, nombrePlantillas } = req.body
   let plantillas = await Plantilla.ordenado().select("orden nombre esdefault")
   if (nombrePlantillas.length !== plantillas.length) throw new errorDB("La cantidad de plantillas que enviaste no coincide con la cantidad actual, por favor recarga la página e inténtalo de nuevo")
-  //verifica si tienen los mismos nombres las plantilla en la base de datos y las enviadas
   if (!nombrePlantillas.every(x => plantillas.map(x => x.nombre).includes(x))) throw new errorDB("Hay nombres de plantilla que no coinciden, por favor recarga la página e inténtalo de nuevo")
 
   let plantillasAActualizar = []
   let plantillaDefault = plantillas.find(x => x.esdefault)
-  if (plantillaDefault.nombre !== nombreDefault) plantillasAActualizar.push(objUpdate(plantillaDefault._id, { $unset: { esdefault: true } }), objUpdate(plantillas.find(x => x.nombre === nombreDefault)._id, { esdefault: true }))
+  if (plantillaDefault.nombre !== nombreDefault) plantillasAActualizar.push(objUpdate(plantillaDefault.nombre, { $unset: { esdefault: true } }), objUpdate(nombreDefault, { esdefault: true }))
 
-  nombrePlantillas.forEach((x, i) => x !== plantillas[i].nombre && plantillasAActualizar.push(objUpdate(plantillas[i]._id, { orden: i })))
+  nombrePlantillas.forEach((x, i) => x !== plantillas[i].nombre && plantillasAActualizar.push(objUpdate(x, { orden: i })))
   await Plantilla.bulkWrite(plantillasAActualizar)
   res.send()
 }, "No se pudieron guardar los cambios"))
@@ -37,7 +36,7 @@ router.route('/editar/:nombre').get(tcaccion(async (req, res) => {
 }, "La plantilla que deseas editar ya no existe")).patch(tcaccion(async (req, res) => {
   req.body.ultimaedicion = devuelveUsuario(req)
   req.body.fechaultimaedicion = Date.now()
-  await Plantilla.editarQueryCustom({ nombre: req.params.nombre }, req.body)
+  await Plantilla.editarCustom({ nombre: req.params.nombre }, req.body)
   res.send()
 }, "Ocurrió un error al actualizar la plantilla"))
 
@@ -47,7 +46,7 @@ router.get('/devuelveplantilla/:nombre', tcaccion(async (req, res) => {
   res.send(plantilla.productos)
 }, "Hubo un error al recuperar la plantilla"))
 
-router.get('/devuelvenombreplantillas', tcaccion(async (req, res) => {
+router.get('/devuelvenombres', tcaccion(async (req, res) => {
   let plantillas = await Plantilla.find().select("nombre -_id")
   res.send(plantillas?.map(x => x.nombre) || [])
 }, "Hubo un error al recuperar la plantilla"))

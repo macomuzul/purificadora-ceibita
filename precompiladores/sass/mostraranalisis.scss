@@ -289,7 +289,7 @@ td {
 }
 
 th {
-  min-width: 140px;
+  min-width: 165px;
   max-width: 240px;
 }
 
@@ -457,7 +457,8 @@ tfoot td:not(:first-child) {
 .tituloSalonDeLaFama {
   text-align: center;
   font-weight: 600;
-  background: radial-gradient(ellipse at center, #443501 0%,#000000 100%);
+  background: radial-gradient(ellipse at center, #443501 0%, #000000 100%);
+
   span {
     font-size: 45px;
     background-image: linear-gradient(to right, #a57c3e 0, #cb9b51 22%, #f6e27a 45%, #f6f2c0 50%, #f6e27a 55%, #cb9b51 78%, #a57c3e 100%);
@@ -467,13 +468,28 @@ tfoot td:not(:first-child) {
   }
 }
 
-.tituloGrupoPodios{
+.tituloGrupoPodios {
   font-size: 35px;
   margin: 20px 0;
   color: aquamarine;
   box-shadow: 0 0 10px;
 }
 
-.checkboxAnimacion{
+.checkboxAnimacion {
   margin: 20px 0;
+}
+
+.ocultarresumen {
+  padding: 15px 30px;
+  font-weight: 500;
+  justify-self: flex-end;
+  align-self: center;
+  svg {
+    rotate: 90deg;
+  }
+}
+
+.gridresumen{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 }

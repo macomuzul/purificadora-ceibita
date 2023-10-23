@@ -1,7 +1,7 @@
 
 let mostrarOffscreen = x => {
   let rect = x.getBoundingClientRect()
-  if((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight) x.scrollIntoView()
+  if((rect.x + rect.width) > innerWidth || (rect.y + rect.height) > innerHeight) x.scrollIntoView()
 }
 
 let validadorIframe = $(`#validadorIframe`)[0]

@@ -98,6 +98,7 @@
                         </ul>
                       </div>
                     </div>
+                    <custom-popover data-alineacion="middle">Ahora puedes seleccionar al conductor presionando el botón con flecha hacia abajo de al lado</custom-popover>
                   </div>
                     <%- include("layouts/tablacompleta", {j, registro, plantillaDefault}) %>
               </div>
@@ -138,18 +139,18 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div class="grupomodal">Ordenar alfabéticamente</div>
+          <div class="grupomodal">Ordenar columnas <custom-popover>Agrega flechas en los encabezados de la tabla para poder ordenar la columna en orden alfabético si contiene letras o numérico si contiene números<br><b>Desordena los datos sin preocupación</b><br>No te preocupes si desordenas tus datos, luego de presionar una flecha aparecerá un botón para recuperar el orden anterior o incluso puedes mover los datos tú manualmente activando la opción de cambiar el orden de los productos de las tablas</custom-popover></div>
           <hr>
           <article>
-            <custom-switch data-id="switchreordenalfabetico" data-checked="1">Agregar ícono para ordenar por orden alfabético</custom-switch>
+            <custom-switch data-id="switchreordenalfabetico" data-checked="1">Agregar ícono para ordenar columnas</custom-switch>
             <hr>
-            <div class="grupomodal">Cambiar orden de</div>
+            <div class="grupomodal">Cambiar orden <custom-popover>La primera opción te permite mover el orden de los camiones arrastrando las pestañas que dicen Camión 1, Camión 2, Camión 3, etc.<br><br>La segunda opción te permite cambiar el orden en el que aparecen los productos en la tabla<br><b>Importante:</b><br>No puedes escribir en la tabla mientras esta opción está activa, para poder volver a escribir desactiva esta opción primero</custom-popover></div>
             <hr>
             <custom-switch data-id="switchreordenarproductos">Cambiar el orden de los productos de las tablas</custom-switch>
             <custom-switch data-id="switchreordenarcamiones">Cambiar el orden de los camiones</custom-switch>
           </article>
           <hr>
-          <div class="grupomodal">Borrar elementos</div>
+          <div class="grupomodal">Borrar elementos <custom-popover>Ambas opciones te permiten borrar ya sea un camión, fila o columna que no deseas en tu registro, ambos son muy similares<br>Ambos poseen tres modos:<br><b>Modo 1:</b><br>Si seleccionas este modo en la opción 1 te permitirá borrar un camión manteniendo presionado por un segundo la pestaña del camión que deseas borrar. En cambio si seleccionas este modo en la opción 2 te permitirá borrar un producto de la tabla presionando la última celda de la tabla (la celda de la columna ingresos)<br><b>Modo 2:</b><br>Lo mismo que el modo 1 pero ahora aparecerá un botón con una X para poder borrarlos<br><b>Modo 3:</b><br>Desactiva la opción de borrar</custom-popover></div>
           <hr>
           <article>
             <div class="titulosecundarioconfiguraciones">¿Cómo prefiere borrar los camiones?</div>
@@ -168,7 +169,7 @@
             </custom-radiogroup>
           </article>
           <hr>
-            <div class="grupomodal">Exportar tablas</div>
+            <div class="grupomodal">Exportar tablas <custom-popover>Si escoges exportar solo la tabla actual exportará la tabla que estés visualizando en ese instante<br><br>Si escoges exportar todas las tablas exportarán todas las tablas que haya en la página</custom-popover></div>
           <hr>
           <article>
             <div class="titulosecundarioconfiguraciones">¿Cuál desea que sea el comportamiento por defecto del botón exportar a PDF?</div>
@@ -184,8 +185,9 @@
               <custom-radiobutton data-id="exportarexceltodo" data-checked="1">Exportar todas las tablas</custom-radiobutton>
             </custom-radiogroup>
           </article>
+          <% if (esAdmin) { %>
           <hr>
-            <div class="grupomodal">Opciones de administrador</div>
+            <div class="grupomodal">Opciones de administrador <custom-popover>Estas opciones te permiten borrar y mover el registro actual<br><b>Importante</b><br>Realizar alguna de estas acciones dejará un registro en el historial de google drive y se notificará con un mensaje a tu correo</custom-popover></div>
           <hr>
           <article>
             <div class="contenedoreliminar">
@@ -193,6 +195,18 @@
               <span class="textoeliminar">Eliminar registro de este día</span>
             </div>
             <div class="contenedormover"><svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" width="30" height="30" viewBox="0 0 24 24" id="date-alt-right" data-name="Flat Line" class="icon flat-line"><circle cx="12" cy="15" r="6" style="fill: transparent; stroke-width: 2;"/><path d="M7.54,19H4a1,1,0,0,1-1-1V5A1,1,0,0,1,4,4H20a1,1,0,0,1,1,1V18a1,1,0,0,1-1,1H16.46" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/><path id="primary-2" data-name="primary" d="M12,9a6,6,0,1,0,6,6A6,6,0,0,0,12,9ZM3,9H21M16,3V6M8,3V6m6,9H10" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/><polyline id="primary-3" data-name="primary" points="12 17 14 15 12 13" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/></svg> Mover registro a otra fecha</div>
+            <% } %>
+
+            <!-- <hr>
+            <div class="grupomodal">Opciones de administrador <custom-popover>Estas opciones te permiten borrar y mover el registro actual<br><b>Importante</b><br>Realizar alguna de estas acciones dejará un registro en el historial de google drive y se notificará con un mensaje a tu correo</custom-popover></div>
+          <hr>
+          <article>
+            <div class="contenedoreliminar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="red" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /></svg>
+              <span class="textoeliminar">Eliminar registro de este día</span>
+            </div>
+            <div class="contenedormover"><svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" width="30" height="30" viewBox="0 0 24 24" id="date-alt-right" data-name="Flat Line" class="icon flat-line"><circle cx="12" cy="15" r="6" style="fill: transparent; stroke-width: 2;"/><path d="M7.54,19H4a1,1,0,0,1-1-1V5A1,1,0,0,1,4,4H20a1,1,0,0,1,1,1V18a1,1,0,0,1-1,1H16.46" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/><path id="primary-2" data-name="primary" d="M12,9a6,6,0,1,0,6,6A6,6,0,0,0,12,9ZM3,9H21M16,3V6M8,3V6m6,9H10" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/><polyline id="primary-3" data-name="primary" points="12 17 14 15 12 13" style="fill: none; stroke: #FFF; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"/></svg> Mover registro a otra fecha</div> -->
+
           </article>
         </div>
         <div class="modal-footer">

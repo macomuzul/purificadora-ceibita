@@ -50,7 +50,7 @@
 
 <% if (errorInicioSesion) { %>
   <script>
-    window.addEventListener("load", q => {
+    addEventListener("load", q => {
     '<%if (errorInicioSesion === "Usuario no existe") {%>'
       usuario.setCustomValidity('El usuario al que desea acceder no existe')
       usuario.reportValidity()

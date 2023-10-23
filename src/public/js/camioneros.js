@@ -8,18 +8,13 @@ const swalConfirmarYCancelar = Swal.mixin({
   buttonsStyling: false,
 })
 
-function mostrarError(error) {
-  Swal.fire("Error", error, "error")
-  return false
-}
-
 function mostrarErrorHTML(html, title) {
   $(html).find("tr").each((_, x) => x.lastElementChild.remove())
   $(html).find("td").prop("contenteditable", "false")
   Swal.fire({
     title,
     icon: "error",
-    width: window.innerWidth * 1 / 2,
+    width: innerWidth / 2,
     html,
     confirmButtonText: "Continuar"
   })
@@ -28,12 +23,16 @@ function mostrarErrorHTML(html, title) {
 function validarCamioneros() {
   let nombres = [...$("tbody td:nth-child(1)")]
   let colores = [...$("tbody td:nth-child(2)")]
-  let tablaCopia = tabla.cloneNode(true)
-  if(nombres.length === 0) return mostrarError("Error, la tabla está vacía, por favor agrega un camionero")
+  if (nombres.length === 0) {
+    Swal.fire("Error", "Error, la tabla está vacía, por favor agrega un camionero", "error")
+    return false
+  }
   nombres.forEach(x => x.textContent = x.innerText.trim())
 
+  let tablaCopia = $("table")[0].cloneNode(true)
+  let camionerosCopia = [...$(tablaCopia).find("tbody td:nth-child(1)")]
   if (nombres.some(x => x.textContent === "")) {
-    [...$(tablaCopia).find("tbody td:first-child")].forEach(x => x.textContent === "" && x.classList.add("enfocar"))
+    camionerosCopia.forEach(x => x.textContent === "" && x.classList.add("enfocar"))
     return mostrarErrorHTML(tablaCopia, "Hay camioneros sin nombre")
   }
   if (colores.some(x => x.textContent === "indefinido")) {
@@ -41,8 +40,7 @@ function validarCamioneros() {
     return mostrarErrorHTML(tablaCopia, "Hay colores con el valor de indefinido")
   }
 
-  let camionerosCopia = [...$(tablaCopia).find("tbody tr td:nth-child(1)")]
-  let arrayNormalizado = productos.map(el => el.textContent.normalizar())
+  let arrayNormalizado = nombres.map(x => x.textContent.normalizar())
   let hayRepetidos = false
   arrayNormalizado.forEach((x, i) => {
     if (arrayNormalizado.indexOf(x) !== i) {
@@ -55,23 +53,20 @@ function validarCamioneros() {
   return true
 }
 
-function mostrarErrorHTML(html, title) {
-  $(html).find("tr").each((_, x) => x.innerHTML = x.cells[0].outerHTML)
-  $(html).find("td").prop("contenteditable", "false")
-  Swal.fire({
-    title,
-    icon: "error",
-    width: window.innerWidth * 1 / 2,
-    html,
-    confirmButtonText: "Continuar"
-  })
+function colorAleatorio() {
+  const threshold = 128;
+  const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+  const rgb = color.match(/\d+/g).map(Number);
+  const brightness = (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]);
+  if (brightness > threshold) return colorAleatorio()
+  return color
 }
 
 $("#guardar").on("click", async function () {
   if (!validarCamioneros()) return
   let data = JSON.stringify({ camioneros: [...$("tbody tr")].map(x => ({ nombre: x.cells[0].textContent, color: x.cells[1].textContent })) })
   $.ajax({
-    url: "/empleados/camioneros",
+    url: location.pathname,
     method: "POST",
     contentType: "application/json",
     data,
@@ -86,7 +81,7 @@ $("body").on('click', ".botoneliminar", async function () {
     let { isConfirmed } = await swalConfirmarYCancelar.fire({
       title: "Estás seguro que deseas borrar a este camionero?",
       icon: "warning",
-      width: window.innerWidth / 2,
+      width: innerWidth / 2,
       html,
       showCancelButton: true,
       confirmButtonText: "Sí",

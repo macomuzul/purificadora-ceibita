@@ -11,6 +11,7 @@ const loggerSchema = new Schema({
 }, {
   statics: {
     async log(req, error) {
+      //TODO este log quitarlo para produccion
       console.log({ req, error })
       await this.create({ req, error })
     }
@@ -21,6 +22,7 @@ let LogsLeves = mongoose.model("logsleves", loggerSchema)
 let LogsGraves = mongoose.model("logsgraves", loggerSchema)
 let LogsRutas = mongoose.model("logsrutas", loggerSchema)
 let LogsGoogle = mongoose.model("logsgoogle", loggerSchema)
+let LogsCron = mongoose.model("logscron", loggerSchema)
+let LogsAutenticacion = mongoose.model("logsautenticacion", loggerSchema)
 
-
-module.exports = { LogsLeves, LogsGraves, LogsRutas, LogsGoogle }
+module.exports = { LogsLeves, LogsGraves, LogsRutas, LogsGoogle, LogsCron, LogsAutenticacion }

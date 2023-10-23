@@ -3,7 +3,6 @@
 @use "./partials/flecha";
 @use "./partials/flecharotada";
 @use "./partials/modal";
-@use "./partials/dropdownRoles";
 
 body {
   background: #191d31;
@@ -51,6 +50,14 @@ form {
 
 .contenedorinferior {
   margin-top: 25px;
+}
+
+.divinput{
+  width: 300px;
+  position: relative;
+  .fa-eye-slash{
+    transform: translateX(2px);
+  }
 }
 
 form i {

@@ -1,3 +1,4 @@
+let correo = process.env.CORREO
 
 async function mandarCorreoCambioRegistro(opcion, usuario, fecha1, fecha2) {
   try {

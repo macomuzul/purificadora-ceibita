@@ -67,13 +67,6 @@ td {
   max-width: fit-content;
 }
 
-.contenedorayuda {
-  display: flex;
-  flex-direction: column;
-  margin-left: auto;
-  margin-right: 2px;
-}
-
 .swal2-actions {
   margin: 0 !important;
   margin-top: 30px !important;
@@ -89,6 +82,7 @@ td {
 
 .enfocar {
   background: #24c2ce !important;
+  height: 52px;
 }
 
 .swal2-title,

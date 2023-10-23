@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 let { validarString, validarCorreo, validadorString, camposObligatorios } = require("./validaciones/validar")
+let { editarborrar } = require('./metodos/metodosschema')
 
 const usuarioSchema = new Schema({
   usuario: validarString,
@@ -13,11 +14,8 @@ const usuarioSchema = new Schema({
 }, {
   statics: {
     buscarPorID(id) { return this.findById(id).lean() },
+    ...editarborrar
   }
-})
-
-usuarioSchema.pre("save", function (next) {
-
 })
 
 camposObligatorios(usuarioSchema)

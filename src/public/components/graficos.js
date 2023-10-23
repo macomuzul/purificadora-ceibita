@@ -1,6 +1,6 @@
 let contador = 0;
 class graficos extends HTMLElement {
-  devuelveSonIngresos = () => this.sonIngresos ? "ingresos" : "ventas"
+  devuelveSonIngresos = q => this.sonIngresos ? "ingresos" : "ventas"
   radiobutton = (id, label, checked) => `<custom-radiobutton data-id="${id}${contador}" ${checked ? `data-checked="1"` : ""}>${label}</custom-radiobutton>`
   acordeonItem = (html, id, titulo) => `<custom-acordeonitem data-id="${id}${contador}" data-titulo="${titulo}">${html}</custom-acordeonitem>`
   devuelveCantidadFormateada = context => this.sonIngresos ? context.raw.aQuetzales() : context.formattedValue
@@ -138,9 +138,9 @@ class graficos extends HTMLElement {
 
   metodosBotonesTabla() {
     $(this).find(".botonpdf")[1].inicializar(() => {
-      let contenedor = $(this).find(".contenedorTabla")[0]
+      let contenedor = $(this).find(".contenedortabla")[0]
       let contenedorClon = contenedor.cloneNode(true)
-      contenedorClon.style.width = contenedor.offsetWidth
+      contenedorClon.style.width = $(contenedor).find("table")[0].offsetWidth + "px"
       let titulo = $(contenedorClon).find(".tituloTabla")[0]
       titulo.style.background = "#0f0924"
       titulo.style.padding = "15px"
@@ -156,10 +156,10 @@ class graficos extends HTMLElement {
       var range = XLSX.utils.decode_range(ws["!ref"])
       ws['!cols'] = that.multiple ? [that.agrupadoPorFecha ? { wch: Math.max(...[...$(tabla).find("tbody td:first-child")].map(x => x.textContent.length)) } : { width: 24 }, ...[...tabla.rows[1].cells].map(x => (that.agrupadoPorFecha ? { width: 18 } : { wch: x.textContent.length })), { width: 19 }] : [...[...tabla.rows[2].cells].map(x => (that.agrupadoPorFecha ? { wch: x.textContent.length } : { width: 18 })), { width: 20 }]
       ws['!rows'] = [{ hpt: 35 }, ...[...Array(range.e.r - range.s.r)].map(x => ({ hpt: 24 }))]
-      for (var i = range.s.r; i <= range.e.r; i++) {
-        for (var j = range.s.c; j <= range.e.c; j++) {
-          var cell_address = XLSX.utils.encode_cell({ r: i, c: j })
-          var cell = ws[cell_address]
+      for (let i = range.s.r; i <= range.e.r; i++) {
+        for (let j = range.s.c; j <= range.e.c; j++) {
+          let cell_address = XLSX.utils.encode_cell({ r: i, c: j })
+          let cell = ws[cell_address]
           if (cell) {
             this.ajustesCeldasExcel(cell)
             cell.s.fill = { fgColor: { rgb: i === 0 ? "192435" : "0f0d35" } }
@@ -199,7 +199,7 @@ class graficos extends HTMLElement {
       <th colspan="${labels.length}">${this.devuelveFechaOProducto(1)}</th>
       ${`<th rowspan="2">Total ${this.devuelveSonIngresos()}:</th>`}</tr>
       <tr>${labels.map(x => `<th>${x.partirFechas()}</th>`).join("")}</tr></thead>
-      <tbody>${datasets.map((d, i) => `<tr><td>${d.label}</td>${d.data.map(x => `<td>${x}</td>`).join("")}<td></td></tr>`).join("")}</tbody>
+      <tbody>${datasets.map(d => `<tr><td>${d.label}</td>${d.data.map(x => `<td>${x}</td>`).join("")}<td></td></tr>`).join("")}</tbody>
     <tfoot><tr><td>Total:</td>${labels.map(() => "<td></td>").join("")}<td></td></tr></tfoot>
   </table>`
     }
@@ -480,3 +480,20 @@ function externalTooltipHandler(context) {
 }
 
 customElements.define("custom-graficos", graficos)
+
+class botonConvertira extends HTMLElement {
+  connectedCallback() {
+    this.className = "btn btn-primary botonazul convertira"
+    this.innerHTML = `${this.innerHTML} <svg xmlns="http://www.w3.org/2000/svg" width="27px" height="27px" viewBox="0 0 24 24" fill="white"><path d="M15.2929 10.2929C14.9024 10.6834 14.9024 11.3166 15.2929 11.7071C15.6834 12.0976 16.3166 12.0976 16.7071 11.7071L20.7071 7.70711C20.8306 7.58361 20.9151 7.43586 20.9604 7.27919C20.9779 7.2191 20.9895 7.1577 20.9954 7.09585C20.9976 7.07319 20.999 7.05048 20.9996 7.02774C21.0002 7.00709 21.0001 6.98642 20.9994 6.96578C20.9905 6.6971 20.8755 6.45528 20.695 6.28079L16.7071 2.29289C16.3166 1.90237 15.6834 1.90237 15.2929 2.29289C14.9024 2.68342 14.9024 3.31658 15.2929 3.70711L17.5856 5.99981L3.99999 5.99999C3.4477 5.99999 2.99999 6.44772 3 7C3.00001 7.55228 3.44773 7.99999 4.00001 7.99999L17.586 7.99981L15.2929 10.2929Z"/><path d="M20 16L6.41423 16L8.70712 13.7071C9.09764 13.3166 9.09764 12.6834 8.70712 12.2929C8.3166 11.9024 7.68343 11.9024 7.29291 12.2929L3.29291 16.2929C2.90238 16.6834 2.90238 17.3166 3.29291 17.7071L7.29291 21.7071C7.68343 22.0976 8.3166 22.0976 8.70712 21.7071C9.09764 21.3166 9.09764 20.6834 8.70712 20.2929L6.41423 18L20 18C20.5523 18 21 17.5523 21 17C21 16.4477 20.5523 16 20 16Z"/></svg>`
+  }
+}
+
+customElements.define("boton-convertira", botonConvertira)
+
+class resumenDatos extends HTMLElement {
+  agregarCantidad() {
+    this.innerHTML = `<div class="tituloGrupoPodios" style="padding: 15px;">Total ingresos generados en este período: ${datasetIngresosAgrupadosPorProducto.reduce((p, c) => p + c.data.reduce((p2, c2) => p2 + c2), 0).normalizarPrecio().aQuetzales()}</div>`
+  }
+}
+
+customElements.define("resumen-datos", resumenDatos)

@@ -1,0 +1,27 @@
+@use "./partials/fondo";
+body{
+  color: white;
+}
+.titulo{
+  font-size: 32px;
+  text-align: center;
+  margin: 10px 0 30px;
+}
+
+main{
+  color: white;
+}
+
+.primeraopcion{
+  width: 100%;
+}
+
+.subtituloagrupados{
+  text-align: center;
+  font-size: 24px;
+  margin: 20px;
+}
+
+.minifecha{
+  font-size: 15px;
+}

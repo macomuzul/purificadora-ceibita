@@ -21,10 +21,14 @@ RegistroVentas.watch().on('change', async cambio => {
 })
 
 ResumenDia.watch().on('change', async cambio => {
-  let { _id } = cambio.documentKey
-  let promesas = [[ResumenSemana, "week"], [ResumenMes, "month"], [ResumenAño, "year"]]
-  let res = await Promise.allSettled(promesas.map(async p => cambio.operationType === "delete" ? await actualizarResumenesEnDelete(...p, _id) : await verificarResumenes(...p, await ResumenDia.findById(_id).lean())))
-  if (res.some(p => p.status === "rejected")) await Promise.all(promesas.filter((_, i) => res[i].status === "rejected"))
+  try {
+    let { _id } = cambio.documentKey
+    let promesas = [[ResumenSemana, "week"], [ResumenMes, "month"], [ResumenAño, "year"]]
+    let res = await Promise.allSettled(promesas.map(async p => cambio.operationType === "delete" ? await actualizarResumenesEnDelete(...p, _id) : await verificarResumenes(...p, await ResumenDia.findById(_id).lean())))
+    if (res.some(p => p.status === "rejected")) await Promise.all(promesas.filter((_, i) => res[i].status === "rejected"))
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 async function verificarResumenes(Resumen, tipo, resumenDia) {

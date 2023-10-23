@@ -1,0 +1,1 @@
+{"name":"ReferenceError","message":"micorreo is not defined","stack":"ReferenceError: micorreo is not defined\n    at process.<anonymous> (C:\\Users\\marco\\Documents\\proyecto purificadora la ceibita\\src\\index.js:5:89)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"}

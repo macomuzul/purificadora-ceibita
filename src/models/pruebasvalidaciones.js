@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const mongoose = require('mongoose')
+const { Schema } = mongoose
 let { cantidadMinima0, validarString, arregloMayorA0, arregloMenorACustom } = require("./validaciones/validar")
 _ = require('lodash');
 
@@ -22,9 +22,13 @@ _ = require('lodash');
 // _.each(_.keys(validacionesSchema.paths), attr => validacionesSchema.path(attr).required(true));
 
 // module.exports = mongoose.model('validaciones', validacionesSchema);
+// const validacionesSchema2 = new Schema({
+//   nombre: validarString,
+//   precio: cantidadMinima0,
+// })
 const validacionesSchema2 = new Schema({
-  nombre: validarString,
-  precio: cantidadMinima0,
+  nombre: String,
+  precio: Number,
 })
 
 _.each(_.keys(validacionesSchema2.paths), attr => validacionesSchema2.path(attr).required(true));

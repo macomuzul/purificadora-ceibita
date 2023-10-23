@@ -3,7 +3,7 @@ let mostrarError = (titulo, texto) => Swal.fire(titulo, texto, "error")
 let crearDatePicker = idDatePicker => $(`#${idDatePicker}`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" }).on("show", q => {
   let x = $(".datepicker")[0]
   let rect = x.getBoundingClientRect()
-  if((rect.x + rect.width) > window.innerWidth || (rect.y + rect.height) > window.innerHeight) x.scrollIntoView()
+  if((rect.x + rect.width) > innerWidth || (rect.y + rect.height) > innerHeight) x.scrollIntoView()
 })
 
 function metododropdown(option, menu) {

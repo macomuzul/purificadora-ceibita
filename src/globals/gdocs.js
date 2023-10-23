@@ -1,5 +1,5 @@
 const { DateTime } = require('luxon')
-// let documentId = "15WhiLi1dDmjjTKnv4sYpAouuS80Xti1CVjvxsvzlOUA"
+let documentId = "15WhiLi1dDmjjTKnv4sYpAouuS80Xti1CVjvxsvzlOUA"
 let num = 58
 let repiteTexto = (texto, n) => [...Array(n)].map(x => texto).join("")
 let devuelveInsertText = x => ({ insertText: { 'text': x + "\n", 'endOfSegmentLocation': {} } })
@@ -15,4 +15,7 @@ let agregarTituloDocs = tcgoogle(async (titulo, simbolo) => {
 }, "google docs agregarTituloDocs")
 
 global.crearDiaGoogleDocs = async q => await agregarTituloDocs("Cambios ocurridos el " + DateTime.now().setZone("America/Guatemala").toFormat("d/M/y"), "-")
-global.crearMesGoogleDocs = async q => await agregarTituloDocs(DateTime.now().monthLong, "*")
+global.crearMesGoogleDocs = async q => {
+  let f = DateTime.now()
+  await agregarTituloDocs(`${primeraLetraMayuscula(f.monthLong)} de ${f.year}`, "*")
+}

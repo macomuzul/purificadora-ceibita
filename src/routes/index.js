@@ -49,10 +49,13 @@ router.route('/recuperarcontrase%C3%B1a').get(async (req, res) => {
   await redis.incr(textoIP)
 
   let { usuario, correo } = req.body
-  let us = await Usuarios.findOne({ usuario })
+  let us = await Usuarios.findOne({ usuario }, {}, { sanitizeFilter: true })
   if (!us) req.flash('errorRecuperarContraseña', 'Usuario no existe')
   else if (us.correo !== correo) req.flash('errorRecuperarContraseña', 'Correo incorrecto')
-  else req.flash('correoEnviado', '1')
+  else {
+    await mandarCorreoVerificacion("Recuperación de datos", `<b>Los datos de tu usuario son:</b><br><b>Usuario: </b>${us.usuario}<br><b>Contraseña: </b>${us.contraseña}`, us.correo)
+    req.flash('correoEnviado', '1')
+  }
   res.redirect("/recuperarcontraseña")
 })
 

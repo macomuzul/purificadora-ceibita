@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const { Schema, model } = mongoose
 const { cantidadMinima0, validarString, arregloMayorA0, arregloMenorACustom, cantidadMinima0YEntero, esPar, camposObligatorios, crearValidationError } = require("./validaciones/validar")
 _ = require('lodash')
-let { editarborrar } = require("./metodos/metodos")
+let { editarborrar } = require("./metodos/metodosschema")
 
 const productosSchema = new Schema({
   nombre: validarString,
@@ -45,7 +45,7 @@ const registroventasSchema = new Schema({
       let { _id, usuario, ultimocambio } = ventasNuevo
       let registro = await this.buscarPorID(_id)
       if (registro) await RegistrosEliminados.create({ registro, borradoEl: ultimocambio, usuario, motivo })
-      let a = await this.updateOne({ _id }, ventasNuevo, { upsert: true })
+      let a = await this.updateOne({ _id }, ventasNuevo, { upsert: true, sanitizeFilter: true })
       if (a.modifiedCount === 0 && a.upsertedCount === 0) throw new Error()
       return a
     },
@@ -68,11 +68,11 @@ registroventasSchema.pre("updateOne", function (next) {
   next()
 })
 
-registroventasSchema.post("updateOne", function (doc, next) {
-  console.log("despues de actualizar")
+// registroventasSchema.post("updateOne", function (doc, next) {
+//   console.log("despues de actualizar")
 
-  next()
-})
+//   next()
+// })
 
   ;[productosSchema, camionesSchema, registroventasSchema].forEach(x => camposObligatorios(x))
 

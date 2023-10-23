@@ -24,7 +24,7 @@ passport.use('iniciarSesion', new LocalStrategy({
   else if (numRequestsInvalidas === loginCantMaxPeticionesInvalidas - 1) req.flash('intentosRestantesLogin', '1')
   await redis.incr(textoIP)
 
-  let user = await Usuarios.findOne({ usuario }).lean()
+  let user = await Usuarios.findOne({ usuario }, {}, { sanitizeFilter: true }).lean()
   if (!user) return done(null, false, req.flash('errorInicioSesion', 'Usuario no existe'))
   if (user.contraseña !== contraseña) return done(null, false, req.flash('errorInicioSesion', 'Contraseña incorrecta'))
 
