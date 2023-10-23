@@ -4,14 +4,14 @@ const RegistroVentas = require("../../models/registroventas")
 const Plantillas = require("../../models/plantillas")
 const Camioneros = require('../../models/camioneros')
 const Registroseliminados = require('../../models/registroseliminados')
-
+let folderRespaldos = process.env.FOLDER_RESPALDOS_USUARIO
 const { DateTime } = require("luxon")
 
 router.route("/").get((req, res) => res.render("googledrive", { fecha: DateTime.now().setZone("America/Guatemala").toFormat("d/M/y"), esAdmin: esAdmin(req) })).post(tcaccion(async (req, res) => {
   let { datos, sobreescribir, nombreCarpeta } = req.body
-  let folder = await buscarFolder(nombreCarpeta, folderVentas)
+  let folder = await buscarFolder(nombreCarpeta, folderRespaldos)
   if (folder && sobreescribir !== 1) return res.status(402).send()
-  if (!folder) folder = await crearFolder(nombreCarpeta, folderVentas)
+  if (!folder) folder = await crearFolder(nombreCarpeta, folderRespaldos)
   folder = folder.id
 
   let o = {
