@@ -8,6 +8,12 @@ let sectionunidadTiempo = $(".sectionunidadTiempo")
 let btnBorrarFechas = $(".btnBorrarFechas")
 let filasIndice = [], listaFechas = []
 let datepicker, objMinView = { dias: 0, semanas: 0, meses: 1, años: 2 }
+moment.locale('en', { week: { dow: 1 } })
+
+window.onbeforeunload = q => {
+  agruparPor = agruparPor.replace("agruparpor=", "")
+  rango = rango.replace("rango=", "")
+}
 
 let devuelveCalendarios = (...calendarios) => calendarios.map(x => $("#" + x).val().replaceAll("/", "-"))
 let destruirCalendario = q => {
@@ -39,9 +45,9 @@ function ordenar(e) {
 function cambiarMes(e) {
   let inicioMes = moment(e.date).startOf("month")
   let empiezaLunes = inicioMes._d.getUTCDay() === 1
-  let inicio = inicioMes.startOf("week")._d
-  if (empiezaLunes) inicio = moment(inicio).subtract(7, "days")._d
-  filasIndice = [...Array(6).keys()].filter(i => listaFechas.includes(moment(inicio).add(i * 7, "days")._d.valueOf()))
+  let inicio = inicioMes.utc().startOf("week")._d
+  if (empiezaLunes) inicio = moment(inicio).utc().subtract(7, "days")._d
+  filasIndice = [...Array(6).keys()].filter(i => listaFechas.includes(moment(inicio).add(i * 7, "days").utc()._d.valueOf()))
 }
 
 function mostarValores() {
@@ -55,7 +61,7 @@ let mostrar = q => filasIndice.forEach(i => $(`.datepicker-days tbody tr:nth-chi
 let capturarFecha = e => {
   if (e.target.matches("td.day")) {
     e.target.closest("tr").classList.toggle("active")
-    let inicioSemana = moment(parseInt(e.target.dataset.date)).startOf("week")._d.valueOf()
+    let inicioSemana = moment(parseInt(e.target.dataset.date)).utc().startOf("week")._d.valueOf()
     let index = listaFechas.indexOf(inicioSemana)
     index !== -1 ? listaFechas.splice(index, 1) : listaFechas.push(inicioSemana)
     mostarValores()
@@ -183,9 +189,10 @@ $("body").on("click", "#analizarVarios", function () {
   let [fecha] = devuelveCalendarios("calendario")
   if (fecha === "") return Swal.fire("Campo de fecha vacío", "Por favor selecciona una fecha para continuar", "error")
   if (rango === "libre") {
-    let fechas = datepicker.datepicker("getDates")
+    let fechas = listaFechas
     fechas.sort((a, b) => a - b)
-    fecha = fechas.map(x => new Intl.DateTimeFormat("es").format(x).replaceAll("/", "-")).join()
+    debugger
+    fecha = fechas.map(x => new Intl.DateTimeFormat("es", { timeZone: "UTC" }).format(x).replaceAll("/", "-")).join()
   }
   antesDeCambiarPagina()
   location = `/analisis/${agruparPor}&${rango}&${unidadTiempo}=${fecha}`
