@@ -1,7 +1,4 @@
 let { LogsLeves, LogsGraves, LogsRutas, LogsGoogle, LogsCron, LogsAutenticacion } = require("../models/loggers")
-let micorreo = process.env.MI_CORREO
-
-
 let errorDePermisos = async (req, res) => await loggearError(req, res, "Error de permisos", "Necesitas permisos de administrador para realizar esta acción", LogsAutenticacion)
 
 global.errorDB = class errorDB extends Error {
@@ -33,7 +30,7 @@ global.tcaccion = (f, msg) => async (req, res) => {
     if (["StrictModeError", "ValidationError", "CastError"].includes(e.name)) {
       await loggearError(req, res, e, errores[e.name])
       let { baseUrl, url, method } = req
-      await mandarCorreoError("Error", `Ocurrió un error grave de ${method} en ${baseUrl}${url}`, micorreo)
+      await mandarCorreoError("Error", `Ocurrió un error grave de ${method} en ${baseUrl}${url}`)
     } else
       await loggearError(req, res, e, e.name === "errorDB" ? e.message : msg, LogsLeves)
   }
@@ -44,7 +41,7 @@ global.tcgoogle = (f, msg) => async (...params) => {
     await f(...params)
   } catch (e) {
     await LogsGoogle.log(msg, { error: e })
-    await mandarCorreoError("Error", msg,)
+    await mandarCorreoError("Error de google", msg)
   }
 }
 
@@ -53,7 +50,7 @@ global.tccron = (f, msg) => async (...params) => {
     await f(...params)
   } catch (e) {
     await LogsCron.log(msg, { error: e })
-    await mandarCorreoError("Error", msg, micorreo)
+    await mandarCorreoError("Error en el cron", msg)
   }
 }
 

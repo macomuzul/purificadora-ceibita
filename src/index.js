@@ -1,12 +1,14 @@
 const fs = require("fs")
 process.on('uncaughtException', async error => {
   try {
+    console.log(error)
     await LogsGraves.log("Error fatal", error)
-    await mandarCorreoError("Error fatal importantisimo", "Ha ocurrido un error fatal", process.env.MI_CORREO)
+    await mandarCorreoError("Error fatal importantisimo", "Ha ocurrido un error fatal")
   } catch (err) {
-    console.log(JSON.stringify(err, ["name", "message", "arguments", "type", "error", "stack"]))
-    fs.writeFile('./logsfatales.log', JSON.stringify(err, ["name", "message", "arguments", "type", "error", "stack"]), e => console.log(e))
+    console.log(error)
+    fs.writeFile('./logsfatales.log', JSON.stringify(error, ["name", "message", "arguments", "type", "error", "stack"]), e => console.log(e))
     console.log(err)
+    fs.writeFile('./logsfatales.log', JSON.stringify(err, ["name", "message", "arguments", "type", "error", "stack"]), e => console.log(e))
   }
 })
 require('dotenv').config()
@@ -48,7 +50,14 @@ require('./security/authPassport')
 // const convertirPlantillas = require("./utilities/convertirnuevasplantillas");
 // convertirPlantillas()
 
-
+// const sumaResumenDias = require("./utilities/sumaResumenDias")
+// const RegistroVentas = require("./models/registroventas")
+// async function resDia() {
+//   let venta = await RegistroVentas.find()
+//   let r = sumaResumenDias(venta.at(-3))
+//   console.log(r)
+// }
+// resDia()
 
 async function crearPruebasValidacion(nombre) {
   try {

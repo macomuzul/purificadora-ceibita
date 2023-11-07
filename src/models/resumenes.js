@@ -13,12 +13,12 @@ let statics = {
   }, strict: false, strictQuery: false
 }
 
+//v es vendidos, i es ingresos, p es productoDesnormalizado, vt es ventasTotales, it es ingresosTotales, prods es productos
 let resumenes = new Schema({
   _id: Date,
   f: Date,
-  prods: {
-
-  },
+  cams: {},
+  prods: {},
   vt: Number,
   it: Number,
   c: Boolean
@@ -27,4 +27,5 @@ let resumenes = new Schema({
 let ResumenSemana = mongoose.model('resumenSemana', resumenes)
 let ResumenMes = mongoose.model('resumenMes', resumenes)
 let ResumenAño = mongoose.model('resumenAño', resumenes)
+
 module.exports = { ResumenSemana, ResumenMes, ResumenAño, statics }

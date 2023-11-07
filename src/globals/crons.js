@@ -43,22 +43,3 @@ global.diaCron = async function () {
   if (await guardarRespaldoDiario(creadosOModificados, "ambos", borrados)) await CambiosVentas.deleteMany()
   else throw new Error("Ocurrió un error al guardar los registros cambiados en google drive")
 }
-
-global.haceloPa = async function () {
-  let cambiosVentas = await CambiosVentas.find().lean()
-  let cambios = {}
-  cambiosVentas.forEach(x => {
-    let { _id, motivo, fecha2 } = x
-    cambios[_id] = { motivo, fecha2 }
-    if (fecha2) cambios[fecha2] = { motivo: motivo * 100, fecha1: _id }
-  })
-  let creadosOModificados = []
-  let borrados = []
-  Object.entries(cambios).forEach(([key, value]) => {
-    if ([1, 3, 4, 5, 6].includes(value.motivo)) creadosOModificados.push({ _id: key, ...cambios[key] })
-    if ([2, 400].includes(value.motivo)) borrados.push({ _id: key, ...cambios[key] })
-  })
-  await Promise.all(creadosOModificados.map(async x => x.venta = await RegistroVentas.findById((new Date(x._id)).valueOf())))
-  if (await guardarRespaldoDiario(creadosOModificados, "ambos", borrados)) await CambiosVentas.deleteMany()
-  else throw new Error("Ocurrió un error al guardar los registros cambiados en google drive")
-}

@@ -11,17 +11,27 @@ function sumaResumenDias(venta) {
     })
     return acc
   }, {})
-  let vt = 0
-  let it = 0
-  Object.values(prods).forEach(x => {
+
+  let listaTablasValores2 = venta.tablas.map(tabla => ({ trabajador: tabla.trabajador.normalizar(), v: tabla.totalvendidos, i: tabla.totalingresos, p: tabla.trabajador }));
+  let cams = listaTablasValores2.reduce((acc, tabla) => {
+    if (acc[tabla.trabajador]) {
+      acc[tabla.trabajador].v += tabla.v;
+      acc[tabla.trabajador].i += tabla.i;
+    } else {
+      acc[tabla.trabajador] = { v: tabla.v, i: tabla.i, p: tabla.p }
+    }
+    return acc
+  }, {})
+
+  let vt = 0, it = 0
+  Object.values(cams).forEach(x => {
     x.i = parseFloat(x.i.normalizarPrecio())
     vt += x.v
     it += x.i
   })
   it = parseFloat(it.normalizarPrecio())
-  return { prods, vt, it }
+  return { prods, cams, vt, it }
 }
-
 String.prototype.normalizar = function () { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "") }
 String.prototype.normalizarPrecio = function () { return parseFloat(this).toFixed(2).replace(/[.,]00$/, "") }
 Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }

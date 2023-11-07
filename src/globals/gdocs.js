@@ -1,5 +1,5 @@
 const { DateTime } = require('luxon')
-let documentId = "15WhiLi1dDmjjTKnv4sYpAouuS80Xti1CVjvxsvzlOUA"
+let documentId = process.env.DOC_GDOCS
 let num = 58
 let repiteTexto = (texto, n) => [...Array(n)].map(x => texto).join("")
 let devuelveInsertText = x => ({ insertText: { 'text': x + "\n", 'endOfSegmentLocation': {} } })

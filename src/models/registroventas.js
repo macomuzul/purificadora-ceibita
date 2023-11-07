@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const { Schema, model } = mongoose
 const { cantidadMinima0, validarString, arregloMayorA0, arregloMenorACustom, cantidadMinima0YEntero, esPar, camposObligatorios, crearValidationError } = require("./validaciones/validar")
-_ = require('lodash')
 let { editarborrar } = require("./metodos/metodosschema")
 
 const productosSchema = new Schema({

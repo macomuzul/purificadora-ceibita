@@ -3,11 +3,11 @@ const { Schema } = mongoose
 let { statics } = require("./resumenes")
 const resumenDiaSchema = new Schema({
   _id: Date,
-  prods: {
-
-  },
+  cams: {},
+  prods: {},
   vt: Number,
   it: Number
 }, { ...statics })
 
-module.exports = mongoose.model('resumenDia', resumenDiaSchema)
+let resumenDia = mongoose.model('resumenDia', resumenDiaSchema)
+module.exports = resumenDia

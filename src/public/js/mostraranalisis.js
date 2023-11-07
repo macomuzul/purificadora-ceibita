@@ -43,9 +43,12 @@ let tiempoMenor = datos.at(0)._id.aUTC()
 let tiempoMayor = datos.at(-1).f?.aUTC() || datos.at(-1)._id.aUTC()
 
 let datasetVendidosAgrupadosPorProducto = [], datasetIngresosAgrupadosPorProducto = [], datasetVendidosAgrupadosPorFecha = [], datasetIngresosAgrupadosPorFecha = []
+let datasetVendidosAgrupadosPorCamion = [], datasetIngresosAgrupadosPorCamion = [], datasetVendidosCamionAgrupadosPorFecha = [], datasetIngresosCamionAgrupadosPorFecha = []
 //TODO este no se si dejarle el .sort al final
-let productos = [...new Set(datos.flatMap(data => Object.keys(data.prods)))]
-let productosDesnormalizados = productos.map(label => datos.find(el => el.prods[label])?.prods[label].p)
+let productos = [...new Set(datos.flatMap(x => Object.keys(x.prods)))]
+let camioneros = [...new Set(datos.flatMap(x => Object.keys(x.cams)))]
+let productosDesnormalizados = productos.map(label => datos.find(x => x.prods[label])?.prods[label].p)
+let camionerosDesnormalizados = camioneros.map(label => datos.find(x => x.cams[label])?.cams[label].p)
 let swalConfirmarYCancelar = Swal.mixin({
   customClass: {
     confirmButton: "btn btn-success margenbotonswal",
@@ -106,6 +109,22 @@ datos.forEach((data, i) => {
   datasetIngresosAgrupadosPorProducto.push(objIngresos)
 })
 
+datos.forEach((data, i) => {
+  let vendidos = camioneros.map(prod => data.cams[prod]?.v || 0)
+  let ingresos = camioneros.map(prod => data.cams[prod]?.i || 0)
+  let objVendidos = {
+    label: fechasStr[i],
+    data: vendidos,
+    ...{ backgroundColor: coloresAlfa[i], borderColor: colores[i], borderWidth: 1 },
+    indice: i,
+  }
+  datasetVendidosAgrupadosPorCamion.push(objVendidos)
+  let objIngresos = structuredClone(objVendidos)
+  objIngresos.data = ingresos
+  datasetIngresosAgrupadosPorCamion.push(objIngresos)
+})
+
+
 productos.forEach((prod, i) => {
   let vendidos = datos.map(dato => dato.prods[prod]?.v || 0)
   let ingresos = datos.map(dato => dato.prods[prod]?.i || 0)
@@ -119,6 +138,22 @@ productos.forEach((prod, i) => {
   let objIngresos = structuredClone(objVendidos)
   objIngresos.data = ingresos
   datasetIngresosAgrupadosPorFecha.push(objIngresos)
+})
+
+
+camioneros.forEach((prod, i) => {
+  let vendidos = datos.map(dato => dato.cams[prod]?.v || 0)
+  let ingresos = datos.map(dato => dato.cams[prod]?.i || 0)
+  let objVendidos = {
+    label: camionerosDesnormalizados[i],
+    data: vendidos,
+    ...{ backgroundColor: coloresAlfa[i], borderColor: colores[i], borderWidth: 1 },
+    indice: i,
+  }
+  datasetVendidosCamionAgrupadosPorFecha.push(objVendidos)
+  let objIngresos = structuredClone(objVendidos)
+  objIngresos.data = ingresos
+  datasetIngresosCamionAgrupadosPorFecha.push(objIngresos)
 })
 
 let masculino = unidadTiempo !== "semanas"
@@ -161,8 +196,12 @@ function crearPodio() {
 crearPodio()
 
 
-//labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, type
-$("#chartVendidosAgrupadosPorFecha")[0].crearGrafico(fechasStr, datasetVendidosAgrupadosPorFecha, `Cantidad de productos vendidos agrupados por ${UTSingular}`, `total vendidos durante ${UTSingularGenero}`, 1, 0,)
-$("#chartIngresosAgrupadosPorFecha")[0].crearGrafico(fechasStr, datasetIngresosAgrupadosPorFecha, `Ingresos generados agrupados por ${UTSingular}`, `total ingresos durante ${UTSingularGenero}`, 1, 1)
-$("#chartVendidosAgrupadosPorProducto")[0].crearGrafico(productosDesnormalizados, datasetVendidosAgrupadosPorProducto, "Cantidad de productos vendidos agrupados por producto", "vendidos", 0, 0)
-$("#chartIngresosAgrupadosPorProducto")[0].crearGrafico(productosDesnormalizados, datasetIngresosAgrupadosPorProducto, "Ingresos generados agrupados por producto", "ingresos", 0, 1)
+//labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, esCamionero
+$("#chartVendidosAgrupadosPorFecha")[0].crearGrafico(fechasStr, datasetVendidosAgrupadosPorFecha, `Cantidad de productos vendidos agrupados por ${UTSingular}`, `total vendidos durante ${UTSingularGenero}`, 1, 0, 0)
+$("#chartIngresosAgrupadosPorFecha")[0].crearGrafico(fechasStr, datasetIngresosAgrupadosPorFecha, `Ingresos generados agrupados por ${UTSingular}`, `total ingresos durante ${UTSingularGenero}`, 1, 1, 0)
+$("#chartVendidosAgrupadosPorProducto")[0].crearGrafico(productosDesnormalizados, datasetVendidosAgrupadosPorProducto, "Cantidad de productos vendidos agrupados por producto", "vendidos", 0, 0, 0)
+$("#chartIngresosAgrupadosPorProducto")[0].crearGrafico(productosDesnormalizados, datasetIngresosAgrupadosPorProducto, "Ingresos generados agrupados por producto", "ingresos", 0, 1, 0)
+$("#chartVendidosCamionAgrupadosPorFecha")[0].crearGrafico(fechasStr, datasetVendidosCamionAgrupadosPorFecha, `Cantidad de productos vendidos agrupados por ${UTSingular}`, `total vendidos durante ${UTSingularGenero}`, 1, 0, 1)
+$("#chartIngresosCamionAgrupadosPorFecha")[0].crearGrafico(fechasStr, datasetIngresosCamionAgrupadosPorFecha, `Ingresos generados agrupados por ${UTSingular}`, `total ingresos durante ${UTSingularGenero}`, 1, 1, 1)
+$("#chartVendidosAgrupadosPorCamion")[0].crearGrafico(camionerosDesnormalizados, datasetVendidosAgrupadosPorCamion, "Cantidad de productos vendidos agrupados por camionero", "vendidos", 0, 0, 1)
+$("#chartIngresosAgrupadosPorCamion")[0].crearGrafico(camionerosDesnormalizados, datasetIngresosAgrupadosPorCamion, "Ingresos generados agrupados por camionero", "ingresos", 0, 1, 1)

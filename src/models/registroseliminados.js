@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const RegistroVentas = require('./registroventas');
-_ = require('lodash');
 let { validarString, cantidadMinima0YEntero, camposObligatorios } = require("./validaciones/validar")
 let { editarborrar } = require("./metodos/metodosschema")
 

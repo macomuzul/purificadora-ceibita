@@ -3,33 +3,34 @@ const ResumenDia = require("./models/resumenDia")
 const { ResumenSemana, ResumenMes, ResumenAño } = require("./models/resumenes")
 const sumaResumenDias = require("./utilities/sumaResumenDias")
 const { DateTime } = require("luxon")
+const { LogsGraves } = require("./models/loggers")
 
 let actualizarResumenesEnDelete = async (Resumen, tipo, id) => await Resumen.findByIdAndUpdate(DateTime.fromJSDate(id).startOf(tipo), { c: true })
-
-//v es vendidos, i es ingresos, p es productoDesnormalizado, vt es ventasTotales, it es ingresosTotales, prods es productos
-RegistroVentas.watch().on('change', async cambio => {
+let errorListener = (f, listener) => async cambio => {
   try {
-    let { operationType, documentKey: { _id } } = cambio
-    if (operationType === "delete") await ResumenDia.deleteOne({ _id })
-    else if (operationType === "insert" || "tablas" in cambio.updateDescription.updatedFields) {
-      let venta = await RegistroVentas.buscarPorID(_id)
-      await ResumenDia.findByIdAndUpdate(venta._id, sumaResumenDias(venta), { upsert: true })
-    }
-  } catch (error) {
-    console.log(error)
+    await f(cambio)
+  } catch (e) {
+    let msg = `Error en el listener ${listener}`
+    await LogsGraves.log(msg, { error: e })
+    await mandarCorreoError(msg, "Error")
   }
-})
+}
 
-ResumenDia.watch().on('change', async cambio => {
-  try {
-    let { _id } = cambio.documentKey
-    let promesas = [[ResumenSemana, "week"], [ResumenMes, "month"], [ResumenAño, "year"]]
-    let res = await Promise.allSettled(promesas.map(async p => cambio.operationType === "delete" ? await actualizarResumenesEnDelete(...p, _id) : await verificarResumenes(...p, await ResumenDia.findById(_id).lean())))
-    if (res.some(p => p.status === "rejected")) await Promise.all(promesas.filter((_, i) => res[i].status === "rejected"))
-  } catch (error) {
-    console.log(error)
+RegistroVentas.watch().on('change', errorListener(async cambio => {
+  let { operationType, documentKey: { _id } } = cambio
+  if (operationType === "delete") await ResumenDia.deleteOne({ _id })
+  else if (operationType === "insert" || "tablas" in cambio.updateDescription.updatedFields) {
+    let venta = await RegistroVentas.buscarPorID(_id)
+    await ResumenDia.findByIdAndUpdate(venta._id, sumaResumenDias(venta), { upsert: true })
   }
-})
+}, "registro ventas"))
+
+ResumenDia.watch().on('change', errorListener(async cambio => {
+  let { _id } = cambio.documentKey
+  let promesas = [[ResumenSemana, "week"], [ResumenMes, "month"], [ResumenAño, "year"]]
+  let res = await Promise.allSettled(promesas.map(async p => cambio.operationType === "delete" ? await actualizarResumenesEnDelete(...p, _id) : await verificarResumenes(...p, await ResumenDia.findById(_id).lean())))
+  if (res.some(p => p.status === "rejected")) await Promise.all(promesas.filter((_, i) => res[i].status === "rejected"))
+}, "resumen dia"))
 
 async function verificarResumenes(Resumen, tipo, resumenDia) {
   let id = DateTime.fromJSDate(resumenDia._id)

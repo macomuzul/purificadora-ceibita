@@ -7,14 +7,13 @@ const devuelveValoresSumados = require("../utilities/devuelveValoresSumados")
 String.prototype.normalizarPrecio = function () { return parseFloat(this).toFixed(2).replace(/[.,]00$/, "") }
 Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }
 router.get('/', async (req, res) => res.render('analisis', { esAdmin: esAdmin(req) }))
-
 let objResumenes = { day: ResumenDia, week: ResumenSemana, month: ResumenMes, year: ResumenAño }
 
 async function actualizarSiHuboCambios(tiempo) {
   let resumenModelo = objResumenes[tiempo]
   let resumen = await resumenModelo.find({ c: true })
+  let buscar = tiempo === "year" ? ResumenMes : ResumenDia
   for (const x of resumen) {
-    let buscar = tiempo === "year" ? ResumenMes : ResumenDia
     let dias = devuelveValoresSumados(await buscar.entre(x._id, x.f))
     await resumenModelo.findByIdAndUpdate(x._id, { ...dias, c: false })
   }
@@ -97,7 +96,13 @@ router.get("/:agruparPorP(agruparpor=(dias|semanas|meses|a%C3%B1os))&:rangoP(ran
   else if (rango === "entre") [fecha1, fecha2] = fecha.split("&y&").map(x => devuelveDateTime(x))
   else fecha = devuelveDateTime(fecha)
 
-  if (agruparPor !== "day") await actualizarSiHuboCambios(agruparPor)
+  if (agruparPor !== "day") {
+    if (agruparPor === "year") {
+      await actualizarSiHuboCambios("month")
+      await actualizarSiHuboCambios("year")
+    } else
+      await actualizarSiHuboCambios(agruparPor)
+  }
   if (unidadTiempo === agruparPor && rango === "libre") {
     datos = await resumen.ordenado().in(fechas)
     datos = await agrupar(datos, agruparPor)

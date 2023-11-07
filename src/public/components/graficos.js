@@ -85,6 +85,8 @@ class graficos extends HTMLElement {
       $(this).find(".articleTabla").toggle()
       $(this).find(".gridBotonesTamaño").toggle()
       $(this).find(".contenedorEliminarData").toggle()
+      $(this).find(".contenedorEscalas").toggle()
+      $(this).find(".contenedorColoresDeLosGrafios").toggle()
       if (this.chartVisible) {
         this.actualizarTabla(this.datasetsActuales, this.labelsActuales)
         $(this).find(".camioneros label").text("Poner en la tabla")
@@ -332,6 +334,7 @@ class graficos extends HTMLElement {
     ${acordeonItem(this.opcionHTMLColores(this.labels, 0), `acordeonproductos`, this.devuelveFechaOProducto(1))}`
 
     let htmlOtrasOpciones = `<div class="contenedorotrasopciones">
+    <div class="contenedorColoresDeLosGrafios">
     <div class="tituloopciones">Colores de los gráficos ${popover("Permite invertir los colores de los gráficos, es más útil con los gráficos circulares")}</div>
     <hr>
     <div class="contenedoropcion">
@@ -339,6 +342,7 @@ class graficos extends HTMLElement {
       ${this.radiobutton("color1", `Utilizar los colores de ${UTPluralGenero}`, 1)}
       ${this.radiobutton("color2", "Utilizar colores de los productos")}
     </custom-radiogroup></div>
+    </div>
 
     ${UTDiaOSemana ? `<div class="tituloopciones">Cambiar formato de la fecha</div>
     <hr><div class="contenedoropcion"><custom-radiogroup class="graficoFechaOpcion" id="fechaRadioButton${contador}">
@@ -397,9 +401,10 @@ class graficos extends HTMLElement {
     }
   }
 
-  crearGrafico(labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, ordenar, type = "bar") {
+  crearGrafico(labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, esCamionero) {
     contador++
-    Object.assign(this, { labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, ordenar, type, multiple: 1, datasetsActuales: datasets, labelsActuales: labels })
+    debugger
+    Object.assign(this, { labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, ordenar: 0, esCamionero, multiple: 1, datasetsActuales: datasets, labelsActuales: labels, type: "bar" })
     this.agregarOpciones()
     this.colocarHTMLGrafica()
     this.colocarDatos()
@@ -426,16 +431,16 @@ class graficos extends HTMLElement {
             external: externalTooltipHandler,
             callbacks: {
               title: ([context]) => {
-                let { multiple, fechaOpcion } = this
-                let title = `${!agrupadoPorFecha ? `Producto: ${context.label}` : `Fecha: ${context.label}`}`
+                let { multiple, fechaOpcion, esCamionero } = this
+                let title = `${!agrupadoPorFecha ? `${esCamionero ? "Camionero" : "Producto"}: ${context.label}` : `Fecha: ${context.label}`}`
                 return title
               },
               label: context => {
-                let { multiple } = this
+                let { multiple, esCamionero } = this
                 let label = ""
 
                 if (multiple) {
-                  label = [agrupadoPorFecha ? `Producto: ${context.dataset.label}` : `Fecha: ${context.dataset.label}`, `${sonIngresos ? "Ingresos generados" : "Cantidad vendidos"}: ${this.devuelveCantidadFormateada(context)}`]
+                  label = [agrupadoPorFecha ? `${esCamionero ? "Camionero" : "Producto"}: ${context.dataset.label}` : `Fecha: ${context.dataset.label}`, `${sonIngresos ? "Ingresos generados" : "Cantidad vendidos"}: ${this.devuelveCantidadFormateada(context)}`]
                 }
                 else {
                   label = `${sonIngresos ? "Total ingresos generados" : `Cantidad ${agrupadoPorFecha ? "de productos " : ""}vendidos`}: ${this.devuelveCantidadFormateada(context)}`
