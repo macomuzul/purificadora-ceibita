@@ -110,8 +110,8 @@ datos.forEach((data, i) => {
 })
 
 datos.forEach((data, i) => {
-  let vendidos = camioneros.map(prod => data.cams[prod]?.v || 0)
-  let ingresos = camioneros.map(prod => data.cams[prod]?.i || 0)
+  let vendidos = camioneros.map(cam => data.cams[cam]?.v || 0)
+  let ingresos = camioneros.map(cam => data.cams[cam]?.i || 0)
   let objVendidos = {
     label: fechasStr[i],
     data: vendidos,

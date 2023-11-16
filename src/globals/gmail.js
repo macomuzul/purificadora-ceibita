@@ -15,7 +15,7 @@ global.mandarCorreoRegVentas = tcgoogle(async (motivo, usuario, f1, f2) => {
   let opcionesHTML = ["creado", "modificado", "eliminado", "movido", "movido y ha sobreescrito otro registro", "recuperado", "recuperado y ha sobreescrito otro registro"]
   let extras = ["", "", "", "a la", "con", "y ha sido puesto en la", "con"]
   let html = `${motivo > 4 ? "Un" : "El"} registro ${motivo > 4 ? "previamente eliminado " : ""}con fecha <strong>${fecha1}</strong> ha sido <span style="font-weight:600; color: ${colores[motivo]};">${opcionesHTML[motivo]}</span>${motivo > 2 ? ` ${extras[motivo]} fecha <strong>${fecha2}</strong>` : ""} por el usuario <strong>${usuario}</strong>
-    <div>Haz click aqui para ir al registro ➔ http://localhost:3000/registrarventas/${fechaURL}</div>${urlLogo}`
+    <div>Haz click aqui para ir al registro ➔ http://ec2-44-201-188-157.compute-1.amazonaws.com:3000/registrarventas/${fechaURL}</div>${urlLogo}`
 
   let formatearFechaDocs = f => DateTime.fromMillis(f).toFormat("d/M/y")
   let f1docs = formatearFechaDocs(f1), f2docs

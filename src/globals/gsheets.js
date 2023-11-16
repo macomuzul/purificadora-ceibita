@@ -6,6 +6,7 @@ let startColumnIndex = '0', endColumnIndex = '3'
 
 let titulosGoogleSheets = tcgoogle(async (titulo, esDia, backgroundColor, fontSize) => {
   let filagsheets = parseInt(await redis.get("filagsheets"))
+  if (await redis.get("hubocambioshoy") === "0") filagsheets++
   let startRowIndex = filagsheets, endRowIndex = filagsheets + 1
   if (!esDia) endRowIndex++
   let range = { sheetId, startRowIndex, endRowIndex, startColumnIndex, endColumnIndex }

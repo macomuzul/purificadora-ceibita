@@ -40,7 +40,7 @@ router.route('/recuperarcontrase%C3%B1a').get(async (req, res) => {
   res.render('recuperarcontraseña', { errorRecuperarContraseña, intentosRestantes, tiempoQueQueda, correoEnviado })
 }).post(async (req, res) => {
   let textoIP = `recuperarcontip:${req.ip || req.socket.remoteAddress}`
-  await redis.setNX(textoIP, "0")
+  await redis.set(textoIP, "0", { NX: true, EX: 86400 })
   let numRequestsInvalidas = parseInt(await redis.getEx(textoIP, { EX: tiempoTimeoutRecuperarContraseñaSegundos }))
 
   if (numRequestsInvalidas > recuperarContraseñaCantMaxPeticionesInvalidas) return req.flash('intentosRestantesRecuperarContraseña', '0')

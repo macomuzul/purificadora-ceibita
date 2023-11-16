@@ -189,9 +189,8 @@ $("body").on("click", "#analizarVarios", function () {
   let [fecha] = devuelveCalendarios("calendario")
   if (fecha === "") return Swal.fire("Campo de fecha vacío", "Por favor selecciona una fecha para continuar", "error")
   if (rango === "libre") {
-    let fechas = listaFechas
+    let fechas = unidadTiempo === "semanas" ? listaFechas : datepicker.datepicker("getDates")
     fechas.sort((a, b) => a - b)
-    debugger
     fecha = fechas.map(x => new Intl.DateTimeFormat("es", { timeZone: "UTC" }).format(x).replaceAll("/", "-")).join()
   }
   antesDeCambiarPagina()
