@@ -3,6 +3,4 @@
 /test-results/
 /playwright-report/
 /playwright/.cache/
-.env
-.env.prod
-.env.dev
+.env*
