@@ -52,8 +52,8 @@ let crearUsuario = async function () {
   })
 }
 
-$("body").on("keydown", "input", function (e) {
-  if (e.keyCode === 13) {
+$("body").on("keydown", "input", e => {
+  if (e.which === 13) {
     let siguienteInput = $(this).parent().next().find("input")[0]
     siguienteInput instanceof HTMLInputElement ? siguienteInput.focus() : $(this).parent().next().find("button")[0]?.focus()
   }

@@ -1,4 +1,3 @@
-require('dotenv').config()
 const router = require("express").Router()
 const RegistrosEliminados = require("../../models/registroseliminados")
 const { DateTime } = require("luxon")

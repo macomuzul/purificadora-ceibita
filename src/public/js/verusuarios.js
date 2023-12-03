@@ -84,6 +84,6 @@ function devuelvePedirContraseña(ojo) {
 function devuelveFuncionCountdown(ojo) {
   return f => {
     $(ojo).closest("td").prev()[0].textContent = "********"
-    $(ojo).prev().click()
+    $(ojo).prev().trigger("click")
   }
 }

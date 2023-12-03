@@ -11,7 +11,6 @@ process.on('uncaughtException', async error => {
     fs.writeFile('./logsfatales.log', JSON.stringify(err, ["name", "message", "arguments", "type", "error", "stack"]), e => console.log(e))
   }
 })
-require('dotenv').config()
 require('./db')
 
 const express = require('express')
@@ -30,12 +29,6 @@ require("./globals/globals")
 require("./listenersDB")
 require('./security/authPassport')
 
-// const convertirRegistrosPorDia = require("./utilities/convertirregistrospordia");
-// convertirRegistrosPorDia()
-
-// const convertirRespaldos = require("./utilities/convertirrespaldos");
-// convertirRespaldos()
-
 // const calcularTodosLosResumenesPorDia = require("./utilities/crearresumenespordia");
 // calcularTodosLosResumenesPorDia()
 
@@ -47,17 +40,6 @@ require('./security/authPassport')
 // const calcularTodosLosResumenesPorAño = require("./utilities/crearresumenesporaño");
 // calcularTodosLosResumenesPorAño()
 
-// const convertirPlantillas = require("./utilities/convertirnuevasplantillas");
-// convertirPlantillas()
-
-// const sumaResumenDias = require("./utilities/sumaResumenDias")
-// const RegistroVentas = require("./models/registroventas")
-// async function resDia() {
-//   let venta = await RegistroVentas.find()
-//   let r = sumaResumenDias(venta.at(-3))
-//   console.log(r)
-// }
-// resDia()
 
 async function crearPruebasValidacion(nombre) {
   try {

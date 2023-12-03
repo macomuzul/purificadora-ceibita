@@ -8,7 +8,7 @@ let datosMes = async fecha => await RegistroVentas.where("_id").gte(fecha.startO
 
 router.route('/calendario').get(async (req, res) => {
   let fecha = DateTime.now().setZone("America/Guatemala")
-  let dias = await datosMes(fecha)
+  let dias = await datosMes(DateTime.fromISO(fecha.toISODate()))
   let camioneros = await Camioneros.encontrar()
   fecha = fecha.toFormat("y/M")
   res.render('calendario', { mes: devuelveMes(fecha, dias), camioneros, fechaActual: fecha, esAdmin: esAdmin(req) })

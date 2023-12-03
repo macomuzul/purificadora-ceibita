@@ -13,7 +13,7 @@ let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).
 
   }(function ($) {
     'use strict';
-    var EvoCalendar = window.EvoCalendar || {};
+    var EvoCalendar = EvoCalendar || {};
 
     EvoCalendar = (function () {
       var instanceUid = 0;

@@ -2,14 +2,15 @@ let getCaretPosition = q => getSelection().rangeCount ? getSelection().getRangeA
 
 $("body").on("keydown", "td", function (e) {
   let cellindex = $(this).index()
-  let { atStart, atEnd } = e.which == 37 || e.which == 39 ? getSelectionTextInfo(this) : {}
-  if (e.which == 37 && atStart) //flecha izquierda
+  let k = e.which
+  let { atStart, atEnd } = k == 37 || k == 39 ? getSelectionTextInfo(this) : {}
+  if (k == 37 && atStart) //flecha izquierda
     enfocarCelda($(this).prev(), e)
-  else if (e.which == 39 && atEnd) //flecha derecha
+  else if (k == 39 && atEnd) //flecha derecha
     enfocarCelda($(this).next(), e)
-  else if (e.which == 38) //flecha arriba
+  else if (k == 38) //flecha arriba
     $(this).parent().index() === 0 ? enfocarCelda($(this).closest("tbody").find("tr").last().find("td").eq(cellindex - 1), e) : enfocarCelda($(this).closest("tr").prev().find("td").eq(cellindex), e)
-  else if (e.keyCode === 13 || e.which == 40) //enter y flecha abajo
+  else if (k === 13 || k == 40) //enter y flecha abajo
     $(this).closest("tr")[0].rowIndex <= $(this).closest("tbody")[0].rows.length ? enfocarCelda($(this).closest("tr").next().find("td").eq(cellindex), e) : enfocarCelda($(this).closest("tbody").find("tr").first().find("td").eq(cellindex + 1), e)
 })
 
@@ -21,7 +22,7 @@ let mostrarOffscreen = x => {
 function enfocarCelda([x], e) {
   e.preventDefault()
   if (x !== undefined && x.contentEditable) {
-    $(x).focus()
+    $(x).trigger("focus")
     irAlFinalDelTexto(x)
     mostrarOffscreen(x)
   }
@@ -59,14 +60,14 @@ $("body").on("beforeinput", "td", function (e) {
 })
 
 
-$("body").on("beforeinput", "input", function (e) {
-  let letra = event.data ?? ''
-  if (letra === '"' || letra == "\\" || letra == '\\') e.preventDefault()
+$("body").on("beforeinput", "input", e => {
+  let k = e.data ?? ''
+  if (k === '"' || k == "\\" || k == '\\') e.preventDefault()
 })
 
 
-$("body").on("keydown", "input", function (e) {
-  if (e.keyCode === 13) {
+$("body").on("keydown", "input", e => {
+  if (e.which === 13) {
     let x = $(e.target).closest("section").find("td").first()
     x.focus()
     irAlFinalDelTexto(x[0])

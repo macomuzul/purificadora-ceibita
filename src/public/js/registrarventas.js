@@ -177,7 +177,7 @@ $("body").on("click", '.grupotabs th:not([colspan="2"]), #tablaresumen th', func
     let esResumen = (tabla.id === "tablaresumen")
     if (!esResumen) $(".restaurarplantilla").css("display", "initial")
     let cuerpo = tabla.querySelector(".cuerpo")
-    let flecha = window.getComputedStyle(this, ':after').content
+    let flecha = getComputedStyle(this, ':after').content
     let order = (flecha === '"↓"') ? "asc" : "desc"
     let separador = "-----"
     let objValores = {}
@@ -232,10 +232,10 @@ $("body").on("click", ".tabs input", function () {
   document.querySelector(`.contenidotabs [data-tabid="${this.dataset.tabid}"]`).style.display = "initial"
 })
 
-$("body").on("keyup", "td", function () {
-  let keycode = event.keyCode || event.which
-  if ((keycode >= 48 && keycode <= 57) || keycode === 229 || keycode === 8) {
-    let cuerpo = this.closest(".cuerpo")
+$("body").on("keyup", "td", e => {
+  let k = e.which
+  if ((k >= 48 && k <= 57) || k === 229 || k === 8) {
+    let cuerpo = e.target.closest(".cuerpo")
       ;[...cuerpo.rows].forEach(x => calcularvendidoseingresos(x))
     calcularvendidoseingresostotal(cuerpo)
   }
@@ -846,7 +846,7 @@ function reacomodarCamiones() {
     label.innerText = `Camión ${(i + 1)}`
   })
   if ($(".grupotabs .tab .tabs__radio:checked").length === 0)
-    $(".grupotabs .tab:first-child .tabs__label")[0].click()
+    $(".grupotabs .tab:first-child .tabs__label")[0].trigger("click")
 }
 
 async function validarCamioneros(textbox, numerotabla) {

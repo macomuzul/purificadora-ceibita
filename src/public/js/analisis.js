@@ -10,7 +10,7 @@ let filasIndice = [], listaFechas = []
 let datepicker, objMinView = { dias: 0, semanas: 0, meses: 1, años: 2 }
 moment.locale('en', { week: { dow: 1 } })
 
-window.onbeforeunload = q => {
+onbeforeunload = q => {
   agruparPor = agruparPor.replace("agruparpor=", "")
   rango = rango.replace("rango=", "")
 }
