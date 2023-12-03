@@ -6,7 +6,6 @@ let startColumnIndex = '0', endColumnIndex = '3'
 
 let titulosGoogleSheets = tcgoogle(async (titulo, esDia, backgroundColor, fontSize) => {
   let filagsheets = parseInt(await redis.get("filagsheets"))
-  if (await redis.get("hubocambioshoy") === "0") filagsheets++
   let startRowIndex = filagsheets, endRowIndex = filagsheets + 1
   if (!esDia) endRowIndex++
   let range = { sheetId, startRowIndex, endRowIndex, startColumnIndex, endColumnIndex }
@@ -43,7 +42,10 @@ let titulosGoogleSheets = tcgoogle(async (titulo, esDia, backgroundColor, fontSi
 
 global.agregarFilaGoogleSheets = tcgoogle(async data => {
   let filagsheets = parseInt(await redis.get("filagsheets"))
-  if (await redis.get("hubocambioshoy") === "0") filagsheets--
+  if (await redis.get("sobreescribirfilagsheets") === "1") {
+    await redis.set("sobreescribirfilagsheets", "0")
+    filagsheets--
+  }
   let startRowIndex = filagsheets, endRowIndex = filagsheets + 1
   let range = { sheetId, startRowIndex, endRowIndex, startColumnIndex, endColumnIndex }
   let requests = [{

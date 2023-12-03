@@ -26,6 +26,7 @@ cron.schedule('0 0 * * *', tccron(async () => {
 
 global.diaCron = async function () {
   await redis.set("hubocambioshoy", "0")
+  await redis.set("sobreescribirfilagsheets", "0")
   let cambiosVentas = await CambiosVentas.find().lean()
   let cambios = {}
   cambiosVentas.forEach(x => {

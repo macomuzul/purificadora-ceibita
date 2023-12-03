@@ -29,6 +29,7 @@ global.mandarCorreoRegVentas = tcgoogle(async (motivo, usuario, f1, f2) => {
     await agregarFilaGoogleSheets(["Hora", "Usuario", "Acción que realizó"])
     await crearDiaGoogleDocs(textoGDocs)
     await redis.set("hubocambioshoy", "1")
+    await redis.set("sobreescribirfilagsheets", "1")
   }
   await agregarFilaGoogleSheets([hora, usuario, textoGSheets])
   await agregarTextoDocs(textoGDocs)

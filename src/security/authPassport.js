@@ -2,6 +2,7 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const Usuarios = require('../models/usuario')
 const redis = require("../redis")
+const { LogsAutenticacion } = require("../models/loggers")
 
 passport.serializeUser((user, done) => done(null, user._id))
 
@@ -20,7 +21,12 @@ passport.use('iniciarSesion', new LocalStrategy({
   let numRequestsInvalidas = parseInt(await redis.getEx(textoIP, { EX: tiempoTimeoutLoginSegundos }))
 
   if (numRequestsInvalidas > loginCantMaxPeticionesInvalidas) return done(null, false, req.flash('intentosRestantesLogin', '0'))
-  if (numRequestsInvalidas === loginCantMaxPeticionesInvalidas) req.flash('intentosRestantesLogin', '0')
+
+  if (numRequestsInvalidas === loginCantMaxPeticionesInvalidas) {
+    await LogsAutenticacion.log(`Error de autenticación ${textoIP}`, { usuario, contraseña })
+    await mandarCorreoError("Error", `Error de autenticación ${textoIP}`)
+    req.flash('intentosRestantesLogin', '0')
+  }
   else if (numRequestsInvalidas === loginCantMaxPeticionesInvalidas - 1) req.flash('intentosRestantesLogin', '1')
   await redis.incr(textoIP)
 

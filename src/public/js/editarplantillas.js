@@ -22,8 +22,6 @@ $(".contenedoreliminar").on('click', async function () {
   }
 })
 
-//TODO revisar que los resumenesdia hacen que cambios sean true en las semanas meses y años, revisar los crons y los mensajes a docs y sheets
-//TODO ver que funciona el location
 $("body").on('click', "#guardar", async function () {
   if (!await validarPlantillas()) return
   let nombre = $("#nombreplantilla").val()

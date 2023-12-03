@@ -157,5 +157,3 @@ app.get('*', (req, res) => res.send("La página a la que deseas acceder no exist
 // guardarGD()
 
 app.listen(app.get('port'), () => console.log('servidor funcionando en el puerto: ', app.get('port')))
-
-// TODO hay que poner en la variable de entorno del servidor NODE_ENV="production"
