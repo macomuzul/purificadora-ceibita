@@ -12,11 +12,21 @@ cron.schedule('0 0 1 * *', tccron(async () => {
   await crearArchivo(`Respaldo mensual del mes de ${fecha.monthLong} del ${fecha.year}`, folderRespaldoMensual, registros, "ambos")
   await crearMesGoogleSheets()
   await crearMesGoogleDocs()
+  await diaCron()
 }, "Ocurrió un error al crear el respaldo mensual"), { timezone: "America/Guatemala" })
 
 
 cron.schedule('0 0 * * *', tccron(async () => {
-  if (DateTime.now().day !== 1) await crearDiaGoogleSheets()  
+  if (DateTime.now().day !== 1) {
+    await crearDiaGoogleSheets()
+    await diaCron()
+  }
+}, "Ocurrió un error al crear el respaldo diario"), { timezone: "America/Guatemala" })
+
+
+global.diaCron = async function () {
+  await redis.set("hubocambioshoy", "0")
+  await redis.set("sobreescribirfilagsheets", "0")
   let cambiosVentas = await CambiosVentas.find().lean()
   let cambios = {}
   cambiosVentas.forEach(x => {
@@ -33,4 +43,4 @@ cron.schedule('0 0 * * *', tccron(async () => {
   await Promise.all(creadosOModificados.map(async x => x.venta = await RegistroVentas.findById((new Date(x._id)).valueOf())))
   if (await guardarRespaldoDiario(creadosOModificados, "ambos", borrados)) await CambiosVentas.deleteMany()
   else throw new Error("Ocurrió un error al guardar los registros cambiados en google drive")
-}, "Ocurrió un error al crear el respaldo diario"), { timezone: "America/Guatemala" })
+}

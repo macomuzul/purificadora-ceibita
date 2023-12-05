@@ -42,8 +42,8 @@ let titulosGoogleSheets = tcgoogle(async (titulo, esDia, backgroundColor, fontSi
 
 global.agregarFilaGoogleSheets = tcgoogle(async data => {
   let filagsheets = parseInt(await redis.get("filagsheets"))
-  if (await redis.get("filagsheetssobreescribir") === "1") {
-    await redis.set("filagsheetssobreescribir", "0")
+  if (await redis.get("sobreescribirfilagsheets") === "1") {
+    await redis.set("sobreescribirfilagsheets", "0")
     filagsheets--
   }
   let startRowIndex = filagsheets, endRowIndex = filagsheets + 1
@@ -79,5 +79,4 @@ global.crearMesGoogleSheets = async function () {
 global.crearDiaGoogleSheets = async function () {
   await titulosGoogleSheets("Día: " + DateTime.now().day, 1, { red: 0.43, green: 0.62, blue: 0.92 }, 11)
   await agregarFilaGoogleSheets(["Sin cambios"])
-  await redis.set("filagsheetssobreescribir", "1")
 }
