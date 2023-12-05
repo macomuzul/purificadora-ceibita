@@ -16,7 +16,7 @@ passport.use('iniciarSesion', new LocalStrategy({
   passwordField: 'contraseña',
   passReqToCallback: true
 }, async (req, usuario, contraseña, done) => {
-  let textoIP = `loginip:${req.ip || req.socket.remoteAddress}`
+  let textoIP = `loginip:${req.ip}`
   await redis.set(textoIP, "0", { NX: true, EX: 86400 })
   let numRequestsInvalidas = parseInt(await redis.getEx(textoIP, { EX: tiempoTimeoutLoginSegundos }))
 
@@ -24,7 +24,6 @@ passport.use('iniciarSesion', new LocalStrategy({
 
   if (numRequestsInvalidas === loginCantMaxPeticionesInvalidas) {
     await LogsAutenticacion.log(`Error de autenticación ${textoIP}`, { usuario, contraseña })
-    await mandarCorreoError("Error", `Error de autenticación ${textoIP}`)
     req.flash('intentosRestantesLogin', '0')
   }
   else if (numRequestsInvalidas === loginCantMaxPeticionesInvalidas - 1) req.flash('intentosRestantesLogin', '1')

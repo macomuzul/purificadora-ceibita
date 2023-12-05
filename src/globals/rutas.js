@@ -30,7 +30,6 @@ global.tcaccion = (f, msg) => async (req, res) => {
     if (["StrictModeError", "ValidationError", "CastError"].includes(e.name)) {
       await loggearError(req, res, e, errores[e.name])
       let { baseUrl, url, method } = req
-      await mandarCorreoError("Error", `Ocurrió un error grave de ${method} en ${baseUrl}${url}`)
     } else
       await loggearError(req, res, e, e.name === "errorDB" ? e.message : msg, LogsLeves)
   }
@@ -41,7 +40,6 @@ global.tcgoogle = (f, msg) => async (...params) => {
     await f(...params)
   } catch (e) {
     await LogsGoogle.log(msg, { error: e })
-    await mandarCorreoError("Error de google", msg)
   }
 }
 
@@ -50,7 +48,6 @@ global.tccron = (f, msg) => async (...params) => {
     await f(...params)
   } catch (e) {
     await LogsCron.log(msg, { error: e })
-    await mandarCorreoError("Error en el cron", msg)
   }
 }
 

@@ -2,13 +2,14 @@ const router = require('express').Router()
 const passport = require('passport')
 const Usuarios = require("../models/usuario")
 const redis = require("../redis")
+const sesiones = require('../models/sesiones')
 
 router.get('/', tcrutas(async (req, res) => {
   let errorInicioSesion = req.flash("errorInicioSesion")[0]
   let intentosRestantes = req.flash("intentosRestantesLogin")[0]
   let tiempoQueQueda = tiempoTimeoutLoginSegundos
   if (!errorInicioSesion) {
-    let textoIP = `loginip:${req.ip || req.socket.remoteAddress}`
+    let textoIP = `loginip:${req.ip}`
     let numRequestsInvalidas = parseInt(await redis.get(textoIP))
     if (numRequestsInvalidas && numRequestsInvalidas >= loginCantMaxPeticionesInvalidas) {
       intentosRestantes = "0"
@@ -19,10 +20,14 @@ router.get('/', tcrutas(async (req, res) => {
 }, "Ocurrió un error"))
 
 router.post('/iniciarSesion', passport.authenticate('iniciarSesion', {
-  successRedirect: '/calendario',
   failureRedirect: '/',
   failureFlash: true
-}))
+}), async (req, res) => {
+  res.redirect("/calendario")
+  let { ip, headers, body, httpVersion } = req
+  let data = { ip, headers, body, httpVersion }
+  await sesiones.create({ fecha: Date.now(), ip, sesion: res.getHeaders()['set-cookie'][0], data })
+})
 
 router.route('/recuperarcontrase%C3%B1a').get(async (req, res) => {
   let errorRecuperarContraseña = req.flash("errorRecuperarContraseña")[0]
@@ -30,7 +35,7 @@ router.route('/recuperarcontrase%C3%B1a').get(async (req, res) => {
   let correoEnviado = req.flash("correoEnviado")[0]
   let tiempoQueQueda = tiempoTimeoutRecuperarContraseñaSegundos
   if (!errorRecuperarContraseña) {
-    let textoIP = `recuperarcontip:${req.ip || req.socket.remoteAddress}`
+    let textoIP = `recuperarcontip:${req.ip}`
     let numRequestsInvalidas = parseInt(await redis.get(textoIP))
     if (numRequestsInvalidas && numRequestsInvalidas >= recuperarContraseñaCantMaxPeticionesInvalidas) {
       intentosRestantes = "0"
@@ -39,7 +44,7 @@ router.route('/recuperarcontrase%C3%B1a').get(async (req, res) => {
   }
   res.render('recuperarcontraseña', { errorRecuperarContraseña, intentosRestantes, tiempoQueQueda, correoEnviado })
 }).post(async (req, res) => {
-  let textoIP = `recuperarcontip:${req.ip || req.socket.remoteAddress}`
+  let textoIP = `recuperarcontip:${req.ip}`
   await redis.set(textoIP, "0", { NX: true, EX: 86400 })
   let numRequestsInvalidas = parseInt(await redis.getEx(textoIP, { EX: tiempoTimeoutRecuperarContraseñaSegundos }))
 

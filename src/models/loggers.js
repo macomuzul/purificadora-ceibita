@@ -2,27 +2,45 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose
 
 const loggerSchema = new Schema({
-  fecha: {
-    type: Date,
-    default: () => Date.now()
-  },
+  fecha: Date,
   req: {},
-  error: {}
+  error: {},
+  tipo: String
 }, {
   statics: {
-    async log(req, error) {
+    async log(req, error, tipo) {
       //TODO este log quitarlo para produccion
       console.log({ req, error })
-      await this.create({ req, error })
+      await this.create({ tipo, fecha: Date.now(), req, error })
     }
   }
 })
 
-let LogsLeves = mongoose.model("logsleves", loggerSchema)
-let LogsGraves = mongoose.model("logsgraves", loggerSchema)
-let LogsRutas = mongoose.model("logsrutas", loggerSchema)
-let LogsGoogle = mongoose.model("logsgoogle", loggerSchema)
-let LogsCron = mongoose.model("logscron", loggerSchema)
-let LogsAutenticacion = mongoose.model("logsautenticacion", loggerSchema)
+let LogsLevesMongo = mongoose.model("logsleves", loggerSchema)
+let LogsGravesMongo = mongoose.model("logsgraves", loggerSchema)
+
+class LoggerLeve {
+  tipo
+  constructor(tipo) {
+    this.tipo = tipo
+  }
+  async log(req, error) {
+    await LogsLevesMongo.log(req, error, this.tipo)
+  }
+}
+
+class LoggerGrave extends LoggerLeve {
+  async log(req, error) {
+    await LogsGravesMongo.log(req, error, this.tipo)
+    await mandarCorreoError(`Error de ${this.tipo}`, req)
+  }
+}
+
+let LogsLeves = new LoggerLeve()
+let LogsGraves = new LoggerGrave("tipo grave")
+let LogsRutas = new LoggerGrave("rutas")
+let LogsGoogle = new LoggerGrave("google")
+let LogsCron = new LoggerGrave("cron")
+let LogsAutenticacion = new LoggerGrave("autenticacion")
 
 module.exports = { LogsLeves, LogsGraves, LogsRutas, LogsGoogle, LogsCron, LogsAutenticacion }

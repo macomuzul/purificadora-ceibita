@@ -12,7 +12,6 @@ let errorListener = (f, listener) => async cambio => {
   } catch (e) {
     let msg = `Error en el listener ${listener}`
     await LogsGraves.log(msg, { error: e })
-    await mandarCorreoError(msg, "Error")
   }
 }
 
