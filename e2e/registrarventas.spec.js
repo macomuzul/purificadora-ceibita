@@ -29,7 +29,7 @@ test.describe("prueba console", () => {
     await page.getByRole('button', { name: 'Configuraciones' }).click()
     await page.getByLabel('Cambiar el orden de los camiones').check()
     await page.getByRole('button', { name: 'Guardar cambios' }).click()
-    await page.locator('span').filter({ hasText: '+' }).first().click()
+    await page.getByText('+').click()
     await page.getByText('+').click()
     await cambiarOrdenCamiones(page, "[for=tab0]", "[for=tab2]")
     await borrarCamion(page, "Camión 2")

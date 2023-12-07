@@ -6,6 +6,7 @@ beforeEach(() => {
   cy.visit('http://localhost:3000/registrarventas/1-3-2024')
   cy.get("input.trabajador").type("aaa")
   cy.viewport(1366, 570)
+  // cy.wra.should('be.true')
 })
 
 describe('validaciones antes de guardar', () => {

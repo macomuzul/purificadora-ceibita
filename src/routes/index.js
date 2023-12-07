@@ -25,7 +25,7 @@ router.post('/iniciarSesion', passport.authenticate('iniciarSesion', {
 }), async (req, res) => {
   res.redirect("/calendario")
   let { ip, headers, body, httpVersion } = req
-  let data = { ip, headers, body, httpVersion }
+  let data = { headers, body, httpVersion }
   await sesiones.create({ fecha: Date.now(), ip, sesion: res.getHeaders()['set-cookie'][0], data })
 })
 

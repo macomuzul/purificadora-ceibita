@@ -1179,6 +1179,3 @@ $("body").on('click', '.contenedormover', async q => {
   esconderOpciones()
   await moverReg(hoy.valueOf(), "/registrarventas/mover")
 })
-
-
-// colocarDatosTabla()
