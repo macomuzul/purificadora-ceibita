@@ -11,7 +11,7 @@ td {
   font-size: 16px;
   color: white;
   background: #0f0d35;
-  vertical-align:middle;
+  vertical-align: middle;
 }
 
 .productos {
@@ -31,9 +31,10 @@ th {
   overflow: auto;
 }
 
-td[contenteditable="true"]
-{
-    &:hover,&:focus{
-        background: #67abb1;
-    }
+td[contenteditable="true"] {
+
+  &:hover,
+  &:focus {
+    background: #67abb1;
+  }
 }

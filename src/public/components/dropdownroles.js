@@ -17,9 +17,8 @@ $("head").append(`<style>
   color: white;
   padding: 8px 10px;
   cursor: pointer;
-  &.active,
-  &:active,
-  &:hover {
+  
+  .active, &:active, &:hover {
     background: #373c49;
     color: white;
   }

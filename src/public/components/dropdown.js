@@ -1,5 +1,5 @@
 let dropdownSeleccionado = null
-$(window).on("click", e => dropdownSeleccionado?.cambiarEstado(-1))
+$(window).on('click', e => dropdownSeleccionado?.cambiarEstado(-1))
 
 class customDropdown extends HTMLElement {
   connectedCallback() {
@@ -14,14 +14,13 @@ class customDropdown extends HTMLElement {
     </ul>
   </div>`
 
-    let select = this.querySelector(".select")
-    let caret = this.querySelector(".caret")
-    let menu = this.querySelector(".menu")
-    let opciones = $(this).find(".menu li")
-    let selected = this.querySelector(".selected")
+    let select = this.querySelector('.select')
+    let caret = this.querySelector('.caret')
+    let menu = this.querySelector('.menu')
+    let selected = this.querySelector('.selected')
     let estaActivo = 0
 
-    $(this).on("click", function (e) {
+    $(this).on('click', function (e) {
       e.stopPropagation()
       if (dropdownSeleccionado !== this) dropdownSeleccionado?.cambiarEstado(-1)
       this.cambiarEstado(0)
@@ -31,9 +30,9 @@ class customDropdown extends HTMLElement {
     let cambiarEstado = i => {
       if (!estaActivo && i === -1) return
       estaActivo = i === 0 ? true : false
-      cambiarClase(select, "select-clicked", i)
-      cambiarClase(caret, "caret-rotate", i)
-      cambiarClase(menu, "menu-open", i)
+      cambiarClase(select, 'select-clicked', i)
+      cambiarClase(caret, 'caret-rotate', i)
+      cambiarClase(menu, 'menu-open', i)
     }
 
     this.cambiarEstado = cambiarEstado
@@ -43,16 +42,16 @@ class customDropdown extends HTMLElement {
       else if (i === 0) $(x).toggleClass(clase)
     }
 
-    $(this).on("click", "li", e => {
+    $(this).on('click', 'li', e => {
       let opcion = e.currentTarget
       e.stopPropagation()
-      selected.innerText = opcion.innerText;
+      selected.innerText = opcion.innerText
       cambiarEstado(-1)
-      opciones.each((i, opcion) => $(opcion).removeClass("active"))
-      $(opcion).addClass("active")
+      $(this).find('.menu li').removeClass('active')
+      $(opcion).addClass('active')
       metododropdown(opcion, menu)
     })
   }
 }
 
-customElements.define("custom-dropdown", customDropdown)
+customElements.define('custom-dropdown', customDropdown)

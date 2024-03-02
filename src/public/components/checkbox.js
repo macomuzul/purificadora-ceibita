@@ -1,9 +1,9 @@
 class cCheckbox extends HTMLElement {
   connectedCallback() {
-    let { checked, clase } = this.dataset
+    let { checked, clase, id } = this.dataset
     this.className = `form-check form-check-inline ${clase ?? ""}`
     this.style.userSelect = "none"
-    this.innerHTML = `<input class="form-check-input" type="checkbox" ${checked ? "checked" : ""}><label class="form-check-label">${this.innerHTML}</label>`
+    this.innerHTML = `<input class="form-check-input" id="${id}" type="checkbox" ${checked ? "checked" : ""}><label class="form-check-label">${this.innerHTML}</label>`
   }
 }
 

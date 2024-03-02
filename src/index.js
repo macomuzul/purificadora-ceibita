@@ -1,14 +1,14 @@
-const fs = require("fs")
+const fs = require('fs')
 process.on('uncaughtException', async error => {
   try {
     console.log(error)
-    await LogsGraves.log("Error fatal", error)
-    await mandarCorreoError("Error fatal importantisimo", "Ha ocurrido un error fatal")
+    await LogsGraves.log('Error fatal', error)
+    await mandarCorreoError('Error fatal importantisimo', 'Ha ocurrido un error fatal')
   } catch (err) {
     console.log(error)
-    fs.writeFile('./logsfatales.log', JSON.stringify(error, ["name", "message", "arguments", "type", "error", "stack"]), e => console.log(e))
+    fs.writeFile('./logsfatales.log', JSON.stringify(error, ['name', 'message', 'arguments', 'type', 'error', 'stack']), e => console.log(e))
     console.log(err)
-    fs.writeFile('./logsfatales.log', JSON.stringify(err, ["name", "message", "arguments", "type", "error", "stack"]), e => console.log(e))
+    fs.writeFile('./logsfatales.log', JSON.stringify(err, ['name', 'message', 'arguments', 'type', 'error', 'stack']), e => console.log(e))
   }
 })
 require('./db')
@@ -22,11 +22,11 @@ const session = require('express-session')
 const passport = require('passport')
 const pruebasvalidaciones = require('./models/pruebasvalidaciones')
 const RedisStore = require('connect-redis')
-const redis = require("./redis")
-const { sanitizeFilter } = require("mongoose")
-const { LogsGraves } = require("./models/loggers")
-require("./globals/globals")
-require("./listenersDB")
+const redis = require('./redis')
+const { sanitizeFilter } = require('mongoose')
+const { LogsGraves } = require('./models/loggers')
+require('./globals/globals')
+require('./listenersDB')
 require('./security/authPassport')
 
 // const calcularTodosLosResumenesPorDia = require("./utilities/crearresumenespordia");
@@ -40,7 +40,6 @@ require('./security/authPassport')
 // const calcularTodosLosResumenesPorAño = require("./utilities/crearresumenesporaño");
 // calcularTodosLosResumenesPorAño()
 
-
 async function crearPruebasValidacion(nombre) {
   try {
     // let j = await pruebasvalidaciones.create({nombre: "masmfnvcnv", fkdk: "kskd", precio: 1200, viajes: [2,5,5,51,1,4], turbokike: 29939})
@@ -48,11 +47,11 @@ async function crearPruebasValidacion(nombre) {
     // let a = await pruebasvalidaciones.updateOne({}, { fuu: "ewr" })
     // console.log(a)
     let req = {}
-    req.body = { apellido: "vergazo" }
+    req.body = { apellido: 'vergazo' }
     req.body = { nombre: { $ne: 1 } }
     // sanitizeFilter(req.body)
     let { nombre } = req.body
-    let cambios = { nombre: "chimadaamigo" }
+    let cambios = { nombre: 'chimadaamigo' }
     console.log(nombre)
     let r = await pruebasvalidaciones.updateOne({ nombre }, cambios, { sanitizeFilter: true })
     console.log(r)
@@ -80,18 +79,18 @@ app.set('view options', { rmWhitespace: true })
 if (enDesarrollo) {
   const morgan = require('morgan')
   app.use(morgan('dev'))
-  app.use(express.static(path.join(__dirname, "../cypress/utilidades")))
+  app.use(express.static(path.join(__dirname, '../cypress/utilidades')))
 }
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
-app.use(express.static(path.join(__dirname, "public/css")))
-app.use(express.static(path.join(__dirname, "public/images")))
-app.use(express.static(path.join(__dirname, "public/js")))
-app.use(express.static(path.join(__dirname, "public/html")))
-app.use(express.static(path.join(__dirname, "public/js/partials")))
-app.use(express.static(path.join(__dirname, "public/js/utilities")))
-app.use(express.static(path.join(__dirname, "public/components")))
-app.use(express.static(path.join(__dirname, "../plugins")))
+app.use(express.static(path.join(__dirname, 'public/css')))
+app.use(express.static(path.join(__dirname, 'public/images')))
+app.use(express.static(path.join(__dirname, 'public/js')))
+app.use(express.static(path.join(__dirname, 'public/html')))
+app.use(express.static(path.join(__dirname, 'public/js/partials')))
+app.use(express.static(path.join(__dirname, 'public/js/utilities')))
+app.use(express.static(path.join(__dirname, 'public/components')))
+app.use(express.static(path.join(__dirname, '../plugins')))
 
 app.set('trust proxy', 1)
 app.use(session({
@@ -101,13 +100,13 @@ app.use(session({
   rolling: true,
   store: new RedisStore.default({
     client: redis,
-    prefix: "cookiesceibita:",
-    disableTouch: false
+    prefix: 'cookiesceibita:',
+    disableTouch: false,
   }),
   cookie: {
     maxAge: 24 * 3600000,
     // maxAge: 30000,
-  }
+  },
 }))
 app.use(flash())
 app.use(passport.initialize())
@@ -115,7 +114,7 @@ app.use(passport.session())
 
 // routes
 app.use('/', require('./routes/index'))
-enDesarrollo ? app.use((req, res, next) => next()) : app.use((req, res, next) => req.isAuthenticated() ? next() : res.redirect('/'))
+enDesarrollo ? app.use((req, res, next) => next()) : app.use((req, res, next) => (req.isAuthenticated() ? next() : res.redirect('/')))
 app.use('/', require('./routes/calendario'))
 
 app.use('/registrarventas', require('./routes/registrarventas').router)
@@ -125,7 +124,9 @@ app.use('/empleados', require('./routes/empleados'))
 app.use('/configuraciones', require('./routes/configuraciones'))
 app.use('/analisis', require('./routes/analisis'))
 app.use('/extras', require('./routes/extras'))
-app.get('*', (req, res) => res.send("La página a la que deseas acceder no existe :("))
+app.use('/gastos', require('./routes/gastos'))
+app.get('/coso', (req, res) => res.render('draggable'))
+app.get('*', (req, res) => res.send('La página a la que deseas acceder no existe :('))
 
 // agregarTituloDocs("Cambios ocurridos el 1/2/2023", "-")
 // crearMesGoogleSheets()

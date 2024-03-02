@@ -1,5 +1,5 @@
 let irAPagina = pag => location = `${document.URL.replace(/pag=[0-9]+/,`pag=${pag}`)}`;
-let svgPaginacion = clase => `<svg xmlns="http://www.w3.org/2000/svg" class="flechanumeracion ${clase}" viewBox="0 0 24 24"><path d="M4 12L20 12M4 12L10 6M4 12L10 18" stroke="#FFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+let svgPaginacion = clase => `<svg class="flechanumeracion ${clase}" viewBox="0 0 24 24"><path d="M4 12L20 12M4 12L10 6M4 12L10 18" stroke="#FFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 
 $(q => {
   let cantNums = 7

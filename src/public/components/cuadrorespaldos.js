@@ -13,9 +13,10 @@ $("head").append(`<style>
 .gridCheckbox{
   justify-items: flex-end;
   position: relative;
-}
-.gridCheckbox>*:nth-child(2n){
-  justify-self: flex-start;
+
+  &>*:nth-child(2n){
+    justify-self: flex-start;
+  }
 }
 
 .tituloOpciones{
@@ -35,11 +36,12 @@ $("head").append(`<style>
   background: #0b2346;
   border-color: #010a18;
   padding: 15px 25px;
-}
-.botonazul:focus, .botonazul:hover, .botonazul:active {
-  outline: none;
-  box-shadow: none;
-  background-color: #072a5c;
+
+  &:focus, &:hover, &:active {
+    outline: none;
+    box-shadow: none;
+    background-color: #072a5c;
+  }
 }
 
 .btn-success {
@@ -90,7 +92,6 @@ $("head").append(`<style>
   position: relative;
   margin-top: 10px;
 }
-
 </style>`)
 
 let contador = 0, seleccionado, c, opcionCalendario
@@ -104,7 +105,7 @@ let swalConfirmarYCancelar = Swal.mixin({
 })
 
 let crearCal = cal => c.html(`<button type="button" class="btn btn-primary botonazul botonvolver" id="volver">
-<svg class="flecharotada" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white"><path d="M20 0zm-8.344 14.709-1.41-1.418L12.547 11H4V9h8.673l-2.38-2.379 1.414-1.414 4.737 4.736z"/></svg>
+<svg class="flecharotada" width="20" height="20" fill="white"><path d="M20 0zm-8.344 14.709-1.41-1.418L12.547 11H4V9h8.673l-2.38-2.379 1.414-1.414 4.737 4.736z"/></svg>
 Volver</button><iframe class="iframe" src="/extras/calendarioIframe${cal}" frameborder="0"></iframe>`)
 $("body").on("click", "#btnMayor", q => {
   seleccionado.cal = "mayores o iguales que"
@@ -128,8 +129,8 @@ $("body").on("click", ".botonvolver", crearContenidoOpciones)
 $("body").on("click", ".opcionesradiobutton custom-radiobutton input", crearContenidoOpciones)
 
 let guardando = false
-$("#btnguardar").on("click", async function() {
-  if(guardando === true) return
+$("#btnguardar").on("click", async function () {
+  if (guardando === true) return
   guardando = true
   $(this).html(`  Guardando<div class="cajaspinner"><div class="spinner-border text-primary"></div>`)
   let chequeados = [...$("cuadro-respaldos")].filter(x => $(x).find(".tituloregistro input")[0].checked)
@@ -143,7 +144,7 @@ $("#btnguardar").on("click", async function() {
 })
 $("body").on("click", "#seleccionarTodos", function () {
   let checked = $(this).find("input")[0].checked
-    ;[...$(this).closest(".contenidoOpciones").find(".gridCheckbox input")].forEach(x => x.checked = checked)
+  $(this).closest(".contenidoOpciones").find(".gridCheckbox input").each((_, x) => x.checked = checked)
 })
 
 async function guardar(body) {
@@ -224,7 +225,7 @@ class cuadroRespaldos extends HTMLElement {
     <div class="contenido">
     <div class="contenidosuperior">
     <custom-input data-texto="Respaldo ${titulo.toLowerCase()}" class="nombreArchivo" ${checked ? "" : `data-props="disabled"`}>Nombre del archivo:</custom-input>
-    <div class="opcionesextra"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ddd" width="30px" height="30px" viewBox="0 0 93.5 93.5" xml:space="preserve"><g><path d="M93.5,40.899c0-2.453-1.995-4.447-4.448-4.447H81.98c-0.74-2.545-1.756-5.001-3.035-7.331l4.998-5    c0.826-0.827,1.303-1.973,1.303-3.146c0-1.19-0.462-2.306-1.303-3.146L75.67,9.555c-1.613-1.615-4.673-1.618-6.29,0l-5,5    c-2.327-1.28-4.786-2.296-7.332-3.037v-7.07C57.048,1.995,55.053,0,52.602,0H40.899c-2.453,0-4.447,1.995-4.447,4.448v7.071    c-2.546,0.741-5.005,1.757-7.333,3.037l-5-5c-1.68-1.679-4.609-1.679-6.288,0L9.555,17.83c-1.734,1.734-1.734,4.555,0,6.289    l4.999,5c-1.279,2.33-2.295,4.788-3.036,7.333h-7.07C1.995,36.452,0,38.447,0,40.899V52.6c0,2.453,1.995,4.447,4.448,4.447h7.071    c0.74,2.545,1.757,5.003,3.036,7.332l-4.998,4.999c-0.827,0.827-1.303,1.974-1.303,3.146c0,1.189,0.462,2.307,1.302,3.146    l8.274,8.273c1.614,1.615,4.674,1.619,6.29,0l5-5c2.328,1.279,4.786,2.297,7.333,3.037v7.071c0,2.453,1.995,4.448,4.447,4.448    h11.702c2.453,0,4.446-1.995,4.446-4.448V81.98c2.546-0.74,5.005-1.756,7.332-3.037l5,5c1.681,1.68,4.608,1.68,6.288,0    l8.275-8.273c1.734-1.734,1.734-4.555,0-6.289l-4.998-5.001c1.279-2.329,2.295-4.787,3.035-7.332h7.071    c2.453,0,4.448-1.995,4.448-4.446V40.899z M62.947,46.75c0,8.932-7.266,16.197-16.197,16.197c-8.931,0-16.197-7.266-16.197-16.197    c0-8.931,7.266-16.197,16.197-16.197C55.682,30.553,62.947,37.819,62.947,46.75z"/></g></svg>
+    <div class="opcionesextra"><svg fill="#ddd" width="30px" height="30px" viewBox="0 0 93.5 93.5"><g><path d="M93.5,40.899c0-2.453-1.995-4.447-4.448-4.447H81.98c-0.74-2.545-1.756-5.001-3.035-7.331l4.998-5    c0.826-0.827,1.303-1.973,1.303-3.146c0-1.19-0.462-2.306-1.303-3.146L75.67,9.555c-1.613-1.615-4.673-1.618-6.29,0l-5,5    c-2.327-1.28-4.786-2.296-7.332-3.037v-7.07C57.048,1.995,55.053,0,52.602,0H40.899c-2.453,0-4.447,1.995-4.447,4.448v7.071    c-2.546,0.741-5.005,1.757-7.333,3.037l-5-5c-1.68-1.679-4.609-1.679-6.288,0L9.555,17.83c-1.734,1.734-1.734,4.555,0,6.289    l4.999,5c-1.279,2.33-2.295,4.788-3.036,7.333h-7.07C1.995,36.452,0,38.447,0,40.899V52.6c0,2.453,1.995,4.447,4.448,4.447h7.071    c0.74,2.545,1.757,5.003,3.036,7.332l-4.998,4.999c-0.827,0.827-1.303,1.974-1.303,3.146c0,1.189,0.462,2.307,1.302,3.146    l8.274,8.273c1.614,1.615,4.674,1.619,6.29,0l5-5c2.328,1.279,4.786,2.297,7.333,3.037v7.071c0,2.453,1.995,4.448,4.447,4.448    h11.702c2.453,0,4.446-1.995,4.446-4.448V81.98c2.546-0.74,5.005-1.756,7.332-3.037l5,5c1.681,1.68,4.608,1.68,6.288,0    l8.275-8.273c1.734-1.734,1.734-4.555,0-6.289l-4.998-5.001c1.279-2.329,2.295-4.787,3.035-7.332h7.071    c2.453,0,4.448-1.995,4.448-4.446V40.899z M62.947,46.75c0,8.932-7.266,16.197-16.197,16.197c-8.931,0-16.197-7.266-16.197-16.197    c0-8.931,7.266-16.197,16.197-16.197C55.682,30.553,62.947,37.819,62.947,46.75z"/></g></svg>
     <div>Opciones</div><div>avanzadas</div></div>
     </div>
     <ul class="listaMensajes"><li class="mensajeOpciones">Crear ambos archivos</li><li class="mensajeOpciones">Guardar todos los registros</li></ul>

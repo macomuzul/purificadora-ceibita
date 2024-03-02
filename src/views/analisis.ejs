@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=1200px">
@@ -22,53 +23,56 @@
 
 <body>
   <%- include("layouts/navbar") %>
-    <main>
-      <div class="contenedorsuperior"> <button class="button-85">Analiza los datos de las fechas que elijas</button></div>
-      <div class="sections">
-        <div class="custom-control custom-switch switchAnimaciones">
-          <input class="custom-control-input" type="checkbox" id="switchAnimaciones" checked="false">
-          <label class="custom-control-label" for="switchAnimaciones">Animaciones</label>
-        </div>
-        <custom-breadcrumbs id="breadcrumbs"></custom-breadcrumbs>
-        <div class="comofunciona"><a href="/analisis/comofunciona">Cómo funcionan cada una de las opciones? ➔</a></div>
-        <section-volver id="sectionAgrupar">
-          <div class="tituloSeccion">Escoge cómo deseas agrupar los datos</div>
-          <article class="gridUnidadTiempo">
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por días" id="btnAgruparDias">
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por semanas" id="btnAgruparSemanas">
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por meses" id="btnAgruparMeses">
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por años" id="btnAgruparAños">
-          </article>
-        </section-volver>
-        <section-volver id="sectionRangos" data-idboton="volverPrimerNivel">
-          <div class="tituloSeccion">Escoge un rango para analizar las fechas</div>
-          <article class="gridUnidadTiempo">
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas mayores o igual que" id="btnMayor">
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas menores o igual que" id="btnMenor">
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas entre" id="btnEntre">
-              <input class="btn btn-primary botonazul btnOrden" type="button" value="Selección libre (uno o varios)" id="btnLibre">
-          </article>
-        </section-volver>
-        <section-volver id="sectionVarios" data-idboton="volverSegundoNivelVarios">
-          <div class="input-group date divdatepicker" id="datepickerVarios"><input type="text" class="form-control" readonly id="calendario"><span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>
-          <input class="btn btn-primary botonazul btnAnalizar" type="button" value="Analizar" id="analizarVarios">
-          <section class="sectionunidadTiempo">
-            <span class="cambiarUnidadTiempo">La selección de fechas actual no satisface tus necesidades? Prueba seleccionando por: <br><div class="unidadesTiempo"><button class="btn btn-primary botonazul btnunidadtiempo dia">Día</button> <button class="btn btn-primary botonazul btnunidadtiempo semana">Semana</button> <button class="btn btn-primary botonazul btnunidadtiempo mes">Mes</button> <button class="btn btn-primary botonazul btnunidadtiempo año">Año</button></div></span>
-          </section>
-          <input class="btn btn-primary botonazul btnBorrarFechas" type="button" value="Borrar fechas seleccionadas" id="borrarFechas">
-          <div class="textoDatePicker"></div>
-        </section-volver>
-
-        <section-volver id="sectionEntre" data-idboton="volverSegundoNivelEntre">
-          <div class="input-group input-daterange divdatepicker" id="datepickerEntre">
-            <div class="input-group date"><input type="text" class="form-control" readonly id="calendario1"><span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>
-            <div class="divseparador">y</div>
-            <div class="input-group date"><input type="text" class="form-control" readonly id="calendario2"><span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>
-          </div>
-          <input class="btn btn-primary botonazul btnAnalizar" type="button" value="Analizar" id="analizarEntre">
-          <input class="btn btn-primary botonazul btnBorrarFechas" type="button" value="Borrar fechas seleccionadas" id="borrarFechas">
-        </section-volver>
+  <main>
+    <div class="contenedorsuperior"> <button class="button-85">Analiza los datos de las fechas que elijas</button></div>
+    <div class="sections">
+      <div class="custom-control custom-switch switchAnimaciones">
+        <input class="custom-control-input" type="checkbox" id="switchAnimaciones" checked="false">
+        <label class="custom-control-label" for="switchAnimaciones">Animaciones</label>
       </div>
-    </main>
+      <custom-breadcrumbs id="breadcrumbs"></custom-breadcrumbs>
+      <div class="comofunciona"><a href="/analisis/comofunciona">Cómo funcionan cada una de las opciones? ➔</a></div>
+      <section-volver id="sectionAgrupar">
+        <div class="tituloSeccion">Escoge cómo deseas agrupar los datos</div>
+        <article class="gridUnidadTiempo">
+          <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por días" id="btnAgruparDias">
+          <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por semanas" id="btnAgruparSemanas">
+          <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por meses" id="btnAgruparMeses">
+          <input class="btn btn-primary botonazul btnOrden" type="button" value="Agrupar por años" id="btnAgruparAños">
+        </article>
+      </section-volver>
+      <section-volver id="sectionRangos" data-idboton="volverPrimerNivel">
+        <div class="tituloSeccion">Escoge un rango para analizar las fechas</div>
+        <article class="gridUnidadTiempo">
+          <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas mayores o igual que" id="btnMayor">
+          <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas menores o igual que" id="btnMenor">
+          <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas entre" id="btnEntre">
+          <input class="btn btn-primary botonazul btnOrden" type="button" value="Selección libre (uno o varios)" id="btnLibre">
+        </article>
+      </section-volver>
+      <section-volver id="sectionVarios" data-idboton="volverSegundoNivelVarios">
+        <div class="input-group date divdatepicker" id="datepickerVarios"><input type="text" class="form-control" readonly id="calendario"><span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>
+        <input class="btn btn-primary botonazul btnAnalizar" type="button" value="Analizar" id="analizarVarios">
+        <section class="sectionunidadTiempo">
+          <span class="cambiarUnidadTiempo">La selección de fechas actual no satisface tus necesidades? Prueba seleccionando por: <br>
+            <div class="unidadesTiempo"><button class="btn btn-primary botonazul btnunidadtiempo dia">Día</button> <button class="btn btn-primary botonazul btnunidadtiempo semana">Semana</button> <button class="btn btn-primary botonazul btnunidadtiempo mes">Mes</button> <button class="btn btn-primary botonazul btnunidadtiempo año">Año</button></div>
+          </span>
+        </section>
+        <input class="btn btn-primary botonazul btnBorrarFechas" type="button" value="Borrar fechas seleccionadas" id="borrarFechas">
+        <div class="textoDatePicker"></div>
+      </section-volver>
+
+      <section-volver id="sectionEntre" data-idboton="volverSegundoNivelEntre">
+        <div class="input-group input-daterange divdatepicker" id="datepickerEntre">
+          <div class="input-group date"><input type="text" class="form-control" readonly id="calendario1"><span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>
+          <div class="divseparador">y</div>
+          <div class="input-group date"><input type="text" class="form-control" readonly id="calendario2"><span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>
+        </div>
+        <input class="btn btn-primary botonazul btnAnalizar" type="button" value="Analizar" id="analizarEntre">
+        <input class="btn btn-primary botonazul btnBorrarFechas" type="button" value="Borrar fechas seleccionadas" id="borrarFechas">
+      </section-volver>
+    </div>
+  </main>
 </body>
+
 </html>

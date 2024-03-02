@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Análisis de datos</title>
+  <%- include("layouts/global") %>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.0/css/font-awesome.min.css">
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+  <link rel="stylesheet" href="/mostrargastos.min.css">
+  <link rel="stylesheet" href="/registroseliminados.min.css">
+
+  <!-- <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="https:p//cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>  
+  <script defer src="https://cdn.jsdelivr.net/npm/he@1.2.0/he.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script> -->
+
+  <script defer src="/sweetalert-2.11.js"></script>
+  <script defer src="/he-1.2.0.js"></script>
+  <script>
+    let datosString = `<%=JSON.stringify(datos)%>`
+  </script>
+  <script defer src="/jquery-ui-1.13.js"></script>
+  <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.es.min.js"></script>
+  <script defer src="/botonPDF.js"></script>
+  <script defer src="/botonExcel.js"></script>
+  <script defer src="/checkbox.js"></script>
+  <script defer src="/tablagastos.js"></script>
+  <script defer src="/switchSortableTabla.js"></script>
+  <script defer src="/mostrargastos.js"></script>
+
+</head>
+
+<body>
+  <%- include("layouts/navbar") %>
+  <main>
+    <div>
+      <div class="contenedorsuperior"> <button class="button-85">Gastos <span id="fechames">del mes de <%= fechaTexto %></span></button></div>
+    </div>
+    <div class="botonesAcciones">
+      <div style="display: flex; gap: 15px;">
+        <button class="configuraciones" data-bs-toggle="modal" data-bs-target="#configs"><svg fill="#ddd" width="30px" height="30px" viewBox="0 0 93.5 93.5"><g><path d="M93.5,40.899c0-2.453-1.995-4.447-4.448-4.447H81.98c-0.74-2.545-1.756-5.001-3.035-7.331l4.998-5    c0.826-0.827,1.303-1.973,1.303-3.146c0-1.19-0.462-2.306-1.303-3.146L75.67,9.555c-1.613-1.615-4.673-1.618-6.29,0l-5,5    c-2.327-1.28-4.786-2.296-7.332-3.037v-7.07C57.048,1.995,55.053,0,52.602,0H40.899c-2.453,0-4.447,1.995-4.447,4.448v7.071    c-2.546,0.741-5.005,1.757-7.333,3.037l-5-5c-1.68-1.679-4.609-1.679-6.288,0L9.555,17.83c-1.734,1.734-1.734,4.555,0,6.289    l4.999,5c-1.279,2.33-2.295,4.788-3.036,7.333h-7.07C1.995,36.452,0,38.447,0,40.899V52.6c0,2.453,1.995,4.447,4.448,4.447h7.071    c0.74,2.545,1.757,5.003,3.036,7.332l-4.998,4.999c-0.827,0.827-1.303,1.974-1.303,3.146c0,1.189,0.462,2.307,1.302,3.146    l8.274,8.273c1.614,1.615,4.674,1.619,6.29,0l5-5c2.328,1.279,4.786,2.297,7.333,3.037v7.071c0,2.453,1.995,4.448,4.447,4.448    h11.702c2.453,0,4.446-1.995,4.446-4.448V81.98c2.546-0.74,5.005-1.756,7.332-3.037l5,5c1.681,1.68,4.608,1.68,6.288,0    l8.275-8.273c1.734-1.734,1.734-4.555,0-6.289l-4.998-5.001c1.279-2.329,2.295-4.787,3.035-7.332h7.071    c2.453,0,4.448-1.995,4.448-4.446V40.899z M62.947,46.75c0,8.932-7.266,16.197-16.197,16.197c-8.931,0-16.197-7.266-16.197-16.197    c0-8.931,7.266-16.197,16.197-16.197C55.682,30.553,62.947,37.819,62.947,46.75z"/></g></svg> Configuraciones</button>
+        <button class="btn btn-primary botonazul" id="mostrarcalculadora"><svg fill="#FFF" width="20px" height="20px" viewBox="0 0 79.518 79.518" class="svgcalcu"><g><g><path d="M72.799,1.569L72.799,1.569C72.799,1.569,72.573,1.569,72.799,1.569C72.127,0.448,71.006,0,69.887,0l0,0H9.631l0,0    C7.614,0,6.047,1.569,6.047,3.584l0,0v3.137v11.647v6.496v11.648v6.494v11.648v6.496v11.646v3.137l0,0    c0,0.672,0.224,1.344,0.672,2.018l0,0l0,0c0.672,0.896,1.792,1.566,2.912,1.566l0,0h60.256l0,0c2.016,0,3.584-1.566,3.584-3.584    l0,0v-3.137V61.152v-6.495v-11.65v-6.494V24.865v-6.496V6.721V3.584l0,0C73.245,2.689,73.023,2.24,72.799,1.569z M28.895,68.32    c0,0.896-0.672,1.568-1.567,1.568h-8.287c-0.896,0-1.568-0.673-1.568-1.568v-3.584c0-0.896,0.672-1.567,1.568-1.567h8.287    c0.896,0,1.567,0.672,1.567,1.567V68.32z M28.895,56.225c0,0.896-0.672,1.567-1.567,1.567h-8.287    c-0.896,0-1.568-0.672-1.568-1.567v-3.584c0-0.896,0.672-1.567,1.568-1.567h8.287c0.896,0,1.567,0.672,1.567,1.567V56.225z     M28.895,44.354c0,0.896-0.672,1.565-1.567,1.565h-8.287c-0.896,0-1.568-0.672-1.568-1.565V40.77c0-0.896,0.672-1.568,1.568-1.568    h8.287c0.896,0,1.567,0.672,1.567,1.568V44.354z M45.245,68.32c0,0.896-0.672,1.568-1.565,1.568h-8.289    c-0.896,0-1.568-0.673-1.568-1.568v-3.584c0-0.896,0.673-1.567,1.568-1.567h8.289c0.896,0,1.565,0.672,1.565,1.567V68.32z     M45.245,56.225c0,0.896-0.672,1.567-1.565,1.567h-8.289c-0.896,0-1.568-0.672-1.568-1.567v-3.584    c0-0.896,0.673-1.567,1.568-1.567h8.289c0.896,0,1.565,0.672,1.565,1.567V56.225z M45.245,44.354c0,0.896-0.672,1.565-1.565,1.565    h-8.289c-0.896,0-1.568-0.672-1.568-1.565V40.77c0-0.896,0.673-1.568,1.568-1.568h8.289c0.896,0,1.565,0.672,1.565,1.568V44.354z     M61.822,68.32c0,0.896-0.672,1.568-1.567,1.568h-8.286c-0.896,0-1.568-0.673-1.568-1.568v-3.584c0-0.896,0.672-1.567,1.568-1.567    h8.286c0.896,0,1.567,0.672,1.567,1.567V68.32z M61.822,56.225c0,0.896-0.672,1.567-1.567,1.567h-8.286    c-0.896,0-1.568-0.672-1.568-1.567v-3.584c0-0.896,0.672-1.567,1.568-1.567h8.286c0.896,0,1.567,0.672,1.567,1.567V56.225z     M61.822,44.354c0,0.896-0.672,1.565-1.567,1.565h-8.286c-0.896,0-1.568-0.672-1.568-1.565V40.77c0-0.896,0.672-1.568,1.568-1.568    h8.286c0.896,0,1.567,0.672,1.567,1.568V44.354z M62.493,31.809L62.493,31.809c0,0.896-0.673,1.566-1.567,1.566H18.143    c-0.896,0-1.567-0.672-1.567-1.566V10.977c0-0.896,0.672-1.568,1.567-1.568h42.783c0.896,0,1.567,0.672,1.567,1.568V31.809z"/><path d="M28.447,19.712c-1.566-0.672-2.238-0.896-2.238-1.567c0-0.448,0.446-0.896,1.566-0.896c1.345,0,2.018,0.448,2.464,0.672    l0.448-2.016c-0.672-0.224-1.344-0.448-2.464-0.672v-1.568h-1.792v1.792c-1.792,0.448-2.912,1.568-2.912,3.136    c0,1.793,1.344,2.688,3.136,3.137c1.346,0.448,1.792,0.896,1.792,1.567s-0.672,1.121-1.792,1.121    c-1.119,0-2.238-0.448-2.911-0.672l-0.447,2.017c0.672,0.446,1.792,0.672,2.912,0.672v1.792h1.792v-2.018    c2.016-0.446,3.136-1.791,3.136-3.358C31.359,21.504,30.463,20.385,28.447,19.712z"/><path d="M40.543,19.712c-1.568-0.672-2.24-0.896-2.24-1.567c0-0.448,0.448-0.896,1.567-0.896c1.345,0,2.017,0.448,2.464,0.672    l0.448-2.016c-0.673-0.224-1.345-0.448-2.464-0.672v-1.568h-1.792v1.792c-1.792,0.448-2.912,1.568-2.912,3.136    c0,1.793,1.346,2.688,3.138,3.137c1.344,0.448,1.792,0.896,1.792,1.567s-0.673,1.121-1.792,1.121c-1.12,0-2.24-0.448-2.912-0.672    l-0.448,2.017c0.672,0.446,1.792,0.672,2.912,0.672v1.792h1.792v-2.018c2.016-0.446,3.137-1.791,3.137-3.358    C43.68,21.504,42.782,20.385,40.543,19.712z"/><path d="M52.863,19.712c-1.566-0.672-2.238-0.896-2.238-1.567c0-0.448,0.445-0.896,1.566-0.896c1.345,0,2.018,0.448,2.463,0.672    l0.449-2.016c-0.672-0.224-1.346-0.448-2.465-0.672v-1.568h-1.791v1.792c-1.793,0.448-2.912,1.568-2.912,3.136    c0,1.793,1.344,2.688,3.135,3.137c1.346,0.448,1.793,0.896,1.793,1.567s-0.672,1.121-1.793,1.121    c-1.118,0-2.239-0.448-2.911-0.672l-0.447,2.016c0.672,0.446,1.791,0.672,2.911,0.672v1.792h1.791v-2.018    c2.018-0.446,3.139-1.791,3.139-3.358C55.775,21.504,54.879,20.385,52.863,19.712z"/></g></g></svg> Mostrar calculadora</button>
+      </div>
+      <div class="botonesExportar">
+        <boton-excel></boton-excel>
+        <boton-pdf></boton-pdf>
+      </div>
+    </div>
+
+    <section id="crearregistro"></section>
+    <section class="tabladegastos">
+      <tabla-gastos id="gastosfijos"></tabla-gastos>
+      <tabla-gastos id="gastosmixtos"></tabla-gastos>
+      <tabla-gastos id="gastosporproducto"></tabla-gastos>
+    </section>
+    <section class="botonesabajo">
+      <div class="botonesCambiarMes grupobotonesabajo">
+        <button class="btn btn-primary botonazul azuloscuro" id="mesanterior"><svg class="flecharotada" width="20" height="20" fill="white"><path d="M20 0zm-8.344 14.709-1.41-1.418L12.547 11H4V9h8.673l-2.38-2.379 1.414-1.414 4.737 4.736z"/></svg> Mes anterior</button>
+        <button class="btn btn-primary botonazul azuloscuro" id="messiguiente">Mes siguiente <svg width="20" height="20" fill="white"><path d="M20 0zm-8.344 14.709-1.41-1.418L12.547 11H4V9h8.673l-2.38-2.379 1.414-1.414 4.737 4.736z"/></svg></button>
+      </div>
+      <div class="grupobotonesabajo">
+        <!-- <button class="btn btn-primary botonazul azuloscuro" id="resumengastos">Resumen de gastos &nbsp;<svg fill="#FFF" width="22px" height="22px" viewBox="0 0 47 47" xml:space="preserve"><g><g><g><path d="M6.12,38.52V5.136h26.962v28.037l5.137-4.243V2.568C38.219,1.15,37.07,0,35.652,0h-32.1C2.134,0,0.985,1.15,0.985,2.568     v38.519c0,1.418,1.149,2.568,2.567,2.568h22.408L22.33,38.52H6.12z"/><path d="M45.613,27.609c-0.473-0.446-1.2-0.467-1.698-0.057l-11.778,9.734l-7.849-4.709c-0.521-0.312-1.188-0.219-1.603,0.229     c-0.412,0.444-0.457,1.117-0.106,1.613l8.506,12.037c0.238,0.337,0.625,0.539,1.037,0.543c0.004,0,0.008,0,0.012,0     c0.408,0,0.793-0.193,1.035-0.525l12.6-17.173C46.149,28.78,46.084,28.055,45.613,27.609z"/><path d="M27.306,8.988H11.897c-1.418,0-2.567,1.15-2.567,2.568s1.149,2.568,2.567,2.568h15.408c1.418,0,2.566-1.15,2.566-2.568     S28.724,8.988,27.306,8.988z"/><path d="M27.306,16.691H11.897c-1.418,0-2.567,1.15-2.567,2.568s1.149,2.568,2.567,2.568h15.408c1.418,0,2.566-1.149,2.566-2.568     C29.874,17.841,28.724,16.691,27.306,16.691z"/><path d="M27.306,24.395H11.897c-1.418,0-2.567,1.15-2.567,2.568s1.149,2.568,2.567,2.568h15.408c1.418,0,2.566-1.15,2.566-2.568     C29.874,25.545,28.724,24.395,27.306,24.395z"/></g></g></g></svg></button> -->
+        <button class="btn btn-primary botonazul azuloscuro" id="resumengastos"><svg fill="#FFF" width="22px" height="22px" viewBox="0 0 47 47" xml:space="preserve"><g><g><g><path d="M6.12,38.52V5.136h26.962v28.037l5.137-4.243V2.568C38.219,1.15,37.07,0,35.652,0h-32.1C2.134,0,0.985,1.15,0.985,2.568     v38.519c0,1.418,1.149,2.568,2.567,2.568h22.408L22.33,38.52H6.12z"/><path d="M45.613,27.609c-0.473-0.446-1.2-0.467-1.698-0.057l-11.778,9.734l-7.849-4.709c-0.521-0.312-1.188-0.219-1.603,0.229     c-0.412,0.444-0.457,1.117-0.106,1.613l8.506,12.037c0.238,0.337,0.625,0.539,1.037,0.543c0.004,0,0.008,0,0.012,0     c0.408,0,0.793-0.193,1.035-0.525l12.6-17.173C46.149,28.78,46.084,28.055,45.613,27.609z"/><path d="M27.306,8.988H11.897c-1.418,0-2.567,1.15-2.567,2.568s1.149,2.568,2.567,2.568h15.408c1.418,0,2.566-1.15,2.566-2.568     S28.724,8.988,27.306,8.988z"/><path d="M27.306,16.691H11.897c-1.418,0-2.567,1.15-2.567,2.568s1.149,2.568,2.567,2.568h15.408c1.418,0,2.566-1.149,2.566-2.568     C29.874,17.841,28.724,16.691,27.306,16.691z"/><path d="M27.306,24.395H11.897c-1.418,0-2.567,1.15-2.567,2.568s1.149,2.568,2.567,2.568h15.408c1.418,0,2.566-1.15,2.566-2.568     C29.874,25.545,28.724,24.395,27.306,24.395z"/></g></g></g></svg> Resumen de gastos</button>
+        <!-- <button class="btn btn-primary botonazul azuloscuro" id="resumengastos">Resumen de gastos &nbsp;<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#FFF" height="20px" width="20px" version="1.1" id="Capa_1" viewBox="0 0 220 220" xml:space="preserve"><path d="M211.5,15.022C211.5,6.726,204.774,0,196.478,0H23.522C15.226,0,8.5,6.726,8.5,15.022v189.955  C8.5,213.274,15.226,220,23.522,220h172.955c8.297,0,15.022-6.726,15.022-15.022V15.022z M88.5,199h-49v-45h49V199z M88.5,132h-49  V88h49V132z M88.5,66h-49V21h49V66z M144.803,199.63l-26.306-26.306l11.205-11.205l15.101,15.102l23.65-23.65l11.205,11.205  L144.803,199.63z M144.803,133.03l-26.306-26.306l11.205-11.205l15.101,15.101l23.65-23.65l11.205,11.205L144.803,133.03z   M144.803,66.429l-26.306-26.306l11.205-11.205l15.101,15.101l23.65-23.65l11.205,11.205L144.803,66.429z"/></svg></button> -->
+        <button class="btn btn-primary botonazul azuloscuro" id="guardarcambios"><svg width="22px" height="22px" viewBox="0 0 24 24" fill="none" style="vertical-align: sub;"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.1716 1C18.702 1 19.2107 1.21071 19.5858 1.58579L22.4142 4.41421C22.7893 4.78929 23 5.29799 23 5.82843V20C23 21.6569 21.6569 23 20 23H4C2.34315 23 1 21.6569 1 20V4C1 2.34315 2.34315 1 4 1H18.1716ZM4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21L5 21L5 15C5 13.3431 6.34315 12 8 12L16 12C17.6569 12 19 13.3431 19 15V21H20C20.5523 21 21 20.5523 21 20V6.82843C21 6.29799 20.7893 5.78929 20.4142 5.41421L18.5858 3.58579C18.2107 3.21071 17.702 3 17.1716 3H17V5C17 6.65685 15.6569 8 14 8H10C8.34315 8 7 6.65685 7 5V3H4ZM17 21V15C17 14.4477 16.5523 14 16 14L8 14C7.44772 14 7 14.4477 7 15L7 21L17 21ZM9 3H15V5C15 5.55228 14.5523 6 14 6H10C9.44772 6 9 5.55228 9 5V3Z" fill="#FFF"/></svg>&nbsp; Guardar cambios</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal fade" id="configs" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Configuraciones</h1>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="grupomodal">Exportar a PDF</div>
+          <hr>
+          <div class="subtitulogrupomodal">¿Cuáles tablas de gastos deseas incluir cuando exportas a PDF?</div>
+          <div class="opcioncheckboxpdf">
+            <custom-checkbox data-id="switchGastosFijosPDF" data-checked="1">Gastos fijos</custom-checkbox>
+            <custom-checkbox data-id="switchGastosMixtosPDF" data-checked="1">Gastos mixtos</custom-checkbox>
+            <custom-checkbox data-id="switchGastosPorProductoPDF" data-checked="1">Gastos por compra de productos</custom-checkbox>
+          </div>
+          <hr>
+          <div class="grupomodal">Exportar a Excel</div>
+          <hr>
+          <div class="opcioncheckboxexcel">
+            <div class="subtitulogrupomodal">¿Cuáles tablas de gastos deseas incluir cuando exportas a Excel?</div>
+            <custom-checkbox data-id="switchGastosFijosExcel" data-checked="1">Gastos fijos</custom-checkbox>
+            <custom-checkbox data-id="switchGastosMixtosExcel" data-checked="1">Gastos mixtos</custom-checkbox>
+            <custom-checkbox data-id="switchGastosPorProductoExcel" data-checked="1">Gastos por compra de productos</custom-checkbox>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-config guardarconfig" data-bs-dismiss="modal">Guardar cambios</button>
+          <button type="button" class="btn btn-danger btn-config cerrarconfig" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom: 35px; height: 35px;"></div>
+
+</body>
+
+</html>

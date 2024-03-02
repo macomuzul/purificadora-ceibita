@@ -10,10 +10,11 @@ $("head").append(`<style>
 </style>`)
 onload = q => { if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) $.getScript('/touch.js') }
 
+//TODO estos poner el bootstrap dde internet
+let dependenciasSwitchSortable = async q => await Promise.all(['/popover.js', '/bootstrap-5.2.3.js'].map(x => $.getScript(x)))
+dependenciasSwitchSortable()
 class switchSortable extends HTMLElement {
   async connectedCallback() {
-    //TODO estos poner el bootstrap dde internet
-    await Promise.all(['/popover.js', '/bootstrap-5.2.3.js'].map(x => $.getScript(x)))
     this.className = "form-check form-switch"
     this.innerHTML = `<input class="form-check-input" type="checkbox" id="switchOrdenarFilas">
     <label class="form-check-label" for="switchOrdenarFilas">Reordenar filas</label>
@@ -39,7 +40,7 @@ class preguntarAntesDeBorrar extends HTMLElement {
       if (switchOrdenarFilas.checked) return
       if (!switchModoSeguro.checked) return this.closest("tr").remove()
       let fila = this.closest("tr").cloneNode(true)
-        ;[...fila.cells].at(-1).remove()
+      $(fila.cells).last().remove()
       let html = `<table class="mx-auto"><tbody style="background: #0f0d35;">${fila.outerHTML}</tbody></table>`
       let { isConfirmed } = await swalConfirmarYCancelar.fire({
         icon: "warning",

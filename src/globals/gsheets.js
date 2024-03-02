@@ -14,22 +14,20 @@ let titulosGoogleSheets = tcgoogle(async (titulo, esDia, backgroundColor, fontSi
     { mergeCells: { range, mergeType: 'MERGE_ALL' } },
     {
       updateCells: {
-        rows: [
-          {
-            values: [
-              {
-                userEnteredValue: { stringValue: titulo },
-                userEnteredFormat: {
-                  wrapStrategy: "WRAP",
-                  horizontalAlignment: 'CENTER',
-                  verticalAlignment: 'MIDDLE',
-                  backgroundColor,
-                  textFormat: { fontSize }
-                }
+        rows: [{
+          values: [
+            {
+              userEnteredValue: { stringValue: titulo },
+              userEnteredFormat: {
+                wrapStrategy: "WRAP",
+                horizontalAlignment: 'CENTER',
+                verticalAlignment: 'MIDDLE',
+                backgroundColor,
+                textFormat: { fontSize }
               }
-            ]
-          }
-        ],
+            }
+          ]
+        }],
         fields: 'userEnteredFormat(backgroundColor,textFormat,wrapStrategy,horizontalAlignment,verticalAlignment),userEnteredValue(stringValue)',
         range
       }
@@ -50,18 +48,16 @@ global.agregarFilaGoogleSheets = tcgoogle(async data => {
   let range = { sheetId, startRowIndex, endRowIndex, startColumnIndex, endColumnIndex }
   let requests = [{
     updateCells: {
-      rows: [
-        {
-          values: [data.map(x => ({
-            userEnteredValue: { stringValue: x },
-            userEnteredFormat: {
-              wrapStrategy: "WRAP",
-              horizontalAlignment: 'CENTER',
-              verticalAlignment: 'MIDDLE',
-            }
-          }))]
-        }
-      ],
+      rows: [{
+        values: [data.map(x => ({
+          userEnteredValue: { stringValue: x },
+          userEnteredFormat: {
+            wrapStrategy: "WRAP",
+            horizontalAlignment: 'CENTER',
+            verticalAlignment: 'MIDDLE',
+          }
+        }))]
+      }],
       fields: 'userEnteredFormat(wrapStrategy,horizontalAlignment,verticalAlignment),userEnteredValue(stringValue)',
       range
     }
@@ -77,6 +73,7 @@ global.crearMesGoogleSheets = async function () {
 }
 
 global.crearDiaGoogleSheets = async function () {
+  await redis.set("filagsheetssobreescribir", "0")
   await titulosGoogleSheets("Día: " + DateTime.now().day, 1, { red: 0.43, green: 0.62, blue: 0.92 }, 11)
   await agregarFilaGoogleSheets(["Sin cambios"])
   await redis.set("filagsheetssobreescribir", "1")
