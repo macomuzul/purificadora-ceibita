@@ -5,19 +5,18 @@
   <meta name="viewport" content="width=1200px">
   <title>Ver Plantillas</title>
   <%- include("layouts/global") %>
-  <link rel="stylesheet" href="/bootstrap-5.2.3.css">
   <link rel="stylesheet" href="/googledrive.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script defer src="/checkbox.js"></script>
   <script defer src="/radiobuttons.js"></script>
   <script defer src="/input.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.es.min.js"></script>
+  <script defer src="/botonazul.js"></script>
+
+  //TODO este ver que onda
   <script>
     document.addEventListener("click", async e => {
   if (e.target.matches(".guardarconfig")) {
-    let s1 = [...$(seleccionado).find(".opcionesarchivos input:checked")].map(x => $(x).closest("custom-checkbox").index())
+    let s1 = [...$(seleccionado).find(".opcionesarchivos input:checked")].map(x => indice(x.closest("custom-checkbox")))
     if (!s1.length) {
       e.stopImmediatePropagation()
       return Swal.fire("Atención", "Debe haber al menos un archivo qué guardar, selecciona archivo json, bson o ambos", "warning")
@@ -55,7 +54,7 @@
     <div class="button"></div>
     <div class="registros">
       <custom-input class="nombreCarpeta" id="guardar" data-texto="Respaldo con fecha: <%= fecha %>">Nombre de la carpeta:</custom-input>
-      <button class="btn btn-primary botonazul" id="btnguardar">Guardar</button>
+      <boton-azul id="btnguardar">Guardar</boton-azul>
       <cuadro-respaldos data-titulo="Ventas" data-checked="1"></cuadro-respaldos>
       <cuadro-respaldos data-titulo="Plantillas" data-checked="1"></cuadro-respaldos>
       <cuadro-respaldos data-titulo="Camioneros" data-checked="1"></cuadro-respaldos>

@@ -1,248 +1,207 @@
-let unidadTiempo = 'dias', agruparPor = '', rango = ''
-String.prototype.capitalizar = function () {
-  return this[0].toUpperCase() + this.slice(1)
+let decodificarStr = s => s.replaceAll('&#34;', '"')
+let decodificado = decodificarStr(datosString), datos = JSON.parse(decodificado)
+// document.body.style.width = "2000px"
+String.prototype.aFloat = function () { return parseFloat(this) }
+
+String.prototype.normalizar = function () { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "") }
+String.prototype.normalizarPrecio = function () { return this.aFloat().toFixed(2).replace(/[.,]00$/, "") }
+String.prototype.normalizarPrecioNum = function () { return this.normalizarPrecio().aFloat() }
+Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }
+Number.prototype.normalizarPrecioNum = function () { return this.normalizarPrecio().aFloat() }
+Number.prototype.aQuetzales = function () { return new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(this) }
+Number.prototype.cantidadFormateada = function () { return new Intl.NumberFormat('es-GT').format(this) }
+String.prototype.aQuetzales = function () { return new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(this.aFloat()) }
+String.prototype.cantidadFormateada = function () { return new Intl.NumberFormat('es-GT').format(this.aFloat()) }
+String.prototype.primeraLetraMayuscula = function () { return this[0].toUpperCase() + this.slice(1); }
+
+Date.prototype.aUTC = function () { return this.toISOString().aUTC() }
+String.prototype.aUTC = function () {
+  const [datePart] = this.split('T')
+  const [year, month, day] = datePart.split('-').map(Number)
+  return new Date(year, month - 1, day)
 }
 
-let calendario = $('#calendario')
-let nivelesBC = [w => `<span class="fa fa-home" style="font-size: 18px;"></span>`, w => `<span class="fa fa-sort-numeric-asc"></span> ${agruparPor.capitalizar()}</a>`, w => `<span class="fa fa-sort"></span> ${rango.capitalizar()}`]
-let textoDatePicker = $('.textoDatePicker'), sectionunidadTiempo = $('.sectionunidadTiempo'), btnBorrarFechas = $('.btnBorrarFechas')
-let filasIndice = [], listaFechas = []
-let datepicker, objMinView = { dias: 0, semanas: 0, meses: 1, años: 2 }
-moment.locale('en', { week: { dow: 1 } })
 
-onbeforeunload = q => {
-  agruparPor = agruparPor.replace('agruparpor=', '')
-  rango = rango.replace('rango=', '')
+String.prototype.partirFechas = function () {
+  let [fecha1, fecha2] = this.split("-")
+  return `${fecha1}${fecha2 ? " - " + fecha2 : ""}`
 }
 
-let devuelveCalendarios = (...calendarios) => calendarios.map(x => $('#' + x).val().replaceAll('/', '-'))
-let destruirCalendario = q => {
-  borrarFechas()
-  datepicker.off()
-  document.removeEventListener('click', capturarFecha, { capture: true })
-  datepicker.datepicker('destroy')
-}
-let borrarFechas = q => {
-  datepicker.datepicker('clearDates')
-  textoDatePicker.text('')
-    ; (filasIndice = []), (listaFechas = [])
-}
 
-function ordenar(e) {
-  let { dates, format } = e
-  if (dates.length > 0) {
-    let indices = [...dates.keys()]
-    indices.sort((a, b) => dates[a] - dates[b])
-    let ordendo = dates.map((_, i) => format(indices[i])).join(', ')
-    textoDatePicker.text(ordendo)
-    datepicker.find('input').val(ordendo)
-  }
-  let clase = { dias: 'day', semanas: 'week', meses: 'month', años: 'year' }[unidadTiempo]
-  $(`.datepicker-${clase}s span.${clase}`).removeClass('focused')
-}
+let [, url] = location.pathname.split("analisis/")
+let [agruparPorP, rangoP, tiempoEscogidoP] = url.split("&")
+let [, unidadTiempo] = agruparPorP.split("=")
+let [, rango] = rangoP.split("=")
+if (unidadTiempo === "a%C3%B1os") unidadTiempo = "años"
+let UTDia = unidadTiempo === "dias"
+let UTSemana = unidadTiempo === "semanas"
+let UTMes = unidadTiempo === "meses"
+let UTAño = unidadTiempo === "años"
+let UTDiaOSemana = UTDia || UTSemana
 
-function cambiarMes(e) {
-  let inicioMes = moment(e.date).startOf('month')
-  let empiezaLunes = inicioMes._d.getUTCDay() === 1
-  let inicio = inicioMes.utc().startOf('week')._d
-  if (empiezaLunes) inicio = moment(inicio).utc().subtract(7, 'days')._d
-  filasIndice = [...Array(6).keys()].filter(i => listaFechas.includes(moment(inicio).add(i * 7, 'days').utc()._d.valueOf()))
-}
+let tiempoMenor = datos.at(0)._id.aUTC()
+let tiempoMayor = datos.at(-1).f?.aUTC() || datos.at(-1)._id.aUTC()
 
-function mostarValores() {
-  listaFechas.sort((a, b) => a - b)
-  let fechas = listaFechas.map(x => moment(x).day(1).format('DD/MM/YYYY') + '-' + moment(x).day(7).format('DD/MM/YYYY')).join(', ')
-  calendario.val(fechas)
-  textoDatePicker.text(fechas)
-}
-let mostrar = q => filasIndice.forEach(i => $(`.datepicker-days tbody tr:nth-child(${i + 1})`).addClass('active'))
-
-let capturarFecha = e => {
-  if (e.target.matches('td.day')) {
-    e.target.closest('tr').classList.toggle('active')
-    let inicioSemana = moment(parseInt(e.target.dataset.date)).utc().startOf('week')._d.valueOf()
-    let index = listaFechas.indexOf(inicioSemana)
-    index !== -1 ? listaFechas.splice(index, 1) : listaFechas.push(inicioSemana)
-    mostarValores()
-
-    e.stopPropagation()
-    e.preventDefault()
-  }
-}
-
+let datasetVendidosAgrupadosPorProducto = [], datasetIngresosAgrupadosPorProducto = [], datasetVendidosAgrupadosPorFecha = [], datasetIngresosAgrupadosPorFecha = []
+let datasetVendidosAgrupadosPorCamion = [], datasetIngresosAgrupadosPorCamion = [], datasetVendidosCamionAgrupadosPorFecha = [], datasetIngresosCamionAgrupadosPorFecha = []
+//TODO este no se si dejarle el .sort al final
+let productos = [...new Set(datos.flatMap(x => Object.keys(x.prods)))]
+let camioneros = [...new Set(datos.flatMap(x => Object.keys(x.cams)))]
+let productosDesnormalizados = productos.map(label => datos.find(x => x.prods[label])?.prods[label].p)
+let camionerosDesnormalizados = camioneros.map(label => datos.find(x => x.cams[label])?.cams[label].p)
 let swalConfirmarYCancelar = Swal.mixin({
   customClass: {
-    confirmButton: 'btn btn-success margenbotonswal',
-    cancelButton: 'btn btn-danger margenbotonswal',
+    confirmButton: "btn btn-success margenbotonswal",
+    cancelButton: "btn btn-danger margenbotonswal",
   },
-  buttonsStyling: false,
+  buttonsStyling: false
 })
 
-let sectionUnidadTiempo = $('#sectionUnidadTiempo')[0], sectionAgrupar = $('#sectionAgrupar')[0], sectionRangos = $('#sectionRangos')[0], sectionVarios = $('#sectionVarios')[0], sectionEntre = $('#sectionEntre')[0], breadcrumbs = $('#breadcrumbs')[0], sectionVolver = $('section-volver')
-let esconderSecciones = () => sectionVolver.each((_, x) => (x.offsetParent !== null ? x.esconder() : ''))
-let cambiarSeccion = (n, valor, cb) => {
-  if (n === 1) agruparPor = valor
-  else if (n === 2) rango = valor
-  esconderSecciones()
-  cb()
-}
-let volverSeccion = cb => {
-  esconderSecciones()
-  cb()
-}
-let clickBC = (e, cb) => {
-  if (sectionVolver[$(e.currentTarget).index()].offsetParent === null) {
-    esconderSecciones()
-    cb()
-  }
+function devuelveColores(colores = ["#ff6384", "#136ba7", "#ffce56", "#4bc0c0", "#9966ff", "#f20034", "#1f00c0", "#004d1a", "#cb005a", "#2bb01a"], opacidad) {
+  let mayor = Math.max(colores.length, productos.length, datos.length)
+  return [...Array(mayor)].map((_, i) => `${colores[i % colores.length]}${opacidad ? "20" : ""}`)
 }
 
-$('body').on('click', '#btnAgruparDias, #btnAgruparSemanas, #btnAgruparMeses, #btnAgruparAños', e => cambiarSeccion(1, e.target.value.split(' ').at(-1), segundoNivel))
-$('body').on('click', '#btnMayor', w => cambiarSeccion(2, 'mayor', tercerNivel))
-$('body').on('click', '#btnMenor', w => cambiarSeccion(2, 'menor', tercerNivel))
-$('body').on('click', '#btnEntre', w => cambiarSeccion(2, 'entre', tercerNivelEntre))
-$('body').on('click', '#btnLibre', w => cambiarSeccion(2, 'libre', tercerNivelLibre))
+let colores = devuelveColores()
+let coloresAlfa = devuelveColores(undefined, 1)
+let fechas = datos.map(x => x._id.aUTC())
+let fechasFin = UTDia ? null : datos.map(x => x.f.aUTC())
+let unirTexto = arr => arr.length === 1 ? arr[0] : `Dias: ${arr.slice(0, -1).join(" - ")} y ${arr.at(-1)}`
 
-$('body').on('click', '#volverPrimerNivel', w => volverSeccion(primerNivel))
-$('body').on('click', '#volverSegundoNivelVarios, #volverSegundoNivelEntre', async e => await preguntarSegundoNivel(volverSeccion, segundoNivel))
+let formatearFechaObj = (opciones, fecha) => new Intl.DateTimeFormat('es', opciones).format(fecha.aUTC())
+let formatearFecha = (dateStyle, fecha) => new Intl.DateTimeFormat('es', { dateStyle }).format(fecha.aUTC())
+let formatearFechaUno = (dateStyle, fecha) => new Intl.DateTimeFormat('es', { dateStyle }).format(fecha.aUTC())
+let formatearFechaVarios = (datasets, dateStyle, checkbox) => datasets[0].label = unirTexto(fechas.filter(el => checkbox ? formatearFecha(dateStyle, el) : null))
+let formatearRango = (opciones, fecha, i) => fecha.valueOf() === fechasFin[i].valueOf() ? formatearFecha(opciones, fecha) : formatearFecha(opciones, fecha) + " - " + formatearFecha(opciones, fechasFin[i])
 
-$('body').on('click', '#breadcrumb li:nth-child(1)', e => clickBC(e, primerNivel))
-$('body').on('click', '#breadcrumb li:nth-child(2)', async e => await preguntarSegundoNivel(clickBC, e, segundoNivel))
+let popover = contenido => `<custom-popover>${contenido}</custom-popover>`
+let checkbox = (html, checked, clase) => `<custom-checkbox ${checked ? `data-checked="1"` : ""} ${clase ? `data-clase="${clase}"` : ""}>${html}</custom-checkbox>`
+let podio = (titulo, ar1, ar2, ar3, ab1, ab2, ab3) => `<custom-podio data-titulo="${titulo}" data-ar1="${ar1}" data-ar2="${ar2}" data-ar3="${ar3}" data-ab1="${ab1}" data-ab2="${ab2}" data-ab3="${ab3}"></custom-podio>`
 
-async function preguntarSegundoNivel(cb, p1, p2) {
-  if (datepicker.find('input').val()) {
-    let { isConfirmed } = await swalConfirmarYCancelar.fire({
-      title: 'Estás seguro que deseas regresar?',
-      text: 'Si regresas se borrarán las fechas que seleccionaste en el calendario',
-      fa: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí',
-      cancelButtonText: 'No',
-    })
-    if (!isConfirmed) return
-  }
-  borrarFechas()
-  cb(p1, p2)
-}
-
-function primerNivel() {
-  sectionAgrupar.mostrar()
-  breadcrumbs.nivel(1)
-}
-
-async function segundoNivel() {
-  sectionRangos.mostrar()
-  breadcrumbs.nivel(2)
-}
-
-function tercerNivel() {
-  unidadTiempo = 'dias'
-  sectionunidadTiempo.hide()
-  btnBorrarFechas.text('Borrar fecha seleccionada')
-  sectionVarios.mostrar('flex')
-  breadcrumbs.nivel(3)
-  crearDatePicker()
-}
-
-function tercerNivelLibre() {
-  sectionunidadTiempo.show()
-  btnBorrarFechas.text('Borrar fechas seleccionadas')
-  sectionVarios.mostrar('flex')
-  breadcrumbs.nivel(3)
-  construirDatePicker(agruparPor)
-}
-
-function tercerNivelEntre() {
-  unidadTiempo = 'dias'
-  sectionunidadTiempo.hide()
-  btnBorrarFechas.text('Borrar fecha seleccionada')
-  sectionEntre.mostrar('flex')
-  breadcrumbs.nivel(3)
-  crearDatePicker()
-}
-
-function datepickerMultidate() {
-  if (unidadTiempo !== 'semanas') {
-    datepicker.on('show', e => ordenar(e))
-    datepicker.on('hide', e => ordenar(e))
-  } else {
-    datepicker.on('show', mostrar)
-    datepicker.on('hide', mostarValores)
-    datepicker.on('changeMonth', e => cambiarMes(e))
-    document.addEventListener('click', capturarFecha, { capture: true })
-  }
-}
-
-function crearDatePicker(opciones = {}) {
-  try {
-    destruirCalendario()
-  } catch (error) { }
-  $('.textoDatePicker')[rango === 'libre' ? 'show' : 'hide']()
-  datepicker = $(`#${rango === 'entre' ? 'datepickerEntre' : 'datepickerVarios'}`).datepicker({ weekStart: 1, language: 'es', autoclose: rango !== 'libre', maxViewMode: 2, minViewMode: objMinView[unidadTiempo], todayHighlight: true, multidate: rango === 'libre', multidateSeparator: ', ', format: 'dd/mm/yyyy', ...opciones })
-}
-
-$('body').on('click', '#analizarVarios', function () {
-  let [fecha] = devuelveCalendarios('calendario')
-  if (fecha === '') return Swal.fire('Campo de fecha vacío', 'Por favor selecciona una fecha para continuar', 'error')
-  if (rango === 'libre') {
-    let fechas = unidadTiempo === 'semanas' ? listaFechas : datepicker.datepicker('getDates')
-    fechas.sort((a, b) => a - b)
-    fecha = fechas.map(x => new Intl.DateTimeFormat('es', { timeZone: 'UTC' }).format(x).replaceAll('/', '-')).join()
-  }
-  antesDeCambiarPagina()
-  location = `/analisis/${agruparPor}&${rango}&${unidadTiempo}=${fecha}`
-})
-$('body').on('click', '#analizarEntre', function () {
-  let [fecha1, fecha2] = devuelveCalendarios('calendario1', 'calendario2')
-  if (fecha1 === '' || fecha2 === '') return Swal.fire('Campo de fecha vacío', 'Por favor selecciona una fecha para continuar', 'error')
-  antesDeCambiarPagina()
-  location = `/analisis/${agruparPor}&${rango}&${unidadTiempo}=${fecha1}&y&${fecha2}`
+let opcionesFechaDefault = UTMes ? { month: "long", year: "numeric" } : { year: "numeric" }
+let fechasStr = fechas.map((x, i) => {
+  if (UTDia) return formatearFecha("long", x)
+  if (UTSemana) return formatearRango("long", x, i)
+  else return x.getDate() === 1 && esFinDeMes(datos[i].f) ? formatearFechaObj(opcionesFechaDefault, x) : formatearRango("long", x, i)
 })
 
-function antesDeCambiarPagina() {
-  agruparPor = agruparPor.replace('días', 'dias')
-  unidadTiempo = unidadTiempo.replace('días', 'dias')
-  agruparPor = 'agruparpor=' + agruparPor
-  rango = 'rango=' + rango
+
+function esFinDeMes(date) {
+  date = new Date(date)
+  let nextDay = new Date(date)
+  nextDay.setDate(nextDay.getDate() + 1)
+  return nextDay.getMonth() !== date.getMonth()
 }
 
-$('body').on('change', '#switchAnimaciones', function () {
-  let opcion = this.checked ? 'addClass' : 'removeClass'
-  sectionVolver[opcion]('animate__animated')
-  $(breadcrumbs)[opcion]('animate__animated')
+
+datos.forEach((data, i) => {
+  let vendidos = productos.map(prod => data.prods[prod]?.v || 0)
+  let ingresos = productos.map(prod => data.prods[prod]?.i || 0)
+  let objVendidos = {
+    label: fechasStr[i],
+    data: vendidos,
+    ...{ backgroundColor: coloresAlfa[i], borderColor: colores[i], borderWidth: 1 },
+    indice: i,
+  }
+  datasetVendidosAgrupadosPorProducto.push(objVendidos)
+  let objIngresos = structuredClone(objVendidos)
+  objIngresos.data = ingresos
+  datasetIngresosAgrupadosPorProducto.push(objIngresos)
 })
 
-$('body').on('click', '.btnBorrarFechas', borrarFechas)
-$('body').on('click', '.input-group-append', e => $(e.currentTarget).prev().focus())
+datos.forEach((data, i) => {
+  let vendidos = camioneros.map(cam => data.cams[cam]?.v || 0)
+  let ingresos = camioneros.map(cam => data.cams[cam]?.i || 0)
+  let objVendidos = {
+    label: fechasStr[i],
+    data: vendidos,
+    ...{ backgroundColor: coloresAlfa[i], borderColor: colores[i], borderWidth: 1 },
+    indice: i,
+  }
+  datasetVendidosAgrupadosPorCamion.push(objVendidos)
+  let objIngresos = structuredClone(objVendidos)
+  objIngresos.data = ingresos
+  datasetIngresosAgrupadosPorCamion.push(objIngresos)
+})
 
-$('body').on('click', '.dia', e => rehacerDatepicker('dias'))
-$('body').on('click', '.semana', e => rehacerDatepicker('semanas'))
-$('body').on('click', '.mes', e => rehacerDatepicker('meses'))
-$('body').on('click', '.año', e => rehacerDatepicker('años'))
 
-async function rehacerDatepicker(UT) {
-  let { isConfirmed } = await swalConfirmarYCancelar.fire({
-    title: `Estás seguro que deseas seleccionar las fechas por ${UT}`,
-    text: 'Si continuas se borrarán las fechas que seleccionaste en el calendario',
-    fa: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Sí',
-    cancelButtonText: 'No',
-  })
-  if (!isConfirmed) return
-  construirDatePicker(UT)
+productos.forEach((prod, i) => {
+  let vendidos = datos.map(dato => dato.prods[prod]?.v || 0)
+  let ingresos = datos.map(dato => dato.prods[prod]?.i || 0)
+  let objVendidos = {
+    label: productosDesnormalizados[i],
+    data: vendidos,
+    ...{ backgroundColor: coloresAlfa[i], borderColor: colores[i], borderWidth: 1 },
+    indice: i,
+  }
+  datasetVendidosAgrupadosPorFecha.push(objVendidos)
+  let objIngresos = structuredClone(objVendidos)
+  objIngresos.data = ingresos
+  datasetIngresosAgrupadosPorFecha.push(objIngresos)
+})
+
+
+camioneros.forEach((prod, i) => {
+  let vendidos = datos.map(dato => dato.cams[prod]?.v || 0)
+  let ingresos = datos.map(dato => dato.cams[prod]?.i || 0)
+  let objVendidos = {
+    label: camionerosDesnormalizados[i],
+    data: vendidos,
+    ...{ backgroundColor: coloresAlfa[i], borderColor: colores[i], borderWidth: 1 },
+    indice: i,
+  }
+  datasetVendidosCamionAgrupadosPorFecha.push(objVendidos)
+  let objIngresos = structuredClone(objVendidos)
+  objIngresos.data = ingresos
+  datasetIngresosCamionAgrupadosPorFecha.push(objIngresos)
+})
+
+let masculino = unidadTiempo !== "semanas"
+let UTSingular = unidadTiempo.slice(0, unidadTiempo === "meses" ? -2 : -1)
+let UTPlural = UTSingular + (unidadTiempo === "meses" ? "e" : "") + "s"
+let UTSingularGenero = `${masculino ? "el" : "la"} ${UTSingular}`
+let UTPluralGenero = `${masculino ? "los" : "las"} ${UTPlural}`
+let UTPluralMayuscula = UTPlural.primeraLetraMayuscula()
+let escogido = " escogid" + (masculino ? "o" : "a")
+let UTSingularGeneroEscogido = UTSingularGenero + escogido
+let UTPluralGeneroEscogido = `${UTPluralGenero}${escogido}s`
+
+cambiarHTML(qsd("#cargando"))
+qsd("resumen-datos").agregarCantidad()
+
+let devuelveTop3 = (data, indices) => [data, indices.sort((a, b) => data[b] - data[a]).slice(0, 3)]
+
+function crearPodio() {
+  let i = productos.length < 3 ? [0, 1, 2] : [...productos.keys()]
+  let [data, primeros3] = devuelveTop3(productos.map((_, i) => datasetVendidosAgrupadosPorProducto.reduce((acc, curr) => acc + curr.data[i], 0)?.normalizarPrecioNum()), i)
+  let html = `<div class="tituloSalonDeLaFama"><span>Salón de la fama</span></div><div class="tituloGrupoPodios">Productos<hr></div><div class="grupoPodios">
+  ${podio("Productos más vendidos", ...primeros3.map(i => productosDesnormalizados[i]), ...primeros3.map(i => data[i]?.cantidadFormateada()))}`
+
+    ;[data, primeros3] = devuelveTop3(productos.map((_, i) => datasetIngresosAgrupadosPorProducto.reduce((acc, curr) => acc + curr.data[i], 0)?.normalizarPrecioNum()), i)
+  html += `${podio("Productos que generaron más ingresos", ...primeros3.map(i => productosDesnormalizados[i]), ...primeros3.map(i => data[i]?.aQuetzales()))}
+  </div><div class="tituloGrupoPodios">Fechas<hr></div><div class="grupoPodios">`
+
+  i = datos.length < 3 ? [0, 1, 2] : [...datos.keys()]
+    ;[data, primeros3] = devuelveTop3(datos.map(x => x.vt), i)
+  html += podio("Fechas en las que se vendio más", ...primeros3.map(i => fechasStr[i]), ...primeros3.map(i => data[i]?.cantidadFormateada()))
+
+    ;[data, primeros3] = devuelveTop3(datos.map(x => x.it), i)
+  html += `${podio("Fechas en la que se generaron más ingresos", ...primeros3.map(i => fechasStr[i]), ...primeros3.map(i => data[i]?.aQuetzales()))}
+    </div>${checkbox("Animación", 1, "checkboxPodio")}`
+
+  qsd("#podios").innerHTML = html
+  agregarConfeti()
+  body.on("click", ".checkboxPodio", e => qs(e.currentTarget, "input").checked ? agregarConfeti() : quitarConfeti())
 }
+crearPodio()
 
-function construirDatePicker(UT) {
-  unidadTiempo = UT
-  let opciones = {}
-  if (UT === 'meses') opciones = { format: 'MM yyyy' }
-  if (UT === 'años') opciones = { format: 'yyyy' }
-  crearDatePicker(opciones)
-  datepickerMultidate()
-}
 
-setTimeout(() => {
-  const popoverTriggerList = document.querySelectorAll('[data-toggle="popover"]')
-  const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl, { html: true }))
-}, 500)
+//labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, esCamionero
+qsd("#chartVendidosAgrupadosPorFecha").crearGrafico(fechasStr, datasetVendidosAgrupadosPorFecha, `Cantidad de productos vendidos agrupados por ${UTSingular}`, `total vendidos durante ${UTSingularGenero}`, 1, 0, 0)
+qsd("#chartIngresosAgrupadosPorFecha").crearGrafico(fechasStr, datasetIngresosAgrupadosPorFecha, `Ingresos generados agrupados por ${UTSingular}`, `total ingresos durante ${UTSingularGenero}`, 1, 1, 0)
+qsd("#chartVendidosAgrupadosPorProducto").crearGrafico(productosDesnormalizados, datasetVendidosAgrupadosPorProducto, "Cantidad de productos vendidos agrupados por producto", "vendidos", 0, 0, 0)
+qsd("#chartIngresosAgrupadosPorProducto").crearGrafico(productosDesnormalizados, datasetIngresosAgrupadosPorProducto, "Ingresos generados agrupados por producto", "ingresos", 0, 1, 0)
+qsd("#chartVendidosCamionAgrupadosPorFecha").crearGrafico(fechasStr, datasetVendidosCamionAgrupadosPorFecha, `Cantidad de productos vendidos agrupados por ${UTSingular}`, `total vendidos durante ${UTSingularGenero}`, 1, 0, 1)
+qsd("#chartIngresosCamionAgrupadosPorFecha").crearGrafico(fechasStr, datasetIngresosCamionAgrupadosPorFecha, `Ingresos generados agrupados por ${UTSingular}`, `total ingresos durante ${UTSingularGenero}`, 1, 1, 1)
+qsd("#chartVendidosAgrupadosPorCamion").crearGrafico(camionerosDesnormalizados, datasetVendidosAgrupadosPorCamion, "Cantidad de productos vendidos agrupados por camionero", "vendidos", 0, 0, 1)
+qsd("#chartIngresosAgrupadosPorCamion").crearGrafico(camionerosDesnormalizados, datasetIngresosAgrupadosPorCamion, "Ingresos generados agrupados por camionero", "ingresos", 0, 1, 1)

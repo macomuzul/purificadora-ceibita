@@ -1,0 +1,221 @@
+let eventoDatepicker = new Event('eventoDP')
+let cargarCSS = x => cabeza.innerHTML += `<link rel="stylesheet" href="${x}">`
+cargarCSS('/datepicker-1.10.0.css')
+cargarCSS('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.0/css/font-awesome.min.css')
+
+añadirCSS(`.dropdown-menu {
+  color: white;
+  background: linear-gradient(35deg, #012249, #09234b, #012249);
+  border: none;
+  margin: .125rem 0 0;
+}
+
+.datepicker {
+  width: 350px;
+  height: 330px;
+  box-sizing: content-box;
+  padding: 7px;
+  border: 1px solid black;
+  transform: translateX(-2px);
+  font-weight: 500;
+
+  .prev,
+  .next {
+    font-size: 30px;
+    height: 50px;
+    width: 50px;
+    transform: translateY(-5px);
+  }
+
+  .datepicker-switch {
+    width: 250px !important;
+    height: 50px !important;
+    font-size: 20px;
+  }
+
+  td.day.focused,
+  span.focused,
+  td.day:hover,
+  .datepicker-switch:hover,
+  .next:hover,
+  .prev:hover,
+  .th:hover,
+  span:hover,
+  td.today:hover {
+    background: #317da0 !important;
+    color: white !important;
+  }
+
+  tr.active {
+    box-shadow: 0 0 10px 3px;
+
+    td {
+      background: #2013a3 !important;
+      border-radius: 0 !important;
+    }
+  }
+
+  td.active,
+  span.active,
+  td.active,
+  .range-start.day,
+  .range-end.day {
+    background: #2013a3 !important;
+    box-shadow: 0 0 10px 3px;
+  }
+
+  span.year.focused:has(+ .year.active) {
+    background: inherit !important;
+  }
+
+  .datepicker-years span.year.focused:hover {
+    background: #317da0 !important;
+  }
+}
+
+.table-condensed {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+tfoot {
+  display: none;
+}
+
+.datepicker-days th,
+.datepicker-days td {
+  width: 50px !important;
+  height: 40px !important;
+}
+
+.datepicker-months tbody td,
+.datepicker-years tbody td {
+  height: 280px;
+}
+
+.datepicker table tbody td span {
+  height: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.datepicker-dropdown::after {
+  border-bottom: 6px solid #09234b;
+}
+
+td.today {
+  color: white !important;
+  background: inherit !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+td.today::after {
+  content: "(Hoy)";
+  font-size: 11px;
+  transform: translateY(-2px);
+  font-weight: 600;
+}
+
+.divdatepicker {
+  width: 360px;
+}
+
+.datepicker-dropdown.datepicker-orient-top:after {
+  border-top: 6px solid #ddd;
+}
+
+.range.day {
+  background: #2f78b7 !important;
+}
+
+.form-control-datepicker:disabled, .form-control-datepicker[readonly] {
+  background-color: #e9ecef;
+  opacity: 1;
+}
+
+.form-control-datepicker {
+  text-align: center !important;
+  display: block;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+
+  height: 50px;
+  &:read-only {
+    background: white !important;
+  }
+  &:focus {
+    color: #495057;
+    box-shadow: none !important;
+    border: 1px solid #ced4da !important;
+  }
+}
+
+.input-group-append {
+  margin-left: -1px;
+}
+
+.input-group-append, .input-group-prepend {
+  display: flex;
+}
+
+.input-group-append, .divdatepicker input, .input-group-text {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.input-group-text {
+  display: flex;
+  align-items: center;
+  padding: .375rem .75rem;
+  margin-bottom: 0;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  text-align: center;
+  white-space: nowrap;
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+}`)
+
+class cCalendarioSimple extends HTMLElement {
+  connectedCallback() {
+    let { id, esMultiple, fecha } = this.dataset
+    this.outerHTML = `<div class="input-group date${esMultiple ? '' : ' divdatepicker'}"${id ? ` id="${id}"` : ''}><input type="text" class="form-control form-control-datepicker" readonly ${fecha ? `value="${fecha}"` : ''} id="calendario"><span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div>`
+  }
+}
+
+customElements.define("calendario-simple", cCalendarioSimple)
+
+class cCalendarioMultiple extends HTMLElement {
+  connectedCallback() {
+    let { id } = this.dataset
+
+    this.outerHTML = `<div class="input-group input-daterange divdatepicker" id="${id}">
+    <calendario-simple data-idinput="calendario1" data-esMultiple="1"></calendario-simple>
+    <div class="divseparador">y</div>
+    <calendario-simple data-idinput="calendario2" data-esMultiple="1"></calendario-simple>
+  </div>`
+  }
+}
+
+customElements.define("calendario-multiple", cCalendarioMultiple)
+
+;(async function() {
+  await $.getScript('/datepicker-1.10.0.js')
+  await $.getScript('/datepicker-local-español-1.10.js')
+  document.dispatchEvent(eventoDatepicker)
+})()

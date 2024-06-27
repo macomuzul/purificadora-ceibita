@@ -8,7 +8,7 @@ customElements.define("custom-acordeon", acordeon)
 
 class acordeonitem extends HTMLElement {
   connectedCallback() {
-    let idPadre = $(this).closest(".accordion")[0]?.id
+    let idPadre = this.closest(".accordion")?.id
     this.classList.add("accordion-item")
     let { id, titulo } = this.dataset
     this.innerHTML = `<h2 class="accordion-header headeracordeon">

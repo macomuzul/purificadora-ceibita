@@ -1,8 +1,4 @@
-@use "./partials/tablassimples";
-@use "./partials/tituloplantillas";
 @use "./partials/estrella";
-@use "./partials/botonazul";
-@use "./partials/flecha";
 
 body {
   background: #191d31;
@@ -39,7 +35,7 @@ th {
   flex-wrap: wrap;
 }
 
-.button2 {
+.divbotontitulo {
   transform: translateX(100px);
 }
 
@@ -52,7 +48,7 @@ th {
   height: 100%;
 }
 
-.button2 {
+.divbotontitulo {
   position: relative;
   display: inline-block;
   overflow: hidden;
@@ -120,14 +116,6 @@ td {
 
 .rol{
   min-width: 170px;
-}
-
-.custom-switch .custom-control-label::before {
-  width: 2rem;
-}
-
-.custom-switch .custom-control-input:checked ~ .custom-control-label::after {
-  transform: translateX(1rem);
 }
 
 section {

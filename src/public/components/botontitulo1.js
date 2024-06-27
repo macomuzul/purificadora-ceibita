@@ -1,0 +1,112 @@
+añadirCSS(`.botontitulo {
+  width: 300px;
+  height: 60px;
+  color: white;
+  background-color: #192435;
+  border-color: #010a18;
+  border: 3px;
+
+  &:hover {
+    background: linear-gradient(#00ccff, #d500f9);
+  }
+}
+
+.divbotontitulo {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+
+  span {
+    position: absolute;
+    display: block;
+  }
+
+  span:nth-child(1) {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(#00ccff, #d500f9);
+    animation: animate1 1s linear infinite;
+  }
+
+  span:nth-child(2) {
+    top: -100%;
+    right: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(#00ccff, #d500f9);
+    animation: animate2 1s linear infinite;
+    animation-delay: 0.25s;
+  }
+
+  span:nth-child(3) {
+    bottom: 0;
+    right: 0;
+    width: 100%;
+
+    background: linear-gradient(#00ccff, #d500f9);
+    animation: animate3 1s linear infinite;
+    animation-delay: 0.5s;
+  }
+
+  span:nth-child(4) {
+    bottom: -100%;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(#00ccff, #d500f9);
+    animation: animate4 1s linear infinite;
+    animation-delay: 0.75s;
+  }
+}
+
+@keyframes animate1 {
+  0% {
+    left: -100%;
+  }
+  50%,
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes animate2 {
+  0% {
+    top: -100%;
+  }
+  50%,
+  100% {
+    top: 100%;
+  }
+}
+
+@keyframes animate3 {
+  0% {
+    right: -100%;
+    height: 3px;
+  }
+  50%,
+  100% {
+    height: 2px;
+    right: 100%;
+  }
+}
+
+@keyframes animate4 {
+  0% {
+    bottom: -100%;
+  }
+  50%,
+  100% {
+    bottom: 100%;
+  }
+}`)
+
+class cBotonTitulo1 extends HTMLElement {
+  connectedCallback() {
+    this.outerHTML = `<div class="divbotontitulo"><span></span><span></span><span></span><span></span><input class="botontitulo" type="button" value="${this.innerHTML}"></div>`
+  }
+}
+
+customElements.define("boton-titulo1", cBotonTitulo1)

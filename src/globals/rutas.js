@@ -51,7 +51,6 @@ global.tccron = (f, msg) => async (...params) => {
   }
 }
 
-//TODO cambiar el rol de admin a administrador
 if (enDesarrollo) {
   global.verificacionIdentidad = (req, res, next) => next()
   global.comprobarQueEsAdmin = (req, res, next) => next()

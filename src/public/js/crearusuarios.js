@@ -1,8 +1,8 @@
 let usuario, contraseña, confirmarContraseña, rol, correo
 toastr.options.positionClass = "toast-bottom-right"
 
-$("body").on('click', '.dropdown-item', function () {
-  $(this).closest(".dropdown-menu").prev()[0].innerText = this.innerText
+body.on('click', '.dropdown-item', function () {
+  anterior(this.closest(".dropdown-menu")).innerText = this.innerText
 })
 
 async function validarDatos() {
@@ -18,16 +18,16 @@ function mostrarError(error) {
   return false
 }
 
-let c = $("#correo")[0]
-$("body").on('click', '#guardar', async function () {
+let c = qsd("#correo")
+body.on('click', '#guardar', async function () {
   [usuario, contraseña, confirmarContraseña, correo] = ["#usuario", "#contraseña", "#confirmarContraseña", "#correo"].map(id => $(id).val((_, x) => x = x.trim()).val())
-  rol = $("#rol")[0].innerText;
+  rol = qsd("#rol").innerText
   if (!await validarDatos()) return
   if (correo) {
     validarCorreo()
     if (!c.checkValidity()) return c.reportValidity()
   }
-  modal.mostrar(crearUsuario)
+  modalAutenticacion.mostrar(crearUsuario)
 })
 
 let validarCorreo = q => c.setCustomValidity(c.validity.valueMissing ? 'Por favor escribe un correo' : c.validity.typeMismatch ? 'Por favor escribe un correo válido por ejemplo: usuario@dominio.com' : '')
@@ -36,7 +36,7 @@ c.addEventListener('input', validarCorreo)
 
 
 let crearUsuario = async function () {
-  let contraseñaVerificacion = $("#verificacionIdentidad")[0].value;
+  let contraseñaVerificacion = qsd("#verificacionIdentidad").value;
   let data = JSON.stringify({ usuario, contraseña, ...(correo ? { correo } : {}), rol, contraseñaVerificacion })
   $.ajax({
     url: `/empleados/usuarios/crear`,
@@ -52,9 +52,10 @@ let crearUsuario = async function () {
   })
 }
 
-$("body").on("keydown", "input", e => {
+body.on("keydown", "input", e => {
   if (e.which === 13) {
-    let siguienteInput = $(this).parent().next().find("input")[0]
-    siguienteInput instanceof HTMLInputElement ? siguienteInput.focus() : $(this).parent().next().find("button")[0]?.focus()
+    let elemSig = siguiente(padre(this))
+    let input = qs(elemSig, "input")
+    input instanceof HTMLInputElement ? input.focus() : qs(elemSig, "button")?.focus()
   }
 })

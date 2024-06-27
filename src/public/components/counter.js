@@ -1,6 +1,5 @@
-let cantidad = 30
-$("head").before(`<style>
-.countdown {
+let numInicial = 30
+añadirCSS(`.countdown {
   line-height: 1;
 
   &>* {
@@ -18,37 +17,33 @@ $("head").before(`<style>
     position: relative;
     font-weight: 500;
   }
-}
-
-custom-counter{
-  display: none;
-}
-</style>`)
+}`)
 class counter extends HTMLElement {
   constructor() {
     super()
     this.timerId = null
-    this.innerHTML = `<span class="countdown"><span style="--value:${cantidad};"></span></span>`
+    esconder(this)
+    this.innerHTML = `<span class="countdown"><span style="--value:${numInicial};"></span></span>`
+    this.estilo = qs(this, `.countdown span`).style
   }
 
   resetear(cb) {
-    this.style.display = "inline"
-    let estilo = this.querySelector(`.countdown span`).style
-    estilo.color = "white"
-    estilo.setProperty("--value", cantidad)
-    this.cuentaAtras(cantidad, this, estilo, cb)
+    this.num = numInicial
+    mostrar(this)
+    this.cambiarValor('white')
+    this.cuentaAtras(cb)
   }
 
-  cuentaAtras(cantidad, obj, estilo, cb) {
+  cuentaAtras(cb) {
     this.timerId = setTimeout(() => {
-      cantidad--
-      estilo.setProperty("--value", cantidad)
-      if (cantidad <= 5) estilo.color = "red"
-      else if (cantidad <= 10) estilo.color = "yellow"
-      
-      if (cantidad > 0) this.cuentaAtras(cantidad, obj, estilo, cb)
+      this.num--
+      let { num } = this
+      let color = num <= 5 ? 'red' : num <= 10 ? 'yellow' : ''
+      this.cambiarValor(color)
+
+      if (num > 0) this.cuentaAtras(cb)
       else {
-        obj.style.display = "none"
+        esconder(this)
         cb()
       }
     }, 1000)
@@ -56,10 +51,12 @@ class counter extends HTMLElement {
 
   parar() {
     clearTimeout(this.timerId)
-    this.style.display = "none"
-    let estilo = this.querySelector(`.countdown span`).style
-    estilo.color = "white"
-    estilo.setProperty("--value", 0)
+    esconder(this)
+  }
+
+  cambiarValor(color) {
+    if (color) this.estilo.color = color
+    this.estilo.setProperty("--value", this.num)
   }
 }
 

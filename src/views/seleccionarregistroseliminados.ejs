@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1200px">
+  <title>Registros eliminados</title>
+  <%- include("layouts/global") %>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.0/css/font-awesome.min.css">
+  <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="/botontitulo2.js"></script>
+  <script defer src="/botonazul.js"></script>
+  <script defer src="/bootstrapdatepicker.js"></script>
+  <script defer src="/seleccionarregistroseliminados.js"></script>
+  <script defer src="/dropdown.js"></script>
+</head>
+
+<body>
+  <link rel="stylesheet" href="/seleccionarregistroseliminados.min.css" />
+
+  <%- include("layouts/navbar") %>
+    <main>
+      <div class="contenedorsuperior"><boton-titulo2>Restaura registros anteriores</boton-titulo2></div>
+
+      <section>
+        <div class="tituloSeccion">Buscar registro de una fecha en específico</div>
+        <br>
+        <div style="display: flex; justify-content: center;">
+          <div style="width: 1100px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 35px;">
+              <custom-dropdown data-idmenu="" data-idseleccionado="buscarpor" data-textopordefecto="Tipo de registro">
+                <li>Ventas</li>
+                <li>Gastos</li>
+              </custom-dropdown>
+              <custom-dropdown data-idmenu="" data-idseleccionado="buscarpor" data-textopordefecto="Buscar por">
+                <li>Fecha del registro</li>
+                <li>Fecha que se eliminó o modificó el registro</li>
+              </custom-dropdown>
+              <custom-dropdown data-idmenu="fechasdropdown" data-idseleccionado="rangofecha" data-textopordefecto="Elige un rango">
+                <li>Fecha igual a</li>
+                <li>Fecha menor o igual a</li>
+                <li>Fecha mayor o igual a</li>
+                <li>Fecha entre</li>
+              </custom-dropdown>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <h3 class="borde">Escoge una fecha para buscar: </h3>
+              <div class="contenedorentre">
+                <calendario-simple data-id="datepickerNormal" data-idinput="calendario"></calendario-simple>
+                <calendario-multiple data-id="datepickerEntre"></calendario-multiple>
+              </div>
+              <input-azul id="btnbuscar">Buscar registros</input-azul>
+            </div>
+          </div>
+        </div>
+      </section>
+      <hr>
+      <section>
+        <div class="tituloSeccion">Buscar entre todos los registros eliminados o modificados</div>
+        <div style="display: flex; justify-content: space-around; align-items: center; margin: 35px 0;">
+          <div>
+            <custom-dropdown data-idmenu="" data-idseleccionado="buscarpor" data-textopordefecto="Tipo de registro">
+              <li>Ventas</li>
+              <li>Gastos</li>
+            </custom-dropdown>
+          </div>
+          <div>
+            <h3 style="text-align: center;">Ordenar por:</h3>
+            <div style="display: flex; justify-content: space-evenly; margin-top: 25px; gap: 25px;">
+              <input-azul class="btnOrden" id="btnMasReciente">Más recientes a más antiguos</input-azul>
+              <input-azul class="btnOrden" id="btnMasAntiguo">Más antiguos más recientes</input-azul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+</body>
+</html>

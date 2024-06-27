@@ -1,5 +1,5 @@
 let timeout = false
-let clickeado = $(".faved")
+let favorito = qsd(".faved")
 const swalConfirmarYCancelar = Swal.mixin({
   customClass: {
     confirmButton: "btn btn-success margenboton",
@@ -8,22 +8,22 @@ const swalConfirmarYCancelar = Swal.mixin({
   buttonsStyling: false,
 })
 
-$(".vermas").on("click", function () {
-  $(this).parent().find(".spanHoras").toggle()
-  this.style.rotate = this.style.rotate === "180deg" ? "0deg" : "180deg"
+body.on("click", ".vermas", function () {
+  alternar(qs(padre(this), '.spanHoras'))
+  this.style.rotate = this.style.rotate === '180deg' ? '0deg' : '180deg'
 })
 
-$('.fave').on("click", function () {
-  if (timeout || $(this).hasClass("faved")) return
-  clickeado.toggleClass('faved')
-  $(this).toggleClass('faved')
+body.on("click", '.fave', function () {
+  if (timeout || tieneClase(this, 'faved')) return
+  alternarClase(favorito, 'faved')
+  alternarClase(this, 'faved')
   timeout = true
-  clickeado = $(this)
+  favorito = this
   setTimeout(() => timeout = false, 300)
 })
 
-$(".svgeliminar").on('click', async function () {
-  let filaborrar = $(this).closest("tr")[0]
+body.on('click', ".svgeliminar", async function () {
+  let filaborrar = this.closest("tr")
   let plantillaborrar = filaborrar.cells[0].innerText
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     icon: "warning",
@@ -33,8 +33,7 @@ $(".svgeliminar").on('click', async function () {
     cancelButtonText: "No continuar",
   })
   if (isConfirmed) {
-    if ($(this).closest("tr").index() === $(".faved").closest("tr").index())
-      return Swal.fire("Error", "No puedes borrar la plantilla de default", "error")
+    if (this.closest("tr") === favorito.closest("tr")) return Swal.fire("Error", "No puedes borrar la plantilla de default", "error")
     $.ajax({
       url: `/plantillas/${plantillaborrar}`,
       method: "DELETE",
@@ -48,21 +47,19 @@ $(".svgeliminar").on('click', async function () {
   }
 })
 
-$(".svgver").each(function (e, btn) {
-  tippy(this, {
+qsaforeachd(".svgver", e => {
+  tippy(e, {
     trigger: 'click',
     placement: 'bottom',
     allowHTML: true,
     popperOptions: { modifiers: [{ name: 'flip', options: { fallbackPlacements: ['bottom', 'top', 'right', 'left'] } }] },
     arrow: false,
     content: "Cargando...",
-    onCreate(instance) {
-      Object.assign(instance, { _isFetching: false, _src: null, _error: null })
-    },
+    onCreate(instance) { Object.assign(instance, { _isFetching: false, _src: null, _error: null }) },
     async onShow(instance) {
       if (instance._isFetching || instance._src) return
       instance._isFetching = true
-      let r = await fetch(`/plantillas/devuelveplantilla/${btn.closest("tr").cells[0].innerText}`)
+      let r = await fetch(`/plantillas/devuelveplantilla/${e.closest("tr").cells[0].innerText}`)
       if (r.ok) {
         let p = await r.json()
         plantilla = `<table>
@@ -81,10 +78,10 @@ $(".svgver").each(function (e, btn) {
   })
 })
 
-$("#guardar").on('click', function () {
+qsclickd('#guardar', function () {
   let data = JSON.stringify({
-    nombreDefault: $(".faved").closest("tr")[0].cells[0].innerText,
-    nombrePlantillas: [...$("tbody tr")].map(x => x.cells[0].innerText)
+    nombreDefault: favorito.closest('tr').cells[0].innerText,
+    nombrePlantillas: qsarrd('tbody tr').map(x => x.cells[0].innerText)
   })
   $.ajax({
     url: "/plantillas",
@@ -96,4 +93,4 @@ $("#guardar").on('click', function () {
   })
 })
 
-$(".svgeditar").on('click', e => location = "/plantillas/editar/" + e.currentTarget.closest("tr").cells[0].innerText)
+$('.svgeditar').on('click', e => location = "/plantillas/editar/" + e.currentTarget.closest("tr").cells[0].innerText)

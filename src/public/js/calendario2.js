@@ -1,9 +1,8 @@
-let decodificado = he.decode(camionerosEJS)
+let decodificarStr = s => s.replaceAll('&#34;', '"')
+let decodificado = decodificarStr(camionerosEJS)
 camionerosEJS = JSON.parse(decodificado)
-
-decodificado = he.decode(diasEJS)
+decodificado = decodificarStr(diasEJS)
 diasEJS = JSON.parse(decodificado)
-
 String.prototype.aUTC = function () {
   const [datePart] = this.split('T')
   const [year, month, day] = datePart.split('-').map(Number)
@@ -12,7 +11,7 @@ String.prototype.aUTC = function () {
 String.prototype.fechaGuatemala = function () { return new Intl.DateTimeFormat('es', { timeZone: "America/Guatemala" }).format(this.aUTC()) }
 let camioneros = {}
 camionerosEJS.forEach(x => camioneros[x.nombre] = x.color)
-$(".camionero").each((i, x) => x.querySelector(".color").style.background = camioneros[x.querySelector(".nombreCamionero").innerText])
+qsad(".camionero").forEach(x => qs(x, ".color").style.background = camioneros[qs(x, ".nombreCamionero").innerText])
 
 let eventosCalendario = []
 diasEJS.forEach(({ camioneros: cam, _id, ultimocambio, usuario }) => cam.forEach((c, i) => eventosCalendario.push({ name: `Camión ${(i + 1)}`, description: `Conductor: ${c}`, date: _id.aUTC().toDateString(), type: i + "", ultimocambio, usuario, color: camioneros[c] })))

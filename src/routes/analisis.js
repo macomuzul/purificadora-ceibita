@@ -6,7 +6,7 @@ const devuelveValoresSumados = require("../utilities/devuelveValoresSumados")
 
 String.prototype.normalizarPrecio = function () { return parseFloat(this).toFixed(2).replace(/[.,]00$/, "") }
 Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }
-router.get('/', async (req, res) => res.render('analisis', { esAdmin: esAdmin(req) }))
+router.get('/', async (req, res) => res.render('seleccionaranalisis', { esAdmin: esAdmin(req) }))
 let objResumenes = { day: ResumenDia, week: ResumenSemana, month: ResumenMes, year: ResumenAño }
 
 async function actualizarSiHuboCambios(tiempo) {
@@ -147,7 +147,7 @@ router.get("/:agruparPorP(agruparpor=(dias|semanas|meses|a%C3%B1os))&:rangoP(ran
     }
   }
 
-  res.render("mostraranalisis", { datos, esAdmin: esAdmin(req) })
+  res.render("analisis", { datos, esAdmin: esAdmin(req) })
 }, "Página inválida"))
 
 async function agrupar(fechas, tiempo) {
@@ -160,7 +160,5 @@ async function agruparMultiple(fechas, tiempo) {
   let dias = Object.entries(agrupados).map(([k, v]) => v.length > 1 ? ({ _id: DateTime.fromISO(k).startOf(tiempo), ...devuelveValoresSumados(v), f: DateTime.fromISO(k).endOf(tiempo) }) : v[0])
   return dias.sort((a, b) => a._id - b._id)
 }
-
-router.get("/comofunciona", (req, res) => res.render("comofuncionaanalisis", { esAdmin: esAdmin(req) }))
 
 module.exports = router

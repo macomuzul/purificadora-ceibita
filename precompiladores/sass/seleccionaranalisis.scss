@@ -1,0 +1,100 @@
+@use "./partials/breadcrumbs";
+
+.gridUnidadTiempo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  justify-items: center;
+  width: 600px;
+  margin: 30px auto 0 auto;
+  row-gap: 25px;
+  align-content: center;
+}
+
+.btnOrden {
+  font-size: 18px;
+}
+
+#breadcrumbs,
+#sectionUnidadTiempo {
+  margin-top: 35px;
+}
+
+#sectionAgrupar {
+  display: block;
+
+  button {
+    display: none;
+  }
+}
+
+.divdatepicker {
+  width: 500px !important;
+}
+
+.btnAnalizar {
+  width: 140px;
+}
+
+.divseparador {
+  display: block;
+}
+
+.sections {
+  position: relative;
+}
+
+custom-switch {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+
+:disabled {
+  background-color: inherit !important;
+  color: inherit !important;
+  border-color: black !important;
+}
+
+.btnBorrarFechas {
+  position: absolute;
+  right: 0;
+  bottom: -80px
+}
+
+.textoDatePicker {
+  position: absolute;
+  bottom: -160px;
+  left: 0;
+}
+
+.unidadesTiempo {
+  color: #007bff;
+  margin-top: 10px;
+}
+
+.margenbotonswal{
+  width: 140px;
+  height: 50px;
+  font-weight: 500;
+  &:not(.btn-success){
+    margin-left: 40px;
+  }
+}
+
+.btnunidadtiempo {
+  padding: 0;
+  width: 100px;
+  height: 50px;
+  margin-left: 0;
+}
+
+.comofunciona{
+  right: 0;
+  top: 0;
+  position: absolute;
+  a{
+    text-decoration: underline;
+  }
+}

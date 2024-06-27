@@ -3,6 +3,8 @@ const Plantilla = require('../models/plantillas')
 
 let objUpdate = (nombre, update) => ({ updateOne: { filter: { nombre }, update } })
 
+if(enTesting) testingPlantillas(router)
+
 router.route('/').get(async (req, res) => {
   let plantillas = await Plantilla.ordenado().select("-productos -_id -orden")
   res.render('verplantillas', { plantillas, esAdmin: esAdmin(req) })

@@ -1,4 +1,4 @@
-class cCheckbox extends HTMLElement {
+class cCustomCheckbox extends HTMLElement {
   connectedCallback() {
     let { checked, clase, id } = this.dataset
     this.className = `form-check form-check-inline ${clase ?? ""}`
@@ -7,6 +7,6 @@ class cCheckbox extends HTMLElement {
   }
 }
 
-$("body").on("click", "custom-checkbox", e => $(e.currentTarget).find("input").prop("checked", (_, val) => e.target.matches("input") ? val : !val))
+body.on("click", "custom-checkbox", e => $(e.currentTarget).find("input").prop("checked", (_, val) => e.target.matches("input") ? val : !val))
 
-customElements.define("custom-checkbox", cCheckbox)
+customElements.define("custom-checkbox", cCustomCheckbox)

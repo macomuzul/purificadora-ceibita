@@ -1,5 +1,4 @@
-$("head").append(`<style>
-.botonexcel{
+añadirCSS(`.botonexcel{
   padding: 10px;
   background: #064723;
   border-color: #116d3a;
@@ -20,8 +19,7 @@ $("head").append(`<style>
 .spinner-border{
   width: 20px;
   height: 20px;
-}
-</style>`)
+}`)
 
 class botonExcel extends HTMLElement {
   connectedCallback() {
@@ -54,9 +52,7 @@ class botonExcel extends HTMLElement {
     }
   }
 
-  inicializar(crear) {
-    this.crear = crear
-  }
+  inicializar(crear) { this.crear = crear }
 }
 
 customElements.define("boton-excel", botonExcel)

@@ -1,10 +1,10 @@
 let listaCanvasConfeti
-function quitarConfeti(w){
-  $(".checkboxPodio").find("input").prop("checked", false)
+function quitarConfeti(){
+  qsd(".checkboxPodio input").checked = false
   listaCanvasConfeti.forEach(x => x.clear())
 }
 function agregarConfeti(w) {
-  listaCanvasConfeti = [...$("#podios").find("canvas")].map(x => new ConfettiGenerator({ target: x }))
+  listaCanvasConfeti = qsarrd("#podios canvas").map(x => new ConfettiGenerator({ target: x }))
   listaCanvasConfeti.forEach(x => x.render())
   setTimeout(q => quitarConfeti(), 10000)
 }

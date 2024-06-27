@@ -9,7 +9,7 @@
     "debug": "nodemon --ignore ./src/public/ --ignore ./cypress --ignore ./e2e --inspect src/index.js",
     "debug2": "NODE_OPTIONS=\"--inspect\" npm run dev",
     "e2e": "cypress open",
-    "test": "jest",
+    "test": "nodemon --ignore ./src/public/ --ignore ./cypress --ignore ./e2e --exec node --env-file=.env --env-file=.env.test src/index.js",
     "testear": "node ./tests/servidortest.js",
     "grabar": "playwright codegen --viewport-size \"1366, 657\""
   },
@@ -17,13 +17,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bson": "^6.3.0",
+    "bson": "^6.4.0",
     "connect-flash": "^0.1.1",
     "connect-redis": "^7.1.1",
     "ejs-mate": "^4.0.0",
     "express": "^4.18.3",
     "express-session": "^1.18.0",
-    "googleapis": "^133.0.0",
+    "googleapis": "^137.1.0",
     "lodash": "^4.17.21",
     "luxon": "^3.4.4",
     "mongoose": "^8.2.0",
@@ -34,8 +34,8 @@
     "redis": "^4.6.13"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.1",
-    "cypress": "^13.6.1",
+    "@playwright/test": "^1.45.0",
+    "cypress": "^13.12.0",
     "morgan": "^1.10.0"
   }
 }

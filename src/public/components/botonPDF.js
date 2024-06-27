@@ -1,5 +1,4 @@
-$("head").append(`<style>
-.botonpdf{
+añadirCSS(`.botonpdf{
   padding: 10px;
   background: #871a08;
   border-color: #b31616;
@@ -21,10 +20,9 @@ $("head").append(`<style>
 .spinner-border{
   width: 20px;
   height: 20px;
-}
-</style>`)
+}`)
 
-$("body").on("click", ".botonpdf", e => e.currentTarget.exportarTabla())
+body.on("click", ".botonpdf", e => e.currentTarget.exportarTabla())
 
 class botonPDF extends HTMLElement {
   connectedCallback() {
@@ -79,7 +77,8 @@ class botonPDF extends HTMLElement {
   }
 
   guardar(pdf) {
-    pdf.save(`${this.nombre}.pdf`)
+    let n = this.nombre
+    pdf.save(`${typeof n === 'function' ? n() : n}.pdf`)
     this.innerHTML = `Archivo creado`
     setTimeout(() => this.innerHTML = this.htmlOriginal, 2000)
   }

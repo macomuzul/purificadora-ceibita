@@ -1,25 +1,9 @@
-@mixin svgNavLinks {
-  width: 2rem;
-  min-width: 2rem;
-  margin: 0 1.5rem;
-  fill: #efefef;
-}
-
-@mixin nav-link {
-  display: flex;
-  align-items: center;
-  height: 5rem;
-  color: var(--text-primary);
-  text-decoration: none;
-}
-
 :root {
   font-family: "Open Sans";
   --text-primary: #efefef;
   --text-secondary: #ececec;
-  --bg-primary: #23232e;
   --bg-secondary: #141418;
-  --transition-speed: 600ms;
+  --transition-speed: 500ms;
 }
 
 main {
@@ -34,7 +18,7 @@ main {
   overflow-x: hidden;
   position: fixed;
   z-index: 99999;
-  background-color: var(--bg-primary);
+  background-color: #23232e;
   transition: width 600ms ease;
   margin: 0;
   padding: 0;
@@ -54,7 +38,7 @@ main {
     background: #6c6875;
   }
 
-  @media (min-width:1300px) {
+  @media (width >= 1300px) {
     &::-webkit-scrollbar {
       width: 11px;
     }
@@ -82,9 +66,13 @@ main {
 }
 
 .nav-link {
-  @include nav-link;
   filter: grayscale(100%) opacity(1);
   transition: var(--transition-speed);
+  display: flex;
+  align-items: center;
+  height: 5rem;
+  color: var(--text-primary);
+  text-decoration: none;
 
   &:focus,
   &:hover {
@@ -98,7 +86,10 @@ main {
   }
 
   svg {
-    @include svgNavLinks;
+    width: 2rem;
+    min-width: 2rem;
+    margin: 0 1.5rem;
+    fill: #efefef;
   }
 }
 
@@ -166,11 +157,10 @@ main {
     top: 50%;
     transition: 0.3s;
   }
-  
 
   .presionado.nav-item-compuesto>.nav-link::after {
     transform: rotate(180deg);
-  } 
+  }
 }
 
 .submenu {
@@ -179,20 +169,23 @@ main {
 
   .nav-item {
     background: #2f2f3e;
-  }
 
-  .nav-item:hover {
-    filter: grayscale(0%) opacity(1);
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
-    transition: var(--transition-speed);
+    &:hover {
+      filter: grayscale(0%) opacity(1);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      transition: var(--transition-speed);
+    }
   }
 
   .nav-link-submenu {
     position: relative;
-    @include nav-link;
-    svg {
-      @include svgNavLinks;
+
+    &::before {
+      content: "‣";
+      font-size: 35px;
+      position: absolute;
+      margin-left: 10px;
     }
   }
 
@@ -203,14 +196,8 @@ main {
     display: flex;
   }
 
-  .nav-link-submenu::before {
-    content: "‣";
-    font-size: 35px;
-    position: absolute;
-    margin-left: 10px;
-  }
 
-  @media (max-width: 1200px) {
+  @media (width <= 1200px) {
     .nav-link-submenu::before {
       font-size: 20px;
     }

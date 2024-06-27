@@ -1,54 +1,145 @@
 let dropdownSeleccionado = null
-$(window).on('click', e => dropdownSeleccionado?.cambiarEstado(-1))
+window.onclick = e => dropdownSeleccionado?.cambiarEstado(-1)
+
+añadirCSS(`custom-dropdown {
+  display: block;
+  width: 400px;
+  position: relative;
+}
+
+.select {
+  background: #232f3b;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px #2a2f3b solid;
+  border-radius: 0.5em;
+  padding: 1em;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.select-clicked {
+  border: 2px #26489a solid;
+  box-shadow: 0 0 0.8em #26489a;
+}
+
+.select:hover {
+  background: #323741;
+}
+
+.caret {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #fff;
+  transition: 0.3s;
+}
+
+.caret-rotate{
+  transform: rotate(180deg);
+}
+
+.menu {
+  user-select: none;
+  list-style: none;
+  padding: 0.2em 0.5em;
+  background: #323741;
+  border: 1px #363a43 solid;
+  box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.2);
+  border-radius: 0.5em;
+  color: #9fa5b5;
+  position: absolute;
+  top: 3em;
+  left: 50%;
+  width: 100%;
+  transform: translateX(-50%);
+  opacity: 0;
+  display: none;
+  transition: 0.2s;
+  z-index: 1;
+
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: inherit;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #8e899c;
+    border-radius: 5px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #6c6875;
+  }
+}
+
+.menu li {
+  padding: 0.7em 0.5em;
+  margin: 0.3em 0;
+  border-radius: 0.5em;
+  cursor: pointer;
+
+  &:hover {
+    background: #2a2d35;
+  }
+}
+
+.active {
+  background: #23242a;
+}
+
+.menu-open {
+  display: block;
+  opacity: 1;
+  margin-top: 18px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.selected, menu{
+  user-select: none;
+}`)
 
 class customDropdown extends HTMLElement {
   connectedCallback() {
     let { idmenu, idseleccionado, textopordefecto } = this.dataset
     this.innerHTML = `<div class="dropdown">
-    <div class="select">
-      <span class="selected" id="${idseleccionado}">${textopordefecto}</span>
-      <div class="caret"></div>
-    </div>
-    <ul class="menu" id="${idmenu}">
-      ${this.innerHTML}
-    </ul>
+    <div class="select"><span class="selected" id="${idseleccionado}">${textopordefecto}</span><div class="caret"></div></div>
+    <ul class="menu" id="${idmenu}">${this.innerHTML}</ul>
   </div>`
 
-    let select = this.querySelector('.select')
-    let caret = this.querySelector('.caret')
-    let menu = this.querySelector('.menu')
-    let selected = this.querySelector('.selected')
+    let menu = qs(this, '.menu')
     let estaActivo = 0
 
-    $(this).on('click', function (e) {
+    this.onclick = function (e) {
       e.stopPropagation()
       if (dropdownSeleccionado !== this) dropdownSeleccionado?.cambiarEstado(-1)
       this.cambiarEstado(0)
       dropdownSeleccionado = this
-    })
+    }
 
     let cambiarEstado = i => {
       if (!estaActivo && i === -1) return
-      estaActivo = i === 0 ? true : false
-      cambiarClase(select, 'select-clicked', i)
-      cambiarClase(caret, 'caret-rotate', i)
+      estaActivo = i === 0
+      cambiarClase(qs(this, '.select'), 'select-clicked', i)
+      cambiarClase(qs(this, '.caret'), 'caret-rotate', i)
       cambiarClase(menu, 'menu-open', i)
     }
 
     this.cambiarEstado = cambiarEstado
 
-    let cambiarClase = (x, clase, i) => {
-      if (i === -1) $(x).removeClass(clase)
-      else if (i === 0) $(x).toggleClass(clase)
-    }
+    let cambiarClase = (x, clase, i) => i === 0 ? alternarClase(x, clase) : quitarClase(x, clase)
 
     $(this).on('click', 'li', e => {
       let opcion = e.currentTarget
       e.stopPropagation()
-      selected.innerText = opcion.innerText
+      qs(this, '.selected').innerText = opcion.innerText
       cambiarEstado(-1)
-      $(this).find('.menu li').removeClass('active')
-      $(opcion).addClass('active')
+      quitarClase(qs(this, '.menu li'), 'active')
+      añadirClase(opcion, 'active')
       metododropdown(opcion, menu)
     })
   }

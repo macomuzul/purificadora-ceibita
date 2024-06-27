@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Recuperar contraseña</title>
-  <%- include("layouts/global") %>
+  <link rel = "icon" href = "/ceibitalogo32x32.jpg" type = "image/x-icon">
   <title>Recuperar Contraseña</title>
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Poppins">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="/recuperarcontraseña.min.css">
   <style>
     .divvolver{
-      top: 18px;
+      top: 14px;
       left: 20px;
     }
     .form{
@@ -64,18 +64,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.css">
 
     <script>
-      addEventListener("load", q => {
-        usuario.setCustomValidity('El usuario que has ingresado no existe')
-        usuario.reportValidity()
-      })
+      usuario.setCustomValidity('El usuario que has ingresado no existe')
+      usuario.reportValidity()
     </script>
   <% } %>
   <%if (errorRecuperarContraseña === 'Correo incorrecto') {%>
     <script>
-      addEventListener("load", q => {
-        correo.setCustomValidity('El correo del usuario no coincide con el que has escrito')
-        correo.reportValidity()
-      })
+      correo.setCustomValidity('El correo del usuario no coincide con el que has escrito')
+      correo.reportValidity()
     </script>
   <% } %>
 

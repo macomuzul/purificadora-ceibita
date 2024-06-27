@@ -1,8 +1,5 @@
-@use "./partials/tablassimples";
-@use "./partials/tituloplantillas";
-@use "./partials/dropdown";
-@use "./partials/botonazul";
 @use "./partials/swal";
+@use "./partials/tablassimples";
 
 body {
   background: #191d31;
@@ -56,7 +53,7 @@ td {
 }
 
 .botontitulo {
-  width: 420px;
+  width: 450px;
 }
 
 .color {

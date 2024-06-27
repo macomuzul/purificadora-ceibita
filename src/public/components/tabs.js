@@ -1,43 +1,76 @@
-class label extends HTMLElement {
-  connectedCallback() {
-    let { id } = this.dataset;
-    this.innerHTML = `<input type="radio" class="tabs__radio" name="${this.getAttribute("name")}" id="${id}">
-    <label for="${id}" class="tabs__label">${this.innerHTML}</label>`
-  }
+añadirCSS(`.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  font-family: sans-serif;
+  margin-top: 10px;
+  justify-content: center;
+  margin-bottom: 0;
 }
 
-customElements.define("custom-label", label)
-
-class tabContent extends HTMLElement {
-  connectedCallback() {
-    $(this).addClass("tabs__content")
-    this.innerHTML = `${this.innerHTML}`
-  }
+.tabLabel, .agregarcamion {
+  padding: 12px 20px;
+  cursor: pointer;
+  background-color: #0f0924;
+  font-size: 15px;
+  color: white;
+  height: 50px;
+  display: grid;
+  align-items: center;
+  transition: font-size 200ms;
 }
 
-customElements.define("tab-content", tabContent)
+.agregarcamion{
+    width: 60px;
+    margin-left: 1px;
+    padding: 10px 16px;
+}
 
+html, body, main {
+  width: fit-content;
+}
+
+.tabRadio {
+  display: none;
+}
+
+tab-content{
+  display: block;
+  order: 1;
+  width: 100%;
+}
+
+.tabRadio:checked + .tabLabel {
+  font-weight: bold;
+  color: white;
+  background-color: #009578;
+  border-bottom: 2px solid #009578;
+}`)
+
+class tabLabel extends HTMLElement {
+  connectedCallback() {
+     this.innerHTML = `<input type="radio" class="tabRadio"><label class="tabLabel">${this.innerHTML}</label>`
+  }
+}
+customElements.define("tab-label", tabLabel)
+
+let devuelveTabContent = (el, id) => registrarVentas ? qs(el, `tab-content[data-tabid="${id-1}"]`) : qs(el, `tab-content:nth-child(${id})`)
 class customTabs extends HTMLElement {
   connectedCallback() {
-    requestAnimationFrame(() => {
-      try {
-        $(this).find("custom-label input")[0].checked = true
-        $(this).find("tab-content")[0].style.display = "initial"
-        $(this).on("click", "custom-label label", e => {
-          let el = $(e.currentTarget).prev()[0]
-          let checkeado = $(this).find("custom-label input:checked")[0]
-          if (el === checkeado) return
-          checkeado.checked = false
-          $(this).find(`tab-content:nth-child(${$(checkeado).parent().index() + 1})`).css("display", "none")
-
-          el.checked = true
-          $(this).find(`tab-content:nth-child(${$(el).parent().index() + 1})`).css("display", "initial")
-        })
-      } catch {
-
-      }
+    // let cambiarChecked = (el, c) => el.setAttribute('checked', c)
+    let cambiarChecked = (el, c) => el.checked = c
+    cambiarChecked(qs(this, 'input'), true)
+    qsaforeach(this, 'tab-content', (x, i) => { if(i !== 0) x.hidden = true })
+    this.idSeleccionado = 1
+    $(this).on("click", "tab-label label", e => {
+      let el = e.currentTarget.previousElementSibling
+      let checkeado = qs(this, "tab-label input:checked")
+      if (el === checkeado) return
+      devuelveTabContent(this, this.idSeleccionado).hidden = true
+      this.idSeleccionado = indice(padre(el)) + 1
+      cambiarChecked(el, true)
+      if(checkeado) cambiarChecked(checkeado, false)
+      devuelveTabContent(this, this.idSeleccionado).hidden = false
     })
   }
 }
-
 customElements.define("custom-tabs", customTabs)

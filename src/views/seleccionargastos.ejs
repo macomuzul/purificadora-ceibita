@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200px">
+  <title>Registros eliminados</title>
+  <%- include("layouts/global") %>
+
+  <link rel="stylesheet" href="/registroseliminados.min.css">
+  <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="/botontitulo2.js"></script>
+  <script defer src="/botonazul.js"></script>
+  <script defer src="/bootstrapdatepicker.js"></script>
+  <script defer src="/seleccionargastos.js"></script>
+</head>
+
+<body>
+  <%- include("layouts/navbar") %>
+  <main>
+    <div class="contenedorsuperior"><boton-titulo2>Escoge un mes para registrar tus gastos</boton-titulo2></div>
+    <section style="display: flex; justify-content: center;">
+      <calendario-simple data-id="datepicker" data-idinput="calendario" data-fecha="<%= fecha %>"></calendario-simple>
+      <botonazul-flechaderechasinurl id="registrargastos" style="padding: 15px 15px 15px 20px; position: absolute; right: 50px;">Registrar gastos</botonazul-flechaderechasinurl>
+    </section>
+  </main>
+</body>
+
+</html>

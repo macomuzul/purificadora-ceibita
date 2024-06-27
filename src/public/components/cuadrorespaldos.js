@@ -1,5 +1,4 @@
-$("head").append(`<style>
-.gridUnidadTiempo {
+añadirCSS(`.gridUnidadTiempo {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
@@ -91,8 +90,7 @@ $("head").append(`<style>
 .contenidoOpciones{
   position: relative;
   margin-top: 10px;
-}
-</style>`)
+}`)
 
 let contador = 0, seleccionado, c, opcionCalendario
 
@@ -104,47 +102,46 @@ let swalConfirmarYCancelar = Swal.mixin({
   buttonsStyling: false
 })
 
-let crearCal = cal => c.html(`<button type="button" class="btn btn-primary botonazul botonvolver" id="volver">
-<svg class="flecharotada" width="20" height="20" fill="white"><path d="M20 0zm-8.344 14.709-1.41-1.418L12.547 11H4V9h8.673l-2.38-2.379 1.414-1.414 4.737 4.736z"/></svg>
-Volver</button><iframe class="iframe" src="/extras/calendarioIframe${cal}" frameborder="0"></iframe>`)
-$("body").on("click", "#btnMayor", q => {
+let crearCal = cal => c.html(`<botonazul-flechaizquierda class="botonvolver" id="volver">Volver</botonazul-flechaizquierda>${cal}`)
+qsclickd("#btnMayor", q => {
   seleccionado.cal = "mayores o iguales que"
-  crearCal("")
+  crearCal('<calendario-simple></calendario-simple>')
 })
-$("body").on("click", "#btnMenor", q => {
+qsclickd("#btnMenor", q => {
   seleccionado.cal = "menores o iguales que"
-  crearCal("")
+  crearCal('')
 })
-$("body").on("click", "#btnLibre", q => {
+
+qsclickd("#btnLibre", q => {
   seleccionado.cal = ""
   crearCal("Multiple")
 })
-$("body").on("click", "#btnEntre", q => {
+qsclickd("#btnEntre", q => {
   seleccionado.cal = "entre el"
   crearCal("Entre")
 })
 
-$("body").on("click", ".tituloregistro custom-checkbox", e => $(e.currentTarget).closest("cuadro-respaldos").find("custom-input input").prop("disabled", !$(e.currentTarget).find("input")[0].checked))
-$("body").on("click", ".botonvolver", crearContenidoOpciones)
-$("body").on("click", ".opcionesradiobutton custom-radiobutton input", crearContenidoOpciones)
+body.on('click', ".tituloregistro custom-checkbox", e => qs(e.currentTarget.closest("cuadro-respaldos", "custom-input input").disabled = !qs(e.currentTarget, "input").checked))
+body.on('click', ".botonvolver", crearContenidoOpciones)
+body.on('click', ".opcionesradiobutton custom-radiobutton input", crearContenidoOpciones)
 
 let guardando = false
-$("#btnguardar").on("click", async function () {
+qsclickd("#btnguardar", async function () {
   if (guardando === true) return
   guardando = true
-  $(this).html(`  Guardando<div class="cajaspinner"><div class="spinner-border text-primary"></div>`)
-  let chequeados = [...$("cuadro-respaldos")].filter(x => $(x).find(".tituloregistro input")[0].checked)
+  cambiarHTML(this, `  Guardando<div class="cajaspinner"><div class="spinner-border text-primary"></div>`)
+  let chequeados = qsarrd("cuadro-respaldos").filter(x => qs(x, ".tituloregistro input").checked)
   if (!chequeados.length) return Swal.fire("Error", "No se ha seleccionado ningún registro para guardar", "error")
-  chequeados.forEach(x => x.opciones.nombreArchivo = $(x).find(".nombreArchivo input").val())
+  chequeados.forEach(x => x.opciones.nombreArchivo = qs(x, ".nombreArchivo input").value)
   let datos = chequeados.map(x => x.opciones)
-  let body = { datos, sobreescribir: 0, nombreCarpeta: $(".nombreCarpeta input").val() }
+  let body = { datos, sobreescribir: 0, nombreCarpeta: qsd(".nombreCarpeta input").value }
   await guardar(body)
-  $(this).html("Guardar")
+  cambiarHTML(this, "Guardar")
   guardando = false
 })
-$("body").on("click", "#seleccionarTodos", function () {
-  let checked = $(this).find("input")[0].checked
-  $(this).closest(".contenidoOpciones").find(".gridCheckbox input").each((_, x) => x.checked = checked)
+qsclickd("#seleccionarTodos", function () {
+  let checked = qs(this, "input").checked
+  qsa(this.closest(".contenidoOpciones"), ".gridCheckbox input").forEach(x => x.checked = checked)
 })
 
 async function guardar(body) {
@@ -179,10 +176,10 @@ async function guardar(body) {
 
 function htmlCalendario() {
   c.html(`<article class="gridUnidadTiempo">
-  <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas mayores o iguales que" id="btnMayor">
-  <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas menores o iguales que" id="btnMenor">
-  <input class="btn btn-primary botonazul btnOrden" type="button" value="Seleccionar fechas entre" id="btnEntre">
-  <input class="btn btn-primary botonazul btnOrden" type="button" value="Selección libre (uno o varios)" id="btnLibre">
+  <input-azul class="btnOrden" id="btnMayor">Seleccionar fechas mayores o iguales que</input-azul>
+  <input-azul class="btnOrden" id="btnMenor">Seleccionar fechas menores o iguales que</input-azul>
+  <input-azul class="btnOrden" id="btnEntre">Seleccionar fechas entre</input-azul>
+  <input-azul class="btnOrden" id="btnLibre">Selección libre (uno o varios)</input-azul>
 </article>`)
 }
 
@@ -202,9 +199,9 @@ async function htmlNombres(url, el) {
 }
 
 function crearContenidoOpciones() {
-  if ($(this).closest("custom-radiobutton").index() === 0) c.hide()
+  if (indice(this.closest("custom-radiobutton")) === 0) c.hide()
   else {
-    if (c.html() && !$(this).hasClass("botonvolver")) c.show()
+    if (c.html() && !tieneClase(this, "botonvolver")) c.show()
     else {
       ({
         Ventas: htmlCalendario,
@@ -230,7 +227,7 @@ class cuadroRespaldos extends HTMLElement {
     </div>
     <ul class="listaMensajes"><li class="mensajeOpciones">Crear ambos archivos</li><li class="mensajeOpciones">Guardar todos los registros</li></ul>
     </div>
-    
+
     <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -268,9 +265,9 @@ class cuadroRespaldos extends HTMLElement {
     }
     contador++
     this.titulo = titulo
-    let modal = new bootstrap.Modal($(this).find(".modal")[0])
+    let modal = new bootstrap.Modal(qs(this, ".modal"))
     $(this).on("click", ".opcionesextra", e => {
-      if (!$(this).find(".tituloregistro input")[0].checked) return Swal.fire("Atención", "El registro a guardar está deshabilitado. Por favor habilítalo para seleccionar qué información mandar", "warning")
+      if (!qs(this, ".tituloregistro input").checked) return Swal.fire("Atención", "El registro a guardar está deshabilitado. Por favor habilítalo para seleccionar qué información mandar", "warning")
       seleccionado = this
       c = $(seleccionado).find(".contenidoOpciones")
       modal.show()

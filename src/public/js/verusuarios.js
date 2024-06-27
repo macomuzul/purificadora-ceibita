@@ -16,9 +16,9 @@ const swalConfirmarYCancelar = Swal.mixin({
   buttonsStyling: false,
 })
 
-$("body").on("click", ".svgeditar", e => location = "/empleados/usuarios/editar/" + $(e.currentTarget).closest("tr")[0].cells[0].innerText)
+body.on("click", ".svgeditar", e => location = "/empleados/usuarios/editar/" + e.currentTarget.closest("tr").cells[0].innerText)
 
-$("body").on("click", ".svgeliminar", async function () {
+body.on("click", ".svgeliminar", async function () {
   let usuario = this.closest("tr").cells[0].innerText
   let html = `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${usuario}</span>`
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
@@ -30,7 +30,7 @@ $("body").on("click", ".svgeliminar", async function () {
     confirmButtonText: "Sí",
     cancelButtonText: "No",
   })
-  if (isConfirmed) modal.mostrar(devuelveBorrarUsuario(JSON.parse({ usuario }), this.closest("tr")))
+  if (isConfirmed) modalAutenticacion.mostrar(devuelveBorrarUsuario(JSON.parse({ usuario }), this.closest("tr")))
 })
 
 function devuelveBorrarUsuario(data, fila) {
@@ -51,19 +51,19 @@ function devuelveBorrarUsuario(data, fila) {
   }
 }
 
-$("body").on("click", "td .fa-eye", function () {
-  let counter = $(this).prev()[0]
-  if (counter.style.display !== "none") counter.parar()
-  $(this).closest("td").prev().text("********")
-  $(this).parent().find("i").toggle()
+body.on("click", "td .fa-eye", function () {
+  let counter = anterior(this)
+  if (!counter.hidden) counter.parar()
+  anterior(this.closest("td")).innerText = "********"
+  alternar(qs(padre(this)), "i")
 })
 
-$("body").on("click", "td .fa-eye-slash", e => modal.mostrar(devuelvePedirContraseña(e.currentTarget)))
+body.on("click", "td .fa-eye-slash", e => modalAutenticacion.mostrar(devuelvePedirContraseña(e.currentTarget)))
 
 function devuelvePedirContraseña(ojo) {
   return f => {
     let usuario = ojo.closest("tr").cells[0].innerText
-    let contraseñaVerificacion = $("#verificacionIdentidad").val()
+    let contraseñaVerificacion = qsd("#verificacionIdentidad").value
     $.ajax({
       url: `/empleados/usuarios`,
       method: "POST",
@@ -71,10 +71,9 @@ function devuelvePedirContraseña(ojo) {
       data: JSON.stringify({ usuario, contraseñaVerificacion }),
       success: s => {
         toastr["success"]("Se ha realizado la petición con éxito", "Éxito")
-        $(ojo).parent().find("i").toggle()
+        alternar(qs(padre(ojo), "i"))
         ojo.closest("tr").cells[1].textContent = s
-        let funcionCountdown = devuelveFuncionCountdown(ojo)
-        $(ojo).prev().prev()[0].resetear(funcionCountdown)
+        anterior(anterior(ojo)).resetear(devuelveFuncionCountdown(ojo))
       },
       error: r => toastr["error"](r.responseText, "Error")
     })
@@ -83,7 +82,7 @@ function devuelvePedirContraseña(ojo) {
 
 function devuelveFuncionCountdown(ojo) {
   return f => {
-    $(ojo).closest("td").prev()[0].textContent = "********"
-    $(ojo).prev().trigger("click")
+    anterior(ojo.closest("td")).textContent = "********"
+    anterior(ojo).click()
   }
 }

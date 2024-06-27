@@ -4,7 +4,7 @@ import * as json from "./utilidades/jsonParaTests"
 
 test.beforeEach(async ({ page }) => {
   await page.goto('http://localhost:3000/registrarventas/1-3-2024')
-
+  await page.locator(".trabajador").clear()
 })
 
 test.describe("prueba console", () => {
@@ -24,7 +24,6 @@ test.describe("prueba console", () => {
   })
 
   test('moviendo de lugar los camiones', async ({ page }) => {
-    await page.goto('http://localhost:3000/registrarventas/1-3-2024')
     page.on('console', log(json.jsonUnCamionero))
     await page.getByRole('button', { name: 'Configuraciones' }).click()
     await page.getByLabel('Cambiar el orden de los camiones').check()

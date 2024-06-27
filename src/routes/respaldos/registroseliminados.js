@@ -5,7 +5,7 @@ const { DateTime } = require("luxon")
 let validarPagina = (req, res, next) => (/^pag=[0-9]+$/.test(req.params.pag)) ? next() : res.send("página inválida")
 let { devuelveFuncionMover } = require("../registrarventas")
 
-router.get("/", (req, res) => res.render("registroseliminados", { esAdmin: esAdmin(req) }))
+router.get("/", (req, res) => res.render("seleccionarregistroseliminados", { esAdmin: esAdmin(req) }))
 router.post("/restaurarregistro", devuelveFuncionMover(RegistrosEliminados, "No se pudo restaurar el registro"))
 
 router.delete("/borrarregistros", tcaccion(async (req, res) => {
@@ -27,7 +27,7 @@ let mostrarPagina = tcrutas(async (req, res, Reg) => {
   if (totalPaginas === 0) return res.send("no hay ningún registro")
   else if (pagina < 1) return res.send("numero de búsqueda inválido")
   else if (pagina > totalPaginas) return res.redirect(url + "pag=" + totalPaginas)
-  res.render("mostrarregistroseliminados", { datostablas, pagina, totalPaginas, DateTime, esAdmin: esAdmin(req) })
+  res.render("registroseliminados", { datostablas, pagina, totalPaginas, DateTime, esAdmin: esAdmin(req) })
 }, "hubo un error al procesar la solicitud")
 
 router.get("/masrecientes&:pag", validarPagina, async (req, res) => masRecientesYMasAntiguos(req, res, 1))

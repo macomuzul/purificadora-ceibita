@@ -29,6 +29,8 @@ require('./globals/globals')
 require('./listenersDB')
 require('./security/authPassport')
 
+if(enTesting) require('../tests/testing')
+
 // const calcularTodosLosResumenesPorDia = require("./utilities/crearresumenespordia");
 // calcularTodosLosResumenesPorDia()
 

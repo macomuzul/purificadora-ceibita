@@ -1,3 +1,11 @@
+añadirCSS(`.custom-switch .custom-control-label::before {
+  width: 2rem;
+}
+
+.custom-switch .custom-control-input:checked~.custom-control-label::after {
+  transform: translateX(1rem);
+}`)
+
 class switches extends HTMLElement {
   connectedCallback() {
     let { id, checked } = this.dataset

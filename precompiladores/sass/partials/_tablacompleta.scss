@@ -1,104 +1,222 @@
-@mixin flecha {
-  content: var(--flecha, "↓");
-  font-size: 20px;
-  margin-left: 5px;
-  transform: translateY(-4px);
-  position: absolute;
-}
+// @mixin flecha {
+//   content: var(--flecha, "↓");
+//   font-size: 20px;
+//   margin-left: 5px;
+//   transform: translateY(-4px);
+//   position: absolute;
+// }
 
-@mixin flechaActiva {
-  --colorActivo: white;
-  text-shadow: 3px 3px 10px var(--colorActivo),
-    -3px 3px 10px var(--colorActivo), 3px -3px 10px var(--colorActivo),
-    -3px -3px 10px var(--colorActivo);
-}
+// @mixin flechaActiva {
+//   --colorActivo: white;
+//   text-shadow: 3px 3px 10px var(--colorActivo),
+//     -3px 3px 10px var(--colorActivo), 3px -3px 10px var(--colorActivo),
+//     -3px -3px 10px var(--colorActivo);
+// }
 
-table,
-th,
-td {
-  border-collapse: collapse;
-  border: solid 1px #ccc;
-  padding: 10px 20px;
-  text-align: center;
-  color: white;
-  font-size: 15px;
-}
+// table,
+// th,
+// td {
+//   border-collapse: collapse;
+//   border: solid 1px #ccc;
+//   padding: 10px 20px;
+//   text-align: center;
+//   color: white;
+//   font-size: 15px;
+// }
 
-td {
-  line-height: 1.4;
-  height: 42px;
-  min-height: 42px;
-}
+// td {
+//   line-height: 1.4;
+//   height: 42px;
+//   min-height: 42px;
+// }
 
-th {
-  background: #192435;
-  width: 90px;
-  min-width: 90px;
-  text-align: center !important;
-  position: relative;
-}
+// th {
+//   background: #192435;
+//   width: 90px;
+//   min-width: 90px;
+//   text-align: center !important;
+//   position: relative;
+// }
 
-.pintarcolumnas col:nth-child(2n) {
-  background: #024649;
-}
+// .pintarcolumnas col:nth-child(2n) {
+//   background: #024649;
+// }
 
-.pintarcolumnas col:nth-child(2n + 1) {
-  background: #192435;
-}
+// .pintarcolumnas col:nth-child(2n + 1) {
+//   background: #192435;
+// }
 
-tbody td:nth-child(4n-1),
-tbody td:nth-child(4n) {
-  background: #192435;
-}
+// tbody td:nth-child(4n-1),
+// tbody td:nth-child(4n) {
+//   background: #192435;
+// }
 
-tbody td:nth-child(4n + 1),
-tbody td:nth-child(4n + 2) {
-  background: #024649;
-}
+// tbody td:nth-child(4n + 1),
+// tbody td:nth-child(4n + 2) {
+//   background: #024649;
+// }
 
-.prod {
-  min-width: 200px;
-  width: 200px;
-}
+// .prod {
+//   min-width: 200px;
+//   width: 200px;
+// }
 
-.tr {
-  min-width: 115px;
-  width: 115px;
-}
+// .tr {
+//   min-width: 115px;
+//   width: 115px;
+// }
 
-tbody td:nth-child(1),
-tbody td:nth-child(2),
-tbody td:nth-last-child(2),
-tbody td:nth-last-child(1),
-tfoot td {
-  background-color: #0f0d35;
-}
+// tbody td:nth-child(1),
+// tbody td:nth-child(2),
+// tbody td:nth-last-child(2),
+// tbody td:nth-last-child(1),
+// tfoot td {
+//   background-color: #0f0d35;
+// }
 
-td:hover,
-td:focus {
-  background: #67abb1;
-}
+// td:hover,
+// td:focus {
+//   background: #67abb1;
+// }
 
-.total {
-  text-align: right;
-}
+// .total {
+//   text-align: right;
+// }
 
-tfoot td:first-child {
-  text-align: right;
-}
+// tfoot td:first-child {
+//   text-align: right;
+// }
 
-.tabs {
-  margin-bottom: 10px;
+// .tabs {
+//   margin-bottom: 10px;
+// }
+
+// .grupotabs {
+//   .cerrarconboton {
+//     &.contenidotabs .borrarfilas,
+//     &.contenidotabs .borrarcolumnas,
+//     &.tabs .tabLabel {
+//       position: relative;
+//       &::after {
+//         content: "❌";
+//         position: absolute;
+//         top: 0;
+//         right: 0;
+//         color: red;
+//         cursor: pointer;
+//         font-weight: bold;
+//       }
+//     }
+//   }
+
+//   .contenidotabs.ordenarAlfabeticamente {
+//     th:not([colspan="2"])::after {
+//       @include flecha;
+//     }
+
+//     th.activo:not([colspan="2"])::after {
+//       @include flechaActiva;
+//     }
+//   }
+// }
+
+// #tablaresumen {
+//   th::after {
+//     @include flecha;
+//   }
+
+//   th.activo::after {
+//     @include flechaActiva;
+//   }
+// }
+
+
+.tablacompleta {
+  &,
+  th,
+  td {
+    border-collapse: collapse;
+    border: solid 1px #ccc;
+    padding: 10px 20px;
+    text-align: center;
+    color: white;
+    font-size: 15px;
+  }
+
+  td {
+    line-height: 1.4;
+    height: 42px;
+    min-height: 42px;
+  }
+
+  th {
+    background: #192435;
+    width: 90px;
+    min-width: 90px;
+    text-align: center !important;
+    position: relative;
+    resize: horizontal;
+    overflow: auto;
+  }
+
+  .pintarcolumnas col:nth-child(2n) {
+    background: #024649;
+  }
+
+  .pintarcolumnas col:nth-child(2n + 1) {
+    background: #192435;
+  }
+
+  tbody td:nth-child(4n-1),
+  tbody td:nth-child(4n) {
+    background: #192435;
+  }
+
+  tbody td:nth-child(4n + 1),
+  tbody td:nth-child(4n + 2) {
+    background: #024649;
+  }
+
+  .prod {
+    min-width: 200px;
+    width: 200px;
+  }
+
+  .tr {
+    min-width: 115px;
+    width: 115px;
+  }
+
+  tbody td:nth-child(1),
+  tbody td:nth-child(2),
+  tbody td:nth-last-child(2),
+  tbody td:nth-last-child(1),
+  tfoot td {
+    background-color: #0f0d35;
+  }
+
+  td:hover,
+  td:focus {
+    background: #67abb1;
+  }
+
+  .total {
+    text-align: right;
+  }
+
+  tfoot td:first-child {
+    text-align: right;
+  }
 }
 
 .grupotabs {
   .cerrarconboton {
     &.contenidotabs .borrarfilas,
     &.contenidotabs .borrarcolumnas,
-    &.tabs .tabs__label {
+    &.tabs .tabLabel {
       position: relative;
       &::after {
-        content: "❌";
+        content: '❌';
         position: absolute;
         top: 0;
         right: 0;
@@ -108,24 +226,23 @@ tfoot td:first-child {
       }
     }
   }
-
-  .contenidotabs.ordenarAlfabeticamente {
-    th:not([colspan="2"])::after {
-      @include flecha;
-    }
-
-    th.activo:not([colspan="2"])::after {
-      @include flechaActiva;
-    }
-  }
 }
 
-#tablaresumen {
-  th::after {
-    @include flecha;
-  }
+.grupotabs .tabs {
+  margin-bottom: 10px;
+}
 
-  th.activo::after {
-    @include flechaActiva;
-  }
+.contenidotabs.ordenarAlfabeticamente th:not([colspan='2'])::after,
+#tablaresumen th::after {
+  content: var(--flecha, '↓');
+  font-size: 20px;
+  margin-left: 5px;
+  transform: translateY(-4px);
+  position: absolute;
+}
+
+.contenidotabs.ordenarAlfabeticamente th.activo:not([colspan='2'])::after,
+#tablaresumen th.activo::after {
+  --colorActivo: white;
+  text-shadow: 3px 3px 10px var(--colorActivo), -3px 3px 10px var(--colorActivo), 3px -3px 10px var(--colorActivo), -3px -3px 10px var(--colorActivo);
 }

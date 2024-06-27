@@ -20,7 +20,7 @@ class tablaGastos extends HTMLElement {
   htmlTitulo() {
     return `<hr>
     <div class="divtitulo">
-    <div><button class="btn btn-primary botonazul botonregistrargasto">Agregar gasto</button></div>
+    <div><boton-azul class="botonregistrargasto">Agregar gasto</boton-azul></div>
     <div class="titulo">${this.titulo}</div>
     <switch-sortable></switch-sortable>
     </div>`
@@ -42,7 +42,7 @@ class tablaGastos extends HTMLElement {
     let [a = '', b = '', c = '', d = '', e = '', f = ''] = data
     return `<tr>
     <td contenteditable="true">${a}</td>
-    <td><div class="input-group date divdatepicker"><input value="${b}" type="text" class="form-control" readonly><span class="input-group-append"><span class="input-group-text bg-white"><i class="fa fa-calendar"></i></span></span></div></td>
+    <td><calendario-simple data-fecha="${b}"></calendario-simple></td>
     <td contenteditable="true">${c}</td>
     <td contenteditable="true">${d}</td>
     ${esGastoPorProducto ? `<td>${e}</td><td contenteditable="true">${f}</td>` : ''}
@@ -55,9 +55,9 @@ customElements.define('tabla-gastos', tablaGastos)
 $(document).on('click', '.divtablagastos tr td:last-child', async function (e) {
   if (this.clientWidth - e.offsetX <= 21 && e.offsetY <= 21) {
     let fila = this.closest('tr')
-    let html = `<div class="divtablagastos"><table class="mx-auto"><tbody style="background: #0f0d35;">${fila.cloneNode(true).outerHTML}</tbody></table></div>`
+    let html = `<div class="divtablagastos"><table class="mx-auto"><tbody style="background: #0f0d35;">${clonar(fila).outerHTML}</tbody></table></div>`
     if (await swalSíNo('Estás seguro que deseas borrar esta fila de la tabla?', html)) {
-      $(fila).parent()[0].rows.length === 1 ? $(this).closest('.tablagastosparteinferior').html(tablaVacia) : fila.remove()
+      padre(fila).rows.length === 1 ? cambiarHTML(this.closest('.tablagastosparteinferior'), tablaVacia) : fila.remove()
       Swal.fire('Fila eliminada', 'Se ha eliminado la fila exitosamente', 'success')
     }
   }

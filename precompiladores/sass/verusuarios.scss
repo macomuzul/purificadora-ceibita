@@ -1,8 +1,4 @@
 @use "./partials/tablassimples";
-@use "./partials/tituloplantillas";
-@use "./partials/botonazul";
-@use "./partials/flecha";
-@use "./partials/modal";
 
 body {
   background: #191d31;
@@ -32,12 +28,8 @@ th {
   flex-wrap: wrap;
 }
 
-.button2 {
+.divbotontitulo {
   transform: translateX(100px);
-}
-
-
-.button2 {
   position: relative;
   display: inline-block;
   overflow: hidden;
@@ -71,10 +63,6 @@ td {
   button:not(.dropdown-toggle):hover {
     opacity: 0.8;
   }
-}
-
-.botonazul {
-  margin-top: 20px;
 }
 
 .dropdown-toggle {

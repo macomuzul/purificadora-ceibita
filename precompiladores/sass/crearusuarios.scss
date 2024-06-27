@@ -1,9 +1,3 @@
-@use "./partials/tituloplantillas";
-@use "./partials/botonazul";
-@use "./partials/flecha";
-@use "./partials/flecharotada";
-@use "./partials/modal";
-
 body {
   background: #191d31;
   color: white;
@@ -22,7 +16,7 @@ main {
   margin-top: 5px;
 }
 
-.button2 {
+.divbotontitulo {
   transform: translateX(-70px);
 }
 
@@ -34,8 +28,8 @@ form {
   width: 330px;
 }
 
-@media (max-width: 1200px) {
-  .button2 {
+@media (width <= 1200px) {
+  .divbotontitulo {
     transform: translateX(10px);
   }
 }

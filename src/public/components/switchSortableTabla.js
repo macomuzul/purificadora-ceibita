@@ -1,26 +1,20 @@
-$("head").append(`<style>
-.contenedorayuda {
+añadirCSS(`.contenedorayuda {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: end;
   margin-left: auto;
   transform: translateY(10px);
-}
-</style>`)
-onload = q => { if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)) $.getScript('/touch.js') }
-
-//TODO estos poner el bootstrap dde internet
-let dependenciasSwitchSortable = async q => await Promise.all(['/popover.js', '/bootstrap-5.2.3.js'].map(x => $.getScript(x)))
-dependenciasSwitchSortable()
+}`)
+cargarTouch()
+$.getScript('/popover.js')
 class switchSortable extends HTMLElement {
   async connectedCallback() {
     this.className = "form-check form-switch"
     this.innerHTML = `<input class="form-check-input" type="checkbox" id="switchOrdenarFilas">
     <label class="form-check-label" for="switchOrdenarFilas">Reordenar filas</label>
     <custom-popover data-alineacion="text-top"><strong>Importante:</strong><br>Mientras la opción de reordenar filas esté activa no puedes escribir en las celdas, tienes que desactivarlo para poder volver a escribir en ellas</custom-popover>`
-    $("body").on("click", "#switchOrdenarFilas", async q => $("tbody").sortable({ axis: "y", disabled: !q.currentTarget.checked }))
-    var switchOrdenarFilas = $("#switchOrdenarFilas")[0]
+    body.on("click", "#switchOrdenarFilas", async q => $("tbody").sortable({ axis: "y", disabled: !q.currentTarget.checked }))
   }
 }
 
@@ -35,12 +29,11 @@ class preguntarAntesDeBorrar extends HTMLElement {
       <label class="form-check-label" for="switchModoSeguro">Modo seguro</label>
     </div>
     <label class="form-check-label" style="font-size: 12px;">(preguntar antes de borrar)</label>`
-    var switchModoSeguro = $("#switchModoSeguro")[0]
-    $("body").on('click', ".botoneliminar", async function () {
-      if (switchOrdenarFilas.checked) return
-      if (!switchModoSeguro.checked) return this.closest("tr").remove()
-      let fila = this.closest("tr").cloneNode(true)
-      $(fila.cells).last().remove()
+    body.on('click', ".botoneliminar", async function () {
+      if (qsd("#switchOrdenarFilas").checked) return
+      if (!qsd("#switchModoSeguro").checked) return this.closest("tr").remove()
+      let fila = clonar(this.closest("tr"))
+      ultimo(fila.cells).remove()
       let html = `<table class="mx-auto"><tbody style="background: #0f0d35;">${fila.outerHTML}</tbody></table>`
       let { isConfirmed } = await swalConfirmarYCancelar.fire({
         icon: "warning",

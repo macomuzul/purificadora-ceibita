@@ -1,23 +1,22 @@
-let navbar = $("#navbar")[0]
-$(document).on("click", esconderNavbar())
+let navbar = $("#navbar")
 
 function esconderNavbar() {
-  $(navbar).find(".presionado").removeClass("presionado").find(".submenu").slideUp()
-  navbar.classList.remove("presionado")
+  navbar.find(".presionado").removeClass("presionado").find(".submenu").slideUp()
+  navbar.removeClass("presionado")
 }
 
-$("#logoNav").on("click", e => {
+qsclickd("#logoNav", e => {
   e.preventDefault()
   e.stopPropagation()
-  navbar.classList.contains("presionado") ? esconderNavbar() : navbar.classList.add("presionado")
+  navbar.hasClass("presionado") ? esconderNavbar() : navbar.addClass("presionado")
 })
 
-$("body").on("click", ".nav-item-compuesto", e => {
-  let el = $(e.currentTarget)
-  navbar.classList.add("presionado")
-  el.toggleClass("presionado")
-  el.find(".submenu").slideToggle()
+body.on("click", ".nav-item-compuesto", e => {
+  let x = $(e.currentTarget)
+  navbar.addClass("presionado")
+  x.toggleClass("presionado")
+  x.find(".submenu").slideToggle()
 })
 
-navbar.addEventListener("mouseenter", e => navbar.classList.add("presionado"))
-navbar.addEventListener("mouseleave", esconderNavbar)
+navbar.on("mouseenter", e => navbar.addClass("presionado"))
+navbar.on("mouseleave", esconderNavbar)

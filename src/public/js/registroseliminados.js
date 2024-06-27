@@ -1,52 +1,118 @@
-let urlPag = location.pathname + "/"
-let mostrarError = (titulo, texto) => Swal.fire(titulo, texto, "error")
-let crearDatePicker = idDatePicker => $(`#${idDatePicker}`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" }).on("show", q => {
-  let x = $(".datepicker")[0]
-  let rect = x.getBoundingClientRect()
-  if((rect.x + rect.width) > innerWidth || (rect.y + rect.height) > innerHeight) x.scrollIntoView()
+const btnSubir = qsd('#back-to-top-btn')
+
+let estilosSwal = (confirmButton, cancelButton = '') => Swal.mixin({ customClass: { confirmButton, cancelButton }, buttonsStyling: false })
+const swalConfirmarYCancelar = estilosSwal('btn btn-success margenbotonswal', 'btn btn-danger margenbotonswal')
+const swalSobreescribir = estilosSwal('btn btn-success margenbotonswal2 botonconfirm', 'btn margenbotonswal2 botondeny')
+
+qsd('#seleccionarTodos').onchange = e => qsad('.check').forEach(x => x.checked = e.currentTarget.checked)
+btnSubir.onclick = q => scrollTo(0, 0)
+
+addEventListener('scroll', q => {
+  let seVeElBoton = btnSubir.classList.contains('btnEntrance')
+  if (scrollY === 0 && seVeElBoton) {
+    quitarClase(btnSubir, 'btnEntrance')
+    añadirClase(btnSubir, 'btnExit')
+    setTimeout(q => (btnSubir.style.display = 'none'), 250)
+  } else if (!seVeElBoton) {
+    quitarClase(btnSubir, 'btnExit')
+    añadirClase(btnSubir, 'btnEntrance')
+    btnSubir.style.display = 'block'
+  }
 })
 
-function metododropdown(option, menu) {
-  if (menu.id === "fechasdropdown") {
-    let fechaEntre = option.innerText === "Fecha entre"
-    $("#datepickerEntre").css("display", fechaEntre ? "flex" : "none")
-    $("#datepickerNormal").css("display", fechaEntre ? "none" : "flex")
-  }
+function devuelveTabla(article) {
+  let registro = clonar(qs(article, '.content'))
+  $(registro).find('tab-content').hide()
+  let html = `<custom-tabs><div class="tabs">
+  ${qsarr(registro, 'table').map((_, i) => `<tab-label>Camión ${i + 1}</tab-label>`).join('')}
+  </div> ${registro.outerHTML}</custom-tabs>`
+  return { html, fecha: qs(article, `.fecharegistro .spanFechaStr`).innerText, fechaDate: new Date(qs(article, 'span-fechas').dataset.fecha) }
 }
 
-crearDatePicker("datepickerNormal")
-crearDatePicker("datepickerEntre")
+body.on('click', '.btnrestaurar', async function (e) {
+  let registro = this.closest('article')
+  let id = registro.getAttribute('name')
+  let { html, fecha, fechaDate } = devuelveTabla(registro)
 
-$("body").on("click", "#btnMasReciente", q => location = `${urlPag}masrecientes&pag=1`)
-$("body").on("click", "#btnMasAntiguo", q => location = `${urlPag}masantiguos&pag=1`)
-
-$("body").on("click", "#btnbuscar", () => {
-  let buscarpor = $("#buscarpor").text()
-  let rango = $("#rangofecha").text()
-  let formatear = x => $(x).val().replaceAll("/", "-")
-  let fecha = formatear($("#calendario"))
-  let fecha1 = formatear($("#calendario1"))
-  let fecha2 = formatear($("#calendario2"))
-
-  if (buscarpor === "Buscar por") return mostrarError("Campo de buscar por vacío", "Por favor selecciona un campo en la sección de buscar por para continuar")
-  if (rango === "Elige un rango") return mostrarError("Campo de rango vacío", "Por favor selecciona un campo en la sección de rango para continuar")
-  if (rango === "Fecha entre") {
-    if (fecha1 === "") return mostrarError("Campo de fecha vacío", "No se ha seleccionado ninguna fecha para el primer calendario")
-    if (fecha2 === "") return mostrarError("Campo de fecha vacío", "No se ha seleccionado ninguna fecha para el segundo calendario")
-  } else if (fecha === "") return mostrarError("Campo de fecha vacío", "No se ha seleccionado ninguna fecha en el calendario")
-  buscar = {
-    "Fecha (calendario)": "fecha",
-    "Fecha de eliminación": "fechaeliminacion"
-  }
-  rangos = {
-    "Fecha igual a": "igual",
-    "Fecha menor o igual a": "menor",
-    "Fecha mayor o igual a": "mayor",
-    "Fecha entre": "entre"
-  }
-  rango = rangos[rango]
-  buscarpor = buscar[buscarpor]
-  location = `${urlPag}${buscarpor}&${rango}&${rango === "entre" ? `${fecha1}y${fecha2}` : fecha}&pag=1`;
+  let { isConfirmed, dismiss } = await swalSobreescribir.fire({
+    title: `Estás seguro que deseas restaurar este registro con fecha ${fecha}?`,
+    icon: 'warning',
+    width: (innerWidth * 3) / 4,
+    html,
+    showCancelButton: true,
+    confirmButtonText: 'Restaurar usando esta fecha',
+    cancelButtonText: 'Usar otra fecha',
+  })
+  let url = '/respaldos/registroseliminados/restaurarregistro'
+  if (isConfirmed) await moverRegistro(id, fechaDate.valueOf(), 0, url)
+  else if (dismiss === 'cancel') await moverReg(id, url)
 })
 
-$("body").on("click", ".input-group-append", e => $(e.currentTarget).prev().focus())
+body.on('click', '.btneliminar', async function (e) {
+  let registro = this.closest('article')
+  let { html, fecha } = devuelveTabla(registro)
+
+  let regs = JSON.stringify({ registros: [registro.getAttribute('name')] })
+  if (await swalSíNo('Estás seguro que deseas borrar este registro?', html)) borrarRegistros(regs, `El registro con fecha: ${fecha} se ha borrado correctamente`)
+})
+
+// $("body").on("click", ".restaurarsoloestatabla", async function (e) {
+//   let registro = this.closest("article");
+//   let tabla = [...$(registro).find("tab-content")].filter(x => x.style.display === "initial")[0]
+//   let fecha = $(registro).find(`.fecharegistro .spanFechaStr`).text();
+//   if (await swalSíNo("Estás seguro que deseas restaurar esta tabla?", tabla.outerHTML)) {
+//     result = await swalConfirmarYCancelar.fire({
+//       title: `Si restauras vas a sobreescribir el registro con fecha ${fecha}`,
+//       icon: "warning",
+//       width: (window.innerWidth * 3) / 4,
+//       html: tabla.outerHTML,
+//       showCancelButton: true,
+//       confirmButtonText: "Sí",
+//       cancelButtonText: "No",
+//     })
+//     if (result.isConfirmed) {
+//       $.ajax({
+//         url: "/respaldos/registroseliminados/restaurarregistro",
+//         method: "POST",
+//         contentType: "application/json",
+//         data,
+//         success: async q => preguntarSiQuiereRedireccionar(fecha),
+//         error: q => Swal.fire("Ups...", "No se pudo restaurar el registro", "error")
+//       });
+//     }
+//   }
+// })
+
+body.on('click', '.eliminartodos', async e => {
+  let regs = JSON.stringify({ registros: qsarrd('.check:checked').map(el => el.closest('article').getAttribute('name')) })
+  if (await swalSíNo('Estás seguro que deseas borrar los registros seleccionados?', null, null)) borrarRegistros(regs, 'Se han borrado correctamente todos los registros seleccionados')
+})
+
+function borrarRegistros(data, texto) {
+  $.ajax({
+    url: '/respaldos/registroseliminados/borrarregistros',
+    method: 'DELETE',
+    contentType: 'application/json',
+    data,
+    success: async q => await preguntarSiQuiereRefrescar('Se ha borrado correctamente', texto, 'success'),
+    error: async r => (r.status === 400 ? Swal.fire('Error', r.responseText, 'error') : await preguntarSiQuiereRefrescar('Atención', r.responseText, 'warning')),
+  })
+}
+
+async function preguntarSiQuiereRefrescar(title, text, icon) {
+  let { isConfirmed } = await swalConfirmarYCancelar.fire({ title: title + ', deseas refrescar la página?', text, icon, showCancelButton: true, confirmButtonText: 'Sí', cancelButtonText: 'No' })
+  if (isConfirmed) location.reload()
+}
+
+async function swalSíNo(title, html, width = (innerWidth * 3) / 4) {
+  let { isConfirmed } = await swalConfirmarYCancelar.fire({
+    title, icon: 'warning', width, html,
+    showCancelButton: true,
+    confirmButtonText: 'Sí',
+    cancelButtonText: 'No',
+  })
+  return isConfirmed
+}
+
+String.prototype.normalizarPrecio = function () { return this.aFloat().toFixed(2).replace(/[.,]00$/, '') }
+Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, '') }

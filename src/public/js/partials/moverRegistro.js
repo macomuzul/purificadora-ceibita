@@ -1,24 +1,52 @@
 let devuelveFechaFormateada = fecha => `${fecha.getUTCDate()}-${(fecha.getUTCMonth() + 1)}-${fecha.getUTCFullYear()}`
+let cargaronLibsDP = false
+añadirCSS(`#datepickerNormal{
+  height: 40px;
+}
+.fa-calendar{
+  color: #615b5b;
+  font-size: 20px;
+}`)
 
 async function moverReg(fecha, url) {
   await Swal.fire({
     title: "Escoge la fecha a donde quieres mover el registro",
     width: 750,
-    html: `<iframe src="/extras/calendarioIframe" frameborder="0"></iframe><button id="continuarIframe" class="btn btn-success margenbotonswal">Continuar</button><button id="cancelarIframe" class="btn btn-danger margenbotonswal">Cancelar</button>`,
     showConfirmButton: false,
-    didOpen: () => {
-      $("#continuarIframe")[0].addEventListener("click", () => {
-        let contenidoIframe = $("iframe")[0].contentDocument
-        let input = contenidoIframe.querySelector("input")
-        if (input.value === "") {
-          input.classList.add("is-invalid")
-          return contenidoIframe.querySelector("#validadorIframe").className = "invalid-feedback"
-        }
-        moverRegistro(fecha, parseDate(input.value).valueOf(), 0, url)
-      })
-      $("#cancelarIframe")[0].addEventListener("click", () => Swal.close())
+    html: 'Cargando',
+    willOpen: async q => {
+      if (!cargaronLibsDP) {
+        await $.getScript("/bootstrapdatepicker.js")
+        cargaronLibsDP = true
+      }
+    },
+    didOpen: async q => {
+      Swal.showLoading()
+      cargaronLibsDP ? mostrarDP(fecha, url) : document.addEventListener('eventoDP', q => mostrarDP(fecha, url))
     }
   })
+}
+
+function mostrarDP(fecha, url) {
+  Swal.hideLoading()
+  cambiarHTML(qsd('#swal2-html-container'), `<div style="display: flex; height: 400px; justify-content: center;"><div><calendario-simple></calendario-simple><div class="invalid-feedback">Por favor escoge una fecha</div></div></div>
+  <button id="continuarIframe" class="btn btn-success margenbotonswal">Continuar</button><button id="cancelarIframe" class="btn btn-danger margenbotonswal">Cancelar</button>`)
+  let dp = $(`#calendario`)
+  let validacion = (c, a) => {
+    $('.input-group-text').css('border-color', c)
+    dp.css('border-color', c)
+    $('.invalid-feedback')[a]()
+  }
+  dp.datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" })
+
+  dp.on('change', q => validacion('#ced4da', 'hide'))
+  qsclickd('#continuarIframe', q => {
+    let input = dp[0]
+    if (input.value === '') return validacion('red', 'show')
+    moverRegistro(fecha, parseDate(input.value).valueOf(), 0, url)
+  })
+  qsclickd('#cancelarIframe', q => Swal.close())
+  setTimeout(q => dp.datepicker('show'), cargaronLibsDP ? 150 : 0)
 }
 
 function moverRegistro(de, a, sobreescribir, url) {
@@ -28,9 +56,9 @@ function moverRegistro(de, a, sobreescribir, url) {
     contentType: "application/json",
     data: JSON.stringify({ de, a, sobreescribir }),
     success: async r => {
-      if (r === "") return await preguntarSiQuiereRedireccionar(a)
+      if (r === '') return await preguntarSiQuiereRedireccionar(a)
       let html = `<custom-tabs><div class="tabs">
-      ${r.map((_, i) => `<custom-label name="swal" data-id="swal${i}">Camión ${i + 1}</custom-label>`).join('')}
+      ${r.map((_, i) => `<tab-label name="swal" data-id="swal${i}">Camión ${i + 1}</tab-label>`).join('')}
       </div><div class="content">
       ${r.map(({ productos, totalvendidos, totalingresos }) => {
         let cantViajes = productos[0].viajes.length / 2;
@@ -49,7 +77,7 @@ function moverRegistro(de, a, sobreescribir, url) {
           </tr>`).join('')}
         </tbody>
         <tfoot><tr><td colspan="${cantViajes * 2 + 2}">Total:</td><td>${totalvendidos}</td><td>${totalingresos.normalizarPrecio()}</td></tr></tfoot>
-      </table></tab-content>`}).join("")}
+      </table></tab-content>`}).join('')}
       </div></custom-tabs>`
 
       if (await swalSíNo("Ya existe un registro en esa fecha, deseas sobreescribirlo?", html)) moverRegistro(de, a, 1, url)

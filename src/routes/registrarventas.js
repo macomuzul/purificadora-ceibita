@@ -6,6 +6,8 @@ const CambiosVentas = require("../models/cambiosventas")
 const Camioneros = require("../models/camioneros")
 const { DateTime } = require("luxon")
 
+if(enTesting) testingRegistrarVentas(router)
+
 router.post("/guardar", tcaccion(async (req, res) => {
   let usuario = devuelveUsuario(req)
   let r = await RegistroVentas.guardar({ ...req.body, usuario }, 0)

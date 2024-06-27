@@ -16,7 +16,7 @@ router.get('/', tcrutas(async (req, res) => {
       tiempoQueQueda = await redis.ttl(textoIP)
     }
   }
-  res.render('index', { errorInicioSesion, intentosRestantes, tiempoQueQueda })
+  res.render('login', { errorInicioSesion, intentosRestantes, tiempoQueQueda })
 }, "Ocurrió un error"))
 
 router.post('/iniciarSesion', passport.authenticate('iniciarSesion', {

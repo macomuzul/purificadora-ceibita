@@ -2,7 +2,8 @@ const { Settings } = require('luxon')
 const { google } = require("googleapis")
 const redis = require("../redis")
 
-global.enDesarrollo = process.env.NODE_ENV === "development"
+global.enDesarrollo = process.env.NODE_ENV !== "production"
+global.enTesting = process.env.NODE_ENV === "testing"
 global.loginCantMaxPeticionesInvalidas = 3
 global.recuperarContraseñaCantMaxPeticionesInvalidas = 2
 global.tiempoTimeoutLoginSegundos = 900 //15 minutos

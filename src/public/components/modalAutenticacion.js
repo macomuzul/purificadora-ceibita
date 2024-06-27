@@ -1,4 +1,76 @@
-let modal
+añadirCSS(`i {
+  font-size: 24px;
+  color: #c5c5c5;
+  cursor: pointer;
+}
+
+.modal-content {
+  background: #23232e;
+  color: white;
+}
+
+.modal-body {
+  font-size: 18px;
+
+  .fa-eye {
+    translate: 6px 4px;
+  }
+  .fa-eye-slash {
+    translate: 5px 4px;
+  }
+}
+
+.modal-header {
+  font-size: 24px;
+}
+
+.cuerpoModal1 {
+  text-align: center;
+  font-size: 22px;
+}
+
+.cuerpoModal2 {
+  margin: 15px 0 12px 7px;
+  display: inline-block;
+}
+
+.cuerpoModal3 {
+  display: inline-block;
+  margin-left: 5px;
+}
+
+#verificacionIdentidad {
+  width: 220px;
+  padding: 2px 5px;
+  font-size: 18px;
+}
+
+.fa-lock {
+  font-size: 22px;
+  transform: translateY(1px);
+}
+
+.botonconfirm {
+  background: #037841;
+  border: 1px solid #194c19;
+  &:hover {
+    background: #025a31;
+  }
+}
+
+.botoncancel {
+  background: #be0000;
+  border: 1px solid #582630;
+  &:hover {
+    background: #a80101;
+  }
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}`)
+let modalAutenticacion
 class customModal extends HTMLElement {
   connectedCallback() {
     let attributes = {
@@ -20,9 +92,7 @@ class customModal extends HTMLElement {
           <div class="cuerpoModal1">Demuestra que de verdad eres tú quien intenta realizar esta acción</div>
           <i class="fa-solid fa-lock"></i>
           <div class="cuerpoModal2">Ingresa la contraseña de tu usuario</div>
-          <div class="cuerpoModal3">
-            <input-password data-id="verificacionIdentidad" data-focus="1" />
-          </div>
+          <div class="cuerpoModal3"><input-password id="verificacionIdentidad" data-focus="1"></input-password></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-success margenbotonswal botonconfirm" id="enviarVerificacion">Confirmar</button>
@@ -32,12 +102,12 @@ class customModal extends HTMLElement {
     </div>`
 
     setTimeout(() => {
-      modal = this
+      modalAutenticacion = this
       this.btModal = new bootstrap.Modal(this)
-      this.input = $(this).find("input")[0]
+      this.input = qs(this, "input")
       $(this).on("hide.bs.modal", q => {
         this.input.value = ""
-        this.input.type === "text" ? $(this).find("input-password")[0].clickOjo(0) : ""
+        this.input.type === "text" ? qs(this, "input-password").clickOjo(0) : ''
       })
 
       $(this).on('click', '#enviarVerificacion', q => {
@@ -54,7 +124,7 @@ class customModal extends HTMLElement {
     }, 5)
   }
 
-  mostrar(ajax){
+  mostrar(ajax) {
     this.ajax = ajax
     this.btModal.show()
   }
@@ -62,9 +132,10 @@ class customModal extends HTMLElement {
 
 customElements.define("custom-modal", customModal)
 
-class inputContraseña extends HTMLElement {
+class inputPass extends HTMLElement {
   connectedCallback() {
-    let { id, focus, label } = this.dataset
+    let { id, innerHTML: label } = this
+    let { focus } = this.dataset
 
     this.innerHTML = `${label ? `<label for="${id}">${label}</label>` : ""}
     <input ${label ? `class="form-control"` : ""} type="password" id="${id}" ${focus ? "autofocus" : ""}>
@@ -75,10 +146,10 @@ class inputContraseña extends HTMLElement {
     $(this).on("click", ".fa-eye-slash", q => this.clickOjo(1))
   }
 
-  clickOjo(texto){
-    $(this).find("i").toggle()
-    $(this).find("input").attr("type", texto ? "text" : "password")
+  clickOjo(texto) {
+    alternar(qs(this, "i"))
+    qs(this, "input").setAttribute('type', texto ? 'text' : 'password')
   }
 }
 
-customElements.define("input-password", inputContraseña)
+customElements.define("input-password", inputPass)

@@ -22,10 +22,10 @@ $(".contenedoreliminar").on('click', async function () {
   }
 })
 
-$("body").on('click', "#guardar", async function () {
+body.on('click', "#guardar", async function () {
   if (!await validarPlantillas()) return
-  let nombre = $("#nombreplantilla").val()
-  let data = JSON.stringify({ nombre, productos: [...$("tbody tr")].map(x => ({ producto: x.cells[0].innerText, precio: parseFloat(x.cells[1].innerText) })) })
+  let nombre = qsd("#nombreplantilla").value
+  let data = JSON.stringify({ nombre, productos: qsarrd("tbody tr").map(x => ({ producto: x.cells[0].innerText, precio: parseFloat(x.cells[1].innerText) })) })
 
   $.ajax({
     url: location.pathname,

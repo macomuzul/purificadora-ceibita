@@ -1,7 +1,7 @@
 let getCaretPosition = q => getSelection().rangeCount ? getSelection().getRangeAt(0).endOffset : 0
 
-$("body").on("keydown", "td", function (e) {
-  let cellindex = $(this).index()
+body.on("keydown", "td", function (e) {
+  let cellindex = indice(this)
   let k = e.which
   let { atStart, atEnd } = k == 37 || k == 39 ? getSelectionTextInfo(this) : {}
   if (k == 37 && atStart) //flecha izquierda
@@ -9,9 +9,9 @@ $("body").on("keydown", "td", function (e) {
   else if (k == 39 && atEnd) //flecha derecha
     enfocarCelda($(this).next(), e)
   else if (k == 38) //flecha arriba
-    $(this).parent().index() === 0 ? enfocarCelda($(this).closest("tbody").find("tr").last().find("td").eq(cellindex - 1), e) : enfocarCelda($(this).closest("tr").prev().find("td").eq(cellindex), e)
+    indice(padre(this)) === 0 ? enfocarCelda($(this).closest("tbody").find("tr").last().find("td").eq(cellindex - 1), e) : enfocarCelda($(this).closest("tr").prev().find("td").eq(cellindex), e)
   else if (k === 13 || k == 40) //enter y flecha abajo
-    $(this).closest("tr")[0].rowIndex <= $(this).closest("tbody")[0].rows.length ? enfocarCelda($(this).closest("tr").next().find("td").eq(cellindex), e) : enfocarCelda($(this).closest("tbody").find("tr").first().find("td").eq(cellindex + 1), e)
+    this.closest("tr").rowIndex <= this.closest("tbody").rows.length ? enfocarCelda($(this).closest("tr").next().find("td").eq(cellindex), e) : enfocarCelda($(this).closest("tbody").find("tr").first().find("td").eq(cellindex + 1), e)
 })
 
 let mostrarOffscreen = x => {
@@ -22,7 +22,7 @@ let mostrarOffscreen = x => {
 function enfocarCelda([x], e) {
   e.preventDefault()
   if (x !== undefined && x.contentEditable) {
-    $(x).trigger("focus")
+    x.focus()
     irAlFinalDelTexto(x)
     mostrarOffscreen(x)
   }
@@ -40,9 +40,9 @@ function irAlFinalDelTexto(elem) {
   sel.addRange(range)
 }
 
-$("body").on("beforeinput", "td", function (e) {
+body.on("beforeinput", "td", function (e) {
   let letra = event.data ?? ''
-  let colindex = $(this).index()
+  let colindex = indice(this)
   let texto = this.innerText
   if (letra === '"' || letra == "\\" || letra == "'") e.preventDefault()
   if (isNaN(letra) && colindex != 0 && colindex != 1) e.preventDefault()
@@ -60,17 +60,17 @@ $("body").on("beforeinput", "td", function (e) {
 })
 
 
-$("body").on("beforeinput", "input", e => {
+body.on("beforeinput", "input", e => {
   let k = e.data ?? ''
   if (k === '"' || k == "\\" || k == '\\') e.preventDefault()
 })
 
 
-$("body").on("keydown", "input", e => {
+body.on("keydown", "input", e => {
   if (e.which === 13) {
-    let x = $(e.target).closest("section").find("td").first()
+    let x = qs(e.target.closest("section"), "td")
     x.focus()
-    irAlFinalDelTexto(x[0])
+    irAlFinalDelTexto(x)
     e.preventDefault()
   }
 })

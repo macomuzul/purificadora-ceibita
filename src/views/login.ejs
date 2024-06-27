@@ -2,12 +2,12 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
-  <%- include("layouts/global") %>
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Poppins" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/login.min.css" />
+  <link rel="icon" href="/ceibitalogo32x32.jpg" type="image/x-icon">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Poppins">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/login.min.css">
 </head>
 
 <body>
@@ -28,6 +28,7 @@
       </div>
     </form>
   </div>
+  <script src="/jquery-4.0.0.js"></script>
   <script>
     let usuario = document.getElementById("usuario")
     let contraseña = document.getElementById("contraseña")
@@ -35,14 +36,14 @@
     let validarContraseña = q => contraseña.setCustomValidity(contraseña.validity.valueMissing ? 'Por favor escribe una contraseña' : '')
     usuario.addEventListener('input', validarUsuario)
     contraseña.addEventListener('input', validarContraseña)
-    usuario.addEventListener("keydown", e => {
-      if (e.key === "Enter") {
+    usuario.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
         e.preventDefault()
         contraseña.focus()
       }
     })
 
-    document.querySelector('[type="submit"]').addEventListener("click", q => {
+    document.querySelector('[type="submit"]').addEventListener('click', q => {
       validarUsuario()
       validarContraseña()
     })
@@ -50,17 +51,15 @@
 
 <% if (errorInicioSesion) { %>
   <script>
-    addEventListener("load", q => {
-    '<%if (errorInicioSesion === "Usuario no existe") {%>'
-      usuario.setCustomValidity('El usuario al que desea acceder no existe')
-      usuario.reportValidity()
-    '<% } %>'
+  '<%if (errorInicioSesion === "Usuario no existe") {%>'
+    usuario.setCustomValidity('El usuario al cual desea acceder no existe')
+    usuario.reportValidity()
+  '<% } %>'
 
-    '<%if (errorInicioSesion === "Contraseña incorrecta") {%>'
-      contraseña.setCustomValidity('Contraseña incorrecta')
-      contraseña.reportValidity()
-    '<% } %>'
-    })
+  '<%if (errorInicioSesion === "Contraseña incorrecta") {%>'
+    contraseña.setCustomValidity('Contraseña incorrecta')
+    contraseña.reportValidity()
+  '<% } %>'
   </script>
 <% } %>
 

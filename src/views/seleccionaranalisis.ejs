@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200px">
+  <title>Registros eliminados</title>
+  <%- include("layouts/global") %>
+  <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+  <script defer src="/dropdown.js"></script>
+  <script defer src="/seleccionaranalisis.js"></script>
+  <script defer src="/botontitulo2.js"></script>
+  <script defer src="/botonazul.js"></script>
+  <script defer src="/bootstrapdatepicker.js"></script>
+</head>
+
+<body>
+  <link rel="stylesheet" href="/seleccionarregistroseliminados.min.css">
+  <link rel="stylesheet" href="/seleccionaranalisis.min.css">
+  <%- include("layouts/navbar") %>
+  <main>
+    <div class="contenedorsuperior"><boton-titulo2>Analiza los datos de las fechas que elijas</boton-titulo2></div>
+    <section>
+      <div>
+        <div style="display: flex; justify-content: space-between;">
+          <custom-dropdown data-idmenu="analizarmenu" data-idseleccionado="analizar" data-textopordefecto="Analizar">
+            <li>Ventas</li>
+            <li>Gastos</li>
+            <li>Ganancias (Ventas - Gastos)</li>
+          </custom-dropdown>
+          <custom-dropdown data-idmenu="agruparmenu" data-idseleccionado="agrupar" data-textopordefecto="Agrupar datos por">
+            <li data-agrupar="dias">Día</li>
+            <li data-agrupar="semanas">Semana</li>
+            <li data-agrupar="meses">Mes</li>
+            <li data-agrupar="años">Año</li>
+          </custom-dropdown>
+          <custom-dropdown data-idmenu="rangomenu" data-idseleccionado="rango" data-textopordefecto="Rango">
+            <li>Mayor o igual que</li>
+            <li>Menor o igual que</li>
+            <li>Entre</li>
+            <li>Libre (permite seleccionar de forma intercalada)</li>
+          </custom-dropdown>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 35px;">
+          <h3 class="borde">Escoge una fecha para buscar: </h3>
+          <div class="contenedorentre">
+            <calendario-simple data-id="datepickerNormal" data-idinput="calendario"></calendario-simple>
+            <calendario-multiple data-id="datepickerEntre"></calendario-multiple>
+          </div>
+          <input-azul id="btnbuscar">Analizar datos</input-azul>
+        </div>
+      </div>
+      <section class="sectionunidadTiempo">
+        <div>Escoge una unidad de tiempo para la selección intercalada</div>
+        <custom-dropdown data-idmenu="seleccionmenu" data-idseleccionado="seleccion" data-textopordefecto="Seleccionar fechas por">
+          <li data-agrupar="dias">Día</li>
+          <li data-agrupar="semanas">Semana</li>
+          <li data-agrupar="meses">Mes</li>
+          <li data-agrupar="años">Año</li>
+        </custom-dropdown>
+      </section>
+      <input-azul class="btnBorrarFechas" id="borrarFechas">Borrar fechas seleccionadas</input-azul>
+      <div class="textoDatePicker"></div>
+      <!-- <input-azul class="btnAnalizar" id="analizarVarios">Analizar</input-azul>
+      <calendario-simple data-id="datepickerVarios"></calendario-simple>
+      <calendario-multiple data-id="datepickerEntre"></calendario-multiple> -->
+    </section>
+  </main>
+</body>
+
+</html>

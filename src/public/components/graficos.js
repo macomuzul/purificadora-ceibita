@@ -1,4 +1,5 @@
 let contador = 0
+let sumar = x => x.reduce((p, c) => p + c)
 class graficos extends HTMLElement {
   devuelveSonIngresos = q => (this.sonIngresos ? 'ingresos' : 'ventas')
   radiobutton = (id, label, checked) => `<custom-radiobutton data-id="${id}${contador}" ${checked ? `data-checked="1"` : ''}>${label}</custom-radiobutton>`
@@ -16,7 +17,7 @@ class graficos extends HTMLElement {
     </ul></div>
     <boton-convertira>Convertir a tabla</boton-convertira>
     <boton-pdf></boton-pdf></div><div class="contenedorCanvas"><canvas id="canvas${contador}"></canvas></div></article>
-    <article class="articleTabla" style="display: none;">
+    <article class="articleTabla" hidden>
     <div class="contenedormedio" style="align-items: center;"><boton-excel id="a"></boton-excel><boton-convertira>Convertir a gráfico</boton-convertira><boton-pdf id="b"></boton-pdf></div>
     <div class="contenedortabla"><div class="tituloTabla">${this.titulo}</div>
     <table></table>
@@ -25,17 +26,17 @@ class graficos extends HTMLElement {
     <div class="contenedorAbajoDeLosDatos">
     <div class="gridBotonesTamaño"><button class="btnTamaño aumentar">+</i></button><button class="btnTamaño disminuir">-</i>
     <button class="btnTamaño restaurarTamaño">Restaurar</i></button><span class="textoTamaño">Tamaño</span></div>
-    <button class="btn btn-primary botonazul uneOSeparaDatos">Unifica los datos <svg fill="#FFF" width="30px" height="30px" viewBox="0 0 20 20" style="transform: rotate(90deg);"><path d="M17.89 17.707L16.892 20c-3.137-1.366-5.496-3.152-6.892-5.275-1.396 2.123-3.755 3.91-6.892 5.275l-.998-2.293C5.14 16.389 8.55 14.102 8.55 10V7H5.5L10 0l4.5 7h-3.05v3c0 4.102 3.41 6.389 6.44 7.707z"/></svg></button>
+    <boton-azul class="uneOSeparaDatos">Unifica los datos <svg fill="#FFF" width="30px" height="30px" viewBox="0 0 20 20" style="transform: rotate(90deg);"><path d="M17.89 17.707L16.892 20c-3.137-1.366-5.496-3.152-6.892-5.275-1.396 2.123-3.755 3.91-6.892 5.275l-.998-2.293C5.14 16.389 8.55 14.102 8.55 10V7H5.5L10 0l4.5 7h-3.05v3c0 4.102 3.41 6.389 6.44 7.707z"/></svg></boton-azul>
     </div>
     <div class="contenedorEliminarData">
     ${checkbox('Eliminar data al tocarla', null, 'eliminarDataGrafico')}
     ${popover(`La eliminación de data usando este método es temporal, la próxima vez que actualices volverá a aparecer, si no quieres que aparezcan quítalos desde las opciones del gráfico. <br><strong>Importante: </strong> borra los datos en base a las etiquetas que están abajo de los datos. Si solo hay una etiqueta borrará todos los datos en esa etiqueta (no te preocupes los datos no se pierden) solo presiona restaurar datos o actualizar y volverán a aparecer`)}
     </div>
-    <div class="restaurarDataEliminada" style="display: none"><button class="btn btn-primary botonazul">Restaurar datos borrados</button></div>`
+    <div class="restaurarDataEliminada" hidden><boton-azul>Restaurar datos borrados</boton-azul></div>`
     this.html += html
 
     this.innerHTML = this.html
-    this.canvas = $(this).find('canvas')[0]
+    this.canvas = qs(this, 'canvas')
     this.$chart = this.canvas.getContext('2d')
     this.metodosOpcionesGrafico()
     this.metodosBotonesGrafico()
@@ -44,14 +45,14 @@ class graficos extends HTMLElement {
   }
 
   metodosBotonesAbajo() {
-    this.contenedorCanvas = $(this).find('.contenedorCanvas')[0]
-    this.restaurarTamaño = $(this).find('.restaurarTamaño')[0]
+    this.contenedorCanvas = qs(this, '.contenedorCanvas')
+    this.restaurarTamaño = qs(this, '.restaurarTamaño')
     $(this).on('click', '.btnTamaño.aumentar', () => {
       let [longitud] = this.style.width.split('px')
       let [altura] = this.contenedorCanvas.style.height.split('px')
       this.style.width = (parseInt(longitud) || 1179) + 500 + 'px'
       this.contenedorCanvas.style.height = (parseInt(altura) || 589) + 250 + 'px'
-      this.restaurarTamaño.style.display = 'initial'
+      this.restaurarTamaño.hidden = false
     })
     $(this).on('click', '.btnTamaño.disminuir', () => {
       let [longitud] = this.style.width.split('px')
@@ -60,12 +61,12 @@ class graficos extends HTMLElement {
       if (longitud <= 1179) return
       this.style.width = longitud - 500 + 'px'
       this.contenedorCanvas.style.height = (parseInt(altura) || 589) - 250 + 'px'
-      if (longitud <= 1679) this.restaurarTamaño.style.display = 'none'
+      if (longitud <= 1679) this.restaurarTamaño.hidden = true
     })
     $(this).on('click', '.restaurarTamaño', () => {
       this.style.width = '1179px'
       this.contenedorCanvas.style.height = '589px'
-      this.restaurarTamaño.style.display = 'none'
+      this.restaurarTamaño.hidden = true
     })
     $(this).on('click', '.uneOSeparaDatos', e => {
       let textoAnterior = e.currentTarget.innerHTML
@@ -73,7 +74,7 @@ class graficos extends HTMLElement {
       this.uneOSeparaDatosTexto = textoAnterior
       this.multiple = !this.multiple
       this.actualizarDatos()
-      $(this).find('.contenedortabla')[0].scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' })
+      qsd(this, '.contenedortabla').scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' })
     })
   }
 
@@ -87,21 +88,21 @@ class graficos extends HTMLElement {
       $(this).find('.contenedorColoresDeLosGrafios').toggle()
       if (this.chartVisible) {
         this.actualizarTabla(this.datasetsActuales, this.labelsActuales)
-        $(this).find('.camioneros label').text('Poner en la tabla')
-        $(this).find('.actualizarGrafico').text('Actualizar tabla')
-        $(this).find('.acordeonPrincipal > .headeracordeon .tituloProductos').text('Opciones de la tabla')
+        qs(this, '.actualizarGrafico').innerText = 'Actualizar tabla'
+        qs(this, '.acordeonPrincipal > .headeracordeon .tituloProductos').innerText = 'Opciones de la tabla'
+        qs(this, '.camioneros label').innerText = 'Poner en la tabla'
       } else {
         this.actualizarChart(this.datasetsActuales, this.labelsActuales)
-        $(this).find('.camioneros label').text('Poner en el gráfico')
-        $(this).find('.actualizarGrafico').text('Actualizar gráfico')
-        $(this).find('.acordeonPrincipal > .headeracordeon .tituloProductos').text('Opciones del gráfico')
+        qs(this, '.actualizarGrafico').innerText = 'Actualizar gráfico'
+        qs(this, '.acordeonPrincipal > .headeracordeon .tituloProductos').innerText = 'Opciones del gráfico'
+        qs(this, '.camioneros label').innerText = 'Poner en el gráfico'
       }
       $(this).find('.convertira')[this.chartVisible ? 1 : 0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
       this.chartVisible = !this.chartVisible
     })
     $(this).on('click', '.articleGrafico .botonpdf', e => e.currentTarget.exportarGrafico(this.canvas, this.titulo))
     $(this).on('click', '.eliminarDataGrafico', e => {
-      this.chart.options.onClick = $(e.currentTarget).find('input')[0].checked
+      this.chart.options.onClick = qs(e.currentTarget, 'input').checked
         ? () => { }
         : (event, activeElements) => {
           let { chart } = event
@@ -117,7 +118,7 @@ class graficos extends HTMLElement {
     })
     $(this).on('click', '.dropdown-item', e => {
       let texto = e.currentTarget.innerText
-      $(e.currentTarget).closest('.dropdown-menu').prev()[0].innerText = texto
+      e.currentTarget.closest('.dropdown-menu').previousElementSibling.innerText = texto
       const graficos = {
         'De barra': 'bar',
         'Circular 1': 'doughnut',
@@ -138,23 +139,23 @@ class graficos extends HTMLElement {
 
   metodosBotonesTabla() {
     $(this).find('.botonpdf')[1].inicializar(() => {
-      let contenedor = $(this).find('.contenedortabla')[0]
-      let contenedorClon = contenedor.cloneNode(true)
-      contenedorClon.style.width = $(contenedor).find('table')[0].offsetWidth + 'px'
-      let titulo = $(contenedorClon).find('.tituloTabla')[0]
+      let contenedor = qs(this, '.contenedortabla')
+      let contenedorClon = clonar(contenedor)
+      contenedorClon.style.width = qs(contenedor, 'table').offsetWidth + 'px'
+      let titulo = qs(contenedorClon, '.tituloTabla')
       titulo.style.background = '#0f0924'
       titulo.style.padding = '15px'
       return contenedorClon.outerHTML
     }, this.titulo)
     let titulo = this.titulo
     let that = this
-    $(this).find('.botonexcel')[0].inicializar(function () {
+    qs(this, '.botonexcel').inicializar(function () {
       let nombre = `${titulo}.xlsx`
       let workbook = XLSX.utils.book_new()
-      let tabla = $(that).find('table')[0]
+      let tabla = qs(that, 'table')
       let ws = XLSX.utils.table_to_sheet(tabla, { raw: true })
       var range = XLSX.utils.decode_range(ws['!ref'])
-      ws['!cols'] = that.multiple ? [that.agrupadoPorFecha ? { wch: Math.max(...[...$(tabla).find('tbody td:first-child')].map(x => x.textContent.length)) } : { width: 24 }, ...[...tabla.rows[1].cells].map(x => (that.agrupadoPorFecha ? { width: 18 } : { wch: x.textContent.length })), { width: 19 }] : [...[...tabla.rows[2].cells].map(x => (that.agrupadoPorFecha ? { wch: x.textContent.length } : { width: 18 })), { width: 20 }]
+      ws['!cols'] = that.multiple ? [that.agrupadoPorFecha ? { wch: Math.max(...qsarr(tabla, 'tbody td:first-child').map(x => x.textContent.length)) } : { width: 24 }, ...[...tabla.rows[1].cells].map(x => (that.agrupadoPorFecha ? { width: 18 } : { wch: x.textContent.length })), { width: 19 }] : [...[...tabla.rows[2].cells].map(x => (that.agrupadoPorFecha ? { wch: x.textContent.length } : { width: 18 })), { width: 20 }]
       ws['!rows'] = [{ hpt: 35 }, ...[...Array(range.e.r - range.s.r)].map(x => ({ hpt: 24 }))]
       for (let i = range.s.r; i <= range.e.r; i++) {
         for (let j = range.s.c; j <= range.e.c; j++) {
@@ -206,17 +207,17 @@ class graficos extends HTMLElement {
       html = `<table><thead><tr><th colspan="${labels.length + 1}">${this.titulo.split('agrupado')[0]}durante el período del ${formatearFecha(this.fechaOpcion, tiempoMenor)} al ${formatearFecha(this.fechaOpcion, tiempoMayor)}</th></tr><tr><th colspan="${data.length}">${this.devuelveFechaOProducto(1)}</th><th rowspan="2">Total ${this.devuelveSonIngresos()}:</th></tr>
       <tr>${labels.map(x => `<th>${x}</th>`).join('')}</tr></thead><tbody><tr>
         ${data.map(x => `<td>${x}</td>`).join('')}
-        <td>${data.reduce((a, t) => (a += t))}</td></tr></tbody></table>`
+        <td>${sumar(data)}</td></tr></tbody></table>`
     }
-    $(this).find('table')[0].outerHTML = html
+    qs(this, 'table').outerHTML = html
     if (this.multiple) {
-      let totalDerecha = datasets.map(x => x.data.reduce((p, c) => p + c))
-      $(this).find('tbody td:last-child').each((i, x) => (x.textContent = totalDerecha[i]))
-      $(this).find('tfoot td:last-child').text(totalDerecha.reduce((p, c) => p + c))
-        ;[...$(this).find('tfoot td')].slice(1, -1).forEach((x, i) => (x.textContent = datasets.reduce((p, c) => p + c.data[i], 0)))
-      this.normalizarCeldas([...$(this).find('tbody td:not(:first-child)')])
-      this.normalizarCeldas([...$(this).find('tfoot td:not(:first-child)')])
-    } else this.normalizarCeldas([...$(this).find('tbody td')])
+      let totalDerecha = datasets.map(x => sumar(x.data))
+      qsa(this, 'tbody td:last-child').forEach((x, i) => (x.textContent = totalDerecha[i]))
+      qs(this, 'tfoot td:last-child').innerText = sumar(totalDerecha)
+      qsarr(this, 'tfoot td').slice(1, -1).forEach((x, i) => (x.textContent = datasets.reduce((p, c) => p + c.data[i], 0)))
+      this.normalizarCeldas(qsarr(this, 'tbody td:not(:first-child)'))
+      this.normalizarCeldas(qsarr(this, 'tfoot td:not(:first-child)'))
+    } else this.normalizarCeldas(qsarr(this, 'tbody td'))
   }
 
   normalizarCeldas(arr) {
@@ -225,23 +226,23 @@ class graficos extends HTMLElement {
 
   actualizarDatos() {
     let { multiple, agrupadoPorFecha } = this
-    let checkboxesInternos = [...$(this.graficoDias).find('.form-check-input')].map(x => x.checked)
-    let checkboxesExternos = [...$(this.graficoProductos).find('.form-check-input')].map(x => x.checked)
+    let checkboxesInternos = qsarr(this.graficoDias, '.form-check-input').map(x => x.checked)
+    let checkboxesExternos = qsarr(this.graficoProductos, '.form-check-input').map(x => x.checked)
     if (multiple && checkboxesInternos.every(x => !x)) return Swal.fire('Error', 'Por favor seleccionar por lo menos un elemento', 'error')
     if (checkboxesExternos.every(x => !x)) return Swal.fire('Error', 'Por favor seleccionar por lo menos un elemento', 'error')
 
     let labels = UTDiaOSemana && agrupadoPorFecha ? fechas.filter((_, i) => checkboxesExternos[i]) : this.labels.filter((_, i) => checkboxesExternos[i])
     let datasets = structuredClone(this.datasets)
 
-    if (this.chartVisible) this.chart.options.scales.y.type = $(this).find('.escalaOpcion input:checked')[0].id.includes('linear') ? 'linear' : 'logarithmic'
+    if (this.chartVisible) this.chart.options.scales.y.type = qs(this, '.escalaOpcion input:checked').id.includes('linear') ? 'linear' : 'logarithmic'
 
-    let coloresOpcion = $(this).find('.coloresOpcion input:checked')[0]?.id
+    let coloresOpcion = qs(this, '.coloresOpcion input:checked')?.id
     if (coloresOpcion) datasets = datasets.filter((_, i) => checkboxesInternos[i])
     datasets.forEach(el => (el.data = el.data.filter((_, i) => checkboxesExternos[i])))
     coloresOpcion?.includes('color1') ? this.colocarColores(this.graficoDias, checkboxesInternos, datasets) : this.colocarColores(this.graficoProductos, checkboxesExternos, datasets)
 
     if (UTDiaOSemana) {
-      let fechaOpcion = $(this.graficoFechaOpcion).find('input:checked')[0]?.id
+      let fechaOpcion = qs(this.graficoFechaOpcion, 'input:checked')?.id
       let opcion = fechaOpcion.includes('fecha1') ? 'full' : fechaOpcion.includes('fecha2') ? 'long' : 'short'
       this.fechaOpcion = opcion
       if (UTDia) {
@@ -261,7 +262,7 @@ class graficos extends HTMLElement {
       datasets = nuevoDataset
     }
 
-    let ordenarOpcion = $(this).find('.ordenarOpcion input:checked')[0].id
+    let ordenarOpcion = qs(this, '.ordenarOpcion input:checked').id
     if (!ordenarOpcion.includes('default')) {
       const funcionesOrdenar = {
         ordenar1: (a, b) => labels[a].localeCompare(labels[b]),
@@ -319,7 +320,7 @@ class graficos extends HTMLElement {
         .join('')}</div>
   <div class="contenedorabajo botonreset ${arriba ? 'resetdias' : 'resetproductos'}">
   <div class="seleccionarTodos">${checkbox('Seleccionar todos los elementos', 1)}${popover('Permite seleccionar o remover todos los elementos')}</div>
-  <button class="btn btn-primary botonazul">Resetear los colores a los valores de default</button></div>`
+  <boton-azul>Resetear los colores a los valores de default</boton-azul></div>`
   }
 
   agregarOpciones() {
@@ -366,7 +367,7 @@ class graficos extends HTMLElement {
     </div>`
 
     html += `${acordeonItem(htmlOtrasOpciones, `acordeonotrasopciones`, 'Otras opciones')}
-    <div class="contenedorabajo"><button class="btn btn-primary botonazul actualizarGrafico">Actualizar gráfico</button></div>
+    <div class="contenedorabajo"><boton-azul class="actualizarGrafico">Actualizar gráfico</boton-azul></div>
     </custom-acordeon></custom-acordeonitem></custom-acordeon>`
     this.html = html
   }
@@ -384,7 +385,7 @@ class graficos extends HTMLElement {
     $(this).on('click', '.actualizarGrafico', () => this.actualizarDatos())
     $(this).on('click', '.actualizarTabla', () => this.actualizarTabla())
     $(this).on('click', '.restaurarDataEliminada', () => this.actualizarDatos())
-    $(this).on('click', '.seleccionarTodos', e => $(e.currentTarget).closest('.accordion-body').find('.camioneros input').prop('checked', !$(e.currentTarget).find('input')[0].checked))
+    $(this).on('click', '.seleccionarTodos', e => $(e.currentTarget).closest('.accordion-body').find('.camioneros input').prop('checked', !qs(e.currentTarget, 'input').checked))
   }
 
   async resetearColores(el) {
@@ -396,7 +397,7 @@ class graficos extends HTMLElement {
       cancelButtonText: 'No',
     })
     if (isConfirmed) {
-      $(el).find("[type='color']").each((i, x) => (x.value = colores[i]))
+      qsa(el, "[type='color']").forEach((x, i) => (x.value = colores[i]))
       Swal.fire('Se han reseteado los colores correctamente', 'Para visualizar los cambios presionar el botón de actualizar gráfico', 'success')
     }
   }
@@ -445,10 +446,10 @@ class graficos extends HTMLElement {
   }
 }
 function getOrCreateTooltip(chart) {
-  let tooltipEl = chart.canvas.parentNode.querySelector('div')
+  let tooltipEl = qs(padre(chart.canvas), 'div')
   if (!tooltipEl) {
-    $(chart.canvas.parentNode).append(`<div style="background: rgba(0, 0, 0, 0.7); border-radius: 3px; color: white; opacity: 1; pointer-events: none; position: absolute; transform: translate(-50%, 0px); transition: all 0.1s ease 0s;"></div>`)
-    tooltipEl = chart.canvas.parentNode.querySelector('div')
+    añadirHTML(padre(chart.canvas), `<div style="background: rgba(0, 0, 0, 0.7); border-radius: 3px; color: white; opacity: 1; pointer-events: none; position: absolute; transform: translate(-50%, 0px); transition: all 0.1s ease 0s;"></div>`)
+    tooltipEl = qs(padre(chart.canvas), 'div')
   }
   return tooltipEl
 }
@@ -458,7 +459,7 @@ function externalTooltipHandler(context) {
   const tooltipEl = getOrCreateTooltip(chart)
   if (tooltip.opacity === 0) return (tooltipEl.style.opacity = 0)
   if (tooltip.body) {
-    $(tooltipEl).html(`<div style="font-size: 14px;">${(tooltip.title || []).map((title, i) => `<span style="background: ${tooltip.labelColors[i].backgroundColor.slice(0, -2) + '40'}; border: 1px solid ${tooltip.labelColors[i].borderColor}; margin-right: 5px; height: 10px; width: 10px; display: inline-block;"></span>${title}`).join('')}</div>
+    cambiarHTML(tooltipEl, `<div style="font-size: 14px;">${(tooltip.title || []).map((title, i) => `<span style="background: ${tooltip.labelColors[i].backgroundColor.slice(0, -2) + '40'}; border: 1px solid ${tooltip.labelColors[i].borderColor}; margin-right: 5px; height: 10px; width: 10px; display: inline-block;"></span>${title}`).join('')}</div>
     ${tooltip.body.map(b => b.lines).map(body => body.map(x => `<div style="font-size: 14px;">${x}</div>`).join('')).join('')}`)
   }
 
@@ -475,8 +476,7 @@ customElements.define('custom-graficos', graficos)
 
 class botonConvertira extends HTMLElement {
   connectedCallback() {
-    this.className = 'btn btn-primary botonazul convertira'
-    this.innerHTML = `${this.innerHTML} <svg width="27px" height="27px" viewBox="0 0 24 24" fill="white"><path d="M15.2929 10.2929C14.9024 10.6834 14.9024 11.3166 15.2929 11.7071C15.6834 12.0976 16.3166 12.0976 16.7071 11.7071L20.7071 7.70711C20.8306 7.58361 20.9151 7.43586 20.9604 7.27919C20.9779 7.2191 20.9895 7.1577 20.9954 7.09585C20.9976 7.07319 20.999 7.05048 20.9996 7.02774C21.0002 7.00709 21.0001 6.98642 20.9994 6.96578C20.9905 6.6971 20.8755 6.45528 20.695 6.28079L16.7071 2.29289C16.3166 1.90237 15.6834 1.90237 15.2929 2.29289C14.9024 2.68342 14.9024 3.31658 15.2929 3.70711L17.5856 5.99981L3.99999 5.99999C3.4477 5.99999 2.99999 6.44772 3 7C3.00001 7.55228 3.44773 7.99999 4.00001 7.99999L17.586 7.99981L15.2929 10.2929Z"/><path d="M20 16L6.41423 16L8.70712 13.7071C9.09764 13.3166 9.09764 12.6834 8.70712 12.2929C8.3166 11.9024 7.68343 11.9024 7.29291 12.2929L3.29291 16.2929C2.90238 16.6834 2.90238 17.3166 3.29291 17.7071L7.29291 21.7071C7.68343 22.0976 8.3166 22.0976 8.70712 21.7071C9.09764 21.3166 9.09764 20.6834 8.70712 20.2929L6.41423 18L20 18C20.5523 18 21 17.5523 21 17C21 16.4477 20.5523 16 20 16Z"/></svg>`
+    this.outerHTML = `<boton-azul class="convertira">${this.innerHTML} <svg width="27px" height="27px" viewBox="0 0 24 24" fill="white"><path d="M15.2929 10.2929C14.9024 10.6834 14.9024 11.3166 15.2929 11.7071C15.6834 12.0976 16.3166 12.0976 16.7071 11.7071L20.7071 7.70711C20.8306 7.58361 20.9151 7.43586 20.9604 7.27919C20.9779 7.2191 20.9895 7.1577 20.9954 7.09585C20.9976 7.07319 20.999 7.05048 20.9996 7.02774C21.0002 7.00709 21.0001 6.98642 20.9994 6.96578C20.9905 6.6971 20.8755 6.45528 20.695 6.28079L16.7071 2.29289C16.3166 1.90237 15.6834 1.90237 15.2929 2.29289C14.9024 2.68342 14.9024 3.31658 15.2929 3.70711L17.5856 5.99981L3.99999 5.99999C3.4477 5.99999 2.99999 6.44772 3 7C3.00001 7.55228 3.44773 7.99999 4.00001 7.99999L17.586 7.99981L15.2929 10.2929Z"/><path d="M20 16L6.41423 16L8.70712 13.7071C9.09764 13.3166 9.09764 12.6834 8.70712 12.2929C8.3166 11.9024 7.68343 11.9024 7.29291 12.2929L3.29291 16.2929C2.90238 16.6834 2.90238 17.3166 3.29291 17.7071L7.29291 21.7071C7.68343 22.0976 8.3166 22.0976 8.70712 21.7071C9.09764 21.3166 9.09764 20.6834 8.70712 20.2929L6.41423 18L20 18C20.5523 18 21 17.5523 21 17C21 16.4477 20.5523 16 20 16Z"/></svg></boton-azul>`
   }
 }
 
@@ -484,7 +484,7 @@ customElements.define('boton-convertira', botonConvertira)
 
 class resumenDatos extends HTMLElement {
   agregarCantidad() {
-    this.innerHTML = `<div class="tituloGrupoPodios" style="padding: 15px;">Total ingresos generados en este período: ${datasetIngresosAgrupadosPorProducto.reduce((p, c) => p + c.data.reduce((p2, c2) => p2 + c2), 0).normalizarPrecio().aQuetzales()}</div>`
+    this.innerHTML = `<div class="tituloGrupoPodios" style="padding: 15px;">Total ingresos generados en este período: ${datasetIngresosAgrupadosPorProducto.reduce((p, c) => p + sumar(c.data), 0).normalizarPrecio().aQuetzales()}</div>`
   }
 }
 

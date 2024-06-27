@@ -1,5 +1,4 @@
-$("head").append(`<style>
-.dropdown-toggle {
+añadirCSS(`.dropdown-toggle {
   text-align: left;
   background: white !important;
   color: #212529 !important;
@@ -17,7 +16,7 @@ $("head").append(`<style>
   color: white;
   padding: 8px 10px;
   cursor: pointer;
-  
+
   .active, &:active, &:hover {
     background: #373c49;
     color: white;
@@ -28,8 +27,7 @@ $("head").append(`<style>
   width: 300px;
   padding: 8px 10px !important;
   background: rgb(42, 48, 60);
-}
-</style>`)
+}`)
 
 class dropdownRoles extends HTMLElement {
   connectedCallback() {

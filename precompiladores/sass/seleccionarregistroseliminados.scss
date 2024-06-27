@@ -1,0 +1,115 @@
+@use "./partials/tablacompleta";
+
+.divseparador {
+  font-size: 30px;
+  margin: 0 10px 12px 10px;
+}
+.contenedorentre {
+  display: inline-block;
+}
+
+.input-daterange {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+body {
+  background: #191d31;
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+
+#datepickerEntre{
+  display: none;
+}
+
+.contenedorsuperior {
+  display: flex;
+  justify-content: center;
+}
+
+.dropdown {
+  width: 350px;
+  display: inline-block;
+}
+
+#btnbuscar {
+  margin-left: 40px;
+  margin-top: -5px;
+  height: 60px;
+}
+
+.botoncrearplantillas:focus,
+.botoncrearplantillas:hover {
+  outline: none;
+  box-shadow: none;
+  background-color: #0b2346 !important;
+  border-color: #010a18;
+}
+
+input:focus {
+  box-shadow: none !important;
+}
+
+main {
+  min-width: 1150px;
+}
+
+// #lel {
+//   background: linear-gradient(
+//       rgba(255, 0, 0, 1) 0%,
+//       rgba(255, 154, 0, 1) 10%,
+//       rgba(208, 222, 33, 1) 20%,
+//       rgba(79, 220, 74, 1) 30%,
+//       rgba(63, 218, 216, 1) 40%,
+//       rgba(47, 201, 226, 1) 50%,
+//       rgba(28, 127, 238, 1) 60%,
+//       rgba(95, 21, 242, 1) 70%,
+//       rgba(186, 12, 248, 1) 80%,
+//       rgba(251, 7, 217, 1) 90%,
+//       rgba(255, 0, 0, 1) 100%
+//     )
+//     0 0/100% 200%;
+//   animation: a 2s linear infinite !important;
+// }
+
+// @keyframes a {
+//   to {
+//     background-position: 0 -200%;
+//   }
+// }
+
+.tituloSeccion {
+  text-align: center;
+  font-size: 33px;
+  font-weight: 500;
+}
+
+section {
+  margin-top: 35px;
+}
+
+.btnOrden{
+  width: 210px;
+  height: 80px;
+  padding: 10px 15px;
+  white-space: normal;
+  margin: 0;
+}
+
+body{
+  min-height: 700px;
+}
+
+hr{
+  background: white;
+  margin-top: 50px;
+  margin-bottom: 25px;
+}
+
+.borde{
+  margin-bottom: 0;
+  margin-top: 7px;
+}
