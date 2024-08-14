@@ -30,7 +30,7 @@ test.describe("prueba console", () => {
     await page.getByRole('button', { name: 'Guardar cambios' }).click()
     await page.getByText('+').click()
     await page.getByText('+').click()
-    await cambiarOrdenCamiones(page, "[for=tab0]", "[for=tab2]")
+    await cambiarOrdenCamiones(page, "tab-label:nth-child(1)", "tab-label:nth-child(3)")
     await borrarCamion(page, "Camión 2")
     await borrarCamion(page, "Camión 1")
     await page.locator(".trabajador").fill("xeresano")
@@ -84,8 +84,8 @@ test.describe("prueba console", () => {
     await page.getByLabel('Cambiar el orden de los productos de las tablas').check()
     await page.getByRole('button', { name: 'Guardar cambios' }).click()
     await page.getByRole('cell', { name: 'garrafón2' }).dragTo(await page.getByRole('cell', { name: 'prueba' }), {
-      sourcePosition: { x: 70, y: 10},
-      targetPosition: { x: 100, y: 30}
+      sourcePosition: { x: 70, y: 10 },
+      targetPosition: { x: 100, y: 30 }
     })
     await page.locator("#guardar").click()
   })
@@ -100,13 +100,18 @@ test.describe("prueba console", () => {
 
   test("prueba dos tablas cambiando orden", async ({ page }) => {
     page.on('console', log(json.jsonDosTablasAlReves))
+    // await page.route('/registrarventas/guardar', async route => {
+    //   debugger
+    //   console.log(route)
+    //   console.log('url ' + route.request().url());
+    // });
     await page.locator(".trabajador").fill("xeresano")
     await agregarCamion(page)
     await page.getByRole('textbox').fill("mostro")
     await page.getByRole('button', { name: 'Configuraciones' }).click()
     await page.getByLabel('Cambiar el orden de los camiones').check()
     await page.getByRole('button', { name: 'Guardar cambios' }).click()
-    await cambiarOrdenCamiones(page, "[for=tab0]", "[for=tab1]")
+    await cambiarOrdenCamiones(page, "tab-label:nth-child(1)", "tab-label:nth-child(2)")
     await page.locator("#guardar").click()
   })
 
@@ -175,15 +180,16 @@ function log(objJSON) {
   return msg => {
     if (msg.type() === 'log') {
       let result = contiene(msg.text(), objJSON)
-      console.log("1",objJSON)
-      console.log("2",msg.text())
+      console.log("1", objJSON)
+      console.log("2", msg.text())
       expect(result).toBeTruthy()
+      // expect(false).toBeTruthy()
     }
   }
 }
 
 async function borrarCamion(page, NoCamion) {
-  await page.getByText(NoCamion).click({ position: { x: 85, y: 8 } })
+  await page.getByText(NoCamion).click({ position: { x: 100, y: 5 } })
   await page.getByRole('button', { name: 'Continuar', exact: true }).click()
   await page.getByRole('button', { name: 'OK' }).click()
 }
@@ -197,42 +203,49 @@ function contiene(t1, t2) {
 async function agregarCamion(page) {
   await page.getByText('+').click()
   await page.getByText('Camión 2').click()
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr > td:nth-child(3)').first().click()
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr > td:nth-child(3)').first().type('123')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr > td:nth-child(3)').first().press('ArrowDown')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(2) > td:nth-child(3)').type('54')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(2) > td:nth-child(3)').press('ArrowDown')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(3) > td:nth-child(3)').type('123')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(3) > td:nth-child(3)').press('ArrowDown')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(4) > td:nth-child(3)').type('54')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(4) > td:nth-child(3)').press('ArrowDown')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(5) > td:nth-child(3)').type('2')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(5) > td:nth-child(3)').press('ArrowDown')
-  await page.locator('tr:nth-child(6) > td:nth-child(3)').type('123')
-  await page.locator('tr:nth-child(7) > td:nth-child(3)').click()
-  await page.locator('tr:nth-child(7) > td:nth-child(3)').type('25')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr > td:nth-child(4)').first().click()
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr > td:nth-child(4)').first().type('23')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr > td:nth-child(4)').first().press('ArrowDown')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(2) > td:nth-child(4)').type('21')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(2) > td:nth-child(4)').press('ArrowDown')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(3) > td:nth-child(4)').press('ArrowDown')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(4) > td:nth-child(4)').press('ArrowUp')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(3) > td:nth-child(4)').type('4')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(3) > td:nth-child(4)').press('ArrowDown')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(4) > td:nth-child(4)').type('5')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(4) > td:nth-child(4)').press('ArrowDown')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(5) > td:nth-child(4)').type('1')
-  await page.locator('div:nth-child(2) > table > .cuerpo > tr:nth-child(5) > td:nth-child(4)').press('ArrowDown')
-  await page.locator('tr:nth-child(6) > td:nth-child(4)').type('3')
-  await page.locator('tr:nth-child(6) > td:nth-child(4)').press('ArrowDown')
-  await page.locator('tr:nth-child(7) > td:nth-child(4)').type('2')
+  let cuerpoCamion2 = await page.locator('tab-content:nth-child(2) > table > .cuerpo')
+  await cuerpoCamion2.locator('tr > td:nth-child(3)').first().click()
+  await cuerpoCamion2.locator('tr > td:nth-child(3)').first().type('123')
+  await cuerpoCamion2.locator('tr > td:nth-child(3)').first().press('ArrowDown')
+  await cuerpoCamion2.locator('tr:nth-child(2) > td:nth-child(3)').type('54')
+  await cuerpoCamion2.locator('tr:nth-child(2) > td:nth-child(3)').press('ArrowDown')
+  await cuerpoCamion2.locator('tr:nth-child(3) > td:nth-child(3)').type('123')
+  await cuerpoCamion2.locator('tr:nth-child(3) > td:nth-child(3)').press('ArrowDown')
+  await cuerpoCamion2.locator('tr:nth-child(4) > td:nth-child(3)').type('54')
+  await cuerpoCamion2.locator('tr:nth-child(4) > td:nth-child(3)').press('ArrowDown')
+  await cuerpoCamion2.locator('tr:nth-child(5) > td:nth-child(3)').type('2')
+  await cuerpoCamion2.locator('tr:nth-child(5) > td:nth-child(3)').press('ArrowDown')
+  // await page.locator('tr:nth-child(6) > td:nth-child(3)').type('123')
+  // await page.locator('tr:nth-child(7) > td:nth-child(3)').click()
+  // await page.locator('tr:nth-child(7) > td:nth-child(3)').type('25')
+  await cuerpoCamion2.locator('tr:nth-child(6) > td:nth-child(3)').type('123')
+  await cuerpoCamion2.locator('tr:nth-child(7) > td:nth-child(3)').click()
+  await cuerpoCamion2.locator('tr:nth-child(7) > td:nth-child(3)').type('25')
+  await cuerpoCamion2.locator('tr > td:nth-child(4)').first().click()
+  await cuerpoCamion2.locator('tr > td:nth-child(4)').first().type('23')
+  await cuerpoCamion2.locator('tr > td:nth-child(4)').first().press('ArrowDown')
+  await cuerpoCamion2.locator('tr:nth-child(2) > td:nth-child(4)').type('21')
+  await cuerpoCamion2.locator('tr:nth-child(2) > td:nth-child(4)').press('ArrowDown')
+  await cuerpoCamion2.locator('tr:nth-child(3) > td:nth-child(4)').press('ArrowDown')
+  await cuerpoCamion2.locator('tr:nth-child(4) > td:nth-child(4)').press('ArrowUp')
+  await cuerpoCamion2.locator('tr:nth-child(3) > td:nth-child(4)').type('4')
+  await cuerpoCamion2.locator('tr:nth-child(3) > td:nth-child(4)').press('ArrowDown')
+  await cuerpoCamion2.locator('tr:nth-child(4) > td:nth-child(4)').type('5')
+  await cuerpoCamion2.locator('tr:nth-child(4) > td:nth-child(4)').press('ArrowDown')
+  await cuerpoCamion2.locator('tr:nth-child(5) > td:nth-child(4)').type('1')
+  await cuerpoCamion2.locator('tr:nth-child(5) > td:nth-child(4)').press('ArrowDown')
+  // await page.locator('tr:nth-child(6) > td:nth-child(4)').type('3')
+  // await page.locator('tr:nth-child(6) > td:nth-child(4)').press('ArrowDown')
+  // await page.locator('tr:nth-child(7) > td:nth-child(4)').type('2')
+  await cuerpoCamion2.locator('tr:nth-child(6) > td:nth-child(4)').type('3')
+  await cuerpoCamion2.locator('tr:nth-child(6) > td:nth-child(4)').press('ArrowDown')
+  await cuerpoCamion2.locator('tr:nth-child(7) > td:nth-child(4)').type('2')
 }
 
 async function cambiarOrdenCamiones(page, camion1, camion2) {
   await page.dragAndDrop(camion1, camion2, {
     sourcePosition: { x: 34, y: 20 },
-    targetPosition: { x: 70, y: 40 },
+    targetPosition: { x: 100, y: 40 },
   })
   expect(await page.locator(".swal2-container")).toBeVisible()
   await page.getByText('Ok').click()

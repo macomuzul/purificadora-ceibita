@@ -1,4 +1,5 @@
 <% let cantidadViajes = (tabla?.productos[0].viajes.length ?? 1); if (cantidadViajes !== 1) cantidadViajes /= 2 %>
+<%_ let normalizar = x => x.toFixed(2).replace(/[.,]00$/, "") _%>
 <table class="tablacompleta">
     <thead>
       <col><col>
@@ -17,7 +18,6 @@
       <%_ if (tabla) { _%>
         <%_ for(k=0; k < tabla.productos.length; k++) { _%>
         <%_ let producto = tabla.productos[k] _%>
-        <%_ let normalizar = x => x.toFixed(2).replace(/[.,]00$/, "") _%>
         <tr>
           <td><%= producto.nombre %></td>
           <td><%= normalizar(producto.precio) %></td>
@@ -32,9 +32,11 @@
     </tbody>
     <tfoot>
       <tr>
-        <td colspan="<%= (tabla ? (cantidadViajes*2 + 2) : 4) %>">Total:</td>
-        <td><%= tabla?.totalvendidos ?? '' %></td>
-        <td><%= tabla?.totalingresos.toFixed(2).replace(/[.,]00$/, '') ?? '' %></td>
+        <%_ if (tabla) { _%>
+          <td colspan="<%= cantidadViajes * 2 + 2 %>">Total:</td><td><%= tabla.totalvendidos %></td><td><%= normalizar(tabla.totalingresos) %></td>
+        <%_ } else { _%>
+          <td colspan="4">Total:</td><td></td><td></td>
+        <%_ } _%>
       </tr>
     </tfoot>
   </table>

@@ -1,17 +1,15 @@
-let getCaretPosition = q => getSelection().rangeCount ? getSelection().getRangeAt(0).endOffset : 0
-
 body.on("keydown", "td", function (e) {
   let cellindex = indice(this)
   let k = e.which
   let { atStart, atEnd } = k == 37 || k == 39 ? getSelectionTextInfo(this) : {}
   if (k == 37 && atStart) //flecha izquierda
-    enfocarCelda($(this).prev(), e)
+    enfocarCelda(anterior(this), e)
   else if (k == 39 && atEnd) //flecha derecha
-    enfocarCelda($(this).next(), e)
+    enfocarCelda(siguiente(this), e)
   else if (k == 38) //flecha arriba
-    indice(padre(this)) === 0 ? enfocarCelda($(this).closest("tbody").find("tr").last().find("td").eq(cellindex - 1), e) : enfocarCelda($(this).closest("tr").prev().find("td").eq(cellindex), e)
+    indice(padre(this)) === 0 ? enfocarCelda([...this.closest("tbody").rows].at(-1).cells[cellindex - 1], e) : enfocarCelda(anterior(this.closest("tr")).cells[cellindex], e)
   else if (k === 13 || k == 40) //enter y flecha abajo
-    this.closest("tr").rowIndex <= this.closest("tbody").rows.length ? enfocarCelda($(this).closest("tr").next().find("td").eq(cellindex), e) : enfocarCelda($(this).closest("tbody").find("tr").first().find("td").eq(cellindex + 1), e)
+    this.closest("tr").rowIndex <= this.closest("tbody").rows.length ? enfocarCelda(siguiente(this.closest("tr")).cells[cellindex], e) : enfocarCelda(this.closest("tbody").rows[0].cells[cellindex + 1], e)
 })
 
 let mostrarOffscreen = x => {
@@ -19,7 +17,7 @@ let mostrarOffscreen = x => {
   if ((rect.x + rect.width) > innerWidth || (rect.y + rect.height) > innerHeight) x.scrollIntoView()
 }
 
-function enfocarCelda([x], e) {
+function enfocarCelda(x, e) {
   e.preventDefault()
   if (x !== undefined && x.contentEditable) {
     x.focus()
@@ -30,45 +28,42 @@ function enfocarCelda([x], e) {
 
 
 function irAlFinalDelTexto(elem) {
+  if (elem.innerText == '') return
   let range = document.createRange()
   let sel = getSelection()
-  if (elem.innerText == "") return
   range.setStart(elem.childNodes[0], elem.innerText.length)
-  range.collapse(false)
-
   sel.removeAllRanges()
   sel.addRange(range)
 }
 
 body.on("beforeinput", "td", function (e) {
-  let letra = event.data ?? ''
+  let letra = e.originalEvent.data ?? ''
   let colindex = indice(this)
-  let texto = this.innerText
-  if (letra === '"' || letra == "\\" || letra == "'") e.preventDefault()
+  if (letra === '"' || letra == '\\' || letra == "'") e.preventDefault()
   if (isNaN(letra) && colindex != 0 && colindex != 1) e.preventDefault()
   if (colindex !== 0 && letra === " ") e.preventDefault()
 
+  let texto = this.innerText
   if (colindex == 1) {
-    let [, decimales] = texto.split(".")
-    if (isNaN(letra) && letra !== ".") e.preventDefault()
-    let dotPos = texto.indexOf(".")
-    if (dotPos > -1 && letra === ".") e.preventDefault()
-    if (getCaretPosition() > dotPos && decimales?.length >= 2 && letra != "") e.preventDefault()
+    let [, decimales] = texto.split('.')
+    if (isNaN(letra) && letra !== '.') e.preventDefault()
+    if (letra === '.' && (texto.indexOf('.') > -1 || texto.length - getSelection().baseOffset > 2)) e.preventDefault()
+    if (decimales?.length >= 2 && letra != '') e.preventDefault()
   }
 
-  if (texto === "0") this.innerText = ""
+  if (texto === "0") this.innerText = ''
 })
 
 
-body.on("beforeinput", "input", e => {
+body.on('beforeinput', 'input', e => {
   let k = e.data ?? ''
-  if (k === '"' || k == "\\" || k == '\\') e.preventDefault()
+  if (k === '"' || k == '\\') e.preventDefault()
 })
 
 
-body.on("keydown", "input", e => {
+body.on('keydown', 'input', e => {
   if (e.which === 13) {
-    let x = qs(e.target.closest("section"), "td")
+    let x = qs(e.target.closest('tab-content'), 'td')
     x.focus()
     irAlFinalDelTexto(x)
     e.preventDefault()

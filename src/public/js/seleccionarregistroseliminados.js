@@ -19,10 +19,10 @@ document.addEventListener('eventoDP', q => {
   crearDatePicker("datepickerEntre")
 })
 
-body.on("click", "#btnMasReciente", q => location = `${urlPag}masrecientes&pag=1`)
-body.on("click", "#btnMasAntiguo", q => location = `${urlPag}masantiguos&pag=1`)
+bodyOnClick("#btnMasReciente", q => location = `${urlPag}masrecientes&pag=1`)
+bodyOnClick("#btnMasAntiguo", q => location = `${urlPag}masantiguos&pag=1`)
 
-body.on("click", "#btnbuscar", () => {
+bodyOnClick("#btnbuscar", () => {
   let buscarpor = qsd("#buscarpor").innerText
   let rango = qsd("#rangofecha").innerText
   let formatear = x => qsd(x)?.value?.replaceAll("/", "-")
@@ -51,4 +51,4 @@ body.on("click", "#btnbuscar", () => {
   location = `${urlPag}${buscarpor}&${rango}&${rango === "entre" ? `${fecha1}y${fecha2}` : fecha}&pag=1`;
 })
 
-body.on("click", ".input-group-append", e => anterior(e.currentTarget).focus())
+bodyOnClick(".input-group-append", e => anterior(e.currentTarget).focus())

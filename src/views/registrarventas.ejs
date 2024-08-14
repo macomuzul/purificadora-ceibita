@@ -4,15 +4,17 @@
   <title>Registrar ventas</title>
   <%- include("layouts/global") %>
 
+  <!-- //TODO este descomentarlo despues -->
   <!-- <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
   <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
   <script defer src="/dayjs.js"></script>
+  <!-- <script defer src="/sortablejs-1.15.2.js"></script> -->
+  <script defer src="https://raw.githack.com/SortableJS/Sortable/master/Sortable.js"></script>
+  <!-- <script defer src="/jquery-ui-1.13.js"></script> -->
+  <!-- <script defer src="/touch.js"></script> -->
   <script defer src="/dayjs-plugin-utc.js"></script>
   <script defer src="/sweetalert-2.11.js"></script>
-  <!-- //TODO este descomentarlo despues -->
-  <script defer src="/jquery-ui-1.13.js"></script>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script> -->
   <script defer src="/tecladoTabla.js"></script>
   <script defer src="/spanFechas.js"></script>
   <script defer src="/botonExcel.js"></script>
@@ -21,9 +23,9 @@
   <script defer src="/radiobuttons.js"></script>
   <script defer src="/switches.js"></script>
   <script defer src="/popover.js"></script>
-  <script defer src="/tabs.js"></script>
   <script defer src="/moverRegistro.js"></script>
   <script defer src="/registrarventas.js"></script>
+  <script defer src="/tabs.js"></script>
   <script defer src="/dropdown.js"></script>
 </head>
 
@@ -38,7 +40,7 @@
             <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" />
           </svg>
         </span>
-        <div class="fecha columnas fechanum" style="display: none;"><%=fecha%></div>
+        <div class="fecha columnas fechanum" hidden><%=fecha%></div>
         <div class="fecha columnas fechastr"><%=fechastr%></div>
         <span class="columnas">
           <svg id="diasiguiente" viewBox="0 0 448 512"><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" /></svg>
@@ -46,12 +48,12 @@
       </div>
       <article>
         <custom-tabs class="grupotabs">
-          <div class="tabs"><% for (let i = 0; i < (registro?.tablas.length ?? 1); i++){ %><tab-label>Camión <%= (i+1) %></tab-label><% } %><span class="agregarcamion"><span class="mas">+</span></span></div>
+          <div class="tabs"><% for (let i = 0; i < (registro?.tablas.length ?? 1); i++){ %><tab-label>Camión <%= (i+1) %></tab-label><% } %><span class="añadirCamion"><span class="mas">+</span></span></div>
           <div class="contenedorsuperior">
             <button class="configuraciones" data-bs-toggle="modal" data-bs-target="#configs"><svg fill="#ddd" width="30px" height="30px" viewBox="0 0 93.5 93.5"><g><path d="M93.5,40.899c0-2.453-1.995-4.447-4.448-4.447H81.98c-0.74-2.545-1.756-5.001-3.035-7.331l4.998-5    c0.826-0.827,1.303-1.973,1.303-3.146c0-1.19-0.462-2.306-1.303-3.146L75.67,9.555c-1.613-1.615-4.673-1.618-6.29,0l-5,5    c-2.327-1.28-4.786-2.296-7.332-3.037v-7.07C57.048,1.995,55.053,0,52.602,0H40.899c-2.453,0-4.447,1.995-4.447,4.448v7.071    c-2.546,0.741-5.005,1.757-7.333,3.037l-5-5c-1.68-1.679-4.609-1.679-6.288,0L9.555,17.83c-1.734,1.734-1.734,4.555,0,6.289    l4.999,5c-1.279,2.33-2.295,4.788-3.036,7.333h-7.07C1.995,36.452,0,38.447,0,40.899V52.6c0,2.453,1.995,4.447,4.448,4.447h7.071    c0.74,2.545,1.757,5.003,3.036,7.332l-4.998,4.999c-0.827,0.827-1.303,1.974-1.303,3.146c0,1.189,0.462,2.307,1.302,3.146    l8.274,8.273c1.614,1.615,4.674,1.619,6.29,0l5-5c2.328,1.279,4.786,2.297,7.333,3.037v7.071c0,2.453,1.995,4.448,4.447,4.448    h11.702c2.453,0,4.446-1.995,4.446-4.448V81.98c2.546-0.74,5.005-1.756,7.332-3.037l5,5c1.681,1.68,4.608,1.68,6.288,0    l8.275-8.273c1.734-1.734,1.734-4.555,0-6.289l-4.998-5.001c1.279-2.329,2.295-4.787,3.035-7.332h7.071    c2.453,0,4.448-1.995,4.448-4.446V40.899z M62.947,46.75c0,8.932-7.266,16.197-16.197,16.197c-8.931,0-16.197-7.266-16.197-16.197    c0-8.931,7.266-16.197,16.197-16.197C55.682,30.553,62.947,37.819,62.947,46.75z"/></g></svg> Configuraciones</button>
             <boton-excel id="exportarexcel"></boton-excel>
             <boton-pdf id="exportarpdf"></boton-pdf>
-            <div class="contenedorrestaurar restaurarsoloestatabla restaurarplantilla">
+            <div class="contenedorrestaurar restaurarsoloestatabla restaurarplantilla" hidden>
               <div class="centrar">
                 <svg class="svgrestaurar" viewBox="0 0 512 512"><path d="M32.5 224H24c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L82.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L169 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H32.5z"/></svg>
                 <span>Restaurar orden de la plantilla</span>
@@ -69,19 +71,19 @@
               <%_ let tabla _%>
               <%_ if (registro) { tabla = registro.tablas[j] } _%>
               <tab-content>
-                  <div class="contenedor-trabajador">
-                    <label class="label-trabajador">Nombre del conductor:</label>
-                    <div class="contenedor-input-trabajador">
-                      <input type="text" class="form-control trabajador"
-                      <% if (registro) { %> value="<%= tabla.trabajador %>"<% } %>/>
-                      <div class="btn-group dropend">
-                        <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
-                        <ul class="dropdown-menu dropdown-menu-dark"><% camioneros?.forEach(camionero => { %><li class="dropdown-item"><%= camionero %></li><% }) %></ul>
-                      </div>
+                <div class="contenedor-trabajador">
+                  <label class="label-trabajador">Nombre del conductor:</label>
+                  <div class="contenedor-input-trabajador">
+                    <input type="text" class="form-control trabajador"
+                    <% if (registro) { %> value="<%= tabla.trabajador %>"<% } %>/>
+                    <div class="btn-group dropend">
+                      <button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown"></button>
+                      <ul class="dropdown-menu dropdown-menu-dark"><% camioneros?.forEach(camionero => { %><li class="dropdown-item"><%= camionero %></li><% }) %></ul>
                     </div>
-                    <custom-popover data-alineacion="middle">Ahora puedes seleccionar al conductor presionando el botón con flecha hacia abajo de al lado</custom-popover>
                   </div>
-                  <%- include("layouts/tablacompleta", {tabla, plantillaDefault}) %>
+                  <custom-popover data-alineacion="middle">Ahora puedes seleccionar al conductor presionando el botón con flecha hacia abajo de al lado</custom-popover>
+                </div>
+                <%- include("layouts/tablacompleta", {tabla, plantillaDefault}) %>
               </tab-content>
               <%_ } _%>
             </div>
@@ -125,7 +127,7 @@
             <hr>
             <div class="grupomodal">Cambiar orden <custom-popover>La primera opción te permite mover el orden de los camiones arrastrando las pestañas que dicen Camión 1, Camión 2, Camión 3, etc.<br><br>La segunda opción te permite cambiar el orden en el que aparecen los productos en la tabla<br><b>Importante:</b><br>No puedes escribir en la tabla mientras esta opción está activa, para poder volver a escribir desactiva esta opción primero</custom-popover></div>
             <hr>
-            <custom-switch data-id="switchreordenarproductos">Cambiar el orden de los productos de las tablas</custom-switch>
+            <custom-switch data-id="switchreordenarproductos" data-checked="1">Cambiar el orden de los productos de las tablas</custom-switch>
             <custom-switch data-id="switchreordenarcamiones" data-checked="1">Cambiar el orden de los camiones</custom-switch>
           </article>
           <hr>

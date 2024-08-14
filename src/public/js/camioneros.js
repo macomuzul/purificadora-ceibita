@@ -75,7 +75,7 @@ qsclickd('#guardar', async q => {
   })
 })
 
-body.on('click', '.botoneliminar', async function () {
+bodyOnClick('.botoneliminar', async function () {
   if (qsd('#switchModoSeguro').checked) {
     let html = `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${this.closest('tr').cells[0].innerText}</span>`
     let { isConfirmed } = await swalConfirmarYCancelar.fire({

@@ -25,7 +25,7 @@ class graficos extends HTMLElement {
     </article>
     <div class="contenedorAbajoDeLosDatos">
     <div class="gridBotonesTamaño"><button class="btnTamaño aumentar">+</i></button><button class="btnTamaño disminuir">-</i>
-    <button class="btnTamaño restaurarTamaño">Restaurar</i></button><span class="textoTamaño">Tamaño</span></div>
+    <button class="btnTamaño restaurarTamaño" hidden>Restaurar</i></button><span class="textoTamaño">Tamaño</span></div>
     <boton-azul class="uneOSeparaDatos">Unifica los datos <svg fill="#FFF" width="30px" height="30px" viewBox="0 0 20 20" style="transform: rotate(90deg);"><path d="M17.89 17.707L16.892 20c-3.137-1.366-5.496-3.152-6.892-5.275-1.396 2.123-3.755 3.91-6.892 5.275l-.998-2.293C5.14 16.389 8.55 14.102 8.55 10V7H5.5L10 0l4.5 7h-3.05v3c0 4.102 3.41 6.389 6.44 7.707z"/></svg></boton-azul>
     </div>
     <div class="contenedorEliminarData">
@@ -33,11 +33,8 @@ class graficos extends HTMLElement {
     ${popover(`La eliminación de data usando este método es temporal, la próxima vez que actualices volverá a aparecer, si no quieres que aparezcan quítalos desde las opciones del gráfico. <br><strong>Importante: </strong> borra los datos en base a las etiquetas que están abajo de los datos. Si solo hay una etiqueta borrará todos los datos en esa etiqueta (no te preocupes los datos no se pierden) solo presiona restaurar datos o actualizar y volverán a aparecer`)}
     </div>
     <div class="restaurarDataEliminada" hidden><boton-azul>Restaurar datos borrados</boton-azul></div>`
-    this.html += html
-
-    this.innerHTML = this.html
+    añadirHTML(this, html)
     this.canvas = qs(this, 'canvas')
-    this.$chart = this.canvas.getContext('2d')
     this.metodosOpcionesGrafico()
     this.metodosBotonesGrafico()
     this.metodosBotonesAbajo()
@@ -47,61 +44,11 @@ class graficos extends HTMLElement {
   metodosBotonesAbajo() {
     this.contenedorCanvas = qs(this, '.contenedorCanvas')
     this.restaurarTamaño = qs(this, '.restaurarTamaño')
-    $(this).on('click', '.btnTamaño.aumentar', () => {
-      let [longitud] = this.style.width.split('px')
-      let [altura] = this.contenedorCanvas.style.height.split('px')
-      this.style.width = (parseInt(longitud) || 1179) + 500 + 'px'
-      this.contenedorCanvas.style.height = (parseInt(altura) || 589) + 250 + 'px'
-      this.restaurarTamaño.hidden = false
-    })
-    $(this).on('click', '.btnTamaño.disminuir', () => {
-      let [longitud] = this.style.width.split('px')
-      let [altura] = this.contenedorCanvas.style.height.split('px')
-      longitud = parseInt(longitud) || 1179
-      if (longitud <= 1179) return
-      this.style.width = longitud - 500 + 'px'
-      this.contenedorCanvas.style.height = (parseInt(altura) || 589) - 250 + 'px'
-      if (longitud <= 1679) this.restaurarTamaño.hidden = true
-    })
-    $(this).on('click', '.restaurarTamaño', () => {
-      this.style.width = '1179px'
-      this.contenedorCanvas.style.height = '589px'
-      this.restaurarTamaño.hidden = true
-    })
-    $(this).on('click', '.uneOSeparaDatos', e => {
-      let textoAnterior = e.currentTarget.innerHTML
-      e.currentTarget.innerHTML = this.uneOSeparaDatosTexto || 'Separa los datos <svg width="30px" height="30px" viewBox="0 0 16 16" style="transform: rotate(-90deg);"><path fill="#FFF" d="M14 13v-1c0-0.2 0-4.1-2.8-5.4-2.2-1-2.2-3.5-2.2-3.6v-3h-2v3c0 0.1 0 2.6-2.2 3.6-2.8 1.3-2.8 5.2-2.8 5.4v1h-2l3 3 3-3h-2v-1c0 0 0-2.8 1.7-3.6 1.1-0.5 1.8-1.3 2.3-2 0.5 0.8 1.2 1.5 2.3 2 1.7 0.8 1.7 3.6 1.7 3.6v1h-2l3 3 3-3h-2z"/></svg>'
-      this.uneOSeparaDatosTexto = textoAnterior
-      this.multiple = !this.multiple
-      this.actualizarDatos()
-      qsd(this, '.contenedortabla').scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' })
-    })
   }
 
   metodosBotonesGrafico() {
-    $(this).on('click', '.convertira', () => {
-      $(this).find('.articleGrafico').toggle()
-      $(this).find('.articleTabla').toggle()
-      $(this).find('.gridBotonesTamaño').toggle()
-      $(this).find('.contenedorEliminarData').toggle()
-      $(this).find('.contenedorEscalas').toggle()
-      $(this).find('.contenedorColoresDeLosGrafios').toggle()
-      if (this.chartVisible) {
-        this.actualizarTabla(this.datasetsActuales, this.labelsActuales)
-        qs(this, '.actualizarGrafico').innerText = 'Actualizar tabla'
-        qs(this, '.acordeonPrincipal > .headeracordeon .tituloProductos').innerText = 'Opciones de la tabla'
-        qs(this, '.camioneros label').innerText = 'Poner en la tabla'
-      } else {
-        this.actualizarChart(this.datasetsActuales, this.labelsActuales)
-        qs(this, '.actualizarGrafico').innerText = 'Actualizar gráfico'
-        qs(this, '.acordeonPrincipal > .headeracordeon .tituloProductos').innerText = 'Opciones del gráfico'
-        qs(this, '.camioneros label').innerText = 'Poner en el gráfico'
-      }
-      $(this).find('.convertira')[this.chartVisible ? 1 : 0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
-      this.chartVisible = !this.chartVisible
-    })
-    $(this).on('click', '.articleGrafico .botonpdf', e => e.currentTarget.exportarGrafico(this.canvas, this.titulo))
-    $(this).on('click', '.eliminarDataGrafico', e => {
+    elOnClick(this, '.articleGrafico .botonpdf', e => e.currentTarget.exportarGrafico(this.canvas, this.titulo))
+    elOnClick(this, '.eliminarDataGrafico', e => {
       this.chart.options.onClick = qs(e.currentTarget, 'input').checked
         ? () => { }
         : (event, activeElements) => {
@@ -112,11 +59,11 @@ class graficos extends HTMLElement {
             datasets.forEach(x => x.data.splice(selectedIndex, 1))
             labels.splice(selectedIndex, 1)
             this.actualizarChart(datasets, labels)
-            $(this.restaurarDataEliminada).show()
+            mostrar(this.restaurarDataEliminada)
           }
         }
     })
-    $(this).on('click', '.dropdown-item', e => {
+    elOnClick(this, '.dropdown-item', e => {
       let texto = e.currentTarget.innerText
       e.currentTarget.closest('.dropdown-menu').previousElementSibling.innerText = texto
       const graficos = {
@@ -138,7 +85,7 @@ class graficos extends HTMLElement {
   }
 
   metodosBotonesTabla() {
-    $(this).find('.botonpdf')[1].inicializar(() => {
+    qsa(this, '.botonpdf')[1].inicializar(() => {
       let contenedor = qs(this, '.contenedortabla')
       let contenedorClon = clonar(contenedor)
       contenedorClon.style.width = qs(contenedor, 'table').offsetWidth + 'px'
@@ -173,8 +120,8 @@ class graficos extends HTMLElement {
   }
 
   colocarColores(contenedorColores, checkboxes, datasets) {
-    let colores = [...contenedorColores.find("[type='color']")].filter((_, i) => checkboxes[i]).map(el => el.value)
-    if (this.multiple && contenedorColores[0].classList.contains('graficoDias')) {
+    let colores = [...qsa(contenedorColores, "[type='color']")].filter((_, i) => checkboxes[i]).map(el => el.value)
+    if (this.multiple && contenedorColores.classList.contains('graficoDias')) {
       let coloresAlfa = colores.map(x => x + '20')
       datasets.forEach((x, i) => {
         x.borderColor = colores[i]
@@ -304,20 +251,16 @@ class graficos extends HTMLElement {
     chart.data.labels = labels
     chart.data.datasets = datasets
     chart.update()
-    $(this.restaurarDataEliminada).hide()
+    esconder(this.restaurarDataEliminada)
   }
 
   opcionHTMLColores(datos, arriba) {
     return `<div class="camioneros ${arriba ? 'graficoDias' : 'graficoProductos'}">
-    ${datos
-        .map(
-          (el, i) => `<div class="camionero">
+    ${datos.map((el, i) => `<div class="camionero">
     <div class="contenedor-color"><input type="color" value="${colores[i]}"></div>
       ${checkbox('Poner en el gráfico', 1)}
     <div class="nombreCamionero">${arriba ? el.label : el}</div>
-    </div>`
-        )
-        .join('')}</div>
+    </div>`).join('')}</div>
   <div class="contenedorabajo botonreset ${arriba ? 'resetdias' : 'resetproductos'}">
   <div class="seleccionarTodos">${checkbox('Seleccionar todos los elementos', 1)}${popover('Permite seleccionar o remover todos los elementos')}</div>
   <boton-azul>Resetear los colores a los valores de default</boton-azul></div>`
@@ -342,13 +285,10 @@ class graficos extends HTMLElement {
     </custom-radiogroup></div>
     </div>
 
-    ${UTDiaOSemana
-        ? `<div class="tituloopciones">Cambiar formato de la fecha</div>
+    ${UTDiaOSemana ? `<div class="tituloopciones">Cambiar formato de la fecha</div>
     <hr><div class="contenedoropcion"><custom-radiogroup class="graficoFechaOpcion" id="fechaRadioButton${contador}">
     ${this.radiobutton('fecha1', 'Usar formato: "Lunes, 1 de enero de 2023"') + this.radiobutton('fecha2', 'Usar formato: "1 de enero de 2023"', 1) + this.radiobutton('fecha3', 'Usar formato: "1/1/2023"')}
-    </custom-radiogroup></div>`
-        : ''
-      }
+    </custom-radiogroup></div>` : '' }
 
     <div class="tituloopciones">Ordenar los datos por ${popover(`Las opciones de ordenar por ${this.devuelveSonIngresos()} de mayor a menor y  ${this.devuelveSonIngresos()} de menor a mayor suma todos los datos y luego los ordena de mayor a menor`)}</div>
     <hr><div class="contenedoropcion"><custom-radiogroup class="ordenarOpcion" id="ordenarRadioButton${contador}">
@@ -373,19 +313,11 @@ class graficos extends HTMLElement {
   }
 
   metodosOpcionesGrafico() {
-    this.graficoDias = $(this).find('.graficoDias')
-    this.tablaDias = $(this).find('.tablaDias')
-    this.graficoProductos = $(this).find('.graficoProductos')
-    this.tablaProductos = $(this).find('.tablaProductos')
-    this.graficoFechaOpcion = $(this).find('.graficoFechaOpcion')
-    this.tablaFechaOpcion = $(this).find('.tablaFechaOpcion')
-    this.restaurarDataEliminada = $(this).find('.restaurarDataEliminada')
-    if (this.multiple) $(this).on('click', '.resetdias button', async () => await this.resetearColores(this.graficoDias))
-    $(this).on('click', '.resetproductos button', async () => await this.resetearColores(this.graficoProductos))
-    $(this).on('click', '.actualizarGrafico', () => this.actualizarDatos())
-    $(this).on('click', '.actualizarTabla', () => this.actualizarTabla())
-    $(this).on('click', '.restaurarDataEliminada', () => this.actualizarDatos())
-    $(this).on('click', '.seleccionarTodos', e => $(e.currentTarget).closest('.accordion-body').find('.camioneros input').prop('checked', !qs(e.currentTarget, 'input').checked))
+    this.graficoDias = qs(this, '.graficoDias')
+    this.graficoProductos = qs(this, '.graficoProductos')
+    this.graficoFechaOpcion = qs(this, '.graficoFechaOpcion')
+    this.restaurarDataEliminada = qs(this, '.restaurarDataEliminada')
+    if (this.multiple) elOnClick(this, '.resetdias button', async () => await this.resetearColores(this.graficoDias))
   }
 
   async resetearColores(el) {
@@ -413,7 +345,7 @@ class graficos extends HTMLElement {
 
   colocarDatos() {
     let { labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, type } = this
-    this.chart = new Chart(this.$chart, {
+    this.chart = new Chart(this.canvas.getContext('2d'), {
       type,
       data: { labels, datasets },
       options: {
@@ -445,31 +377,34 @@ class graficos extends HTMLElement {
     if (type === 'radar') this.chart.options.scales.r.ticks.backdropColor = 'transparent'
   }
 }
+
 function getOrCreateTooltip(chart) {
-  let tooltipEl = qs(padre(chart.canvas), 'div')
-  if (!tooltipEl) {
-    añadirHTML(padre(chart.canvas), `<div style="background: rgba(0, 0, 0, 0.7); border-radius: 3px; color: white; opacity: 1; pointer-events: none; position: absolute; transform: translate(-50%, 0px); transition: all 0.1s ease 0s;"></div>`)
-    tooltipEl = qs(padre(chart.canvas), 'div')
+  let padreCanvas = padre(chart.canvas)
+  if (!chart.tooltipEl) {
+    añadirHTML(padreCanvas, `<div style="background: rgba(0, 0, 0, 0.7); border-radius: 3px; color: white; opacity: 1; pointer-events: none; position: absolute; transform: translate(-50%, 0px); transition: all 0.1s ease 0s;"></div>`)
+    chart.tooltipEl = qs(padreCanvas, 'div')
   }
-  return tooltipEl
 }
 
+
 function externalTooltipHandler(context) {
-  const { chart, tooltip } = context
-  const tooltipEl = getOrCreateTooltip(chart)
-  if (tooltip.opacity === 0) return (tooltipEl.style.opacity = 0)
+  let { chart, tooltip } = context
+  getOrCreateTooltip(chart)
+  let tooltipEl = chart.tooltipEl
+  let estilo = tooltipEl.style
+  if (tooltip.opacity === 0) return (estilo.opacity = 0)
   if (tooltip.body) {
     cambiarHTML(tooltipEl, `<div style="font-size: 14px;">${(tooltip.title || []).map((title, i) => `<span style="background: ${tooltip.labelColors[i].backgroundColor.slice(0, -2) + '40'}; border: 1px solid ${tooltip.labelColors[i].borderColor}; margin-right: 5px; height: 10px; width: 10px; display: inline-block;"></span>${title}`).join('')}</div>
     ${tooltip.body.map(b => b.lines).map(body => body.map(x => `<div style="font-size: 14px;">${x}</div>`).join('')).join('')}`)
   }
 
-  const { offsetLeft, offsetTop } = chart.canvas
-  tooltipEl.style.opacity = 1
+  let { offsetLeft, offsetTop } = chart.canvas
+  estilo.opacity = 1
   let long = tooltipEl.getBoundingClientRect().width / 2 + 5
-  tooltipEl.style.left = offsetLeft + tooltip.caretX + (tooltip.caretX > chart.width / 2 ? -long : long) + 'px'
-  tooltipEl.style.top = offsetTop + tooltip.caretY + 'px'
-  tooltipEl.style.font = tooltip.options.bodyFont.string
-  tooltipEl.style.padding = '5px 10px 7px'
+  estilo.left = offsetLeft + tooltip.caretX + (tooltip.caretX > chart.width / 2 ? -long : long) + 'px'
+  estilo.top = offsetTop + tooltip.caretY + 'px'
+  estilo.font = tooltip.options.bodyFont.string
+  estilo.padding = '5px 10px 7px'
 }
 
 customElements.define('custom-graficos', graficos)
@@ -489,3 +424,73 @@ class resumenDatos extends HTMLElement {
 }
 
 customElements.define('resumen-datos', resumenDatos)
+
+let graficoCercano = c => c.closest('custom-graficos')
+bodyOnClick('.resetproductos button', async c => await graficoCercano(c).resetearColores(c.graficoProductos))
+bodyOnClick('.actualizarGrafico', c => graficoCercano(c).actualizarDatos())
+bodyOnClick('.actualizarTabla', c => graficoCercano(c).actualizarTabla())
+bodyOnClick('.restaurarDataEliminada', c => graficoCercano(c).actualizarDatos())
+
+bodyOnClick('.seleccionarTodos custom-checkbox', c => {
+  let checkeado = qs(c, 'input').checked
+  qsaforeach(c.closest('.accordion-body'), '.camionero custom-checkbox input', x => x.checked = e.target.matches('input') ? checkeado : !checkeado)
+})
+
+bodyOnClick('.restaurarTamaño', c => {
+  let g = graficoCercano(c)
+  g.style.width = '1179px'
+  g.contenedorCanvas.style.height = '589px'
+  esconder(g.restaurarTamaño)
+})
+
+bodyOnClick('.uneOSeparaDatos', c => {
+  let g = graficoCercano(c)
+  let textoAnterior = c.innerHTML
+  c.innerHTML = g.uneOSeparaDatosTexto || 'Separa los datos <svg width="30px" height="30px" viewBox="0 0 16 16" style="transform: rotate(-90deg);"><path fill="#FFF" d="M14 13v-1c0-0.2 0-4.1-2.8-5.4-2.2-1-2.2-3.5-2.2-3.6v-3h-2v3c0 0.1 0 2.6-2.2 3.6-2.8 1.3-2.8 5.2-2.8 5.4v1h-2l3 3 3-3h-2v-1c0 0 0-2.8 1.7-3.6 1.1-0.5 1.8-1.3 2.3-2 0.5 0.8 1.2 1.5 2.3 2 1.7 0.8 1.7 3.6 1.7 3.6v1h-2l3 3 3-3h-2z"/></svg>'
+  g.uneOSeparaDatosTexto = textoAnterior
+  g.multiple = !g.multiple
+  g.actualizarDatos()
+  qs(g, '.contenedortabla').scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' })
+})
+
+bodyOnClick('.btnTamaño.aumentar', c => {
+  let g = graficoCercano(c)
+  let [longitud] = g.style.width.split('px')
+  let [altura] = g.contenedorCanvas.style.height.split('px')
+  g.style.width = (parseInt(longitud) || 1179) + 500 + 'px'
+  g.contenedorCanvas.style.height = (parseInt(altura) || 589) + 250 + 'px'
+  mostrar(g.restaurarTamaño)
+})
+bodyOnClick('.btnTamaño.disminuir', c => {
+  let g = graficoCercano(c)
+  let [longitud] = g.style.width.split('px')
+  let [altura] = g.contenedorCanvas.style.height.split('px')
+  longitud = parseInt(longitud) || 1179
+  if (longitud <= 1179) return
+  g.style.width = longitud - 500 + 'px'
+  g.contenedorCanvas.style.height = (parseInt(altura) || 589) - 250 + 'px'
+  if (longitud <= 1679) esconder(g.restaurarTamaño)
+})
+
+bodyOnClick('.convertira', () => {
+  let g = graficoCercano(c)
+  alternar(qs(g, '.articleGrafico'))
+  alternar(qs(g, '.articleTabla'))
+  alternar(qs(g, '.gridBotonesTamaño'))
+  alternar(qs(g, '.contenedorEliminarData'))
+  alternar(qs(g, '.contenedorEscalas'))
+  alternar(qs(g, '.contenedorColoresDeLosGrafios'))
+  if (g.chartVisible) {
+    g.actualizarTabla(g.datasetsActuales, g.labelsActuales)
+    qs(g, '.actualizarGrafico').innerText = 'Actualizar tabla'
+    qs(g, '.acordeonPrincipal > .headeracordeon .tituloProductos').innerText = 'Opciones de la tabla'
+    qs(g, '.camioneros label').innerText = 'Poner en la tabla'
+  } else {
+    g.actualizarChart(g.datasetsActuales, g.labelsActuales)
+    qs(g, '.actualizarGrafico').innerText = 'Actualizar gráfico'
+    qs(g, '.acordeonPrincipal > .headeracordeon .tituloProductos').innerText = 'Opciones del gráfico'
+    qs(g, '.camioneros label').innerText = 'Poner en el gráfico'
+  }
+  qsa(g, '.convertira')[g.chartVisible ? 1 : 0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+  g.chartVisible = !g.chartVisible
+})

@@ -29,7 +29,7 @@ function devuelveTabla(article) {
   return { html, fecha: qs(article, `.fecharegistro .spanFechaStr`).innerText, fechaDate: new Date(qs(article, 'span-fechas').dataset.fecha) }
 }
 
-body.on('click', '.btnrestaurar', async function (e) {
+bodyOnClick('.btnrestaurar', async function (e) {
   let registro = this.closest('article')
   let id = registro.getAttribute('name')
   let { html, fecha, fechaDate } = devuelveTabla(registro)
@@ -48,7 +48,7 @@ body.on('click', '.btnrestaurar', async function (e) {
   else if (dismiss === 'cancel') await moverReg(id, url)
 })
 
-body.on('click', '.btneliminar', async function (e) {
+bodyOnClick('.btneliminar', async function (e) {
   let registro = this.closest('article')
   let { html, fecha } = devuelveTabla(registro)
 
@@ -83,7 +83,7 @@ body.on('click', '.btneliminar', async function (e) {
 //   }
 // })
 
-body.on('click', '.eliminartodos', async e => {
+bodyOnClick('.eliminartodos', async e => {
   let regs = JSON.stringify({ registros: qsarrd('.check:checked').map(el => el.closest('article').getAttribute('name')) })
   if (await swalSíNo('Estás seguro que deseas borrar los registros seleccionados?', null, null)) borrarRegistros(regs, 'Se han borrado correctamente todos los registros seleccionados')
 })

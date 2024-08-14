@@ -3,10 +3,13 @@ class cCustomCheckbox extends HTMLElement {
     let { checked, clase, id } = this.dataset
     this.className = `form-check form-check-inline ${clase ?? ""}`
     this.style.userSelect = "none"
-    this.innerHTML = `<input class="form-check-input" id="${id}" type="checkbox" ${checked ? "checked" : ""}><label class="form-check-label">${this.innerHTML}</label>`
+    this.innerHTML = `<input class="form-check-input" ${id ? `id="${id}"` : ""} type="checkbox" ${checked ? "checked" : ""}><label class="form-check-label">${this.innerHTML}</label>`
   }
 }
 
-body.on("click", "custom-checkbox", e => $(e.currentTarget).find("input").prop("checked", (_, val) => e.target.matches("input") ? val : !val))
+bodyOnClick("custom-checkbox", (c, e) => {
+  let input = qs(c, 'input')
+  if(!e.target.matches("input")) input.checked = !input.checked
+})
 
 customElements.define("custom-checkbox", cCustomCheckbox)

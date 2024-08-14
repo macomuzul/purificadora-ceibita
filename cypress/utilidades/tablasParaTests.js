@@ -1,4 +1,4 @@
-let tablaNormal = `<table>
+let tablaNormal = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -69,7 +69,7 @@ let tablaNormal = `<table>
 </tfoot>
 </table>`
 
-export let tablaAñadirProductos = `<table>
+export let tablaAñadirProductos = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -148,7 +148,7 @@ export let tablaAñadirProductos = `<table>
 </tfoot>
 </table>`
 
-export let tablaAñadirViajes = `<table>
+export let tablaAñadirViajes = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -229,7 +229,7 @@ export let tablaAñadirViajes = `<table>
 </tfoot>
 </table>`
 
-export let tablaValidarProductos = `<table>
+export let tablaValidarProductos = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -300,7 +300,7 @@ export let tablaValidarProductos = `<table>
 </tfoot>
 </table>`
 
-export let tablaValidarVariosProductos = `<table>
+export let tablaValidarVariosProductos = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -371,7 +371,7 @@ export let tablaValidarVariosProductos = `<table>
 </tfoot>
 </table>`
 
-export let tablaValidarPrecios = `<table>
+export let tablaValidarPrecios = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -442,7 +442,7 @@ export let tablaValidarPrecios = `<table>
 </tfoot>
 </table>`
 
-export let tablaValidarVariosPrecios = `<table>
+export let tablaValidarVariosPrecios = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -513,7 +513,7 @@ export let tablaValidarVariosPrecios = `<table>
 </tfoot>
 </table>`
 
-export let tablaValidarPreciosYProductosUnaVez = `<table>
+export let tablaValidarPreciosYProductosUnaVez = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -584,7 +584,7 @@ export let tablaValidarPreciosYProductosUnaVez = `<table>
 </tfoot>
 </table>`
 
-export let tablaAñadeCeros = `<table>
+export let tablaAñadeCeros = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -655,7 +655,7 @@ export let tablaAñadeCeros = `<table>
 </tfoot>
 </table>`
 
-export let tablaEntraMasDeLoQueSale = `<table>
+export let tablaEntraMasDeLoQueSale = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -726,7 +726,7 @@ export let tablaEntraMasDeLoQueSale = `<table>
 </tfoot>
 </table>`
 
-export let tablaBorrarFilasVacias1 = `<table>
+export let tablaBorrarFilasVacias1 = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -773,10 +773,10 @@ export let tablaBorrarFilasVacias1 = `<table>
 </tfoot>
 </table>`
 
-export let tablaBorrarFilasVacias2 = `<table><thead></thead><colgroup><col><col></colgroup><colgroupclass="pintarcolumnas"><colspan="2"></colgroup><colgroup><col><col></colgroup><tbody><tr><throwspan="2"class="prod">Productos</th><throwspan="2"class="tr">Precio</th><thcolspan="2"class="borrarcolumnas">ViajeNo.1</th><throwspan="2"class="trcolumnaVendidos">Vendidos</th><throwspan="2"class="tr">Ingresos</th></tr><trclass="saleYEntra"><th>Sale</th><th>Entra</th></tr></tbody><tbodyclass="cuerpo"><tr><tdcontenteditable="true">garrafón2</td><tdcontenteditable="true">10</td><tdcontenteditable="true">99</td><tdcontenteditable="true">3</td><td>96</td><tdclass="borrarfilas">960</td></tr><tr><tdcontenteditable="true">boopi</td><tdcontenteditable="true">25</td><tdcontenteditable="true">3</td><tdcontenteditable="true">2</td><td>1</td><tdclass="borrarfilas">25</td></tr></tbody><tfoot><tr><tdcolspan="4">Total:</td><td>97</td><td>985</td></tr></tfoot></table>`
+export let tablaBorrarFilasVacias2 = `<table class="tablacompleta"><thead></thead><colgroup><col><col></colgroup><colgroupclass="pintarcolumnas"><colspan="2"></colgroup><colgroup><col><col></colgroup><tbody><tr><throwspan="2"class="prod">Productos</th><throwspan="2"class="tr">Precio</th><thcolspan="2"class="borrarcolumnas">ViajeNo.1</th><throwspan="2"class="trcolumnaVendidos">Vendidos</th><throwspan="2"class="tr">Ingresos</th></tr><trclass="saleYEntra"><th>Sale</th><th>Entra</th></tr></tbody><tbodyclass="cuerpo"><tr><tdcontenteditable="true">garrafón2</td><tdcontenteditable="true">10</td><tdcontenteditable="true">99</td><tdcontenteditable="true">3</td><td>96</td><tdclass="borrarfilas">960</td></tr><tr><tdcontenteditable="true">boopi</td><tdcontenteditable="true">25</td><tdcontenteditable="true">3</td><tdcontenteditable="true">2</td><td>1</td><tdclass="borrarfilas">25</td></tr></tbody><tfoot><tr><tdcolspan="4">Total:</td><td>97</td><td>985</td></tr></tfoot></table>`
 
 
-export let tablaBorrarFilasTotalmenteVacias = `<table>
+export let tablaBorrarFilasTotalmenteVacias = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">
@@ -847,7 +847,7 @@ export let tablaBorrarFilasTotalmenteVacias = `<table>
 </tfoot>
 </table>`
 
-export let tablaNormalAbajo = `<table>
+export let tablaNormalAbajo = `<table class="tablacompleta">
 <thead></thead>
 <colgroup><col><col></colgroup>
   <colgroup class="pintarcolumnas">

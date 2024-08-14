@@ -7,7 +7,7 @@ global.testingRegistrarVentas = router => {
       "__v": 0,
       "tablas": [
         {
-          "trabajador": "",
+          "trabajador": "fdf",
           "productos": [
             {
               "nombre": "garrafón2",

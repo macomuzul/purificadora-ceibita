@@ -1,7 +1,7 @@
 let usuario, contraseña, confirmarContraseña, rol, correo
 toastr.options.positionClass = "toast-bottom-right"
 
-body.on('click', '.dropdown-item', function () {
+bodyOnClick('.dropdown-item', function () {
   anterior(this.closest(".dropdown-menu")).innerText = this.innerText
 })
 
@@ -19,7 +19,7 @@ function mostrarError(error) {
 }
 
 let c = qsd("#correo")
-body.on('click', '#guardar', async function () {
+bodyOnClick('#guardar', async function () {
   [usuario, contraseña, confirmarContraseña, correo] = ["#usuario", "#contraseña", "#confirmarContraseña", "#correo"].map(id => $(id).val((_, x) => x = x.trim()).val())
   rol = qsd("#rol").innerText
   if (!await validarDatos()) return

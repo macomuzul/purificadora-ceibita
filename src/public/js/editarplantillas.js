@@ -1,6 +1,6 @@
 let nombrePlantillaURL = location.pathname.split("/").at(-1)
 
-$(".contenedoreliminar").on('click', async function () {
+bodyOnClick(".contenedoreliminar", async e => {
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     icon: "warning",
     text: "Estas seguro que deseas borrar esta plantilla?",
@@ -22,7 +22,7 @@ $(".contenedoreliminar").on('click', async function () {
   }
 })
 
-body.on('click', "#guardar", async function () {
+bodyOnClick("#guardar", async e => {
   if (!await validarPlantillas()) return
   let nombre = qsd("#nombreplantilla").value
   let data = JSON.stringify({ nombre, productos: qsarrd("tbody tr").map(x => ({ producto: x.cells[0].innerText, precio: parseFloat(x.cells[1].innerText) })) })

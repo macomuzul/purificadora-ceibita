@@ -121,9 +121,9 @@ qsclickd("#btnEntre", q => {
   crearCal("Entre")
 })
 
-body.on('click', ".tituloregistro custom-checkbox", e => qs(e.currentTarget.closest("cuadro-respaldos", "custom-input input").disabled = !qs(e.currentTarget, "input").checked))
-body.on('click', ".botonvolver", crearContenidoOpciones)
-body.on('click', ".opcionesradiobutton custom-radiobutton input", crearContenidoOpciones)
+bodyOnClick(".tituloregistro custom-checkbox", e => qs(e.currentTarget.closest("cuadro-respaldos", "custom-input input").disabled = !qs(e.currentTarget, "input").checked))
+bodyOnClick(".botonvolver", crearContenidoOpciones)
+bodyOnClick(".opcionesradiobutton custom-radiobutton input", crearContenidoOpciones)
 
 let guardando = false
 qsclickd("#btnguardar", async function () {
@@ -266,7 +266,7 @@ class cuadroRespaldos extends HTMLElement {
     contador++
     this.titulo = titulo
     let modal = new bootstrap.Modal(qs(this, ".modal"))
-    $(this).on("click", ".opcionesextra", e => {
+    elOnClick(this, ".opcionesextra", q => {
       if (!qs(this, ".tituloregistro input").checked) return Swal.fire("Atención", "El registro a guardar está deshabilitado. Por favor habilítalo para seleccionar qué información mandar", "warning")
       seleccionado = this
       c = $(seleccionado).find(".contenidoOpciones")

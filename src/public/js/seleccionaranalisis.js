@@ -92,7 +92,7 @@ function cambiarRango(opcion){
 
 $('#rangomenu').on('click', w => metododropdown = cambiarRango)
 $('#agruparmenu').on('click', w => { metododropdown = (opcion) => agruparPor = opcion.dataset.agrupar })
-body.on('click', '.dia', e => rehacerDatepicker('dias'))
+bodyOnClick('.dia', e => rehacerDatepicker('dias'))
 
 function tercerNivel() {
   unidadTiempo = 'dias'
@@ -132,7 +132,7 @@ function datepickerMultidate() {
   }
 }
 
-body.on('click', '#analizarVarios', function () {
+bodyOnClick('#analizarVarios', function () {
   let [fecha] = devuelveCalendarios('calendario')
   if (fecha === '') return Swal.fire('Campo de fecha vacío', 'Por favor selecciona una fecha para continuar', 'error')
   if (rango === 'libre') {
@@ -143,7 +143,7 @@ body.on('click', '#analizarVarios', function () {
   antesDeCambiarPagina()
   location = `/analisis/${agruparPor}&${rango}&${unidadTiempo}=${fecha}`
 })
-body.on('click', '#analizarEntre', function () {
+bodyOnClick('#analizarEntre', function () {
   let [fecha1, fecha2] = devuelveCalendarios('calendario1', 'calendario2')
   if (fecha1 === '' || fecha2 === '') return Swal.fire('Campo de fecha vacío', 'Por favor selecciona una fecha para continuar', 'error')
   antesDeCambiarPagina()
@@ -157,8 +157,8 @@ function antesDeCambiarPagina() {
   rango = 'rango=' + rango
 }
 
-body.on('click', '.btnBorrarFechas', borrarFechas)
-body.on('click', '.input-group-append', e => anterior(e.currentTarget).focus())
+bodyOnClick('.btnBorrarFechas', borrarFechas)
+bodyOnClick('.input-group-append', e => anterior(e.currentTarget).focus())
 
 
 async function rehacerDatepicker(UT) {

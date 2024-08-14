@@ -11,7 +11,7 @@ qsclickd("#logoNav", e => {
   navbar.hasClass("presionado") ? esconderNavbar() : navbar.addClass("presionado")
 })
 
-body.on("click", ".nav-item-compuesto", e => {
+bodyOnClick(".nav-item-compuesto", e => {
   let x = $(e.currentTarget)
   navbar.addClass("presionado")
   x.toggleClass("presionado")

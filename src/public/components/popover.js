@@ -6,5 +6,4 @@ class cPopover extends HTMLElement {
 
 customElements.define("custom-popover", cPopover)
 
-
-setTimeout(q => qsarrd('[data-bs-toggle="popover"]').map(x => new bootstrap.Popover(x, { html: true })), 500)
+alCargar(q => qsarrd('[data-bs-toggle="popover"]').map(x => new bootstrap.Popover(x, { html: true })))

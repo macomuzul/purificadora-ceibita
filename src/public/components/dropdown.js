@@ -1,5 +1,7 @@
 let dropdownSeleccionado = null
-window.onclick = e => dropdownSeleccionado?.cambiarEstado(-1)
+document.addEventListener('click', e => {
+  if (!e.target.closest('custom-dropdown')) dropdownSeleccionado?.cambiarEstado(-1)
+})
 
 añadirCSS(`custom-dropdown {
   display: block;
@@ -111,38 +113,33 @@ class customDropdown extends HTMLElement {
     <ul class="menu" id="${idmenu}">${this.innerHTML}</ul>
   </div>`
 
-    let menu = qs(this, '.menu')
+    this.menu = qs(this, '.menu')
     let estaActivo = 0
 
-    this.onclick = function (e) {
-      e.stopPropagation()
-      if (dropdownSeleccionado !== this) dropdownSeleccionado?.cambiarEstado(-1)
-      this.cambiarEstado(0)
-      dropdownSeleccionado = this
-    }
-
-    let cambiarEstado = i => {
+    this.cambiarEstado = i => {
       if (!estaActivo && i === -1) return
       estaActivo = i === 0
       cambiarClase(qs(this, '.select'), 'select-clicked', i)
       cambiarClase(qs(this, '.caret'), 'caret-rotate', i)
-      cambiarClase(menu, 'menu-open', i)
+      cambiarClase(this.menu, 'menu-open', i)
     }
-
-    this.cambiarEstado = cambiarEstado
-
     let cambiarClase = (x, clase, i) => i === 0 ? alternarClase(x, clase) : quitarClase(x, clase)
-
-    $(this).on('click', 'li', e => {
-      let opcion = e.currentTarget
-      e.stopPropagation()
-      qs(this, '.selected').innerText = opcion.innerText
-      cambiarEstado(-1)
-      quitarClase(qs(this, '.menu li'), 'active')
-      añadirClase(opcion, 'active')
-      metododropdown(opcion, menu)
-    })
   }
 }
+
+bodyOnClick('custom-dropdown', c => {
+  if (dropdownSeleccionado !== c) dropdownSeleccionado?.cambiarEstado(-1)
+  c.cambiarEstado(0)
+  dropdownSeleccionado = c
+})
+
+bodyOnClick('li', (c, e) => {
+  let o = c.closest('custom-dropdown')
+  qs(o, '.selected').innerText = c.innerText
+  o.cambiarEstado(-1)
+  quitarClase(qs(o, '.menu li'), 'active')
+  añadirClase(c, 'active')
+  metododropdown(c, o.menu)
+})
 
 customElements.define('custom-dropdown', customDropdown)

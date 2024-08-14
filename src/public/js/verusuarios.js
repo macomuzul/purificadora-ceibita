@@ -16,9 +16,9 @@ const swalConfirmarYCancelar = Swal.mixin({
   buttonsStyling: false,
 })
 
-body.on("click", ".svgeditar", e => location = "/empleados/usuarios/editar/" + e.currentTarget.closest("tr").cells[0].innerText)
+bodyOnClick(".svgeditar", e => location = "/empleados/usuarios/editar/" + e.currentTarget.closest("tr").cells[0].innerText)
 
-body.on("click", ".svgeliminar", async function () {
+bodyOnClick(".svgeliminar", async function () {
   let usuario = this.closest("tr").cells[0].innerText
   let html = `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${usuario}</span>`
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
@@ -51,14 +51,14 @@ function devuelveBorrarUsuario(data, fila) {
   }
 }
 
-body.on("click", "td .fa-eye", function () {
+bodyOnClick("td .fa-eye", function () {
   let counter = anterior(this)
   if (!counter.hidden) counter.parar()
   anterior(this.closest("td")).innerText = "********"
   alternar(qs(padre(this)), "i")
 })
 
-body.on("click", "td .fa-eye-slash", e => modalAutenticacion.mostrar(devuelvePedirContraseña(e.currentTarget)))
+bodyOnClick("td .fa-eye-slash", e => modalAutenticacion.mostrar(devuelvePedirContraseña(e.currentTarget)))
 
 function devuelvePedirContraseña(ojo) {
   return f => {

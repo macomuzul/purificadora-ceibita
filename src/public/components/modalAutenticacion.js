@@ -110,7 +110,7 @@ class customModal extends HTMLElement {
         this.input.type === "text" ? qs(this, "input-password").clickOjo(0) : ''
       })
 
-      $(this).on('click', '#enviarVerificacion', q => {
+      elOnClick(this, '#enviarVerificacion', q => {
         let { input } = this
         if (input.value === "") {
           input.setCustomValidity('Por favor escribe una contraseña')
@@ -142,8 +142,8 @@ class inputPass extends HTMLElement {
     <i class="fa-sharp fa-solid fa-eye" style="display: none;"></i>
     <i class="fa-sharp fa-solid fa-eye-slash"></i>`
 
-    $(this).on("click", ".fa-eye", q => this.clickOjo(0))
-    $(this).on("click", ".fa-eye-slash", q => this.clickOjo(1))
+    elOnClick(this, ".fa-eye", q => this.clickOjo(0))
+    elOnClick(this, ".fa-eye-slash", q => this.clickOjo(1))
   }
 
   clickOjo(texto) {

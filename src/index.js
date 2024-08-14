@@ -127,7 +127,6 @@ app.use('/configuraciones', require('./routes/configuraciones'))
 app.use('/analisis', require('./routes/analisis'))
 app.use('/extras', require('./routes/extras'))
 app.use('/gastos', require('./routes/gastos'))
-app.get('/coso', (req, res) => res.render('draggable'))
 app.get('*', (req, res) => res.send('La página a la que deseas acceder no existe :('))
 
 // agregarTituloDocs("Cambios ocurridos el 1/2/2023", "-")

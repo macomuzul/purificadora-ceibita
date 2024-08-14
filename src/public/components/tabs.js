@@ -7,7 +7,7 @@ añadirCSS(`.tabs {
   margin-bottom: 0;
 }
 
-.tabLabel, .agregarcamion {
+.tabLabel, .añadirCamion {
   padding: 12px 20px;
   cursor: pointer;
   background-color: #0f0924;
@@ -17,12 +17,6 @@ añadirCSS(`.tabs {
   display: grid;
   align-items: center;
   transition: font-size 200ms;
-}
-
-.agregarcamion{
-    width: 60px;
-    margin-left: 1px;
-    padding: 10px 16px;
 }
 
 html, body, main {
@@ -48,29 +42,34 @@ tab-content{
 
 class tabLabel extends HTMLElement {
   connectedCallback() {
-     this.innerHTML = `<input type="radio" class="tabRadio"><label class="tabLabel">${this.innerHTML}</label>`
+    if (this.innerHTML.startsWith('<input')) return
+    this.innerHTML = `<input type="radio" class="tabRadio"><label class="tabLabel">${this.innerHTML}</label>`
+    this.cambiarTexto = t => cambiarHTML(qs(this, 'label'), t)
   }
 }
 customElements.define("tab-label", tabLabel)
 
-let devuelveTabContent = (el, id) => registrarVentas ? qs(el, `tab-content[data-tabid="${id-1}"]`) : qs(el, `tab-content:nth-child(${id})`)
+let devuelveTabContent = (el, i) => qs(el, `tab-content:nth-child(${i + 1})`)
+let cambiarChecked = (el, c) => el.checked = c
 class customTabs extends HTMLElement {
   connectedCallback() {
-    // let cambiarChecked = (el, c) => el.setAttribute('checked', c)
-    let cambiarChecked = (el, c) => el.checked = c
-    cambiarChecked(qs(this, 'input'), true)
-    qsaforeach(this, 'tab-content', (x, i) => { if(i !== 0) x.hidden = true })
-    this.idSeleccionado = 1
-    $(this).on("click", "tab-label label", e => {
-      let el = e.currentTarget.previousElementSibling
-      let checkeado = qs(this, "tab-label input:checked")
-      if (el === checkeado) return
-      devuelveTabContent(this, this.idSeleccionado).hidden = true
-      this.idSeleccionado = indice(padre(el)) + 1
-      cambiarChecked(el, true)
-      if(checkeado) cambiarChecked(checkeado, false)
-      devuelveTabContent(this, this.idSeleccionado).hidden = false
+    setTimeout(q => {
+      cambiarChecked(qs(this, 'input'), true)
+      qsaforeach(this, 'tab-content', (x, i) => { if (i !== 0) esconder(x) })
     })
   }
 }
 customElements.define("custom-tabs", customTabs)
+
+bodyOnClick('tab-label', c => {
+  let p = c.closest('custom-tabs')
+  let input = qs(c, 'input')
+  let checkeado = qs(p, 'input:checked')
+  if (input === checkeado) return
+  if (checkeado) {
+    cambiarChecked(checkeado, false)
+    esconder(devuelveTabContent(p, indice(padre(checkeado))))
+  }
+  cambiarChecked(input, true)
+  mostrar(devuelveTabContent(p, indice(c)))
+})

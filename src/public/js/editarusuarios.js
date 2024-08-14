@@ -13,9 +13,9 @@ let enviar = (atributos, texto) => q => {
   })
 }
 
-body.on('click', '.dropdown-item', function () { anterior(this.closest(".dropdown-menu")).innerText = this.innerText })
+bodyOnClick('.dropdown-item', function () { anterior(this.closest(".dropdown-menu")).innerText = this.innerText })
 
-body.on("click", "#cambiarUsuario", q => {
+bodyOnClick("#cambiarUsuario", q => {
   let usuario = trim(qsd("#usuario"))
   if (!usuario) return mostrarError("El campo de usuario está vacío")
   modalAutenticacion.mostrar(enviar({ usuario }, "Se ha cambiado el nombre de usuario correctamente"))

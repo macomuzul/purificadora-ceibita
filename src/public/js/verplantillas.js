@@ -8,12 +8,12 @@ const swalConfirmarYCancelar = Swal.mixin({
   buttonsStyling: false,
 })
 
-body.on("click", ".vermas", function () {
+bodyOnClick(".vermas", function () {
   alternar(qs(padre(this), '.spanHoras'))
   this.style.rotate = this.style.rotate === '180deg' ? '0deg' : '180deg'
 })
 
-body.on("click", '.fave', function () {
+bodyOnClick('.fave', function () {
   if (timeout || tieneClase(this, 'faved')) return
   alternarClase(favorito, 'faved')
   alternarClase(this, 'faved')
@@ -22,7 +22,7 @@ body.on("click", '.fave', function () {
   setTimeout(() => timeout = false, 300)
 })
 
-body.on('click', ".svgeliminar", async function () {
+bodyOnClick(".svgeliminar", async function () {
   let filaborrar = this.closest("tr")
   let plantillaborrar = filaborrar.cells[0].innerText
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
@@ -93,4 +93,4 @@ qsclickd('#guardar', function () {
   })
 })
 
-$('.svgeditar').on('click', e => location = "/plantillas/editar/" + e.currentTarget.closest("tr").cells[0].innerText)
+bodyOnClick('.svgeditar', e => location = "/plantillas/editar/" + e.currentTarget.closest("tr").cells[0].innerText)

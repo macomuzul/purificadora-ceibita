@@ -166,7 +166,7 @@ let escogido = " escogid" + (masculino ? "o" : "a")
 let UTSingularGeneroEscogido = UTSingularGenero + escogido
 let UTPluralGeneroEscogido = `${UTPluralGenero}${escogido}s`
 
-cambiarHTML(qsd("#cargando"))
+cambiarHTML(qsd("#cargando"), '')
 qsd("resumen-datos").agregarCantidad()
 
 let devuelveTop3 = (data, indices) => [data, indices.sort((a, b) => data[b] - data[a]).slice(0, 3)]
@@ -191,7 +191,7 @@ function crearPodio() {
 
   qsd("#podios").innerHTML = html
   agregarConfeti()
-  body.on("click", ".checkboxPodio", e => qs(e.currentTarget, "input").checked ? agregarConfeti() : quitarConfeti())
+  bodyOnClick(".checkboxPodio", e => qs(e.currentTarget, "input").checked ? agregarConfeti() : quitarConfeti())
 }
 crearPodio()
 

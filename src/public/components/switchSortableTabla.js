@@ -14,7 +14,7 @@ class switchSortable extends HTMLElement {
     this.innerHTML = `<input class="form-check-input" type="checkbox" id="switchOrdenarFilas">
     <label class="form-check-label" for="switchOrdenarFilas">Reordenar filas</label>
     <custom-popover data-alineacion="text-top"><strong>Importante:</strong><br>Mientras la opción de reordenar filas esté activa no puedes escribir en las celdas, tienes que desactivarlo para poder volver a escribir en ellas</custom-popover>`
-    body.on("click", "#switchOrdenarFilas", async q => $("tbody").sortable({ axis: "y", disabled: !q.currentTarget.checked }))
+    bodyOnClick("#switchOrdenarFilas", async q => $("tbody").sortable({ axis: "y", disabled: !q.currentTarget.checked }))
   }
 }
 
@@ -29,7 +29,7 @@ class preguntarAntesDeBorrar extends HTMLElement {
       <label class="form-check-label" for="switchModoSeguro">Modo seguro</label>
     </div>
     <label class="form-check-label" style="font-size: 12px;">(preguntar antes de borrar)</label>`
-    body.on('click', ".botoneliminar", async function () {
+    bodyOnClick(".botoneliminar", async function () {
       if (qsd("#switchOrdenarFilas").checked) return
       if (!qsd("#switchModoSeguro").checked) return this.closest("tr").remove()
       let fila = clonar(this.closest("tr"))

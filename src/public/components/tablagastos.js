@@ -8,7 +8,7 @@ class tablaGastos extends HTMLElement {
     $(this).html(`${this.htmlTitulo()}<div class="tablagastosparteinferior">${tieneData ? this.crearTabla(1) : tablaVacia}</div>`)
     if (!tieneData) $(this).find('.botonesExportar').hide()
 
-    $(this).on('click', '.botonregistrargasto', e => {
+    elOnClick(this, '.botonregistrargasto', e => {
       $(this).find('table').length > 0 ? $(this).find('tbody').append(this.añadirFila([])) : $(this).find('.tablagastosparteinferior').html(this.crearTabla(0))
       convierteDatePicker($(this).find('.divdatepicker'))
     })
