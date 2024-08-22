@@ -48,4 +48,4 @@ let bodyOnClick = (el, m) => bodyOn('click', el, m)
 let alCargar = x => window.addEventListener('load', x)
 
 let esTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
-// if (esTouch) $.getScript('/touch.js')
+if (esTouch) $.getScript('/touch.js')

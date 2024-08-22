@@ -10,6 +10,7 @@ let listaplantillas = {}, objReordenarPlantillas = [], tablaParaValidacion, plan
 let $grupotabs = qsd('.grupotabs')
 let $tabs = qs($grupotabs, '.tabs')
 let $contents = qs($grupotabs, '.contenidotabs')
+let inicioTabSortable
 
 let $tabContents = [...$contents.children]
 let $idTab = q => $tabContents.findIndex(x => !x.hidden)
@@ -33,46 +34,7 @@ let borrarEnfocarFilas = tabla => quitarClase(qs(tabla, '.cuerpo td'), 'enfocar'
 let soloHayUnCamion = async q => ($tablas().length === 1 ? (await mostrarError('No se puede borrar, debe haber al menos un camión'), true) : false)
 let mostrarError = async (e, titulo = 'Error') => (await Swal.fire(titulo, e, 'error'), false)
 
-
-añadirCSS(`
-.sortable-chosen, sortable-chosen.sortable-ghost {
-    opacity: 0;
-}
-
-.sortable-ghost{
-    opacity: 0.6;
-    box-shadow: 0 0 10px 7px white;
-}`)
-
-// añadirCSS(`.sortable-drag { opacity: 0 !important; }
-
-// .sortable-ghost{
-//     box-shadow: 0 0 10px 7px white;
-// }`)
-let tablasSort
-let tabsSort = new Sortable($tabs, {
-  ghostClass: "sortable-ghost",
-  draggable: "tab-label",
-  // direction: 'vertical',
-  fallbackOnBody: true,
-  // swapThreshold: 1,
-  fallbackClass: "dragging", // Add a custom class to the dragged item
-  forceFallback: true,
-  // fallbackTolerance: 1000,
-  onEnd: e => {
-    let tabContent = i => qs($contents, `tab-content:nth-child(${i + 1})`)
-    tabContent(e.newIndex)[e.newIndex < e.oldIndex ? 'before' : 'after'](tabContent(e.oldIndex))
-    reacomodarCamiones()
-    Swal.fire('Se ha cambiado el orden', 'Se ha cambiado el orden de los camiones exitosamente', 'success')
-  }
-})
-
-let tablasSortable = q => {
-  tablasSort = qsarr($contents, '.cuerpo').map(x => new Sortable(x, {}))
-  tablasSort.forEach(x => x.option("disabled", !_reordenarProductos))
-  tabsSort.option("disabled", !_reordenarCamiones)
-}
-// let tablasSortable = q => $('.grupotabs .cuerpo').sortable({ axis: 'y', disabled: !_reordenarProductos })
+let tablasSortable = q => $('.grupotabs .cuerpo').sortable({ axis: 'y', disabled: !_reordenarProductos })
 
 let cerrarSwal = q => Swal.close()
 let funcionOpcionSwal = x => { opcionSwal = x; Swal.close() }
@@ -133,15 +95,19 @@ async function guardarValoresConfig() {
   alternarClase($contents, 'ordenarAlfabeticamente', _ordenarOrdenAlfabetico)
   qsaforeach($contents, '.cuerpo td:not(:nth-last-child(1), :nth-last-child(2))', x => x.contentEditable = !_reordenarProductos)
 
-  // $('.tabs').sortable({
-  //   axis: 'x',
-  //   items: 'tab-label',
-  //   disabled: !_reordenarCamiones,
-  //   stop: q => {
-  //     reacomodarCamiones()
-  //     Swal.fire('Se ha cambiado el orden', 'Se ha cambiado el orden de los camiones exitosamente', 'success')
-  //   },
-  // })
+  $('.tabs').sortable({
+    axis: 'x',
+    items: 'tab-label',
+    disabled: !_reordenarCamiones,
+    start: e => { inicioTabSortable = indice(padre(e.toElement)) },
+    stop: e => {
+      let tabContent = i => qs($contents, `tab-content:nth-child(${i + 1})`)
+      let finTabSortable = indice(padre(e.toElement))
+      tabContent(finTabSortable)[finTabSortable < inicioTabSortable ? 'before' : 'after'](tabContent(inicioTabSortable))
+      reacomodarCamiones()
+      Swal.fire('Se ha cambiado el orden', 'Se ha cambiado el orden de los camiones exitosamente', 'success')
+    },
+  })
   tablasSortable()
 }
 

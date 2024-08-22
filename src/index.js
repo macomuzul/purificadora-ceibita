@@ -5,10 +5,10 @@ process.on('uncaughtException', async error => {
     await LogsGraves.log('Error fatal', error)
     await mandarCorreoError('Error fatal importantisimo', 'Ha ocurrido un error fatal')
   } catch (err) {
-    console.log(error)
-    fs.writeFile('./logsfatales.log', JSON.stringify(error, ['name', 'message', 'arguments', 'type', 'error', 'stack']), e => console.log(e))
     console.log(err)
-    fs.writeFile('./logsfatales.log', JSON.stringify(err, ['name', 'message', 'arguments', 'type', 'error', 'stack']), e => console.log(e))
+    let escribirError = errorazo => fs.appendFile('./logsfatales.log', JSON.stringify(errorazo, ['name', 'message', 'arguments', 'type', 'error', 'stack']) + '\n', e => console.log(e))
+    escribirError(error)
+    escribirError(err)
   }
 })
 require('./db')
