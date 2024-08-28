@@ -1,4 +1,5 @@
 String.prototype.normalizar = function () { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '') }
+let tbody = qsd('tbody')
 
 const swalConfirmarYCancelar = Swal.mixin({
   customClass: {
@@ -9,8 +10,8 @@ const swalConfirmarYCancelar = Swal.mixin({
 })
 
 function mostrarErrorHTML(html, title) {
-  qs(html, 'tr *:last-child()').remove()
-  qs(html, 'td').contenteditable = false
+  [...html.rows].forEach(x => [...x.cells].at(-1).remove())
+  qsaforeach(html, 'td', x => x.contentEditable = false)
   Swal.fire({
     title,
     icon: 'error',
@@ -21,8 +22,8 @@ function mostrarErrorHTML(html, title) {
 }
 
 function validarCamioneros() {
-  let nombres = qsarrd('tbody td:nth-child(1)')
-  let colores = qsarrd('tbody td:nth-child(2)')
+  let nombres = qsarr(tbody, 'td:nth-child(1)')
+  let colores = qsarr(tbody, 'td:nth-child(2)')
   if (nombres.length === 0) {
     Swal.fire('Error', 'Error, la tabla está vacía, por favor agrega un camionero', 'error')
     return false
@@ -54,17 +55,18 @@ function validarCamioneros() {
 }
 
 function colorAleatorio() {
-  const threshold = 128
-  const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`
-  const rgb = color.match(/\d+/g).map(Number)
-  const brightness = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
-  if (brightness > threshold) return colorAleatorio()
+  let limite = 128
+  let numAleatorio = q => Math.floor(Math.random() * 256)
+  let color = `rgb(${numAleatorio()}, ${numAleatorio()}, ${numAleatorio()})`
+  let rgb = color.match(/\d+/g).map(Number)
+  let brillo = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]
+  if (brillo > limite) return colorAleatorio()
   return color
 }
 
 qsclickd('#guardar', async q => {
   if (!validarCamioneros()) return
-  let data = JSON.stringify({ camioneros: qsarrd('tbody tr').map(x => ({ nombre: x.cells[0].textContent, color: x.cells[1].textContent })) })
+  let data = JSON.stringify({ camioneros: [...tbody.rows].map(x => ({ nombre: x.cells[0].textContent, color: x.cells[1].textContent })) })
   $.ajax({
     url: location.pathname,
     method: 'POST',
@@ -75,9 +77,9 @@ qsclickd('#guardar', async q => {
   })
 })
 
-bodyOnClick('.botoneliminar', async function () {
+bodyOnClick('.botoneliminar', async c => {
   if (qsd('#switchModoSeguro').checked) {
-    let html = `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${this.closest('tr').cells[0].innerText}</span>`
+    let html = `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${c.closest('tr').cells[0].innerText}</span>`
     let { isConfirmed } = await swalConfirmarYCancelar.fire({
       title: 'Estás seguro que deseas borrar a este camionero?',
       icon: 'warning',
@@ -87,12 +89,12 @@ bodyOnClick('.botoneliminar', async function () {
       confirmButtonText: 'Sí',
       cancelButtonText: 'No',
     })
-    if (isConfirmed) this.closest('tr').remove()
+    if (isConfirmed) c.closest('tr').remove()
   }
 })
 
-body.on('input', `[type="color"]`, e => (anterior(padre(e.currentTarget)).textContent = e.currentTarget.value))
+bodyOn('input', '[type="color"]', c => (anterior(padre(c)).textContent = c.value))
 
-qsclickd('#añadirproducto', q => añadirHTML(qsd('tbody', `<tr><td contenteditable="true"></td><td>indefinido</td><td><input type="color"></td>
-<td><button type="button" class="botoneliminar"><svg class="svgeliminar" width="30" height="30" fill="red" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /></svg></button></td>
-</tr>`)))
+qsclickd('#añadircamionero', q => añadirHTML(tbody, `<tr><td contenteditable="true"></td><td>#000000</td><td><input type="color" value="#000000"></td>
+<td><button type="button" class="botoneliminar"><svg class="svgeliminar" width="30" height="30" fill="red" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></svg></button></td>
+</tr>`))

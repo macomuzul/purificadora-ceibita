@@ -12,6 +12,7 @@ let qsarrd = x => qsarr(document, x)
 
 let cabeza = document.querySelector('head')
 let añadirCSS = x => cabeza.innerHTML += `<style>${x}</style>`
+let añadirJS = src => new Promise((res, rej) => cabeza.appendChild(Object.assign(document.createElement('script'), { src, onload: res })))
 
 let añadirClase = (el, x) => el.classList.add(x)
 let quitarClase = (el, x) => el.classList.remove(x)

@@ -62,10 +62,8 @@ añadirCSS(`.gridUnidadTiempo {
   width: 120px;
 }
 
-.iframe{
-  width: 700px;
-  height: 400px;
-  margin-top: 20px;
+.input-group{
+  margin: 0 auto;
 }
 
 .botonvolver{
@@ -90,9 +88,10 @@ añadirCSS(`.gridUnidadTiempo {
 .contenidoOpciones{
   position: relative;
   margin-top: 10px;
+  height: 400px;
 }`)
 
-let contador = 0, seleccionado, c, opcionCalendario
+let contador = 0, seleccionado, cal, opcionCalendario
 
 let swalConfirmarYCancelar = Swal.mixin({
   customClass: {
@@ -102,46 +101,64 @@ let swalConfirmarYCancelar = Swal.mixin({
   buttonsStyling: false
 })
 
-let crearCal = cal => c.html(`<botonazul-flechaizquierda class="botonvolver" id="volver">Volver</botonazul-flechaizquierda>${cal}`)
-qsclickd("#btnMayor", q => {
+let crearCal = c => cal.html(`<botonazul-flechaizquierda class="botonvolver" id="volver">Volver</botonazul-flechaizquierda>${c}`)
+bodyOnClick("#btnMayor", q => {
   seleccionado.cal = "mayores o iguales que"
   crearCal('<calendario-simple></calendario-simple>')
+  $(`.divdatepicker`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" })
+  $(`.divdatepicker`).datepicker("show")
 })
-qsclickd("#btnMenor", q => {
+bodyOnClick("#btnMenor", q => {
   seleccionado.cal = "menores o iguales que"
-  crearCal('')
+  crearCal('<calendario-simple></calendario-simple>')
+  $(`.divdatepicker`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" })
+  $(`.divdatepicker`).datepicker("show")
 })
 
-qsclickd("#btnLibre", q => {
+bodyOnClick("#btnLibre", q => {
   seleccionado.cal = ""
-  crearCal("Multiple")
+  crearCal("<calendario-simple></calendario-simple>")
+  $(`.divdatepicker`).datepicker({ weekStart: 1, language: "es", autoclose: false, maxViewMode: 2, multidate: true, multidateSeparator: ", ", todayHighlight: true, format: "dd/mm/yyyy" })
+  $(`.divdatepicker`).datepicker("show")
 })
-qsclickd("#btnEntre", q => {
+bodyOnClick("#btnEntre", q => {
   seleccionado.cal = "entre el"
   crearCal("Entre")
 })
 
-bodyOnClick(".tituloregistro custom-checkbox", e => qs(e.currentTarget.closest("cuadro-respaldos", "custom-input input").disabled = !qs(e.currentTarget, "input").checked))
-bodyOnClick(".botonvolver", crearContenidoOpciones)
-bodyOnClick(".opcionesradiobutton custom-radiobutton input", crearContenidoOpciones)
+bodyOnClick(".tituloregistro custom-checkbox", c => qs(c.closest("cuadro-respaldos"), "custom-input input").disabled = !qs(c, "input").checked)
+bodyOnClick(".botonvolver, .opcionesradiobutton custom-radiobutton input", c => {
+  if (indice(seleccionado.closest("custom-radiobutton")) === 0) cal.hide()
+  else {
+    if (cal.html() && !tieneClase(c, "botonvolver")) cal.show()
+    else {
+      ({
+        Ventas: htmlCalendario,
+        Plantillas: q => htmlNombres("/plantillas/devuelvenombres", "plantillas"),
+        Camioneros: q => htmlNombres("/empleados/camioneros/devuelvenombres", "camioneros"),
+        "Registros eliminados": htmlCalendario,
+      })[seleccionado.titulo]()
+    }
+  }
+})
 
 let guardando = false
-qsclickd("#btnguardar", async function () {
-  if (guardando === true) return
+bodyOnClick("#btnguardar", async c => {
+  if (guardando) return
   guardando = true
-  cambiarHTML(this, `  Guardando<div class="cajaspinner"><div class="spinner-border text-primary"></div>`)
-  let chequeados = qsarrd("cuadro-respaldos").filter(x => qs(x, ".tituloregistro input").checked)
-  if (!chequeados.length) return Swal.fire("Error", "No se ha seleccionado ningún registro para guardar", "error")
-  chequeados.forEach(x => x.opciones.nombreArchivo = qs(x, ".nombreArchivo input").value)
-  let datos = chequeados.map(x => x.opciones)
+  cambiarHTML(c, `  Guardando<div class="cajaspinner"><div class="spinner-border text-primary"></div>`)
+  let checkeados = qsarrd("cuadro-respaldos").filter(x => qs(x, ".tituloregistro input").checked)
+  if (!checkeados.length) return Swal.fire("Error", "No se ha seleccionado ningún registro para guardar", "error")
+  checkeados.forEach(x => x.opciones.nombreArchivo = qs(x, ".nombreArchivo input").value)
+  let datos = checkeados.map(x => x.opciones)
   let body = { datos, sobreescribir: 0, nombreCarpeta: qsd(".nombreCarpeta input").value }
   await guardar(body)
-  cambiarHTML(this, "Guardar")
+  cambiarHTML(c, "Guardar")
   guardando = false
 })
-qsclickd("#seleccionarTodos", function () {
-  let checked = qs(this, "input").checked
-  qsa(this.closest(".contenidoOpciones"), ".gridCheckbox input").forEach(x => x.checked = checked)
+bodyOnClick("#seleccionarTodos", c => {
+  let checked = qs(c, "input").checked
+  qsa(c.closest(".contenidoOpciones"), ".gridCheckbox input").forEach(x => x.checked = checked)
 })
 
 async function guardar(body) {
@@ -175,7 +192,7 @@ async function guardar(body) {
 }
 
 function htmlCalendario() {
-  c.html(`<article class="gridUnidadTiempo">
+  cal.html(`<article class="gridUnidadTiempo">
   <input-azul class="btnOrden" id="btnMayor">Seleccionar fechas mayores o iguales que</input-azul>
   <input-azul class="btnOrden" id="btnMenor">Seleccionar fechas menores o iguales que</input-azul>
   <input-azul class="btnOrden" id="btnEntre">Seleccionar fechas entre</input-azul>
@@ -188,28 +205,13 @@ async function htmlNombres(url, el) {
     let r = await fetch(url)
     let t = await r.json()
 
-    c.html(`<div style="text-align: right; margin: 5px 0;"><custom-checkbox id="seleccionarTodos">Seleccionar todos los elementos</custom-checkbox></div>
+    cal.html(`<div style="text-align: right; margin: 5px 0;"><custom-checkbox id="seleccionarTodos">Seleccionar todos los elementos</custom-checkbox></div>
     <article class="gridUnidadTiempo gridCheckbox">
     <div class="tituloOpciones">Elije qué ${el} deseas guardar</div>
       ${t.map((x, i) => `<custom-checkbox ${i % 2 === 1 ? `data-clase="form-check-reverse"` : ""}>${x}</custom-checkbox>`).join("")}
     </article>`)
   } catch (error) {
     Swal.fire("Error de conexión", "Te has quedado sin conexión a internet. Por favor conéctate a una red WIFI", "error")
-  }
-}
-
-function crearContenidoOpciones() {
-  if (indice(this.closest("custom-radiobutton")) === 0) c.hide()
-  else {
-    if (c.html() && !tieneClase(this, "botonvolver")) c.show()
-    else {
-      ({
-        Ventas: htmlCalendario,
-        Plantillas: q => htmlNombres("/plantillas/devuelvenombres", "plantillas"),
-        Camioneros: q => htmlNombres("/empleados/camioneros/devuelvenombres", "camioneros"),
-        "Registros eliminados": htmlCalendario,
-      })[seleccionado.titulo]()
-    }
   }
 }
 
@@ -269,7 +271,7 @@ class cuadroRespaldos extends HTMLElement {
     elOnClick(this, ".opcionesextra", q => {
       if (!qs(this, ".tituloregistro input").checked) return Swal.fire("Atención", "El registro a guardar está deshabilitado. Por favor habilítalo para seleccionar qué información mandar", "warning")
       seleccionado = this
-      c = $(seleccionado).find(".contenidoOpciones")
+      cal = $(seleccionado).find(".contenidoOpciones")
       modal.show()
     })
   }

@@ -33,7 +33,7 @@ class botonExcel extends HTMLElement {
     this.innerHTML = `  Cargando<div class="cajaspinner"><div class="spinner-border text-success"></div></div>`
     if (typeof XLSX === "undefined") {
       try {
-        await $.getScript('/tablaAExcelSheetJS.js')
+        await añadirJS('/tablaAExcelSheetJS.js')
       } catch (error) {
         this.innerHTML = `Error al generar PDF`
         return

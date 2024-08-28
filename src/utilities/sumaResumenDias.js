@@ -1,27 +1,27 @@
 function sumaResumenDias(venta) {
   let listaTablasValores = venta.tablas.map(tabla => tabla.productos.map(producto => ({ producto: producto.nombre.normalizar(), v: producto.vendidos, i: producto.ingresos, p: producto.nombre })));
-  let prods = listaTablasValores.reduce((acc, table) => {
-    table.forEach(prod => {
-      if (acc[prod.producto]) {
-        acc[prod.producto].v += prod.v;
-        acc[prod.producto].i += prod.i;
-      } else {
-        acc[prod.producto] = { v: prod.v, i: prod.i, p: prod.p }
-      }
+
+  let prods = {}
+  listaTablasValores.forEach(tabla => {
+    tabla.forEach(prod => {
+      let { v, i, p, producto: n } = prod
+      if (prods[n]) {
+        prods[n].v += v;
+        prods[n].i += i;
+      } else prods[n] = { v, i, p }
     })
-    return acc
-  }, {})
+  })
 
   let listaTablasValores2 = venta.tablas.map(tabla => ({ trabajador: tabla.trabajador.normalizar(), v: tabla.totalvendidos, i: tabla.totalingresos, p: tabla.trabajador }));
-  let cams = listaTablasValores2.reduce((acc, tabla) => {
-    if (acc[tabla.trabajador]) {
-      acc[tabla.trabajador].v += tabla.v;
-      acc[tabla.trabajador].i += tabla.i;
-    } else {
-      acc[tabla.trabajador] = { v: tabla.v, i: tabla.i, p: tabla.p }
-    }
-    return acc
-  }, {})
+
+  let cams = {}
+  listaTablasValores2.forEach(tabla => {
+    let { v, i, p, trabajador: t } = tabla
+    if (cams[t]) {
+      cams[t].v += v;
+      cams[t].i += i;
+    } else cams[t] = { v, i, p }
+  })
 
   let vt = 0, it = 0
   Object.values(cams).forEach(x => {

@@ -2,7 +2,6 @@ let decodificarStr = s => s.replaceAll('&#34;', '"')
 let decodificado = decodificarStr(datosString), datos = JSON.parse(decodificado)
 let mb = qsd('modal-body')
 
-cargarTouch()
 let svgCalcu = `<svg fill="#FFF" width="20px" height="20px" viewBox="0 0 79.518 79.518" class="svgcalcu"><g><g><path d="M72.799,1.569L72.799,1.569C72.799,1.569,72.573,1.569,72.799,1.569C72.127,0.448,71.006,0,69.887,0l0,0H9.631l0,0    C7.614,0,6.047,1.569,6.047,3.584l0,0v3.137v11.647v6.496v11.648v6.494v11.648v6.496v11.646v3.137l0,0    c0,0.672,0.224,1.344,0.672,2.018l0,0l0,0c0.672,0.896,1.792,1.566,2.912,1.566l0,0h60.256l0,0c2.016,0,3.584-1.566,3.584-3.584    l0,0v-3.137V61.152v-6.495v-11.65v-6.494V24.865v-6.496V6.721V3.584l0,0C73.245,2.689,73.023,2.24,72.799,1.569z M28.895,68.32    c0,0.896-0.672,1.568-1.567,1.568h-8.287c-0.896,0-1.568-0.673-1.568-1.568v-3.584c0-0.896,0.672-1.567,1.568-1.567h8.287    c0.896,0,1.567,0.672,1.567,1.567V68.32z M28.895,56.225c0,0.896-0.672,1.567-1.567,1.567h-8.287    c-0.896,0-1.568-0.672-1.568-1.567v-3.584c0-0.896,0.672-1.567,1.568-1.567h8.287c0.896,0,1.567,0.672,1.567,1.567V56.225z     M28.895,44.354c0,0.896-0.672,1.565-1.567,1.565h-8.287c-0.896,0-1.568-0.672-1.568-1.565V40.77c0-0.896,0.672-1.568,1.568-1.568    h8.287c0.896,0,1.567,0.672,1.567,1.568V44.354z M45.245,68.32c0,0.896-0.672,1.568-1.565,1.568h-8.289    c-0.896,0-1.568-0.673-1.568-1.568v-3.584c0-0.896,0.673-1.567,1.568-1.567h8.289c0.896,0,1.565,0.672,1.565,1.567V68.32z     M45.245,56.225c0,0.896-0.672,1.567-1.565,1.567h-8.289c-0.896,0-1.568-0.672-1.568-1.567v-3.584    c0-0.896,0.673-1.567,1.568-1.567h8.289c0.896,0,1.565,0.672,1.565,1.567V56.225z M45.245,44.354c0,0.896-0.672,1.565-1.565,1.565    h-8.289c-0.896,0-1.568-0.672-1.568-1.565V40.77c0-0.896,0.673-1.568,1.568-1.568h8.289c0.896,0,1.565,0.672,1.565,1.568V44.354z     M61.822,68.32c0,0.896-0.672,1.568-1.567,1.568h-8.286c-0.896,0-1.568-0.673-1.568-1.568v-3.584c0-0.896,0.672-1.567,1.568-1.567    h8.286c0.896,0,1.567,0.672,1.567,1.567V68.32z M61.822,56.225c0,0.896-0.672,1.567-1.567,1.567h-8.286    c-0.896,0-1.568-0.672-1.568-1.567v-3.584c0-0.896,0.672-1.567,1.568-1.567h8.286c0.896,0,1.567,0.672,1.567,1.567V56.225z     M61.822,44.354c0,0.896-0.672,1.565-1.567,1.565h-8.286c-0.896,0-1.568-0.672-1.568-1.565V40.77c0-0.896,0.672-1.568,1.568-1.568    h8.286c0.896,0,1.567,0.672,1.567,1.568V44.354z M62.493,31.809L62.493,31.809c0,0.896-0.673,1.566-1.567,1.566H18.143    c-0.896,0-1.567-0.672-1.567-1.566V10.977c0-0.896,0.672-1.568,1.567-1.568h42.783c0.896,0,1.567,0.672,1.567,1.568V31.809z"/><path d="M28.447,19.712c-1.566-0.672-2.238-0.896-2.238-1.567c0-0.448,0.446-0.896,1.566-0.896c1.345,0,2.018,0.448,2.464,0.672    l0.448-2.016c-0.672-0.224-1.344-0.448-2.464-0.672v-1.568h-1.792v1.792c-1.792,0.448-2.912,1.568-2.912,3.136    c0,1.793,1.344,2.688,3.136,3.137c1.346,0.448,1.792,0.896,1.792,1.567s-0.672,1.121-1.792,1.121    c-1.119,0-2.238-0.448-2.911-0.672l-0.447,2.017c0.672,0.446,1.792,0.672,2.912,0.672v1.792h1.792v-2.018    c2.016-0.446,3.136-1.791,3.136-3.358C31.359,21.504,30.463,20.385,28.447,19.712z"/><path d="M40.543,19.712c-1.568-0.672-2.24-0.896-2.24-1.567c0-0.448,0.448-0.896,1.567-0.896c1.345,0,2.017,0.448,2.464,0.672    l0.448-2.016c-0.673-0.224-1.345-0.448-2.464-0.672v-1.568h-1.792v1.792c-1.792,0.448-2.912,1.568-2.912,3.136    c0,1.793,1.346,2.688,3.138,3.137c1.344,0.448,1.792,0.896,1.792,1.567s-0.673,1.121-1.792,1.121c-1.12,0-2.24-0.448-2.912-0.672    l-0.448,2.017c0.672,0.446,1.792,0.672,2.912,0.672v1.792h1.792v-2.018c2.016-0.446,3.137-1.791,3.137-3.358    C43.68,21.504,42.782,20.385,40.543,19.712z"/><path d="M52.863,19.712c-1.566-0.672-2.238-0.896-2.238-1.567c0-0.448,0.445-0.896,1.566-0.896c1.345,0,2.018,0.448,2.463,0.672    l0.449-2.016c-0.672-0.224-1.346-0.448-2.465-0.672v-1.568h-1.791v1.792c-1.793,0.448-2.912,1.568-2.912,3.136    c0,1.793,1.344,2.688,3.135,3.137c1.346,0.448,1.793,0.896,1.793,1.567s-0.672,1.121-1.793,1.121    c-1.118,0-2.239-0.448-2.911-0.672l-0.447,2.016c0.672,0.446,1.791,0.672,2.911,0.672v1.792h1.791v-2.018    c2.018-0.446,3.139-1.791,3.139-3.358C55.775,21.504,54.879,20.385,52.863,19.712z"/></g></g></svg>`
 String.prototype.aFloat = function () { return parseFloat(this) }
 String.prototype.aInt = function () { return parseInt(this) }
@@ -20,10 +19,6 @@ let switchGastosPorProductoExcel = -1
 let switchGastosFijosPDF = -1
 let switchGastosMixtosPDF = -1
 let switchGastosPorProductoPDF = -1
-
-let pantallacalcu
-let calculadora = $('.calculadora')
-let mostrarCalculadora = qsd('#mostrarcalculadora')
 
 let alargar = x => {
   if (x === '<-') return 'alargarancho'
@@ -46,7 +41,11 @@ añadirHTML(qsd('main'), `<div class="calculadora" hidden>
 <div class="botonescalcu">${grid.map(x => `${x.map(y => `<button class="botoncalcu ${alargar(y)}">${y}</button>`).join('')}`).join('')}</div>
 </div>`)
 
-calculadora.draggable(esTouch ? { handle: '.movercalcu' } : {})
+
+let pantallacalcu
+let calculadora = qsd('.calculadora')
+let mostrarCalculadora = qsd('#mostrarcalculadora')
+$(calculadora).draggable(esTouch ? { handle: '.movercalcu' } : {})
 
 pantallacalcu = qsd('.pantallacalcu')
 $(document).on('click', '.botoncalcu', e => {
@@ -71,30 +70,25 @@ let finMes = moment(fechaUrl, 'DD-MM-YYYY').endOf('month').format('DD-MM-YYYY')
 let esMesActual = moment().isSame(moment(fechaUrl, 'DD-MM-YYYY'), 'month')
 
 let convierteDatePicker = dp => dp.datepicker({ weekStart: 1, language: 'es', autoclose: true, todayHighlight: true, format: 'dd/mm/yyyy', maxViewMode: 0, startDate: inicioMes, endDate: finMes })
-document.addEventListener('eventoDP', q => convierteDatePicker($(`.form-control-datepicker`)))
-$('#registrargastos').on('click', e => {
-  let fecha = $('#calendario').val().replaceAll('/', '-')
-  if (fecha === '') return Swal.fire('Campo de fecha vacío', 'Por favor selecciona una fecha para continuar', 'error')
-  location = `/gastos/${fecha}`
-})
+document.addEventListener('eventoDP', q => convierteDatePicker($(`.divdatepicker`)))
 
 mostrarcalculadora.onclick = e => {
-  if (calculadora.is(':visible')) esconderCalculadora()
+  if (!calculadora.hidden) esconderCalculadora()
   else {
-    calculadora.show()
+    mostrar(calculadora)
     cambiarHTML(mostrarcalculadora, svgCalcu + ' Esconder calculadora')
   }
 }
 
-$(document).on('click', '.cerrarcalcu', esconderCalculadora)
+bodyOnClick('.cerrarcalcu', esconderCalculadora)
 
 function esconderCalculadora() {
-  calculadora.hide()
+  esconder(calculadora)
   cambiarHTML(mostrarcalculadora, svgCalcu + ' Mostrar calculadora')
 }
 
-qsclickd('#mesanterior', e => (location = url + moment(fechaUrl, 'DD-MM-YYYY').subtract(1, 'month').format('DD-MM-YYYY')))
-qsclickd('#messiguiente', e => (location = url + moment(fechaUrl, 'DD-MM-YYYY').add(1, 'month').format('DD-MM-YYYY')))
+bodyOnClick('#mesanterior', e => (location = url + moment(fechaUrl, 'DD-MM-YYYY').subtract(1, 'month').format('DD-MM-YYYY')))
+bodyOnClick('#messiguiente', e => (location = url + moment(fechaUrl, 'DD-MM-YYYY').add(1, 'month').format('DD-MM-YYYY')))
 
 let estilosSwal = (confirmButton, cancelButton = '') => Swal.mixin({ customClass: { confirmButton, cancelButton }, buttonsStyling: false })
 let swalConfirmarYCancelar = estilosSwal('btn btn-success margenbotonswal', 'btn btn-danger margenbotonswal')
@@ -109,17 +103,18 @@ async function swalSíNo(title, html, width = (innerWidth * 3) / 4) {
 }
 
 body.on("keydown", "td", function (e) {
-  let cellindex = indice(this)
   let k = e.which
+  let cellindex = indice(this)
+  let filas = this.closest("tbody").rows
   let { atStart, atEnd } = k == 37 || k == 39 ? getSelectionTextInfo(this) : {}
   if (k == 37 && atStart) //flecha izquierda
     enfocarCelda(anterior(this), e)
   else if (k == 39 && atEnd) //flecha derecha
     enfocarCelda(siguiente(this), e)
   else if (k == 38) //flecha arriba
-    indice(padre(this)) === 0 ? enfocarCelda([...this.closest("tbody").rows].at(-1).cells[cellindex - 1], e) : enfocarCelda(anterior(this.closest("tr")).cells[cellindex], e)
+    indice(padre(this)) === 0 ? enfocarCelda([...filas].at(-1).cells[cellindex - 1], e) : enfocarCelda(anterior(this.closest("tr")).cells[cellindex], e)
   else if (k === 13 || k == 40) //enter y flecha abajo
-    this.closest("tr").rowIndex <= this.closest("tbody").rows.length ? enfocarCelda(siguiente(this.closest("tr")).cells[cellindex], e) : enfocarCelda(this.closest("tbody").rows[0].cells[cellindex + 1], e)
+    this.closest("tr").rowIndex < filas.length ? enfocarCelda(siguiente(this.closest("tr")).cells[cellindex], e) : enfocarCelda(filas[0].cells[cellindex + 1], e)
 })
 
 let mostrarOffscreen = x => {
@@ -199,7 +194,7 @@ function getSelectionTextInfo(x) {
 }
 
 let mostrarError = async (e, titulo = 'Error') => (await Swal.fire(titulo, e, 'error'), false)
-$('#guardarcambios').on('click', async e => {
+bodyOnClick('#guardarcambios', 'click', async e => {
   esValido = false
   let v = await validarDatos()
   if (!v) return
@@ -342,18 +337,17 @@ function calculargastos(cuerpo) {
 
 let formatearCeldas = ({ cells: [, gasto] }) => gasto.innerText = gasto.innerText.aQuetzales()
 
-qsclickd('#resumengastos', async e => {
+bodyOnClick('#resumengastos', async e => {
   let listaTablasValores = qsarrd('table').map(tabla => {
     let productos = qsarr(tabla, 'tbody td:first-child')
     let gastos = qsarr(tabla, 'tbody td:nth-last-child(2)')
     return productos.map((p, i) => ({ producto: p.innerText.normalizar(), gastos: gastos[i].innerText.aFloat() || 0, productoDesnormalizado: p.innerText }))
   })
 
-  let p = listaTablasValores.reduce((acc, table) => {
-    table.forEach(fila => acc[fila.producto] ? acc[fila.producto].gastos += fila.gastos : acc[fila.producto] = { gastos: fila.gastos, productoDesnormalizado: fila.productoDesnormalizado })
-    return acc
-  }, {})
-
+  let p = {}
+  listaTablasValores.forEach(tabla => {
+    tabla.forEach(fila => p[fila.producto] ? p[fila.producto].gastos += fila.gastos : p[fila.producto] = { gastos: fila.gastos, productoDesnormalizado: fila.productoDesnormalizado })
+  })
   Object.keys(p).forEach(x => (p[x].gastos = p[x].gastos.normalizarPrecio()))
 
   let html = `<table id="tablaresumen" class="mx-auto"><thead><tr>
@@ -433,9 +427,7 @@ function reseteaValoresConfig() {
   qs(mb, '#switchGastosPorProductoPDF').checked = switchGastosPorProductoPDF
 }
 
-qsd('#configs').addEventListener('hidden.bs.modal', reseteaValoresConfig)
-
-
+bodyOn('hidden.bs.modal', '#configs', reseteaValoresConfig)
 
 bodyOnClick('#tablaresumen th', function () {
   let tabla = this.closest('table')

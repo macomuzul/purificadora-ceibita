@@ -1,7 +1,7 @@
 class contenedorAcciones extends HTMLElement {
   connectedCallback() {
-    $(this).addClass("contenedoracciones");
-    let { id } = this.dataset;
+    añadirClase(this, "contenedoracciones")
+    let { id } = this.dataset
     this.innerHTML = `<div class="form-check checkabsolute">
     <input class="form-check-input check" type="checkbox" id="${id}">
     <label class="form-check-label" for="${id}">Seleccionar</label>

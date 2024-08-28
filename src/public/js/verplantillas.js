@@ -8,22 +8,22 @@ const swalConfirmarYCancelar = Swal.mixin({
   buttonsStyling: false,
 })
 
-bodyOnClick(".vermas", function () {
-  alternar(qs(padre(this), '.spanHoras'))
-  this.style.rotate = this.style.rotate === '180deg' ? '0deg' : '180deg'
+bodyOnClick(".vermas", c => {
+  alternar(qs(padre(c), '.spanHoras'))
+  c.style.rotate = c.style.rotate === '180deg' ? '0deg' : '180deg'
 })
 
-bodyOnClick('.fave', function () {
-  if (timeout || tieneClase(this, 'faved')) return
+bodyOnClick('.fave', c => {
+  if (timeout || tieneClase(c, 'faved')) return
   alternarClase(favorito, 'faved')
-  alternarClase(this, 'faved')
+  alternarClase(c, 'faved')
   timeout = true
-  favorito = this
+  favorito = c
   setTimeout(() => timeout = false, 300)
 })
 
-bodyOnClick(".svgeliminar", async function () {
-  let filaborrar = this.closest("tr")
+bodyOnClick(".svgeliminar", async c => {
+  let filaborrar = c.closest("tr")
   let plantillaborrar = filaborrar.cells[0].innerText
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     icon: "warning",
@@ -33,7 +33,7 @@ bodyOnClick(".svgeliminar", async function () {
     cancelButtonText: "No continuar",
   })
   if (isConfirmed) {
-    if (this.closest("tr") === favorito.closest("tr")) return Swal.fire("Error", "No puedes borrar la plantilla de default", "error")
+    if (c.closest("tr") === favorito.closest("tr")) return Swal.fire("Error", "No puedes borrar la plantilla de default", "error")
     $.ajax({
       url: `/plantillas/${plantillaborrar}`,
       method: "DELETE",
@@ -93,4 +93,4 @@ qsclickd('#guardar', function () {
   })
 })
 
-bodyOnClick('.svgeditar', e => location = "/plantillas/editar/" + e.currentTarget.closest("tr").cells[0].innerText)
+bodyOnClick('.svgeditar', c => location = "/plantillas/editar/" + c.closest("tr").cells[0].innerText)

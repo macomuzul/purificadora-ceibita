@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node --env-file=.env --env-file=.env.prod src/index.js",
     "dev": "nodemon --ignore ./src/public/ --ignore ./cypress --ignore ./e2e --exec node --env-file=.env --env-file=.env.dev src/index.js",
-    "debug": "nodemon --ignore ./src/public/ --ignore ./cypress --ignore ./e2e --inspect src/index.js",
+    "debug": "nodemon --ignore ./src/public/ --ignore ./cypress --ignore ./e2e --exec node --env-file=.env --env-file=.env.dev --inspect src/index.js",
     "debug2": "NODE_OPTIONS=\"--inspect\" npm run dev",
     "e2e": "cypress open",
     "test": "nodemon --ignore ./src/public/ --ignore ./cypress --ignore ./e2e --exec node --env-file=.env --env-file=.env.test src/index.js",

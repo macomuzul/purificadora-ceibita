@@ -391,16 +391,15 @@ qsclickd('#resumen', async () => {
     return productos.map((_, i) => ({ producto: productos[i].innerText.normalizar(), vendidos: vendidos[i].innerText.aInt() || 0, ingresos: ingresos[i].innerText.aFloat() || 0, productoDesnormalizado: productos[i].innerText }))
   })
 
-  let p = tablasValores.reduce((acc, table) => {
-    table.forEach(fila => {
-      if (acc[fila.producto]) {
-        acc[fila.producto].vendidos += fila.vendidos
-        acc[fila.producto].ingresos += fila.ingresos
-      } else acc[fila.producto] = { vendidos: fila.vendidos, ingresos: fila.ingresos, productoDesnormalizado: fila.productoDesnormalizado }
+  let p = {}
+  tablasValores.forEach(tabla => {
+    tabla.forEach(fila => {
+      if (p[fila.producto]) {
+        p[fila.producto].vendidos += fila.vendidos
+        p[fila.producto].ingresos += fila.ingresos
+      } else p[fila.producto] = { vendidos: fila.vendidos, ingresos: fila.ingresos, productoDesnormalizado: fila.productoDesnormalizado }
     })
-    return acc
-  }, {})
-
+  })
   Object.keys(p).forEach(x => (p[x].ingresos = p[x].ingresos.normalizarPrecio()))
 
   let html = `<table id="tablaresumen" class="mx-auto tablacompleta"><thead><tr>

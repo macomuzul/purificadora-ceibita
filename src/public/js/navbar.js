@@ -11,11 +11,10 @@ qsclickd("#logoNav", e => {
   navbar.hasClass("presionado") ? esconderNavbar() : navbar.addClass("presionado")
 })
 
-bodyOnClick(".nav-item-compuesto", e => {
-  let x = $(e.currentTarget)
-  navbar.addClass("presionado")
-  x.toggleClass("presionado")
-  x.find(".submenu").slideToggle()
+bodyOnClick(".nav-item-compuesto", c => {
+  navbar.addClass('presionado')
+  alternarClase(c, 'presionado')
+  $(c).find(".submenu").slideToggle()
 })
 
 navbar.on("mouseenter", e => navbar.addClass("presionado"))

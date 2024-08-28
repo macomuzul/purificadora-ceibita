@@ -5,11 +5,10 @@ class tablaGastos extends HTMLElement {
   inicializar(datos, titulo, idTabla, esGastoPorProducto) {
     Object.assign(this, { datos, titulo, idTabla, esGastoPorProducto, datos: datos || [] })
     let tieneData = datos?.length > 0
-    $(this).html(`${this.htmlTitulo()}<div class="tablagastosparteinferior">${tieneData ? this.crearTabla(1) : tablaVacia}</div>`)
-    if (!tieneData) $(this).find('.botonesExportar').hide()
+    this.innerHTML = `${this.htmlTitulo()}<div class="tablagastosparteinferior">${tieneData ? this.crearTabla(1) : tablaVacia}</div>`
 
     elOnClick(this, '.botonregistrargasto', e => {
-      $(this).find('table').length > 0 ? $(this).find('tbody').append(this.añadirFila([])) : $(this).find('.tablagastosparteinferior').html(this.crearTabla(0))
+      qs(this, 'table') ? añadirHTML(qs(this, 'tbody'), this.añadirFila([])) : cambiarHTML(qs(this, '.tablagastosparteinferior'), this.crearTabla(0))
       convierteDatePicker($(this).find('.divdatepicker'))
     })
 
@@ -28,7 +27,6 @@ class tablaGastos extends HTMLElement {
 
   crearTabla(inicializando) {
     let { esGastoPorProducto, datos, idTabla } = this
-    $(this).find('.botonesExportar').show()
     return `<div class="divtablagastos">
     <table class="${idTabla}">
       <thead><tr>${esGastoPorProducto ? `<th>Producto</th><th>Fecha</th><th>Costo unitario</th><th>Cantidad comprados</th><th>Gasto total</th><th>Descripción (Opcional)</th>` : `<th>Concepto de gasto</th><th>Fecha</th><th>Gasto</th><th>Descripción (Opcional)</th>`}</tr></thead>

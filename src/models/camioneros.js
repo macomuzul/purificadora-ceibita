@@ -20,7 +20,7 @@ const camionerosSchema = new Schema({
   statics: {
     filtrar(f) { return this.findOne().lean().select(f + " -_id") },
     async encontrar(f = "") { return (await this.filtrar(f))?.camioneros || [] },
-    async nombres() { return (await this.encontrar("camioneros.nombre")).map(el => el.nombre) || [] }
+    async nombres() { return (await this.encontrar("camioneros.nombre")).map(c => c.nombre) || [] }
   }
 })
 

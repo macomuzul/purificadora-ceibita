@@ -1,8 +1,8 @@
-qsclickd("#guardar", async function () {
+qsclickd('#guardar', async function () {
   if (!await validarPlantillas()) return
 
   let data = JSON.stringify({
-    nombre: nombreplantilla.val(),
+    nombre: nombreplantilla.value,
     ultimaedicion: "",
     fechaultimaedicion: Date.now(),
     orden: 1,

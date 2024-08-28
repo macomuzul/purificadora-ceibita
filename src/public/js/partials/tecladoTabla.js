@@ -1,15 +1,16 @@
 body.on("keydown", "td", function (e) {
-  let cellindex = indice(this)
   let k = e.which
+  let cellindex = indice(this)
+  let filas = this.closest("tbody").rows
   let { atStart, atEnd } = k == 37 || k == 39 ? getSelectionTextInfo(this) : {}
   if (k == 37 && atStart) //flecha izquierda
     enfocarCelda(anterior(this), e)
   else if (k == 39 && atEnd) //flecha derecha
     enfocarCelda(siguiente(this), e)
   else if (k == 38) //flecha arriba
-    indice(padre(this)) === 0 ? enfocarCelda([...this.closest("tbody").rows].at(-1).cells[cellindex - 1], e) : enfocarCelda(anterior(this.closest("tr")).cells[cellindex], e)
+    indice(padre(this)) === 0 ? enfocarCelda([...filas].at(-1).cells[cellindex - 1], e) : enfocarCelda(anterior(this.closest("tr")).cells[cellindex], e)
   else if (k === 13 || k == 40) //enter y flecha abajo
-    this.closest("tr").rowIndex <= this.closest("tbody").rows.length ? enfocarCelda(siguiente(this.closest("tr")).cells[cellindex], e) : enfocarCelda(this.closest("tbody").rows[0].cells[cellindex + 1], e)
+    this.closest("tr").rowIndex <= filas.length ? enfocarCelda(siguiente(this.closest("tr")).cells[cellindex], e) : enfocarCelda(filas[0].cells[cellindex + 1], e)
 })
 
 let mostrarOffscreen = x => {

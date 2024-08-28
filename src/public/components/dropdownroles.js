@@ -43,4 +43,6 @@ class dropdownRoles extends HTMLElement {
   }
 }
 
+bodyOnClick('.dropdown-item', c => anterior(c.closest(".dropdown-menu")).innerText = c.innerText)
+
 customElements.define("dropdown-roles", dropdownRoles)

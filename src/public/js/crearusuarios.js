@@ -1,10 +1,6 @@
 let usuario, contraseña, confirmarContraseña, rol, correo
 toastr.options.positionClass = "toast-bottom-right"
 
-bodyOnClick('.dropdown-item', function () {
-  anterior(this.closest(".dropdown-menu")).innerText = this.innerText
-})
-
 async function validarDatos() {
   if (!usuario || !contraseña || !confirmarContraseña) return mostrarError("Por favor llenar todos los campos")
   if (contraseña !== confirmarContraseña) return mostrarError("Las contraseñas no coinciden")
