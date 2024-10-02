@@ -1,17 +1,12 @@
-let unidadTiempo = 'dias', agruparPor = '', rango = ''
+let unidadTiempo = 'dias', agruparPor = '', rango = '', analizar = ''
 
 let calendario = $('#calendario')
-let textoDatePicker = $('.textoDatePicker'), sectionunidadTiempo = $('.sectionunidadTiempo'), btnBorrarFechas = $('.btnBorrarFechas')
+let textoDatePicker = qsd('.textoDatePicker'), cambiarseleccionintercalada = qsd('.cambiarseleccionintercalada'), btnBorrarFechas = qsd('#borrarFechas')
 let filasIndice = [], listaFechas = []
 let datepicker, objMinView = { dias: 0, semanas: 0, meses: 1, años: 2 }
 moment.updateLocale('en', { week: { dow: 1 } })
 
-onbeforeunload = q => {
-  agruparPor = agruparPor.replace('agruparpor=', '')
-  rango = rango.replace('rango=', '')
-}
-
-let devuelveCalendarios = (...calendarios) => calendarios.map(x => $('#' + x).val().replaceAll('/', '-'))
+let devuelveCalendarios = (...calendarios) => calendarios.map(x => qsd('#' + x).value.replaceAll('/', '-'))
 let destruirCalendario = q => {
   borrarFechas()
   datepicker.off()
@@ -20,7 +15,7 @@ let destruirCalendario = q => {
 }
 let borrarFechas = q => {
   datepicker.datepicker('clearDates')
-  textoDatePicker.text('')
+  textoDatePicker.innerText = ''
   filasIndice = [], listaFechas = []
 }
 
@@ -29,9 +24,9 @@ function ordenar(e) {
   if (dates.length > 0) {
     let indices = [...dates.keys()]
     indices.sort((a, b) => dates[a] - dates[b])
-    let ordendo = dates.map((_, i) => format(indices[i])).join(', ')
-    textoDatePicker.text(ordendo)
-    datepicker.find('input').val(ordendo)
+    let ordenado = dates.map((_, i) => format(indices[i])).join(', ')
+    textoDatePicker.innerText = ordenado
+    datepicker.find('input').val(ordenado)
   }
   let clase = { dias: 'day', semanas: 'week', meses: 'month', años: 'year' }[unidadTiempo]
   $(`.datepicker-${clase}s span.${clase}`).removeClass('focused')
@@ -49,9 +44,9 @@ function mostarValores() {
   listaFechas.sort((a, b) => a - b)
   let fechas = listaFechas.map(x => moment(x).day(1).format('DD/MM/YYYY') + '-' + moment(x).day(7).format('DD/MM/YYYY')).join(', ')
   calendario.val(fechas)
-  textoDatePicker.text(fechas)
+  textoDatePicker.innerText = fechas
 }
-let mostrar = q => filasIndice.forEach(i => $(`.datepicker-days tbody tr:nth-child(${i + 1})`).addClass('active'))
+let display = q => filasIndice.forEach(i => $(`.datepicker-days tbody tr:nth-child(${i + 1})`).addClass('active'))
 
 let capturarFecha = e => {
   if (e.target.matches('td.day')) {
@@ -66,14 +61,6 @@ let capturarFecha = e => {
   }
 }
 
-let swalConfirmarYCancelar = Swal.mixin({
-  customClass: {
-    confirmButton: 'btn btn-success margenbotonswal',
-    cancelButton: 'btn btn-danger margenbotonswal',
-  },
-  buttonsStyling: false,
-})
-
 function crearDatePicker(opciones = {}) {
   try {
     destruirCalendario()
@@ -81,104 +68,71 @@ function crearDatePicker(opciones = {}) {
   datepicker = $(`#${rango === 'entre' ? 'datepickerEntre' : 'datepickerNormal'}`).datepicker({ weekStart: 1, language: 'es', autoclose: rango !== 'libre', maxViewMode: 2, minViewMode: objMinView[unidadTiempo], todayHighlight: true, multidate: rango === 'libre', multidateSeparator: ', ', format: 'dd/mm/yyyy', ...opciones })
 }
 
-function cambiarRango(opcion){
-  rango = opcion.textContent.split(' ').at(0).toLowerCase()
-  $('.textoDatePicker')[rango === 'libre' ? 'show' : 'hide']()
-  let fechaEntre = rango === 'entre'
-  $('#datepickerNormal').css('display', fechaEntre ? 'none' : 'flex')
-  $('#datepickerEntre').css('display', fechaEntre ? 'flex' : 'none')
-  crearDatePicker()
-}
-
-$('#rangomenu').on('click', w => metododropdown = cambiarRango)
-$('#agruparmenu').on('click', w => { metododropdown = (opcion) => agruparPor = opcion.dataset.agrupar })
-bodyOnClick('.dia', e => rehacerDatepicker('dias'))
-
-function tercerNivel() {
-  unidadTiempo = 'dias'
-  sectionunidadTiempo.hide()
-  btnBorrarFechas.text('Borrar fecha seleccionada')
-  sectionVarios.mostrar('flex')
-  breadcrumbs.nivel(3)
-  crearDatePicker()
-}
-
-function tercerNivelLibre() {
-  sectionunidadTiempo.show()
-  btnBorrarFechas.text('Borrar fechas seleccionadas')
-  sectionVarios.mostrar('flex')
-  breadcrumbs.nivel(3)
-  construirDatePicker(agruparPor)
-}
-
-function tercerNivelEntre() {
-  unidadTiempo = 'dias'
-  sectionunidadTiempo.hide()
-  btnBorrarFechas.text('Borrar fecha seleccionada')
-  sectionEntre.mostrar('flex')
-  breadcrumbs.nivel(3)
-  crearDatePicker()
-}
-
-function datepickerMultidate() {
-  if (unidadTiempo !== 'semanas') {
-    datepicker.on('show', e => ordenar(e))
-    datepicker.on('hide', e => ordenar(e))
-  } else {
-    datepicker.on('show', mostrar)
-    datepicker.on('hide', mostarValores)
-    datepicker.on('changeMonth', e => cambiarMes(e))
-    document.addEventListener('click', capturarFecha, { capture: true })
-  }
-}
-
-bodyOnClick('#analizarVarios', function () {
-  let [fecha] = devuelveCalendarios('calendario')
-  if (fecha === '') return Swal.fire('Campo de fecha vacío', 'Por favor selecciona una fecha para continuar', 'error')
-  if (rango === 'libre') {
-    let fechas = unidadTiempo === 'semanas' ? listaFechas : datepicker.datepicker('getDates')
-    fechas.sort((a, b) => a - b)
-    fecha = fechas.map(x => new Intl.DateTimeFormat('es', { timeZone: 'UTC' }).format(x).replaceAll('/', '-')).join()
-  }
-  antesDeCambiarPagina()
-  location = `/analisis/${agruparPor}&${rango}&${unidadTiempo}=${fecha}`
-})
-bodyOnClick('#analizarEntre', function () {
-  let [fecha1, fecha2] = devuelveCalendarios('calendario1', 'calendario2')
-  if (fecha1 === '' || fecha2 === '') return Swal.fire('Campo de fecha vacío', 'Por favor selecciona una fecha para continuar', 'error')
-  antesDeCambiarPagina()
-  location = `/analisis/${agruparPor}&${rango}&${unidadTiempo}=${fecha1}&y&${fecha2}`
-})
-
-function antesDeCambiarPagina() {
-  agruparPor = agruparPor.replace('días', 'dias')
-  unidadTiempo = unidadTiempo.replace('días', 'dias')
-  agruparPor = 'agruparpor=' + agruparPor
-  rango = 'rango=' + rango
-}
-
-bodyOnClick('.btnBorrarFechas', borrarFechas)
-bodyOnClick('.input-group-append', e => anterior(e.currentTarget).focus())
-
-
-async function rehacerDatepicker(UT) {
-  let { isConfirmed } = await swalConfirmarYCancelar.fire({
-    title: `Estás seguro que deseas seleccionar las fechas por ${UT}`,
-    text: 'Si continuas se borrarán las fechas que seleccionaste en el calendario',
-    fa: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Sí',
-    cancelButtonText: 'No',
-  })
-  if (!isConfirmed) return
-  construirDatePicker(UT)
-}
-
-function construirDatePicker(UT) {
-  unidadTiempo = UT
+function crearDatPickerMultidate(UT) {
   let opciones = {}
   if (UT === 'meses') opciones = { format: 'MM yyyy' }
   if (UT === 'años') opciones = { format: 'yyyy' }
   crearDatePicker(opciones)
-  datepickerMultidate()
+  if (UT !== 'semanas') {
+    datepicker.on('show', ordenar)
+    datepicker.on('hide', ordenar)
+  } else {
+    datepicker.on('show', display)
+    datepicker.on('hide', mostarValores)
+    datepicker.on('changeMonth', cambiarMes)
+    document.addEventListener('click', capturarFecha, { capture: true })
+  }
 }
+
+qsd('[data-idseleccionado="analizar"]').metododropdown = opcion => analizar = opcion.dataset.analizar
+qsd('[data-idseleccionado="agrupar"]').metododropdown = opcion => agruparPor = opcion.dataset.agrupar
+qsd('[data-idseleccionado="rango"]').metododropdown = c => {
+  let t = c.textContent
+  let l = t.startsWith('Libre')
+  rango = t.split(' ').at(0).toLowerCase()
+  let entre = rango === 'entre'
+  visibilidad(cambiarseleccionintercalada, l)
+  visibilidad(textoDatePicker, l)
+  visibilidad(qsd('#datepickerNormal'), !entre)
+  visibilidad(qsd('#datepickerEntre'), entre)
+  btnBorrarFechas.innerText = l ? 'Borrar fechas seleccionadas' : 'Borrar fecha seleccionada'
+  if (l) crearDatPickerMultidate(agruparPor)
+  else {
+    unidadTiempo = 'dias'
+    crearDatePicker()
+  }
+}
+qsd('[data-idseleccionado="intercalado"]').metododropdown = async c => {
+  let UT = c.dataset.intercalar
+  let { isConfirmed } = await swalConfirmarYCancelar.fire({
+    title: `Estás seguro que deseas seleccionar las fechas por ${UT}`,
+    text: 'Si continuas se borrarán las fechas que seleccionaste en el calendario',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí',
+    cancelButtonText: 'No',
+  })
+  if (isConfirmed) crearDatPickerMultidate(UT)
+}
+
+bodyOnClick('#btnbuscar', c => {
+  let f
+  if (rango === 'entre') {
+    let [fecha1, fecha2] = devuelveCalendarios('calendario1', 'calendario2')
+    if (fecha1 === '' || fecha2 === '') return Swal.fire('Campo de fecha vacío', 'Por favor selecciona una fecha para continuar', 'error')
+    f = `${fecha1}&y&${fecha2}`
+  } else {
+    let [fecha] = devuelveCalendarios('calendario')
+    if (fecha === '') return Swal.fire('Campo de fecha vacío', 'Por favor selecciona una fecha para continuar', 'error')
+    if (rango === 'libre') {
+      let fechas = unidadTiempo === 'semanas' ? listaFechas : datepicker.datepicker('getDates')
+      fechas.sort((a, b) => a - b)
+      fecha = fechas.map(x => new Intl.DateTimeFormat('es', { timeZone: 'UTC' }).format(x).replaceAll('/', '-')).join()
+    }
+    f = fecha
+  }
+  location = `/analisis/agruparpor=${agruparPor}&rango=${rango}&${unidadTiempo}=${f}`
+})
+
+bodyOnClick('.btnBorrarFechas', borrarFechas)
+document.addEventListener('eventoDP', crearDatePicker)

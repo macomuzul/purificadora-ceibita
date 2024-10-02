@@ -27,6 +27,7 @@ router.route('/crear').get(async (req, res) => {
   let plantillas = await Plantilla.nombres()
   res.render('crearplantillas', { plantillas, esAdmin: esAdmin(req) })
 }).post(tcaccion(async (req, res) => {
+  await Plantilla.create({jiji: "jijija"})
   if (await Plantilla.exists({ nombre: req.body.nombre })) throw new errorDB('Ya existe una plantilla con ese nombre')
   await Plantilla.create({ ...req.body, orden: await Plantilla.countDocuments({}), ultimaedicion: devuelveUsuario(req) })
   res.send()
@@ -40,7 +41,16 @@ router.route('/editar/:nombre').get(tcaccion(async (req, res) => {
   req.body.fechaultimaedicion = Date.now()
   await Plantilla.editarCustom({ nombre: req.params.nombre }, req.body)
   res.send()
-}, "Ocurrió un error al actualizar la plantilla"))
+}, "Ocurrió un error al actualizar la plantilla")).delete(tcaccion(async (req, res) => {
+  let plantilla = await Plantilla.encontrar({ nombre: req.params.nombre }).select("orden esdefault")
+  if (!plantilla) throw new errorDB("La plantilla que deseas borrar ya no existe")
+  let { esdefault, orden, _id } = plantilla
+  if (esdefault) throw new errorDB("No puedes borrar la plantilla de default")
+
+  await Plantilla.borrar(_id)
+  await Plantilla.updateMany({ orden: { $gte: orden } }, { $inc: { orden: -1 } })
+  res.send()
+}, "Ocurrió un error al tratar de borrar la plantilla"))
 
 router.get('/devuelveplantilla/:nombre', tcaccion(async (req, res) => {
   let plantilla = await Plantilla.encontrar({ nombre: req.params.nombre }).select("productos -_id")
@@ -53,16 +63,5 @@ router.get('/devuelvenombres', tcaccion(async (req, res) => {
   res.send(plantillas?.map(x => x.nombre) || [])
 }, "Hubo un error al recuperar la plantilla"))
 
-
-router.route('/:nombre').delete(tcaccion(async (req, res) => {
-  let plantilla = await Plantilla.encontrar({ nombre: req.params.nombre }).select("orden esdefault")
-  if (!plantilla) throw new errorDB("La plantilla que deseas borrar ya no existe")
-  let { esdefault, orden, _id } = plantilla
-  if (esdefault) throw new errorDB("No puedes borrar la plantilla de default")
-
-  await Plantilla.borrar(_id)
-  await Plantilla.updateMany({ orden: { $gte: orden } }, { $inc: { orden: -1 } })
-  res.send()
-}, "Ocurrió un error al tratar de borrar la plantilla"))
 
 module.exports = router

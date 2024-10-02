@@ -5,10 +5,7 @@ const { DateTime } = require("luxon")
 let validarPagina = (req, res, next) => (/^pag=[0-9]+$/.test(req.params.pag)) ? next() : res.send("página inválida")
 let { devuelveFuncionMover } = require("../registrarventas")
 
-router.get("/", (req, res) => res.render("seleccionarregistroseliminados", { esAdmin: esAdmin(req) }))
-router.post("/restaurarregistro", devuelveFuncionMover(RegistrosEliminados, "No se pudo restaurar el registro"))
-
-router.delete("/borrarregistros", tcaccion(async (req, res) => {
+router.route("/").get((req, res) => res.render("seleccionarregistroseliminados", { esAdmin: esAdmin(req) })).delete(tcaccion(async (req, res) => {
   let { registros } = req.body
   let eliminados = await RegistrosEliminados.deleteMany({ _id: { $in: registros } })
   if (eliminados.deletedCount === registros.length) return res.send()
@@ -17,11 +14,14 @@ router.delete("/borrarregistros", tcaccion(async (req, res) => {
   res.status(401).send("Se lograron borrar los registros excepto unos que ya los habías eliminado antes")
 }, "Ocurrió un error al intentar eliminar los registros"))
 
+router.post("/restaurarregistro", devuelveFuncionMover(RegistrosEliminados, "No se pudo restaurar el registro"))
+
+
 
 let mostrarPagina = tcrutas(async (req, res, Reg) => {
   let limite = 10
   let [url, pagina] = req.originalUrl.split('pag=')
-  pagina = parseInt(pagina)
+  pagina = pagina.aInt()
   let datostablas = await Reg.clone().limit(limite).skip(limite * (pagina - 1))
   let totalPaginas = Math.ceil(await Reg.clone().countDocuments() / limite)
   if (totalPaginas === 0) return res.send("no hay ningún registro")

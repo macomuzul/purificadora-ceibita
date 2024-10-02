@@ -27,11 +27,8 @@ global.tcaccion = (f, msg) => async (req, res) => {
     await f(req, res)
   } catch (e) {
     let errores = enDesarrollo ? { StrictModeError: e.message, ValidationError: Object.values(e.errors)[0].message } : { StrictModeError: "dato no esperado", ValidationError: "error de validación" }
-    if (["StrictModeError", "ValidationError", "CastError"].includes(e.name)) {
-      await loggearError(req, res, e, errores[e.name])
-      let { baseUrl, url, method } = req
-    } else
-      await loggearError(req, res, e, e.name === "errorDB" ? e.message : msg, LogsLeves)
+    if (["StrictModeError", "ValidationError", "CastError"].includes(e.name)) await loggearError(req, res, e, errores[e.name])
+    else await loggearError(req, res, e, e.name === "errorDB" ? e.message : msg, LogsLeves)
   }
 }
 

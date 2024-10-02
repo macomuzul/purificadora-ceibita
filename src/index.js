@@ -2,11 +2,10 @@ const fs = require('fs')
 process.on('uncaughtException', async error => {
   try {
     console.log(error)
-    await LogsGraves.log('Error fatal', error)
-    await mandarCorreoError('Error fatal importantisimo', 'Ha ocurrido un error fatal')
+    await Promise.all([LogsGraves.log('Error fatal', error), mandarCorreoError('Error fatal importantisimo', 'Ha ocurrido un error fatal')])
   } catch (err) {
     console.log(err)
-    let escribirError = errorazo => fs.appendFile('./logsfatales.log', JSON.stringify(errorazo, ['name', 'message', 'arguments', 'type', 'error', 'stack']) + '\n', e => console.log(e))
+    let escribirError = errorazo => fs.appendFileSync('./logsfatales.log', JSON.stringify(errorazo, ['name', 'message', 'arguments', 'type', 'error', 'stack']) + '\n', e => { console.log(e) })
     escribirError(error)
     escribirError(err)
   }
@@ -20,55 +19,15 @@ const engine = require('ejs-mate')
 const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('passport')
-const pruebasvalidaciones = require('./models/pruebasvalidaciones')
 const RedisStore = require('connect-redis')
 const redis = require('./redis')
-const { sanitizeFilter } = require('mongoose')
 const { LogsGraves } = require('./models/loggers')
 require('./globals/globals')
 require('./listenersDB')
 require('./security/authPassport')
 
-if(enTesting) require('../tests/testing')
+if (enTesting) require('../tests/testing')
 
-// const calcularTodosLosResumenesPorDia = require("./utilities/crearresumenespordia");
-// calcularTodosLosResumenesPorDia()
-
-// const { ResumenSemana, ResumenMes } = require("./models/resumenes")
-// const convertirRegistrosPorSemanaYMes = require("./utilities/crearresumenesporsemanaymes");
-// convertirRegistrosPorSemanaYMes("week", ResumenSemana)
-// convertirRegistrosPorSemanaYMes("month", ResumenMes)
-
-// const calcularTodosLosResumenesPorAño = require("./utilities/crearresumenesporaño");
-// calcularTodosLosResumenesPorAño()
-
-async function crearPruebasValidacion(nombre) {
-  try {
-    // let j = await pruebasvalidaciones.create({nombre: "masmfnvcnv", fkdk: "kskd", precio: 1200, viajes: [2,5,5,51,1,4], turbokike: 29939})
-    // console.log(j)
-    // let a = await pruebasvalidaciones.updateOne({}, { fuu: "ewr" })
-    // console.log(a)
-    let req = {}
-    req.body = { apellido: 'vergazo' }
-    req.body = { nombre: { $ne: 1 } }
-    // sanitizeFilter(req.body)
-    let { nombre } = req.body
-    let cambios = { nombre: 'chimadaamigo' }
-    console.log(nombre)
-    let r = await pruebasvalidaciones.updateOne({ nombre }, cambios, { sanitizeFilter: true })
-    console.log(r)
-    // let b = await pruebasvalidaciones.findOneAndUpdate({}, {nombre: "putito"})
-    // console.log(b)
-    // let j = await pruebasvalidaciones2.updateOne({nombre: "masmfnvcnv"}, {nombre: "masmfnvcnv",precio: -1500, viajes: [40], turbokike: 29939}, {runValidators: true})
-    // console.log(j)
-    // let a = await pruebasvalidaciones2.findOneAndDelete({coño: "esumare"}, {nombre: "coñodesumadreverga"})
-    // console.log(a)
-  } catch (error) {
-    console.log(error)
-  }
-}
-// crearPruebasValidacion()
-// crearDiaGoogleSheets()
 //TODO este quitarlo despues
 app.set('view cache', false)
 app.set('port', process.env.PORT || 3000)
@@ -128,34 +87,5 @@ app.use('/analisis', require('./routes/analisis'))
 app.use('/extras', require('./routes/extras'))
 app.use('/gastos', require('./routes/gastos'))
 app.get('*', (req, res) => res.send('La página a la que deseas acceder no existe :('))
-
-// agregarTituloDocs("Cambios ocurridos el 1/2/2023", "-")
-// crearMesGoogleSheets()
-// crearDiaGoogleSheets()
-// titulosGoogleSheets(`Mes: Octubre de 2023`, 0, { red: 0.62, green: 0.77, blue: 0.91 }, 14)
-// titulosGoogleSheets("Día: 1", 1, { red: 0.43, green: 0.62, blue: 0.92 }, 11)
-// titulosGoogleSheets("Día: 2", 1, { red: 0.43, green: 0.62, blue: 0.92 }, 11)
-// agregarFilaGoogleSheetsSimple(["Sin cambios"])
-// pruebiña()
-// agregarFilaGoogleSheets(["Hora", "Usuario", "Acción que realizó"])
-// agregarFilaGoogleSheets(["Sin cambios"])
-// agregarSinCambios()
-// agregarHoja()
-//   ;(async function () {
-//   await crearMesGoogleSheets()
-// await crearDiaGoogleSheets()
-// })()
-// datosSpreadSheet()
-// agregarTituloDocs("Febrero", "*")
-// crearMesGoogleSheets()
-// agregarFilaGoogleSheets(["8:32 a. m.", "adm", "Movió un registro con fecha 20/10/2023 y sobreescribió otro registro con fecha 20/10/2023"])
-// agregarTextoDocs("coño de su madre marico no joda")
-// haceloPa()
-// crearDiaGoogleSheets()
-// async function guardarGD() {
-//   let r = await guardarDias()
-//   console.log(r ? "Se crearon con éxito" : "Falló al crearse")
-// }
-// guardarGD()
 
 app.listen(app.get('port'), () => console.log('servidor funcionando en el puerto: ', app.get('port')))

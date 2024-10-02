@@ -16,7 +16,7 @@ async function moverReg(fecha, url) {
     html: 'Cargando',
     willOpen: async q => {
       if (!cargaronLibsDP) {
-        await $.getScript("/bootstrapdatepicker.js")
+        await añadirJS("/bootstrapdatepicker.js")
         cargaronLibsDP = true
       }
     },
@@ -50,39 +50,32 @@ function mostrarDP(fecha, url) {
 }
 
 function moverRegistro(de, a, sobreescribir, url) {
-  $.ajax({
-    url,
-    method: "POST",
-    contentType: "application/json",
-    data: JSON.stringify({ de, a, sobreescribir }),
-    success: async r => {
-      if (r === '') return await preguntarSiQuiereRedireccionar(a)
-      let html = `<custom-tabs><div class="tabs">
-      ${r.map((_, i) => `<tab-label name="swal" data-id="swal${i}">Camión ${i + 1}</tab-label>`).join('')}
-      </div><div class="content">
-      ${r.map(({ productos, totalvendidos, totalingresos }) => {
-        let cantViajes = productos[0].viajes.length / 2;
-        return `<tab-content><table><thead>
-          <col><col><colgroup class="pintarcolumnas">${[...Array(cantViajes)].map(_ => `<col span="2">`).join('')}</colgroup><col><col>
-          <tr>
-            <th rowspan="2" class="prod">Productos</th><th rowspan="2" class="tr">Precio</th>
-            ${[...Array(cantViajes)].map((_, k) => `<th colspan="2">Viaje No. ${k + 1}</th>`).join('')}
-            <th rowspan="2" class="tr">Vendidos</th><th rowspan="2" class="tr">Ingresos</th>
-          </tr>
-          <tr>${[...Array(cantViajes)].map(_ => `<th>Sale</th><th>Entra</th>`).join('')}</tr>
-        </thead>
-        <tbody>
-          ${productos.map(({ nombre, precio, viajes, vendidos, ingresos }) => `<tr>
-            <td>${nombre}</td><td>${precio.normalizarPrecio()}</td>${viajes.map(x => `<td>${x}</td>`).join('')}<td>${vendidos}</td><td>${ingresos.normalizarPrecio()}</td>
-          </tr>`).join('')}
-        </tbody>
-        <tfoot><tr><td colspan="${cantViajes * 2 + 2}">Total:</td><td>${totalvendidos}</td><td>${totalingresos.normalizarPrecio()}</td></tr></tfoot>
-      </table></tab-content>`}).join('')}
-      </div></custom-tabs>`
+  hazPost(url, JSON.stringify({ de, a, sobreescribir }), async r => {
+    if (r === '') return await preguntarSiQuiereRedireccionar(a)
+    let html = `<custom-tabs><div class="tabs">
+    ${r.map((_, i) => `<tab-label name="swal" data-id="swal${i}">Camión ${i + 1}</tab-label>`).join('')}
+    </div><div class="content">
+    ${r.map(({ productos, totalvendidos, totalingresos }) => {
+      let cantViajes = productos[0].viajes.length / 2;
+      return `<tab-content><table><thead>
+        <col><col><colgroup class="pintarcolumnas">${[...Array(cantViajes)].map(_ => `<col span="2">`).join('')}</colgroup><col><col>
+        <tr>
+          <th rowspan="2" class="prod">Productos</th><th rowspan="2" class="tr">Precio</th>
+          ${[...Array(cantViajes)].map((_, k) => `<th colspan="2">Viaje No. ${k + 1}</th>`).join('')}
+          <th rowspan="2" class="tr">Vendidos</th><th rowspan="2" class="tr">Ingresos</th>
+        </tr>
+        <tr>${[...Array(cantViajes)].map(_ => `<th>Sale</th><th>Entra</th>`).join('')}</tr>
+      </thead>
+      <tbody>
+        ${productos.map(({ nombre, precio, viajes, vendidos, ingresos }) => `<tr>
+          <td>${nombre}</td><td>${precio.normalizarPrecio()}</td>${viajes.map(x => `<td>${x}</td>`).join('')}<td>${vendidos}</td><td>${ingresos.normalizarPrecio()}</td>
+        </tr>`).join('')}
+      </tbody>
+      <tfoot><tr><td colspan="${cantViajes * 2 + 2}">Total:</td><td>${totalvendidos}</td><td>${totalingresos.normalizarPrecio()}</td></tr></tfoot>
+    </table></tab-content>`}).join('')}
+    </div></custom-tabs>`
 
-      if (await swalSíNo("Ya existe un registro en esa fecha, deseas sobreescribirlo?", html)) moverRegistro(de, a, 1, url)
-    },
-    error: r => Swal.fire("Error", r.responseText, "error")
+    if (await swalSíNo("Ya existe un registro en esa fecha, deseas sobreescribirlo?", html)) moverRegistro(de, a, 1, url)
   })
 }
 

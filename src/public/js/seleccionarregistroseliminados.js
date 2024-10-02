@@ -6,7 +6,7 @@ let crearDatePicker = idDatePicker => $(`#${idDatePicker}`).datepicker({ weekSta
   if ((rect.x + rect.width) > innerWidth || (rect.y + rect.height) > innerHeight) x.scrollIntoView()
 })
 
-function metododropdown(option, menu) {
+qsd('custom-dropdown').metododropdown = (option, menu) => {
   if (menu.id === "fechasdropdown") {
     let fechaEntre = option.innerText === "Fecha entre"
     $("#datepickerEntre").css("display", fechaEntre ? "flex" : "none")

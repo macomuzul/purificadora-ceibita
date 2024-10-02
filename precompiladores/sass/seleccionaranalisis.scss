@@ -1,5 +1,3 @@
-@use "./partials/breadcrumbs";
-
 .gridUnidadTiempo {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -15,10 +13,6 @@
   font-size: 18px;
 }
 
-#breadcrumbs,
-#sectionUnidadTiempo {
-  margin-top: 35px;
-}
 
 #sectionAgrupar {
   display: block;
@@ -55,32 +49,6 @@ custom-switch {
   background-color: inherit !important;
   color: inherit !important;
   border-color: black !important;
-}
-
-.btnBorrarFechas {
-  position: absolute;
-  right: 0;
-  bottom: -80px
-}
-
-.textoDatePicker {
-  position: absolute;
-  bottom: -160px;
-  left: 0;
-}
-
-.unidadesTiempo {
-  color: #007bff;
-  margin-top: 10px;
-}
-
-.margenbotonswal{
-  width: 140px;
-  height: 50px;
-  font-weight: 500;
-  &:not(.btn-success){
-    margin-left: 40px;
-  }
 }
 
 .btnunidadtiempo {

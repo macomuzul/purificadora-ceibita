@@ -1,6 +1,8 @@
 const { Settings } = require('luxon')
-const { google } = require("googleapis")
-const redis = require("../redis")
+const { docs } = require('@googleapis/docs')
+const { sheets } = require('@googleapis/sheets')
+const { drive } = require('@googleapis/drive')
+const { auth } = require('@googleapis/oauth2')
 
 global.enDesarrollo = process.env.NODE_ENV !== "production"
 global.enTesting = process.env.NODE_ENV === "testing"
@@ -23,16 +25,15 @@ require("./rutas")
 let clientId = process.env.CLIENT_ID
 let clientSecret = process.env.CLIENT_SECRET
 let refreshToken = process.env.REFRESH_TOKEN
-let oauth2Client = new google.auth.OAuth2(clientId, clientSecret, refreshToken)
+let oauth2Client = new auth.OAuth2(clientId, clientSecret, refreshToken)
 oauth2Client.setCredentials({ refresh_token: refreshToken })
-
 global.clientId = clientId
 global.clientSecret = clientSecret
 global.refreshToken = refreshToken
 global.oauth2Client = oauth2Client
-global.gDrive = google.drive({ version: 'v3', auth: oauth2Client })
-global.gSheets = google.sheets({ version: 'v4', auth: oauth2Client })
-global.gDocs = google.docs({ version: "v1", auth: oauth2Client })
+global.gDrive = drive({ version: 'v3', auth: oauth2Client })
+global.gSheets = sheets({ version: 'v4', auth: oauth2Client })
+global.gDocs = docs({ version: "v1", auth: oauth2Client })
 
 require("./gmail")
 require("./gsheets")

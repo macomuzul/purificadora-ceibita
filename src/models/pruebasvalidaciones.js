@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose
 let { cantidadMinima0, validarString, arregloMayorA0, arregloMenorACustom } = require("./validaciones/validar")
-_ = require('lodash');
 
 // const validacionesSchema = new Schema({
 //   nombre: validarString,

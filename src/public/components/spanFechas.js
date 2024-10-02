@@ -10,7 +10,7 @@ class spanFechas extends HTMLElement {
     <span class="spanFechaStr">${sinhora ? texto.replace(/^\w/, c => c.toUpperCase()) : texto}</span>`
 
     if (!sinhora) {
-      let hora = parseInt(formatearFecha({ hour: "numeric" }))
+      let hora = formatearFecha({ hour: "numeric" }).aInt()
       let tiempo = (hora >= 0 && hora < 6) ? "madrugada" : (hora >= 6 && hora < 12) ? "mañana" : (hora >= 12 && hora < 19) ? "tarde" : "noche"
       html += `<span class="spanHoras"${escondido ? ' hidden' : ''}> a las ${hora > 13 ? hora - 12 : hora} ${hora === 0 ? "horas" : ""} de la ${tiempo} con ${fecha.getMinutes()} minutos y ${fecha.getSeconds()} segundos </span>`
     }

@@ -14,7 +14,7 @@ let inicioTabSortable
 
 let $tabContents = [...$contents.children]
 let $idTab = q => $tabContents.findIndex(x => !x.hidden)
-let $tabla = q => $tabContents.find(x => !x.hidden)
+let $tabla = q => qs($tabContents.find(x => !x.hidden), 'table')
 let $tablas = q => qsarr($contents, `table`)
 let $cuerpo = q => qs($tabla(), '.cuerpo')
 let $filas = q => [...$cuerpo().rows]
@@ -60,6 +60,11 @@ let _exportarExcel = -1
 let _reordenarProductos = -1
 let _reordenarCamiones = -1
 let _ordenarOrdenAlfabetico = -1
+
+let tabsTexto = (tablaOriginal, tablaNueva, texto) => `<custom-tabs class="swalTab">
+  <div class="tabs"><tab-label>${texto}</tab-label><tab-label>Vista previa del resultado</tab-label></div>
+  <div><tab-content>${tablaOriginal.outerHTML}</tab-content><tab-content hidden>${tablaNueva.outerHTML}</tab-content></div>
+</custom-tabs>`
 
 bodyOnClick('.restaurarplantilla', e => {
   let tabla = $tabla()
@@ -201,9 +206,6 @@ bodyOnClick('.grupotabs th:not([colspan="2"]), #tablaresumen th', c => {
   }
 })
 
-let estilosSwal = (confirmButton, cancelButton = '', denyButton = '') => Swal.mixin({ customClass: { confirmButton, cancelButton, denyButton }, buttonsStyling: false })
-
-const swalConfirmarYCancelar = estilosSwal('btn btn-success margenbotonswal', 'btn btn-danger margenbotonswal')
 const swalContinuar = estilosSwal('btn btn-primary margenbotonswal btncontinuar')
 const swal3Botones = estilosSwal('botonswal3 botonconfirm', 'botonswal3 botoncancel', 'botonswal3 botondeny')
 const swal3BotonesInvertido = estilosSwal('botonswal3 botondeny', 'botonswal3 botoncancel', 'botonswal3 botonconfirm')
@@ -367,14 +369,7 @@ qsclickd('#guardar', async function () {
   })
   console.log(data)
 
-  $.ajax({
-    url: '/registrarventas/guardar',
-    method: 'POST',
-    contentType: 'application/json',
-    data,
-    success: q => Swal.fire('Se ha guardado exitosamente', 'El archivo se ha almacenado en la base de datos', 'success'),
-    error: q => Swal.fire('Ups...', 'No se pudo guardar en la base de datos', 'error'),
-  })
+  hazPost('/registrarventas/guardar', data, q => Swal.fire('Se ha guardado exitosamente', 'El archivo se ha almacenado en la base de datos', 'success'), e => swalError('No se pudo guardar en la base de datos'))
 })
 
 function formatearCeldas({ cells: [, prod, prec] }) {
@@ -394,10 +389,11 @@ qsclickd('#resumen', async () => {
   let p = {}
   tablasValores.forEach(tabla => {
     tabla.forEach(fila => {
-      if (p[fila.producto]) {
-        p[fila.producto].vendidos += fila.vendidos
-        p[fila.producto].ingresos += fila.ingresos
-      } else p[fila.producto] = { vendidos: fila.vendidos, ingresos: fila.ingresos, productoDesnormalizado: fila.productoDesnormalizado }
+      let { producto: n, vendidos, ingresos, productoDesnormalizado } = fila
+      if (p[n]) {
+        p[n].vendidos += vendidos
+        p[n].ingresos += ingresos
+      } else p[n] = { vendidos, ingresos, productoDesnormalizado }
     })
   })
   Object.keys(p).forEach(x => (p[x].ingresos = p[x].ingresos.normalizarPrecio()))
@@ -753,18 +749,6 @@ async function swalContinuarNoContinuar(title, html) {
   })
   return isConfirmed
 }
-async function swalSíNo(title, html, width = (innerWidth * 3) / 4) {
-  let { isConfirmed } = await swalConfirmarYCancelar.fire({
-    title,
-    icon: 'warning',
-    width,
-    html,
-    showCancelButton: true,
-    confirmButtonText: 'Sí',
-    cancelButtonText: 'No',
-  })
-  return isConfirmed
-}
 
 async function borrarCamiones(label, e) {
   e.stopImmediatePropagation()
@@ -890,7 +874,7 @@ async function pidePlantilla(nombre) {
   return listaplantillas[nombre]
 }
 
-async function metododropdown(option) {
+qsd('custom-dropdown').metododropdown = async option => {
   let p = await pidePlantilla(option.textContent)
   if (!p) return
   plantillaSeleccionada = p
@@ -971,13 +955,6 @@ async function mezclarHandler(sinEliminar, ordenTabla) {
   tablasSortable()
 }
 
-function tabsTexto(tablaOriginal, tablaNueva, texto) {
-  return `<custom-tabs class="swalTab">
-  <div class="tabs"><tab-label>${texto}</tab-label><tab-label>Vista previa del resultado</tab-label></div>
-  <div><tab-content>${tablaOriginal.outerHTML}</tab-content><tab-content>${tablaNueva.outerHTML}</tab-content></div>
-  </custom-tabs>`
-}
-
 function mezclarOrden(productos, sinEliminar, ordenTabla) {
   let filas = $filas()
   let formatoTablaLlena = ''
@@ -1009,12 +986,6 @@ function mezclarOrden(productos, sinEliminar, ordenTabla) {
   }
   return formatoTablaLlena
 }
-String.prototype.aFloat = function () { return parseFloat(this) }
-String.prototype.aInt = function () { return parseInt(this) }
-String.prototype.normalizar = function () { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '') }
-String.prototype.normalizarPrecio = function () { return this.aFloat().toFixed(2).replace(/[.,]00$/, '') }
-Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, '') }
-
 String.prototype.aQuetzales = function () { return new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(this.aFloat()) }
 String.prototype.cantidadFormateada = function () { return new Intl.NumberFormat('es-GT').format(this.aFloat()) }
 
@@ -1054,27 +1025,11 @@ bodyOn('hide.bs.dropdown', '#dropdowncamionero', c => { c.closest('.swal2-html-c
 bodyOnClick('.swal2-html-container .dropdown-toggle', c => c.closest('.swal2-html-container').style.minHeight = `${(siguiente(this).children.length - 4) * 30 + 135}px`)
 
 bodyOnClick('.contenedoreliminar', async q => {
-  let { isConfirmed } = await swalConfirmarYCancelar.fire({
-    title: 'Estás seguro que deseas borrar este registro?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Sí',
-    cancelButtonText: 'No',
-  })
-  if (isConfirmed) {
+  if (await swalSíNo('Estás seguro que deseas borrar este registro?', '')) {
     modalAutenticacion.mostrar(q => {
-      let contraseñaVerificacion = qsd('#verificacionIdentidad').value
-      let data = JSON.stringify({ contraseñaVerificacion })
-      $.ajax({
-        url: location.pathname,
-        method: 'DELETE',
-        contentType: 'application/json',
-        data,
-        success: async q => {
-          await Swal.fire('ÉXITO', 'Se ha borrado el registro exitosamente', 'success')
-          location.reload()
-        },
-        error: r => mostrarError(r.responseText),
+      hazDelete('', JSON.stringify({ contraseñaVerificacion: qsd('#verificacionIdentidad').value }), async q => {
+        await Swal.fire('ÉXITO', 'Se ha borrado el registro exitosamente', 'success')
+        location.reload()
       })
     })
     esconderOpciones()

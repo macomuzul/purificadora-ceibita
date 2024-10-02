@@ -1,12 +1,7 @@
 let decodificarStr = s => s.replaceAll('&#34;', '"')
 let decodificado = decodificarStr(datosString), datos = JSON.parse(decodificado)
 // document.body.style.width = "2000px"
-String.prototype.aFloat = function () { return parseFloat(this) }
-
-String.prototype.normalizar = function () { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, "") }
-String.prototype.normalizarPrecio = function () { return this.aFloat().toFixed(2).replace(/[.,]00$/, "") }
 String.prototype.normalizarPrecioNum = function () { return this.normalizarPrecio().aFloat() }
-Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }
 Number.prototype.normalizarPrecioNum = function () { return this.normalizarPrecio().aFloat() }
 Number.prototype.aQuetzales = function () { return new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(this) }
 Number.prototype.cantidadFormateada = function () { return new Intl.NumberFormat('es-GT').format(this) }
@@ -21,12 +16,10 @@ String.prototype.aUTC = function () {
   return new Date(year, month - 1, day)
 }
 
-
 String.prototype.partirFechas = function () {
   let [fecha1, fecha2] = this.split("-")
   return `${fecha1}${fecha2 ? " - " + fecha2 : ""}`
 }
-
 
 let [, url] = location.pathname.split("analisis/")
 let [agruparPorP, rangoP, tiempoEscogidoP] = url.split("&")
@@ -49,13 +42,6 @@ let productos = [...new Set(datos.flatMap(x => Object.keys(x.prods)))]
 let camioneros = [...new Set(datos.flatMap(x => Object.keys(x.cams)))]
 let productosDesnormalizados = productos.map(label => datos.find(x => x.prods[label])?.prods[label].p)
 let camionerosDesnormalizados = camioneros.map(label => datos.find(x => x.cams[label])?.cams[label].p)
-let swalConfirmarYCancelar = Swal.mixin({
-  customClass: {
-    confirmButton: "btn btn-success margenbotonswal",
-    cancelButton: "btn btn-danger margenbotonswal",
-  },
-  buttonsStyling: false
-})
 
 function devuelveColores(colores = ["#ff6384", "#136ba7", "#ffce56", "#4bc0c0", "#9966ff", "#f20034", "#1f00c0", "#004d1a", "#cb005a", "#2bb01a"], opacidad) {
   let mayor = Math.max(colores.length, productos.length, datos.length)

@@ -10,7 +10,7 @@ async function validarDatos() {
 }
 
 function mostrarError(error) {
-  Swal.fire("Error", error, "error")
+  swalError(error)
   return false
 }
 
@@ -32,19 +32,10 @@ c.addEventListener('input', validarCorreo)
 
 
 let crearUsuario = async function () {
-  let contraseñaVerificacion = qsd("#verificacionIdentidad").value;
-  let data = JSON.stringify({ usuario, contraseña, ...(correo ? { correo } : {}), rol, contraseñaVerificacion })
-  $.ajax({
-    url: `/empleados/usuarios/crear`,
-    method: "POST",
-    contentType: "application/json",
-    data,
-    success: q => {
-      Swal.fire("ÉXITO", "Se ha guardado el usuario correctamente", "success");
-      // if (correo)
-      //   toastr.info("Se ha enviado un mensaje a tu correo para validarlo", "Atención")
-    },
-    error: r => Swal.fire("Ups...", r.responseText, "error")
+  let contraseñaVerificacion = qsd("#verificacionIdentidad").value
+  hazPost('', JSON.stringify({ usuario, contraseña, ...(correo ? { correo } : {}), rol, contraseñaVerificacion }), q => {
+    swalExito("Se ha guardado el usuario correctamente")
+    // if (correo) toastr.info("Se ha enviado un mensaje a tu correo para validarlo", "Atención")
   })
 }
 

@@ -1,8 +1,6 @@
 const btnSubir = qsd('#back-to-top-btn')
-
-let estilosSwal = (confirmButton, cancelButton = '') => Swal.mixin({ customClass: { confirmButton, cancelButton }, buttonsStyling: false })
-const swalConfirmarYCancelar = estilosSwal('btn btn-success margenbotonswal', 'btn btn-danger margenbotonswal')
 const swalSobreescribir = estilosSwal('btn btn-success margenbotonswal2 botonconfirm', 'btn margenbotonswal2 botondeny')
+let borrarRegistros = (data, texto) => hazDelete('', data, async q => await preguntarSiQuiereRefrescar('Se ha borrado correctamente', texto, 'success'), async r => (r.status === 400 ? Swal.fire('Error', r.responseText, 'error') : await preguntarSiQuiereRefrescar('Atención', r.responseText, 'warning')))
 
 qsd('#seleccionarTodos').onchange = e => qsad('.check').forEach(x => x.checked = e.currentTarget.checked)
 btnSubir.onclick = q => scrollTo(0, 0)
@@ -12,7 +10,7 @@ addEventListener('scroll', q => {
   if (scrollY === 0 && seVeElBoton) {
     quitarClase(btnSubir, 'btnEntrance')
     añadirClase(btnSubir, 'btnExit')
-    setTimeout(q => (btnSubir.style.display = 'none'), 250)
+    setTimeout(q => btnSubir.style.display = 'none', 250)
   } else if (!seVeElBoton) {
     quitarClase(btnSubir, 'btnExit')
     añadirClase(btnSubir, 'btnEntrance')
@@ -56,63 +54,23 @@ bodyOnClick('.btneliminar', async function (e) {
   if (await swalSíNo('Estás seguro que deseas borrar este registro?', html)) borrarRegistros(regs, `El registro con fecha: ${fecha} se ha borrado correctamente`)
 })
 
-// $("body").on("click", ".restaurarsoloestatabla", async function (e) {
-//   let registro = this.closest("article");
-//   let tabla = [...$(registro).find("tab-content")].filter(x => x.style.display === "initial")[0]
-//   let fecha = $(registro).find(`.fecharegistro .spanFechaStr`).text();
-//   if (await swalSíNo("Estás seguro que deseas restaurar esta tabla?", tabla.outerHTML)) {
-//     result = await swalConfirmarYCancelar.fire({
-//       title: `Si restauras vas a sobreescribir el registro con fecha ${fecha}`,
-//       icon: "warning",
-//       width: (window.innerWidth * 3) / 4,
-//       html: tabla.outerHTML,
-//       showCancelButton: true,
-//       confirmButtonText: "Sí",
-//       cancelButtonText: "No",
-//     })
-//     if (result.isConfirmed) {
-//       $.ajax({
-//         url: "/respaldos/registroseliminados/restaurarregistro",
-//         method: "POST",
-//         contentType: "application/json",
-//         data,
-//         success: async q => preguntarSiQuiereRedireccionar(fecha),
-//         error: q => Swal.fire("Ups...", "No se pudo restaurar el registro", "error")
-//       });
-//     }
-//   }
-// })
+$("body").on("click", ".restaurarsoloestatabla", async function (e) {
+  let registro = this.closest("article")
+  let tabla = qsarr(registro, 'tab-content').filter(x => x.style.display === "initial")[0]
+  let fecha = qs(registro, `.fecharegistro .spanFechaStr`).textContent
+  if (await swalSíNo("Estás seguro que deseas restaurar esta tabla?", tabla.outerHTML)) {
+    if (await swalSíNo(`Si restauras vas a sobreescribir el registro con fecha ${fecha}`, tabla.outerHTML)) {
+      hazPost('/respaldos/registroseliminados/restaurarregistro', data, async q => await preguntarSiQuiereRedireccionar(fecha), q => swalError("No se pudo restaurar el registro"))
+    }
+  }
+})
 
 bodyOnClick('.eliminartodos', async e => {
   let regs = JSON.stringify({ registros: qsarrd('.check:checked').map(el => el.closest('article').getAttribute('name')) })
   if (await swalSíNo('Estás seguro que deseas borrar los registros seleccionados?', null, null)) borrarRegistros(regs, 'Se han borrado correctamente todos los registros seleccionados')
 })
 
-function borrarRegistros(data, texto) {
-  $.ajax({
-    url: '/respaldos/registroseliminados/borrarregistros',
-    method: 'DELETE',
-    contentType: 'application/json',
-    data,
-    success: async q => await preguntarSiQuiereRefrescar('Se ha borrado correctamente', texto, 'success'),
-    error: async r => (r.status === 400 ? Swal.fire('Error', r.responseText, 'error') : await preguntarSiQuiereRefrescar('Atención', r.responseText, 'warning')),
-  })
-}
-
 async function preguntarSiQuiereRefrescar(title, text, icon) {
   let { isConfirmed } = await swalConfirmarYCancelar.fire({ title: title + ', deseas refrescar la página?', text, icon, showCancelButton: true, confirmButtonText: 'Sí', cancelButtonText: 'No' })
   if (isConfirmed) location.reload()
 }
-
-async function swalSíNo(title, html, width = (innerWidth * 3) / 4) {
-  let { isConfirmed } = await swalConfirmarYCancelar.fire({
-    title, icon: 'warning', width, html,
-    showCancelButton: true,
-    confirmButtonText: 'Sí',
-    cancelButtonText: 'No',
-  })
-  return isConfirmed
-}
-
-String.prototype.normalizarPrecio = function () { return this.aFloat().toFixed(2).replace(/[.,]00$/, '') }
-Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, '') }

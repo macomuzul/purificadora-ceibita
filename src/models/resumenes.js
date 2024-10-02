@@ -22,7 +22,7 @@ let resumenes = new Schema({
   vt: Number,
   it: Number,
   c: Boolean
-}, { ...statics })
+}, statics)
 
 let ResumenSemana = mongoose.model('resumenSemana', resumenes)
 let ResumenMes = mongoose.model('resumenMes', resumenes)

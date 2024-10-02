@@ -12,11 +12,11 @@ h1{
   list-style:none;
   display: flex;
   justify-content: center;
-  
+
   .icon{
     font-size: 14px;
   }
-  
+
   li{
     float:left;
     cursor: pointer;
@@ -35,7 +35,7 @@ h1{
     &:nth-child(even){
       a{
         background-color: $blue;
-        
+
         &:before{
           border-color:$blue;
           border-left-color:transparent;
@@ -63,8 +63,8 @@ h1{
          }
       }
     }
-    
-    a{   
+
+    a{
       &:before,
       &:after{
         content: "";
@@ -86,7 +86,7 @@ h1{
       }
       &:hover{
         background-color: $green;
-        
+
         &:before{
           border-color:$green;
           border-left-color:transparent;
@@ -97,7 +97,7 @@ h1{
       }
       &:active{
         background-color: $green;
-        
+
         &:before{
           border-color:$green;
           border-left-color:transparent;

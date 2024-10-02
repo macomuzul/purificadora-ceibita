@@ -6,7 +6,6 @@
   <title>Ver Plantillas</title>
   <%- include("layouts/global") %>
   <link rel="stylesheet" href="/googledrive.min.css">
-  <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script defer src="/checkbox.js"></script>
   <script defer src="/radiobuttons.js"></script>
   <script defer src="/input.js"></script>
@@ -16,7 +15,7 @@
   <script>
     document.addEventListener("click", async e => {
   if (e.target.matches(".guardarconfig")) {
-    let s1 = [...$(seleccionado).find(".opcionesarchivos input:checked")].map(x => indice(x.closest("custom-checkbox")))
+    let s1 = [...qs(seleccionado, ".opcionesarchivos input:checked")].map(x => indice(x.closest("custom-checkbox")))
     if (!s1.length) {
       e.stopImmediatePropagation()
       return Swal.fire("Atención", "Debe haber al menos un archivo qué guardar, selecciona archivo json, bson o ambos", "warning")
@@ -43,7 +42,6 @@
   }
 }, { capture: true })
   </script>
-  <script defer src="/bootstrap-5.2.3.js"></script>
   <script defer src="/cuadrorespaldos.js"></script>
 </head>
 

@@ -19,7 +19,7 @@
     box-shadow: none;
     outline: none;
   }
-  
+
   .button-85:before {
     content: "";
     background: linear-gradient(
@@ -46,7 +46,7 @@
     animation: glowing-button-85 20s linear infinite;
     transition: opacity 0.3s ease-in-out;
   }
-  
+
   @keyframes glowing-button-85 {
     0% {
       background-position: 0 0;
@@ -58,7 +58,7 @@
       background-position: 0 0;
     }
   }
-  
+
   .button-85:after {
     z-index: -1;
     content: "";

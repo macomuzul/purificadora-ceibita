@@ -4,8 +4,6 @@ const { ResumenSemana, ResumenMes, ResumenAño } = require("../models/resumenes"
 const { DateTime } = require("luxon");
 const devuelveValoresSumados = require("../utilities/devuelveValoresSumados")
 
-String.prototype.normalizarPrecio = function () { return parseFloat(this).toFixed(2).replace(/[.,]00$/, "") }
-Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, "") }
 router.get('/', async (req, res) => res.render('seleccionaranalisis', { esAdmin: esAdmin(req) }))
 let objResumenes = { day: ResumenDia, week: ResumenSemana, month: ResumenMes, year: ResumenAño }
 
@@ -103,15 +101,18 @@ router.get("/:agruparPorP(agruparpor=(dias|semanas|meses|a%C3%B1os))&:rangoP(ran
     } else
       await actualizarSiHuboCambios(agruparPor)
   }
-  if (unidadTiempo === agruparPor && rango === "libre") {
-    datos = await resumen.ordenado().in(fechas)
-    datos = await agrupar(datos, agruparPor)
-  } else if (unidadTiempo !== "day" && rango === "libre") {
-    let rangoFunc = agruparPor === "year" ? rangoEntreAños : rangoEntre
-    datos = await Promise.all(fechas.map(async x => await rangoFunc(x.startOf(unidadTiempo), x.endOf(unidadTiempo), agruparPor, resumen)))
-    datos = datos.flat()
-    // datos = await agrupar(datos, agruparPor)
-    datos = await agruparMultiple(datos, agruparPor)
+  if(rango === "libre"){
+    if (unidadTiempo === agruparPor) datos = await resumen.ordenado().in(fechas)
+    else if (unidadTiempo !== "day") {
+      let rangoFunc = agruparPor === "year" ? rangoEntreAños : rangoEntre
+      datos = await Promise.all(fechas.map(async x => await rangoFunc(x.startOf(unidadTiempo), x.endOf(unidadTiempo), agruparPor, resumen)))
+      datos = datos.flat()
+      // datos = await agrupar(datos, agruparPor)
+      datos = await agruparMultiple(datos, agruparPor)
+    } else {
+      datos = await objResumenes[unidadTiempo].ordenado().in(fechas)
+      datos = await agrupar(datos, agruparPor)
+    }
   }
   else {
     if (agruparPor === "day") {
@@ -151,12 +152,12 @@ router.get("/:agruparPorP(agruparpor=(dias|semanas|meses|a%C3%B1os))&:rangoP(ran
 }, "Página inválida"))
 
 async function agrupar(fechas, tiempo) {
-  let agrupados = _.groupBy(fechas, x => DateTime.fromJSDate(x._id).startOf(tiempo).toISO())
+  let agrupados = Object.groupBy(fechas, x => DateTime.fromJSDate(x._id).startOf(tiempo).toISO())
   let dias = Object.entries(agrupados).map(([k, v]) => ({ _id: DateTime.fromISO(k).startOf(tiempo), ...devuelveValoresSumados(v), f: DateTime.fromISO(k).endOf(tiempo) }))
   return dias.sort((a, b) => a._id - b._id)
 }
 async function agruparMultiple(fechas, tiempo) {
-  let agrupados = _.groupBy(fechas, x => DateTime.fromJSDate(x._id).startOf(tiempo).toISO())
+  let agrupados = Object.groupBy(fechas, x => DateTime.fromJSDate(x._id).startOf(tiempo).toISO())
   let dias = Object.entries(agrupados).map(([k, v]) => v.length > 1 ? ({ _id: DateTime.fromISO(k).startOf(tiempo), ...devuelveValoresSumados(v), f: DateTime.fromISO(k).endOf(tiempo) }) : v[0])
   return dias.sort((a, b) => a._id - b._id)
 }

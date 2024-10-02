@@ -55,7 +55,7 @@ class customTabs extends HTMLElement {
   connectedCallback() {
     setTimeout(q => {
       cambiarChecked(qs(this, 'input'), true)
-      qsaforeach(this, 'tab-content', (x, i) => { if (i !== 0) esconder(x) })
+      mostrar(qs(this, 'tab-content'))
     })
   }
 }

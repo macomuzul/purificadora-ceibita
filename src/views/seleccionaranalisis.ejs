@@ -6,13 +6,12 @@
   <meta name="viewport" content="width=1200px">
   <title>Registros eliminados</title>
   <%- include("layouts/global") %>
-  <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
   <script defer src="/dropdown.js"></script>
-  <script defer src="/seleccionaranalisis.js"></script>
+  <script defer src="/bootstrapdatepicker.js"></script>
   <script defer src="/botontitulo2.js"></script>
   <script defer src="/botonazul.js"></script>
-  <script defer src="/bootstrapdatepicker.js"></script>
+  <script defer src="/seleccionaranalisis.js"></script>
 </head>
 
 <body>
@@ -25,9 +24,9 @@
       <div>
         <div style="display: flex; justify-content: space-between;">
           <custom-dropdown data-idmenu="analizarmenu" data-idseleccionado="analizar" data-textopordefecto="Analizar">
-            <li>Ventas</li>
-            <li>Gastos</li>
-            <li>Ganancias (Ventas - Gastos)</li>
+            <li data-analizar="ventas">Ventas</li>
+            <li data-analizar="gastos">Gastos</li>
+            <li data-analizar="ganancias">Ganancias (Ventas - Gastos)</li>
           </custom-dropdown>
           <custom-dropdown data-idmenu="agruparmenu" data-idseleccionado="agrupar" data-textopordefecto="Agrupar datos por">
             <li data-agrupar="dias">Día</li>
@@ -39,29 +38,31 @@
             <li>Mayor o igual que</li>
             <li>Menor o igual que</li>
             <li>Entre</li>
-            <li>Libre (permite seleccionar de forma intercalada)</li>
+            <li>Libre (Selección de forma intercalada)</li>
           </custom-dropdown>
         </div>
-        <div style="display: flex; justify-content: space-between; margin-top: 35px;">
+        <section style="display: flex; justify-content: space-between;">
           <h3 class="borde">Escoge una fecha para buscar: </h3>
           <div class="contenedorentre">
             <calendario-simple data-id="datepickerNormal" data-idinput="calendario"></calendario-simple>
             <calendario-multiple data-id="datepickerEntre"></calendario-multiple>
           </div>
           <input-azul id="btnbuscar">Analizar datos</input-azul>
-        </div>
+        </section>
       </div>
-      <section class="sectionunidadTiempo">
-        <div>Escoge una unidad de tiempo para la selección intercalada</div>
-        <custom-dropdown data-idmenu="seleccionmenu" data-idseleccionado="seleccion" data-textopordefecto="Seleccionar fechas por">
-          <li data-agrupar="dias">Día</li>
-          <li data-agrupar="semanas">Semana</li>
-          <li data-agrupar="meses">Mes</li>
-          <li data-agrupar="años">Año</li>
-        </custom-dropdown>
+      <section class="cambiarseleccionintercalada" style="display: flex; justify-content: space-between; align-items: center;" hidden>
+        <div>
+          <div>Escoge una unidad de tiempo para la selección intercalada (selección libre)</div>
+          <custom-dropdown data-idmenu="seleccionmenu" data-idseleccionado="intercalado" data-textopordefecto="Seleccionar fechas por">
+            <li data-intercalar="dias">Día</li>
+            <li data-intercalar="semanas">Semana</li>
+            <li data-intercalar="meses">Mes</li>
+            <li data-intercalar="años">Año</li>
+          </custom-dropdown>
+        </div>
+        <input-azul id="borrarFechas" style="margin-left: auto;">Borrar fechas seleccionadas</input-azul>
       </section>
-      <input-azul class="btnBorrarFechas" id="borrarFechas">Borrar fechas seleccionadas</input-azul>
-      <div class="textoDatePicker"></div>
+      <div class="textoDatePicker" hidden></div>
       <!-- <input-azul class="btnAnalizar" id="analizarVarios">Analizar</input-azul>
       <calendario-simple data-id="datepickerVarios"></calendario-simple>
       <calendario-multiple data-id="datepickerEntre"></calendario-multiple> -->

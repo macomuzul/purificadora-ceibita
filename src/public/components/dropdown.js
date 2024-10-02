@@ -5,7 +5,7 @@ document.addEventListener('click', e => {
 
 añadirCSS(`custom-dropdown {
   display: block;
-  width: 400px;
+  width: fit-content;
   position: relative;
 }
 
@@ -133,13 +133,14 @@ bodyOnClick('custom-dropdown', c => {
   dropdownSeleccionado = c
 })
 
-bodyOnClick('li', (c, e) => {
+bodyOnClick('custom-dropdown li', (c, e) => {
   let o = c.closest('custom-dropdown')
   qs(o, '.selected').innerText = c.innerText
   o.cambiarEstado(-1)
-  quitarClase(qs(o, '.menu li'), 'active')
+  let a = qs(o, '.active')
+  if (a) quitarClase(a, 'active')
   añadirClase(c, 'active')
-  metododropdown(c, o.menu)
+  o.metododropdown(c, o.menu)
 })
 
 customElements.define('custom-dropdown', customDropdown)

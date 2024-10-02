@@ -10,8 +10,7 @@ let errorListener = (f, listener) => async cambio => {
   try {
     await f(cambio)
   } catch (e) {
-    let msg = `Error en el listener ${listener}`
-    await LogsGraves.log(msg, { error: e })
+    await LogsGraves.log(`Error en el listener ${listener}`, { error: e })
   }
 }
 

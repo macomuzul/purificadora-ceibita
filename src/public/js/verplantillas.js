@@ -1,12 +1,5 @@
 let timeout = false
 let favorito = qsd(".faved")
-const swalConfirmarYCancelar = Swal.mixin({
-  customClass: {
-    confirmButton: "btn btn-success margenboton",
-    cancelButton: "btn btn-danger margenboton",
-  },
-  buttonsStyling: false,
-})
 
 bodyOnClick(".vermas", c => {
   alternar(qs(padre(c), '.spanHoras'))
@@ -34,16 +27,7 @@ bodyOnClick(".svgeliminar", async c => {
   })
   if (isConfirmed) {
     if (c.closest("tr") === favorito.closest("tr")) return Swal.fire("Error", "No puedes borrar la plantilla de default", "error")
-    $.ajax({
-      url: `/plantillas/${plantillaborrar}`,
-      method: "DELETE",
-      contentType: "application/json",
-      success: q => {
-        Swal.fire("Se ha borrado la plantilla exitosamente", "La plantilla ya ha sido borrada del sistema", "success")
-        filaborrar.remove()
-      },
-      error: r => Swal.fire("Error", r.responseText, "error")
-    })
+    hazDelete(`/plantillas/editar/${plantillaborrar}`, q => Swal.fire("Se ha borrado la plantilla exitosamente", "La plantilla ya ha sido borrada del sistema", "success"))
   }
 })
 
@@ -78,19 +62,12 @@ qsaforeachd(".svgver", e => {
   })
 })
 
-qsclickd('#guardar', function () {
+qsclickd('#guardar', q => {
   let data = JSON.stringify({
     nombreDefault: favorito.closest('tr').cells[0].innerText,
     nombrePlantillas: qsarrd('tbody tr').map(x => x.cells[0].innerText)
   })
-  $.ajax({
-    url: "/plantillas",
-    method: "PATCH",
-    contentType: "application/json",
-    data,
-    success: q => Swal.fire("Se ha guardado exitosamente", "Se ha guardado el orden", "success"),
-    error: r => Swal.fire("Error", r.responseText, "error")
-  })
+  hazPatch('', data, q => swalExito("Se ha guardado el nuevo orden exitosamente"))
 })
 
 bodyOnClick('.svgeditar', c => location = "/plantillas/editar/" + c.closest("tr").cells[0].innerText)

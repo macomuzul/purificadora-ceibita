@@ -1,6 +1,4 @@
 let tablaVacia = `<div class="titulo ningunregistro">Aún no se ha registrado ningún gasto de este tipo este mes</div>`
-let fechastr = $('#fechames').text().replace('del mes ', '')
-
 class tablaGastos extends HTMLElement {
   inicializar(datos, titulo, idTabla, esGastoPorProducto) {
     Object.assign(this, { datos, titulo, idTabla, esGastoPorProducto, datos: datos || [] })
@@ -50,12 +48,12 @@ class tablaGastos extends HTMLElement {
 
 customElements.define('tabla-gastos', tablaGastos)
 
-$(document).on('click', '.divtablagastos tr td:last-child', async function (e) {
-  if (this.clientWidth - e.offsetX <= 21 && e.offsetY <= 21) {
-    let fila = this.closest('tr')
+bodyOnClick('.divtablagastos tr td:last-child', async c => {
+  if (c.clientWidth - e.offsetX <= 21 && e.offsetY <= 21) {
+    let fila = c.closest('tr')
     let html = `<div class="divtablagastos"><table class="mx-auto"><tbody style="background: #0f0d35;">${clonar(fila).outerHTML}</tbody></table></div>`
     if (await swalSíNo('Estás seguro que deseas borrar esta fila de la tabla?', html)) {
-      padre(fila).rows.length === 1 ? cambiarHTML(this.closest('.tablagastosparteinferior'), tablaVacia) : fila.remove()
+      padre(fila).rows.length === 1 ? cambiarHTML(c.closest('.tablagastosparteinferior'), tablaVacia) : fila.remove()
       Swal.fire('Fila eliminada', 'Se ha eliminado la fila exitosamente', 'success')
     }
   }

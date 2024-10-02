@@ -30,15 +30,13 @@ global.mandarCorreoRegVentas = tcgoogle(async (motivo, usuario, f1, f2) => {
     await agregarFilaGoogleSheets(["Hora", "Usuario", "Acción que realizó"])
     await crearDiaGoogleDocs(textoGDocs)
   }
-  await agregarFilaGoogleSheets([hora, usuario, textoGSheets])
-  await agregarTextoDocs(textoGDocs)
-  await mandarCorreo(`${!motivo ? "Se ha agregado un nuevo registro" : `Un registro ha sido ${opcionesHTML[motivo]}`}!`, html)
+  await Promise.allSettled([agregarFilaGoogleSheets([hora, usuario, textoGSheets]), agregarTextoDocs(textoGDocs), mandarCorreo(`${!motivo ? "Se ha agregado un nuevo registro" : `Un registro ha sido ${opcionesHTML[motivo]}`}!`, html)])
 }, "gmail mandarCorreoRegVentas")
 
 let mandarCorreoDev = async (subject, html, to = miCorreo) => await mandarCorreo(subject, html, to)
 let mandarCorreoConLogo = async (subject, html, to = correoPrincipal) => await mandarCorreo(subject, html + `<br>${urlLogo}`, to)
 
-global.mandarCorreoError = enDesarrollo ? function () { } : tcgoogle(mandarCorreoDev, "gmail mandarCorreoError")
+global.mandarCorreoError = enDesarrollo ? function () { console.log("putitos") } : tcgoogle(mandarCorreoDev, "gmail mandarCorreoError")
 global.mandarCorreoVerificacion = tcgoogle(mandarCorreoConLogo, "gmail mandarCorreoVerificacion")
 
 async function mandarCorreo(subject, html, to = correoPrincipal) {

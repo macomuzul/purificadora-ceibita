@@ -1,7 +1,5 @@
-const { google } = require("googleapis")
 const { DateTime } = require("luxon")
 const cron = require('node-cron')
-const redis = require("../redis")
 const CambiosVentas = require("../models/cambiosventas")
 const RegistroVentas = require("../models/registroventas")
 
@@ -9,14 +7,14 @@ cron.schedule('0 0 1 * *', tccron(async () => {
   let folderRespaldoMensual = process.env.FOLDER_RESPALDO_MENSUAL
   let registros = await RegistroVentas.find().lean()
   let fecha = DateTime.now().minus({ days: 1 })
-  await crearArchivo(`Respaldo mensual del mes de ${fecha.monthLong} del ${fecha.year}`, folderRespaldoMensual, registros, "ambos")
-  await crearMesGoogleSheets()
-  await crearMesGoogleDocs()
+  crearArchivo(`Respaldo mensual del mes de ${fecha.monthLong} del ${fecha.year}`, folderRespaldoMensual, registros, "ambos")
+  crearMesGoogleSheets()
+  crearMesGoogleDocs()
 }, "Ocurrió un error al crear el respaldo mensual"), { timezone: "America/Guatemala" })
 
 
 cron.schedule('0 0 * * *', tccron(async () => {
-  if (DateTime.now().day !== 1) await crearDiaGoogleSheets()  
+  if (DateTime.now().day !== 1) await crearDiaGoogleSheets()
   let cambiosVentas = await CambiosVentas.find().lean()
   let cambios = {}
   cambiosVentas.forEach(x => {

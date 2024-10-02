@@ -92,15 +92,6 @@ añadirCSS(`.gridUnidadTiempo {
 }`)
 
 let contador = 0, seleccionado, cal, opcionCalendario
-
-let swalConfirmarYCancelar = Swal.mixin({
-  customClass: {
-    confirmButton: "btn btn-success margenbotonswal",
-    cancelButton: "btn btn-danger margenbotonswal",
-  },
-  buttonsStyling: false
-})
-
 let crearCal = c => cal.html(`<botonazul-flechaizquierda class="botonvolver" id="volver">Volver</botonazul-flechaizquierda>${c}`)
 bodyOnClick("#btnMayor", q => {
   seleccionado.cal = "mayores o iguales que"
@@ -162,33 +153,15 @@ bodyOnClick("#seleccionarTodos", c => {
 })
 
 async function guardar(body) {
-  try {
-    let r = await fetch("", {
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
-      body: JSON.stringify(body)
-    })
-    if (r.ok) Swal.fire("Éxito", "Se han guardado los registros seleccionados en tu carpeta de google drive", "success")
-    else {
-      if (r.status === 402) {
-        let { isConfirmed } = await swalConfirmarYCancelar.fire({
-          title: "Atención",
-          icon: "warning",
-          html: "Ya existe una carpeta con ese nombre, estás seguro que deseas sobreescribirla?",
-          showCancelButton: true,
-          confirmButtonText: "Sí",
-          cancelButtonText: "No",
-        })
-        if (isConfirmed) {
-          body.sobreescribir = 1
-          await guardar(body)
-        }
+  await hazPost('', JSON.stringify(body), q => swalExito('Se han guardado los registros seleccionados en tu carpeta de google drive'), async r => {
+    if (r.status === 402) {
+      if (await swalSíNo('Atención', 'Ya existe una carpeta con ese nombre, estás seguro que deseas sobreescribirla?')) {
+        body.sobreescribir = 1
+        await guardar(body)
       }
-      else Swal.fire("Error", "Ocurrió un error al guardar los registros", "error")
     }
-  } catch {
-    Swal.fire("Error de conexión", "Te has quedado sin conexión a internet. Por favor conéctate a una red WIFI", "error")
-  }
+    else swalError('Ocurrió un error al guardar los registros')
+  })
 }
 
 function htmlCalendario() {

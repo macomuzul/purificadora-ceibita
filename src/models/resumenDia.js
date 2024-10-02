@@ -7,7 +7,7 @@ const resumenDiaSchema = new Schema({
   prods: {},
   vt: Number,
   it: Number
-}, { ...statics })
+}, statics)
 
 let resumenDia = mongoose.model('resumenDia', resumenDiaSchema)
 module.exports = resumenDia

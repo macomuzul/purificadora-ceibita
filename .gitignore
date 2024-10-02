@@ -4,3 +4,4 @@
 /playwright-report/
 /playwright/.cache/
 .env*
+/src/por si acaso/

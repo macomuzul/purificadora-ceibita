@@ -6,12 +6,9 @@
 
   <!-- //TODO este descomentarlo despues -->
   <!-- <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script>
-  <script defer src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+  <script defer src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js"></script> -->
   <script defer src="/dayjs.js"></script>
-  <script defer src="/jquery-ui-1.13.js"></script>
   <script defer src="/dayjs-plugin-utc.js"></script>
-  <script defer src="/sweetalert-2.11.js"></script>
   <script defer src="/tecladoTabla.js"></script>
   <script defer src="/spanFechas.js"></script>
   <script defer src="/botonExcel.js"></script>
@@ -67,7 +64,7 @@
               <%_ for (let j = 0; j < (registro?.tablas.length ?? 1); j++){ _%>
               <%_ let tabla _%>
               <%_ if (registro) { tabla = registro.tablas[j] } _%>
-              <tab-content>
+              <tab-content hidden>
                 <div class="contenedor-trabajador">
                   <label class="label-trabajador">Nombre del conductor:</label>
                   <div class="contenedor-input-trabajador">

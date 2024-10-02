@@ -1,14 +1,6 @@
 String.prototype.normalizar = function () { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '') }
 let tbody = qsd('tbody')
 
-const swalConfirmarYCancelar = Swal.mixin({
-  customClass: {
-    confirmButton: 'btn btn-success margenbotonswal',
-    cancelButton: 'btn btn-danger margenbotonswal',
-  },
-  buttonsStyling: false,
-})
-
 function mostrarErrorHTML(html, title) {
   [...html.rows].forEach(x => [...x.cells].at(-1).remove())
   qsaforeach(html, 'td', x => x.contentEditable = false)
@@ -25,7 +17,7 @@ function validarCamioneros() {
   let nombres = qsarr(tbody, 'td:nth-child(1)')
   let colores = qsarr(tbody, 'td:nth-child(2)')
   if (nombres.length === 0) {
-    Swal.fire('Error', 'Error, la tabla está vacía, por favor agrega un camionero', 'error')
+    swalError('Error, la tabla está vacía, por favor agrega un camionero')
     return false
   }
   nombres.forEach(x => (x.textContent = x.innerText.trim()))
@@ -66,31 +58,11 @@ function colorAleatorio() {
 
 qsclickd('#guardar', async q => {
   if (!validarCamioneros()) return
-  let data = JSON.stringify({ camioneros: [...tbody.rows].map(x => ({ nombre: x.cells[0].textContent, color: x.cells[1].textContent })) })
-  $.ajax({
-    url: location.pathname,
-    method: 'POST',
-    contentType: 'application/json',
-    data,
-    success: q => Swal.fire('Éxito', 'Se han guardado exitosamente', 'success'),
-    error: r => Swal.fire('Ups...', r.responseText, 'error'),
-  })
+  hazPost('', JSON.stringify({ camioneros: [...tbody.rows].map(x => ({ nombre: x.cells[0].textContent, color: x.cells[1].textContent })) }), q => swalExito('Se han guardado exitosamente'))
 })
 
 bodyOnClick('.botoneliminar', async c => {
-  if (qsd('#switchModoSeguro').checked) {
-    let html = `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${c.closest('tr').cells[0].innerText}</span>`
-    let { isConfirmed } = await swalConfirmarYCancelar.fire({
-      title: 'Estás seguro que deseas borrar a este camionero?',
-      icon: 'warning',
-      width: innerWidth / 2,
-      html,
-      showCancelButton: true,
-      confirmButtonText: 'Sí',
-      cancelButtonText: 'No',
-    })
-    if (isConfirmed) c.closest('tr').remove()
-  }
+  if (qsd('#switchModoSeguro').checked && await swalSíNo('Estás seguro que deseas borrar a este camionero?', `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${c.closest('tr').cells[0].innerText}</span>`, innerWidth / 2)) c.closest('tr').remove()
 })
 
 bodyOn('input', '[type="color"]', c => (anterior(padre(c)).textContent = c.value))

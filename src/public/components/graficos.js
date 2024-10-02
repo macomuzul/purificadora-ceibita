@@ -329,7 +329,7 @@ class graficos extends HTMLElement {
       cancelButtonText: 'No',
     })
     if (isConfirmed) {
-      qsa(el, "[type='color']").forEach((x, i) => (x.value = colores[i]))
+      qsaforeach(el, "[type='color']", (x, i) => (x.value = colores[i]))
       Swal.fire('Se han reseteado los colores correctamente', 'Para visualizar los cambios presionar el botón de actualizar gráfico', 'success')
     }
   }
@@ -457,18 +457,18 @@ bodyOnClick('.btnTamaño.aumentar', c => {
   let g = graficoCercano(c)
   let [longitud] = g.style.width.split('px')
   let [altura] = g.contenedorCanvas.style.height.split('px')
-  g.style.width = (parseInt(longitud) || 1179) + 500 + 'px'
-  g.contenedorCanvas.style.height = (parseInt(altura) || 589) + 250 + 'px'
+  g.style.width = (longitud.aInt() || 1179) + 500 + 'px'
+  g.contenedorCanvas.style.height = (altura.aInt() || 589) + 250 + 'px'
   mostrar(g.restaurarTamaño)
 })
 bodyOnClick('.btnTamaño.disminuir', c => {
   let g = graficoCercano(c)
   let [longitud] = g.style.width.split('px')
   let [altura] = g.contenedorCanvas.style.height.split('px')
-  longitud = parseInt(longitud) || 1179
+  longitud = longitud.aInt() || 1179
   if (longitud <= 1179) return
   g.style.width = longitud - 500 + 'px'
-  g.contenedorCanvas.style.height = (parseInt(altura) || 589) - 250 + 'px'
+  g.contenedorCanvas.style.height = (altura.aInt() || 589) - 250 + 'px'
   if (longitud <= 1679) esconder(g.restaurarTamaño)
 })
 

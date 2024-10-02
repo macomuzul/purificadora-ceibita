@@ -1,5 +1,5 @@
 let eventoDatepicker = new Event('eventoDP')
-let cargarCSS = x => cabeza.innerHTML += `<link rel="stylesheet" href="${x}">`
+let cargarCSS = x => head.innerHTML += `<link rel="stylesheet" href="${x}">`
 cargarCSS('/datepicker-1.10.0.css')
 cargarCSS('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.0/css/font-awesome.min.css')
 
@@ -215,7 +215,7 @@ class cCalendarioMultiple extends HTMLElement {
 customElements.define("calendario-multiple", cCalendarioMultiple)
 
 ;(async function() {
-  await $.getScript('/datepicker-1.10.0.js')
-  await $.getScript('/datepicker-local-español-1.10.js')
+  await añadirJS('/datepicker-1.10.0.js')
+  await añadirJS('/datepicker-local-español-1.10.js')
   document.dispatchEvent(eventoDatepicker)
 })()

@@ -14,7 +14,7 @@ router.post("/guardar", tcaccion(async (req, res) => {
   res.send()
   let { _id } = req.body
   await CambiosVentas.updateOne({ _id }, { motivo: 1 }, { upsert: true })
-  await mandarCorreoRegVentas(r.upsertedCount > 0 ? 0 : 1, usuario, _id)
+  mandarCorreoRegVentas(r.upsertedCount > 0 ? 0 : 1, usuario, _id)
 }, "Ha habido un error al guardar los datos"))
 
 let devuelveFuncionMover = (Reg, msg) => tcaccion(async (req, res) => {
@@ -32,7 +32,7 @@ let devuelveFuncionMover = (Reg, msg) => tcaccion(async (req, res) => {
   res.send()
   let motivo = esRegEliminado ? sobreescribir ? 6 : 5 : sobreescribir ? 4 : 3
   await CambiosVentas.updateOne({ _id: a }, { motivo, ...(motivo < 5 ? { fecha2: de } : {}) }, { upsert: true })
-  await mandarCorreoRegVentas(motivo, usuario, esRegEliminado ? registroAMover.registro._id.valueOf() : de, a)
+  mandarCorreoRegVentas(motivo, usuario, esRegEliminado ? registroAMover.registro._id.valueOf() : de, a)
 }, msg)
 
 
@@ -55,7 +55,7 @@ router.route('/:id([0-9]{1,2}-[0-9]{1,2}-[0-9]{4})').get(tcaccion(async (req, re
   await RegistroVentas.borrar(registro._id)
   res.send()
   await CambiosVentas.updateOne({ _id: fecha }, { motivo: 2 }, { upsert: true })
-  await mandarCorreoRegVentas(2, usuario, fecha.toMillis())
+  mandarCorreoRegVentas(2, usuario, fecha.toMillis())
 }, "Ocurrió un error al eliminar el registro"))
 
 

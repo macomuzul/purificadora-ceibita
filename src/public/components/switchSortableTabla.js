@@ -6,7 +6,6 @@ añadirCSS(`.contenedorayuda {
   margin-left: auto;
   transform: translateY(10px);
 }`)
-// $.getScript('/popover.js')
 añadirJS('/popover.js')
 class switchSortable extends HTMLElement {
   async connectedCallback() {

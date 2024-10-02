@@ -2,15 +2,7 @@ let trim = x => x.value = x.value.trim()
 let mostrarError = err => Swal.fire("Error", err, "error")
 let enviar = (atributos, texto) => q => {
   let contraseñaVerificacion = qsd("#verificacionIdentidad").value
-  let data = JSON.stringify({ ...atributos, contraseñaVerificacion })
-  $.ajax({
-    url: location.pathname,
-    method: "POST",
-    contentType: "application/json",
-    data,
-    success: q => Swal.fire("ÉXITO", texto, "success"),
-    error: r => Swal.fire("Ups...", r.responseText, "error")
-  })
+  hazPost('', JSON.stringify({ ...atributos, contraseñaVerificacion }), q => swalExito(texto))
 }
 
 bodyOnClick('.dropdown-item', function () { anterior(this.closest(".dropdown-menu")).innerText = this.innerText })

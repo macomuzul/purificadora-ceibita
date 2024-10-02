@@ -34,12 +34,11 @@ class botonExcel extends HTMLElement {
     if (typeof XLSX === "undefined") {
       try {
         await añadirJS('/tablaAExcelSheetJS.js')
+        this.crear()
       } catch (error) {
-        this.innerHTML = `Error al generar PDF`
-        return
+        this.innerHTML = `Ocurrió un error`
       }
     }
-    this.crear()
     setTimeout(() => this.innerHTML = this.htmlOriginal, 2000)
   }
 
