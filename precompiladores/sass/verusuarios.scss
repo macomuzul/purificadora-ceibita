@@ -13,19 +13,14 @@ th {
   font-size: 15px;
 }
 
-.filasuperior {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
 
-.divbotontitulo {
-  transform: translateX(100px);
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
+.filasuperior {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 5px 0 35px;
+  &>:nth-child(3){
+    justify-self: end;
+  }
 }
 
 
@@ -42,7 +37,6 @@ th {
 }
 
 .svgeliminar {
-  fill: rgb(230, 11, 11);
   width: 40px;
   height: 40px;
 }

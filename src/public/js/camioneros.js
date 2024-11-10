@@ -1,9 +1,9 @@
 String.prototype.normalizar = function () { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '') }
-let tbody = qsd('tbody')
+let tbody = qs('tbody')
 
 function mostrarErrorHTML(html, title) {
-  [...html.rows].forEach(x => [...x.cells].at(-1).remove())
-  qsaforeach(html, 'td', x => x.contentEditable = false)
+  html.qsafor('td:last-child', x => x.remove())
+  html.qsafor('td', x => x.contentEditable = false)
   Swal.fire({
     title,
     icon: 'error',
@@ -14,22 +14,22 @@ function mostrarErrorHTML(html, title) {
 }
 
 function validarCamioneros() {
-  let nombres = qsarr(tbody, 'td:nth-child(1)')
-  let colores = qsarr(tbody, 'td:nth-child(2)')
+  let nombres = tbody.qsarr('td:nth-child(1)')
+  let colores = tbody.qsarr('td:nth-child(2)')
   if (nombres.length === 0) {
     swalError('Error, la tabla está vacía, por favor agrega un camionero')
     return false
   }
-  nombres.forEach(x => (x.textContent = x.innerText.trim()))
+  nombres.forEach(x => x.textContent = x.innerText.trim())
 
-  let tablaCopia = clonar(qsd('table'))
-  let camionerosCopia = qsarr(tablaCopia, 'tbody td:nth-child(1)')
+  let tablaCopia = qs('table').clonar()
+  let camionerosCopia = tablaCopia.qsarr('tbody td:nth-child(1)')
   if (nombres.some(x => x.textContent === '')) {
-    camionerosCopia.forEach(x => x.textContent === '' && x.classList.add('enfocar'))
+    camionerosCopia.forEach(x => x.textContent === '' && x.añadirClase('enfocar'))
     return mostrarErrorHTML(tablaCopia, 'Hay camioneros sin nombre')
   }
   if (colores.some(x => x.textContent === 'indefinido')) {
-    qsa(tablaCopia, 'tbody td:nth-child(2)').forEach(x => x.textContent === 'indefinido' && x.classList.add('enfocar'))
+    tablaCopia.qsafor('tbody td:nth-child(2)', x => x.textContent === 'indefinido' && x.añadirClase('enfocar'))
     return mostrarErrorHTML(tablaCopia, 'Hay colores con el valor de indefinido')
   }
 
@@ -56,17 +56,15 @@ function colorAleatorio() {
   return color
 }
 
-qsclickd('#guardar', async q => {
+qsclick('#guardar', async q => {
   if (!validarCamioneros()) return
   hazPost('', JSON.stringify({ camioneros: [...tbody.rows].map(x => ({ nombre: x.cells[0].textContent, color: x.cells[1].textContent })) }), q => swalExito('Se han guardado exitosamente'))
 })
 
 bodyOnClick('.botoneliminar', async c => {
-  if (qsd('#switchModoSeguro').checked && await swalSíNo('Estás seguro que deseas borrar a este camionero?', `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${c.closest('tr').cells[0].innerText}</span>`, innerWidth / 2)) c.closest('tr').remove()
+  if (qs('#switchModoSeguro').checked && await swalSíNo('Estás seguro que deseas borrar a este camionero?', `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${c.closest('tr').cells[0].innerText}</span>`, innerWidth / 2)) c.closest('tr').remove()
 })
 
-bodyOn('input', '[type="color"]', c => (anterior(padre(c)).textContent = c.value))
+bodyOn('input', '[type="color"]', c => c.padre().ant().textContent = c.value)
 
-qsclickd('#añadircamionero', q => añadirHTML(tbody, `<tr><td contenteditable="true"></td><td>#000000</td><td><input type="color" value="#000000"></td>
-<td><button type="button" class="botoneliminar"><svg class="svgeliminar" width="30" height="30" fill="red" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></svg></button></td>
-</tr>`))
+qsclick('#añadircamionero', q => tbody.añadirHTML(`<tr><td contenteditable="true"></td><td>#000000</td><td><input type="color" value="#000000"></td><td><button class="botoneliminar"><svg-eliminar></svg-eliminar></button></td></tr>`))

@@ -12,7 +12,7 @@ test.describe("prueba console", () => {
     page.on('console', log(json.jsonSimple))
     await page.locator("#guardar").click()
     await expect(page.locator(".swal2-popup")).toBeVisible()
-    await page.locator("#trabajadorrevisar").fill("nanard")
+    await page.locator("#swal2-html-container input").fill("nanard")
     await page.locator(".swal2-confirm").click()
     await expect(page.locator(".swal2-success-ring")).toBeVisible()
   })
@@ -94,7 +94,7 @@ test.describe("prueba console", () => {
     page.on('console', log(json.jsonDosTablas))
     await page.locator(".trabajador").fill("xeresano")
     await agregarCamion(page)
-    await page.getByRole('textbox').fill("mostro")
+    await page.locator(".trabajador").nth(1).fill("mostro")
     await page.locator("#guardar").click()
   })
 
@@ -107,11 +107,12 @@ test.describe("prueba console", () => {
     // });
     await page.locator(".trabajador").fill("xeresano")
     await agregarCamion(page)
-    await page.getByRole('textbox').fill("mostro")
+    await page.locator(".trabajador").nth(1).fill("mostro")
     await page.getByRole('button', { name: 'Configuraciones' }).click()
     await page.getByLabel('Cambiar el orden de los camiones').check()
     await page.getByRole('button', { name: 'Guardar cambios' }).click()
     await cambiarOrdenCamiones(page, "tab-label:nth-child(1)", "tab-label:nth-child(2)")
+    await page.pause()
     await page.locator("#guardar").click()
   })
 

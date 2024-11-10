@@ -61,31 +61,6 @@
   border-radius: 0;
 }
 
-.dropdown-toggle-split {
-  height: 34px;
-  width: 28px;
-  border-radius: 0;
-  border: none;
-  transform: translateX(-1px);
-  font-size: 23px;
-  background: #00132e !important;
-
-  &:hover,
-  &:active,
-  &:focus {
-    background: #00132e !important;
-  }
-}
-
-.dropdown-item.active,
-.dropdown-item:active {
-  background: transparent !important;
-}
-
-.dropdown-menu-dark li {
-  cursor: pointer;
-}
-
 .label-trabajador {
   color: white;
   font-size: 18px;
@@ -212,11 +187,6 @@ h4 {
   font-family: sans-serif;
   font-size: 18px;
   height: 90px;
-}
-
-.divtrabajadorrevisar {
-  display: flex;
-  justify-content: center;
 }
 
 .contenedorrestaurar {
@@ -406,13 +376,6 @@ table{
   }
 }
 
-.dropdown-toggle-split::after,
-.dropend .dropdown-toggle-split::after,
-.dropup .dropdown-toggle-split::after {
-  font-size: 23px;
-  transform: rotate(90deg) translate(-2px, 0px);
-}
-
 .contenedorflex {
   display: flex;
   justify-content: center;
@@ -492,4 +455,9 @@ table{
 
 .dropend .dropdown-toggle::after {
   border-right: .3em solid transparent;
+}
+
+#swal2-html-container dropdown-camioneros input {
+  box-shadow: 0px 0px 5px 0px blue inset;
+  height: 34px;
 }

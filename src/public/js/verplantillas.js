@@ -1,21 +1,21 @@
 let timeout = false
-let favorito = qsd(".faved")
+let favorito = qs(".faved")
 
 bodyOnClick(".vermas", c => {
-  alternar(qs(padre(c), '.spanHoras'))
+  c.padre().qs('.spanHoras').alternar()
   c.style.rotate = c.style.rotate === '180deg' ? '0deg' : '180deg'
 })
 
 bodyOnClick('.fave', c => {
-  if (timeout || tieneClase(c, 'faved')) return
-  alternarClase(favorito, 'faved')
-  alternarClase(c, 'faved')
+  if (timeout || c.tieneClase('faved')) return
+  favorito.alternarClase('faved')
+  c.alternarClase('faved')
   timeout = true
   favorito = c
   setTimeout(() => timeout = false, 300)
 })
 
-bodyOnClick(".svgeliminar", async c => {
+bodyOnClick('.svgeliminar', async c => {
   let filaborrar = c.closest("tr")
   let plantillaborrar = filaborrar.cells[0].innerText
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
@@ -31,7 +31,7 @@ bodyOnClick(".svgeliminar", async c => {
   }
 })
 
-qsaforeachd(".svgver", e => {
+qsafor(".svgver", e => {
   tippy(e, {
     trigger: 'click',
     placement: 'bottom',
@@ -62,10 +62,10 @@ qsaforeachd(".svgver", e => {
   })
 })
 
-qsclickd('#guardar', q => {
+qsclick('#guardar', q => {
   let data = JSON.stringify({
     nombreDefault: favorito.closest('tr').cells[0].innerText,
-    nombrePlantillas: qsarrd('tbody tr').map(x => x.cells[0].innerText)
+    nombrePlantillas: qsarr('tbody td:first-child').map(x => x.innerText)
   })
   hazPatch('', data, q => swalExito("Se ha guardado el nuevo orden exitosamente"))
 })

@@ -5,8 +5,8 @@ class tablaGastos extends HTMLElement {
     let tieneData = datos?.length > 0
     this.innerHTML = `${this.htmlTitulo()}<div class="tablagastosparteinferior">${tieneData ? this.crearTabla(1) : tablaVacia}</div>`
 
-    elOnClick(this, '.botonregistrargasto', e => {
-      qs(this, 'table') ? añadirHTML(qs(this, 'tbody'), this.añadirFila([])) : cambiarHTML(qs(this, '.tablagastosparteinferior'), this.crearTabla(0))
+    this.elclick('.botonregistrargasto', q => {
+      this.qs('table') ? this.qs('tbody').añadirHTML(this.añadirFila([])) : this.qs('.tablagastosparteinferior').html(this.crearTabla(0))
       convierteDatePicker($(this).find('.divdatepicker'))
     })
 
@@ -51,9 +51,9 @@ customElements.define('tabla-gastos', tablaGastos)
 bodyOnClick('.divtablagastos tr td:last-child', async c => {
   if (c.clientWidth - e.offsetX <= 21 && e.offsetY <= 21) {
     let fila = c.closest('tr')
-    let html = `<div class="divtablagastos"><table class="mx-auto"><tbody style="background: #0f0d35;">${clonar(fila).outerHTML}</tbody></table></div>`
+    let html = `<div class="divtablagastos"><table class="mx-auto"><tbody style="background: #0f0d35;">${fila.clonar().outerHTML}</tbody></table></div>`
     if (await swalSíNo('Estás seguro que deseas borrar esta fila de la tabla?', html)) {
-      padre(fila).rows.length === 1 ? cambiarHTML(c.closest('.tablagastosparteinferior'), tablaVacia) : fila.remove()
+      fila.padre().rows.length === 1 ? c.closest('.tablagastosparteinferior').html(tablaVacia) : fila.remove()
       Swal.fire('Fila eliminada', 'Se ha eliminado la fila exitosamente', 'success')
     }
   }

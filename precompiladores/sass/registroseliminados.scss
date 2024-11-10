@@ -36,9 +36,9 @@ body {
 
 .fechaDelRegistro {
   display: inline-block;
-}
-.fechaDelRegistro::first-letter {
-  text-transform: uppercase;
+  &::first-letter {
+    text-transform: uppercase;
+  }
 }
 
 .svgrestaurar {
@@ -124,11 +124,14 @@ body {
 }
 
 .contenedorsuperior {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
   margin-bottom: 50px;
-  flex-wrap: wrap;
+}
+
+.botontitulo {
+  width: fit-content;
+  justify-self: center;
 }
 
 .flechaatras svg {
@@ -178,27 +181,20 @@ hr {
   margin-bottom: 20px;
 }
 
-iframe{
-  width: 100%;
-  height: 400px;
-}
-
 .tabSeccionAbajo{
-  display: flex;
+  display: grid;
+  grid-template-columns: 5fr 1fr;
   align-items: center;
-  justify-content: space-between;
-
   container-type: inline-size;
   container-name: tabAbajo;
 }
 
 @container tabAbajo (width <= 860px) {
   .fechaeliminacion{
-    max-width: 330px;
-    text-align: center;
+    max-width: 360px;
   }
+}
 
-  .tabSeccionAbajo{
-    justify-content: space-around;
-  }
+table {
+  margin: 10px 0;
 }

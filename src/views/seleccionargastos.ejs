@@ -17,10 +17,10 @@
 <body>
   <%- include("layouts/navbar") %>
   <main>
-    <div class="contenedorsuperior"><boton-titulo2>Escoge un mes para registrar tus gastos</boton-titulo2></div>
+    <div class="contenedorsuperior" style="justify-content: center;"><boton-titulo2>Escoge un mes para registrar tus gastos</boton-titulo2></div>
     <section style="display: flex; justify-content: center;">
-      <calendario-simple data-id="datepicker" data-idinput="calendario" data-fecha="<%= fecha %>"></calendario-simple>
-      <botonazul-flechaderechasinurl id="registrargastos" style="padding: 15px 15px 15px 20px; position: absolute; right: 50px;">Registrar gastos</botonazul-flechaderechasinurl>
+      <calendario-simple data-id="datepicker" data-fecha="<%= fecha %>"></calendario-simple>
+      <botonazul-flechaderecha id="registrargastos" style="padding: 15px 15px 15px 20px; position: absolute; right: 50px;">Registrar gastos</botonazul-flechaderecha>
     </section>
   </main>
 </body>

@@ -16,9 +16,9 @@ class spanFechas extends HTMLElement {
     }
     this.innerHTML = html
 
-    elOnClick(this, ".spanFechaStr,.spanFecha", q => {
-      alternar(qs(this, `.spanFecha`))
-      alternar(qs(this, `.spanFechaStr`))
+    this.elclick(".spanFechaStr,.spanFecha", q => {
+      this.qs('.spanFecha').alternar()
+      this.qs('.spanFechaStr').alternar()
     })
   }
 

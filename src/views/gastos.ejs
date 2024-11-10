@@ -25,9 +25,7 @@
   <link rel="stylesheet" href="/gastos.min.css">
   <%- include("layouts/navbar") %>
   <main>
-    <div>
-      <div class="contenedorsuperior"><boton-titulo2>Gastos <span id="fechames">del mes de <%= fechaTexto %></span></boton-titulo2></div>
-    </div>
+    <div class="contenedorsuperior"><boton-titulo2>Gastos <span id="fechames">del mes de <%= fechaTexto %></span></boton-titulo2></div>
     <div class="botonesAcciones">
       <div style="display: flex; gap: 15px;">
         <button class="configuraciones" data-bs-toggle="modal" data-bs-target="#configs"><svg fill="#ddd" width="30px" height="30px" viewBox="0 0 93.5 93.5"><g><path d="M93.5,40.899c0-2.453-1.995-4.447-4.448-4.447H81.98c-0.74-2.545-1.756-5.001-3.035-7.331l4.998-5    c0.826-0.827,1.303-1.973,1.303-3.146c0-1.19-0.462-2.306-1.303-3.146L75.67,9.555c-1.613-1.615-4.673-1.618-6.29,0l-5,5    c-2.327-1.28-4.786-2.296-7.332-3.037v-7.07C57.048,1.995,55.053,0,52.602,0H40.899c-2.453,0-4.447,1.995-4.447,4.448v7.071    c-2.546,0.741-5.005,1.757-7.333,3.037l-5-5c-1.68-1.679-4.609-1.679-6.288,0L9.555,17.83c-1.734,1.734-1.734,4.555,0,6.289    l4.999,5c-1.279,2.33-2.295,4.788-3.036,7.333h-7.07C1.995,36.452,0,38.447,0,40.899V52.6c0,2.453,1.995,4.447,4.448,4.447h7.071    c0.74,2.545,1.757,5.003,3.036,7.332l-4.998,4.999c-0.827,0.827-1.303,1.974-1.303,3.146c0,1.189,0.462,2.307,1.302,3.146    l8.274,8.273c1.614,1.615,4.674,1.619,6.29,0l5-5c2.328,1.279,4.786,2.297,7.333,3.037v7.071c0,2.453,1.995,4.448,4.447,4.448    h11.702c2.453,0,4.446-1.995,4.446-4.448V81.98c2.546-0.74,5.005-1.756,7.332-3.037l5,5c1.681,1.68,4.608,1.68,6.288,0    l8.275-8.273c1.734-1.734,1.734-4.555,0-6.289l-4.998-5.001c1.279-2.329,2.295-4.787,3.035-7.332h7.071    c2.453,0,4.448-1.995,4.448-4.446V40.899z M62.947,46.75c0,8.932-7.266,16.197-16.197,16.197c-8.931,0-16.197-7.266-16.197-16.197    c0-8.931,7.266-16.197,16.197-16.197C55.682,30.553,62.947,37.819,62.947,46.75z"/></g></svg> Configuraciones</button>
@@ -47,8 +45,8 @@
     </section>
     <section class="botonesabajo">
       <div class="botonesCambiarMes grupobotonesabajo">
-        <botonazul-flechaizquierdasinurl id="mesanterior" class="azuloscuro">Mes anterior</botonazul-flechaizquierdasinurl>
-        <botonazul-flechaderechasinurl id="messiguiente" class="azuloscuro">Mes siguiente</botonazul-flechaderechasinurl>
+        <botonazul-flechaizquierda id="mesanterior" class="azuloscuro">Mes anterior</botonazul-flechaizquierda>
+        <botonazul-flechaderecha id="messiguiente" class="azuloscuro">Mes siguiente</botonazul-flechaderecha>
       </div>
       <div class="grupobotonesabajo">
         <boton-azul id="resumengastos" class="azuloscuro"><svg fill="#FFF" width="22px" height="22px" viewBox="0 0 47 47" xml:space="preserve"><g><g><g><path d="M6.12,38.52V5.136h26.962v28.037l5.137-4.243V2.568C38.219,1.15,37.07,0,35.652,0h-32.1C2.134,0,0.985,1.15,0.985,2.568     v38.519c0,1.418,1.149,2.568,2.567,2.568h22.408L22.33,38.52H6.12z"/><path d="M45.613,27.609c-0.473-0.446-1.2-0.467-1.698-0.057l-11.778,9.734l-7.849-4.709c-0.521-0.312-1.188-0.219-1.603,0.229     c-0.412,0.444-0.457,1.117-0.106,1.613l8.506,12.037c0.238,0.337,0.625,0.539,1.037,0.543c0.004,0,0.008,0,0.012,0     c0.408,0,0.793-0.193,1.035-0.525l12.6-17.173C46.149,28.78,46.084,28.055,45.613,27.609z"/><path d="M27.306,8.988H11.897c-1.418,0-2.567,1.15-2.567,2.568s1.149,2.568,2.567,2.568h15.408c1.418,0,2.566-1.15,2.566-2.568     S28.724,8.988,27.306,8.988z"/><path d="M27.306,16.691H11.897c-1.418,0-2.567,1.15-2.567,2.568s1.149,2.568,2.567,2.568h15.408c1.418,0,2.566-1.149,2.566-2.568     C29.874,17.841,28.724,16.691,27.306,16.691z"/><path d="M27.306,24.395H11.897c-1.418,0-2.567,1.15-2.567,2.568s1.149,2.568,2.567,2.568h15.408c1.418,0,2.566-1.15,2.566-2.568     C29.874,25.545,28.724,24.395,27.306,24.395z"/></g></g></g></svg> Resumen de gastos</boton-azul>
@@ -62,7 +60,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="staticBackdropLabel">Configuraciones</h1>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <div class="grupomodal">Exportar a PDF</div>
@@ -84,8 +82,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary btn-config guardarconfig" data-bs-dismiss="modal">Guardar cambios</button>
-          <button type="button" class="btn btn-danger btn-config cerrarconfig" data-bs-dismiss="modal">Cerrar</button>
+          <button class="btn btn-primary btn-config guardarconfig" data-bs-dismiss="modal">Guardar cambios</button>
+          <button class="btn btn-danger btn-config cerrarconfig" data-bs-dismiss="modal">Cerrar</button>
         </div>
       </div>
     </div>

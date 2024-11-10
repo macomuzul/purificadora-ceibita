@@ -11,37 +11,6 @@
   <script defer src="/input.js"></script>
   <script defer src="/botonazul.js"></script>
   <script defer src="/bootstrapdatepicker.js"></script>
-
-  <script>
-    document.addEventListener("click", async e => {
-  if (e.target.matches(".guardarconfig")) {
-    let s1 = [...qs(seleccionado, ".opcionesarchivos input:checked")].map(x => indice(x.closest("custom-checkbox")))
-    if (!s1.length) {
-      e.stopImmediatePropagation()
-      return Swal.fire("Atención", "Debe haber al menos un archivo qué guardar, selecciona archivo json, bson o ambos", "warning")
-    }
-
-    let s2 = $(seleccionado).find(".opcionesradiobutton input:checked").closest("custom-radiobutton").index()
-    let v, iframe = $(seleccionado).find("iframe")[0]?.contentDocument, fechaEntre = seleccionado.cal === "entre el"
-    if(s2){
-      v = iframe ? fechaEntre ? new Intl.ListFormat("es").format([...$(iframe).find("input")].map(x => x.value)) : $(iframe).find("input").val() : [...$(seleccionado).find(".contenidoOpciones input:checked")].map(x => $(x).next().text())
-      if (!v) {
-        e.stopImmediatePropagation()
-        return Swal.fire("Atención", "No has escogido qué registros deseas guardar", "warning")
-      }
-    }
-
-    let opciones = {}
-    opciones.archivos = s1.length === 2 ? "ambos" : s1[0] ? "bson" : "json"
-    opciones.guardar = s2 ? { rango: seleccionado.cal, valor: v } : "todos"
-    seleccionado.opciones = {...seleccionado.opciones, ...opciones}
-    let li = []
-    li.push(`Crear ${s1.length === 2 ? "ambos archivos" : `archivo ${s1[0] ? "bson" : "json"}`}`)
-    li.push(`Guardar ${s2 ? iframe ? `fechas ${seleccionado.cal} ${v}` : new Intl.ListFormat("es").format(v) : "todos los registros"}`)
-    $(seleccionado).find(".listaMensajes").html(li.map(x => `<li class="mensajeOpciones">${x}</li>`))
-  }
-}, { capture: true })
-  </script>
   <script defer src="/cuadrorespaldos.js"></script>
 </head>
 

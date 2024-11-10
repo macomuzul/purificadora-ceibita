@@ -29,23 +29,23 @@ async function moverReg(fecha, url) {
 
 function mostrarDP(fecha, url) {
   Swal.hideLoading()
-  cambiarHTML(qsd('#swal2-html-container'), `<div style="display: flex; height: 400px; justify-content: center;"><div><calendario-simple></calendario-simple><div class="invalid-feedback">Por favor escoge una fecha</div></div></div>
-  <button id="continuarIframe" class="btn btn-success margenbotonswal">Continuar</button><button id="cancelarIframe" class="btn btn-danger margenbotonswal">Cancelar</button>`)
+  qs('#swal2-html-container').html(`<div style="display: flex; height: 400px; justify-content: center;"><div><calendario-simple></calendario-simple><div class="invalid-feedback">Por favor escoge una fecha</div></div></div>
+  <button id="continuarCal" class="btn btn-success margenbotonswal">Continuar</button><button id="cancelarCal" class="btn btn-danger margenbotonswal">Cancelar</button>`)
   let dp = $(`#calendario`)
   let validacion = (c, a) => {
     $('.input-group-text').css('border-color', c)
     dp.css('border-color', c)
-    $('.invalid-feedback')[a]()
+    qs('.invalid-feedback')[a]()
   }
   dp.datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" })
 
-  dp.on('change', q => validacion('#ced4da', 'hide'))
-  qsclickd('#continuarIframe', q => {
+  dp.on('change', q => validacion('#ced4da', 'esconder'))
+  qsclick('#continuarCal', q => {
     let input = dp[0]
-    if (input.value === '') return validacion('red', 'show')
+    if (input.value === '') return validacion('red', 'mostrar')
     moverRegistro(fecha, parseDate(input.value).valueOf(), 0, url)
   })
-  qsclickd('#cancelarIframe', q => Swal.close())
+  qsclick('#cancelarCal', q => Swal.close())
   setTimeout(q => dp.datepicker('show'), cargaronLibsDP ? 150 : 0)
 }
 

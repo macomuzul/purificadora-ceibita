@@ -1,37 +1,37 @@
-let tabla = qsd('table')
-let tbody = qsd('tbody')
-let nombreplantilla = qsd('#nombreplantilla')
+let tabla = qs('table')
+let tbody = qs('tbody')
+let nombreplantilla = qs('#nombreplantilla')
 
-qsclickd('#añadirproducto', q => tbody.innerHTML += `<tr><td contenteditable="true"></td><td contenteditable="true"></td><td><button type="button" class="botoneliminar"><svg class="svgeliminar" width="30" height="30" fill="red" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /></svg></button></td></tr>`)
+qsclick('#añadirproducto', q => tbody.innerHTML += `<tr><td contenteditable="true"></td><td contenteditable="true"></td><td><button class="botoneliminar"><svg-eliminar></svg-eliminar></button></td></tr>`)
 
 async function validarPlantillas() {
   nombreplantilla.value = nombreplantilla.value.trim()
-  qsa(tbody, 'td:nth-child(1)').forEach(x => (x.textContent = x.innerText.trim()))
-  qsa(tbody, 'td:nth-child(2)').forEach(x => {
+  tbody.qsafor('td:nth-child(1)', x => x.textContent = x.innerText.trim())
+  tbody.qsafor('td:nth-child(2)', x => {
     let precio = x.innerText
     if (precio === '.') x.textContent = ''
     let p = precio.aFloat()
     if (!isNaN(p)) x.textContent = p.normalizarPrecio()
   })
 
-  let productos = qsarrd('tbody td:nth-child(1)')
-  let precios = qsarrd('tbody td:nth-child(2)')
-  let tablaCopia = clonar(tabla)
-  let productosCopia = qsarr(tablaCopia, 'tbody tr td:nth-child(1)')
-  let preciosCopia = qsarr(tablaCopia, 'tbody tr td:nth-child(2)')
+  let productos = qsarr('tbody td:nth-child(1)')
+  let precios = qsarr('tbody td:nth-child(2)')
+  let tablaCopia = tabla.clonar()
+  let productosCopia = tablaCopia.qsarr('tbody tr td:nth-child(1)')
+  let preciosCopia = tablaCopia.qsarr('tbody tr td:nth-child(2)')
 
   if (nombreplantilla.value === '') return mostrarError('El nombre de la plantilla está vacío')
   if (productos.length < 1) return mostrarError('No hay productos qué guardar')
   if (productos.some(x => x.textContent === '')) {
-    productosCopia.forEach(x => x.textContent === '' && x.classList.add('enfocar'))
+    productosCopia.forEach(x => x.textContent === '' && x.añadirClase('enfocar'))
     return mostrarErrorHTML(tablaCopia, 'Hay productos sin nombre en la tabla')
   }
   if (precios.some(x => x.innerText === '')) {
-    preciosCopia.forEach(x => x.textContent === '' && x.classList.add('enfocar'))
+    preciosCopia.forEach(x => x.textContent === '' && x.añadirClase('enfocar'))
     return mostrarErrorHTML(tablaCopia, 'Hay precios vacíos')
   }
   if (precios.some(x => x.innerText === '0')) {
-    preciosCopia.forEach(x => x.textContent === '0' && x.classList.add('enfocar'))
+    preciosCopia.forEach(x => x.textContent === '0' && x.añadirClase('enfocar'))
     return mostrarErrorHTML(tablaCopia, 'Hay precios con valor igual a 0')
   }
 
@@ -58,8 +58,8 @@ function colorAleatorio() {
 }
 
 function mostrarErrorHTML(html, title) {
-  [...html.rows].forEach(x => [...x.cells].at(-1).remove())
-  qsaforeach(html, 'td', x => x.contentEditable = false)
+  html.qsafor('td:last-child', x => x.remove())
+  html.qsafor('td', x => x.contentEditable = false)
   Swal.fire({
     title,
     icon: 'error',

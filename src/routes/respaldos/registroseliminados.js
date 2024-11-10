@@ -21,7 +21,7 @@ router.post("/restaurarregistro", devuelveFuncionMover(RegistrosEliminados, "No 
 let mostrarPagina = tcrutas(async (req, res, Reg) => {
   let limite = 10
   let [url, pagina] = req.originalUrl.split('pag=')
-  pagina = pagina.aInt()
+  pagina = parseInt(pagina)
   let datostablas = await Reg.clone().limit(limite).skip(limite * (pagina - 1))
   let totalPaginas = Math.ceil(await Reg.clone().countDocuments() / limite)
   if (totalPaginas === 0) return res.send("no hay ningún registro")

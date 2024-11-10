@@ -4,12 +4,10 @@ const Gastos = require('../models/gastos')
 router.get('/', (req, res) => res.render('seleccionargastos', {fecha: DateTime.now().startOf('month').toFormat('dd/MM/y')}))
 
 router.route('/:fechaP').get(tcrutas(async (req, res) => {
-  let { fechaP } = req.params
-  let fecha = DateTime.fromFormat(fechaP, 'd-M-y')
+  let fecha = DateTime.fromFormat(req.params.fechaP, 'd-M-y')
   let datos = await Gastos.buscarPorID(fecha) || {}
   res.render('gastos', { datos, fechaTexto: fecha.toLocaleString({ month: 'long', year: 'numeric' })})
-}))
-.post(tcrutas(async (req, res) => {
+})).post(tcrutas(async (req, res) => {
   await Gastos.guardar({ _id: DateTime.fromFormat(req.params.fechaP, 'd-M-y'), usuario: devuelveUsuario(req), ...req.body })
   res.send()
 }))

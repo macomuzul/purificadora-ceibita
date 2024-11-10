@@ -92,7 +92,7 @@ añadirCSS(`.gridUnidadTiempo {
 }`)
 
 let contador = 0, seleccionado, cal, opcionCalendario
-let crearCal = c => cal.html(`<botonazul-flechaizquierda class="botonvolver" id="volver">Volver</botonazul-flechaizquierda>${c}`)
+let crearCal = c => cal.html(`<botonazul-flechaizquierda class="botonvolver">Volver</botonazul-flechaizquierda>${c}`)
 bodyOnClick("#btnMayor", q => {
   seleccionado.cal = "mayores o iguales que"
   crearCal('<calendario-simple></calendario-simple>')
@@ -117,16 +117,16 @@ bodyOnClick("#btnEntre", q => {
   crearCal("Entre")
 })
 
-bodyOnClick(".tituloregistro custom-checkbox", c => qs(c.closest("cuadro-respaldos"), "custom-input input").disabled = !qs(c, "input").checked)
+bodyOnClick(".tituloregistro custom-checkbox", c => c.closest("cuadro-respaldos").qs("custom-input input").disabled = !c.qs("input").checked)
 bodyOnClick(".botonvolver, .opcionesradiobutton custom-radiobutton input", c => {
-  if (indice(seleccionado.closest("custom-radiobutton")) === 0) cal.hide()
+  if (qs('.modal-body custom-radiobutton:has(input:checked)').indice() === 0) cal.hide()
   else {
-    if (cal.html() && !tieneClase(c, "botonvolver")) cal.show()
+    if (cal.html() && !c.tieneClase("botonvolver")) cal.show()
     else {
       ({
         Ventas: htmlCalendario,
-        Plantillas: q => htmlNombres("/plantillas/devuelvenombres", "plantillas"),
-        Camioneros: q => htmlNombres("/empleados/camioneros/devuelvenombres", "camioneros"),
+        Plantillas: q => htmlNombres("/plantillas/nombres", "plantillas"),
+        Camioneros: q => htmlNombres("/empleados/camioneros/nombres", "camioneros"),
         "Registros eliminados": htmlCalendario,
       })[seleccionado.titulo]()
     }
@@ -137,19 +137,19 @@ let guardando = false
 bodyOnClick("#btnguardar", async c => {
   if (guardando) return
   guardando = true
-  cambiarHTML(c, `  Guardando<div class="cajaspinner"><div class="spinner-border text-primary"></div>`)
-  let checkeados = qsarrd("cuadro-respaldos").filter(x => qs(x, ".tituloregistro input").checked)
+  c.html(`  Guardando<div class="cajaspinner"><div class="spinner-border text-primary"></div>`)
+  let checkeados = qsarr("cuadro-respaldos").filter(x => x.qs(".tituloregistro input").checked)
   if (!checkeados.length) return Swal.fire("Error", "No se ha seleccionado ningún registro para guardar", "error")
-  checkeados.forEach(x => x.opciones.nombreArchivo = qs(x, ".nombreArchivo input").value)
+  checkeados.forEach(x => x.opciones.nombreArchivo = x.qs(".nombreArchivo input").value)
   let datos = checkeados.map(x => x.opciones)
-  let body = { datos, sobreescribir: 0, nombreCarpeta: qsd(".nombreCarpeta input").value }
+  let body = { datos, sobreescribir: 0, nombreCarpeta: qs(".nombreCarpeta input").value }
   await guardar(body)
-  cambiarHTML(c, "Guardar")
+  c.html("Guardar")
   guardando = false
 })
 bodyOnClick("#seleccionarTodos", c => {
-  let checked = qs(c, "input").checked
-  qsa(c.closest(".contenidoOpciones"), ".gridCheckbox input").forEach(x => x.checked = checked)
+  let checked = c.qs("input").checked
+  c.closest(".contenidoOpciones").qsafor(".gridCheckbox input", x => x.checked = checked)
 })
 
 async function guardar(body) {
@@ -208,7 +208,7 @@ class cuadroRespaldos extends HTMLElement {
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5">Configuraciones</h1>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
             <div style="margin: 0 0 30px 10px;" class="opcionesarchivos">
@@ -216,16 +216,16 @@ class cuadroRespaldos extends HTMLElement {
             <custom-checkbox data-checked="1">Crear archivo bson</custom-checkbox>
             </div>
             <custom-radiogroup style="margin-left: 10px;" id="opcionesradiobutton${contador}" class="opcionesradiobutton">
-              <custom-radiobutton data-id="guardartodoslosregistros${contador}" data-checked="1">Guardar todos los registros</custom-radiobutton>
-              <custom-radiobutton data-id="escogerregistros${contador}">Escoger qué registros guardar</custom-radiobutton>
+              <custom-radiobutton data-checked="1">Guardar todos los registros</custom-radiobutton>
+              <custom-radiobutton>Escoger qué registros guardar</custom-radiobutton>
             </custom-radiogroup>
             <div class="contenidoOpciones"></div>
           </div>
           <div class="modal-footer">
-            <div style="flex-grow: 1;"><button type="button" class="btn btn-primary btn-config botonazul restaurarconfig" data-bs-dismiss="modal">Restaurar los valores de default</button></div>
+            <div style="flex-grow: 1;"><button class="btn btn-primary btn-config botonazul restaurarconfig" data-bs-dismiss="modal">Restaurar los valores de default</button></div>
             <div style="flex-grow: 1; display: flex; justify-content: flex-end;">
-              <button type="button" style="margin-right: 5px;" class="btn btn-success btn-config guardarconfig" data-bs-dismiss="modal">Aceptar</button>
-              <button type="button" class="btn btn-danger btn-config cerrarconfig" data-bs-dismiss="modal">Cancelar</button>
+              <button style="margin-right: 5px;" class="btn btn-success btn-config guardarconfig" data-bs-dismiss="modal">Aceptar</button>
+              <button class="btn btn-danger btn-config cerrarconfig" data-bs-dismiss="modal">Cancelar</button>
             </div>
           </div>
         </div>
@@ -240,9 +240,9 @@ class cuadroRespaldos extends HTMLElement {
     }
     contador++
     this.titulo = titulo
-    let modal = new bootstrap.Modal(qs(this, ".modal"))
-    elOnClick(this, ".opcionesextra", q => {
-      if (!qs(this, ".tituloregistro input").checked) return Swal.fire("Atención", "El registro a guardar está deshabilitado. Por favor habilítalo para seleccionar qué información mandar", "warning")
+    let modal = new bootstrap.Modal(this.qs(".modal"))
+    this.elclick(".opcionesextra", q => {
+      if (!this.qs(".tituloregistro input").checked) return Swal.fire("Atención", "El registro a guardar está deshabilitado. Por favor habilítalo para seleccionar qué información mandar", "warning")
       seleccionado = this
       cal = $(seleccionado).find(".contenidoOpciones")
       modal.show()
@@ -251,3 +251,29 @@ class cuadroRespaldos extends HTMLElement {
 }
 
 customElements.define("cuadro-respaldos", cuadroRespaldos)
+
+
+bodyOnClick('.guardarconfig', (c, e) => {
+  let s1 = seleccionado.qsarr(".opcionesarchivos input:checked").map(x => x.closest("custom-checkbox").indice())
+  if (!s1.length) {
+    e.stopImmediatePropagation()
+    return Swal.fire("Atención", "Debe haber al menos un archivo qué guardar, selecciona archivo json, bson o ambos", "warning")
+  }
+
+  let s2 = $(seleccionado).find(".opcionesradiobutton input:checked").closest("custom-radiobutton").index()
+  let v, iframe = $(seleccionado).find("iframe")[0]?.contentDocument, fechaEntre = seleccionado.cal === "entre el"
+  if(s2){
+    v = iframe ? fechaEntre ? new Intl.ListFormat("es").format([...$(iframe).find("input")].map(x => x.value)) : $(iframe).find("input").val() : [...$(seleccionado).find(".contenidoOpciones input:checked")].map(x => $(x).next().text())
+    if (!v) {
+      e.stopImmediatePropagation()
+      return Swal.fire("Atención", "No has escogido qué registros deseas guardar", "warning")
+    }
+  }
+
+  Object.assign(seleccionado.opciones, {
+    archivos: s1.length === 2 ? "ambos" : s1[0] ? "bson" : "json",
+    guardar: s2 ? { rango: seleccionado.cal, valor: v } : "todos"
+  })
+  let li = [`Crear ${s1.length === 2 ? "ambos archivos" : `archivo ${s1[0] ? "bson" : "json"}`}`, `Guardar ${s2 ? iframe ? `fechas ${seleccionado.cal} ${v}` : new Intl.ListFormat("es").format(v) : "todos los registros"}`]
+  seleccionado.qs(".listaMensajes").html(li.map(x => `<li class="mensajeOpciones">${x}</li>`))
+})

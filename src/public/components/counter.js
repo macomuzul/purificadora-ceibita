@@ -1,4 +1,4 @@
-let numInicial = 30
+let numInicial = 20
 añadirCSS(`.countdown {
   line-height: 1;
 
@@ -22,36 +22,35 @@ class counter extends HTMLElement {
   constructor() {
     super()
     this.timerId = null
-    esconder(this)
+    this.esconder()
     this.innerHTML = `<span class="countdown"><span style="--value:${numInicial};"></span></span>`
-    this.estilo = qs(this, `.countdown span`).style
+    this.estilo = this.qs('.countdown span').style
   }
 
   resetear(cb) {
+    this.cb = cb
     this.num = numInicial
-    mostrar(this)
+    this.mostrar()
     this.cambiarValor('white')
     this.cuentaAtras(cb)
   }
 
-  cuentaAtras(cb) {
-    this.timerId = setTimeout(() => {
+  cuentaAtras() {
+    this.timerId = setInterval(() => {
       this.num--
       let { num } = this
-      let color = num <= 5 ? 'red' : num <= 10 ? 'yellow' : ''
-      this.cambiarValor(color)
+      this.cambiarValor(num <= 5 ? 'red' : num <= 10 ? 'yellow' : '')
 
-      if (num > 0) this.cuentaAtras(cb)
-      else {
-        esconder(this)
-        cb()
+      if (num <= 0) {
+        this.parar()
+        this.cb()
       }
     }, 1000)
   }
 
   parar() {
-    clearTimeout(this.timerId)
-    esconder(this)
+    clearInterval(this.timerId)
+    this.esconder()
   }
 
   cambiarValor(color) {

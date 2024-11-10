@@ -64,4 +64,6 @@ router.route('/recuperarcontrase%C3%B1a').get(async (req, res) => {
   res.redirect("/recuperarcontraseña")
 })
 
+router.get('/logout', (req, res, next) => req.logout(err => err ? next(err) : res.redirect('/')))
+
 module.exports = router

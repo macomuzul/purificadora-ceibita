@@ -58,7 +58,7 @@ router.get('/devuelveplantilla/:nombre', tcaccion(async (req, res) => {
   res.send(plantilla.productos)
 }, "Hubo un error al recuperar la plantilla"))
 
-router.get('/devuelvenombres', tcaccion(async (req, res) => {
+router.get('/nombres', tcaccion(async (req, res) => {
   let plantillas = await Plantilla.find().select("nombre -_id")
   res.send(plantillas?.map(x => x.nombre) || [])
 }, "Hubo un error al recuperar la plantilla"))

@@ -1,10 +1,10 @@
 let listaCanvasConfeti
 function quitarConfeti(){
-  qsd(".checkboxPodio input").checked = false
+  qs(".checkboxPodio input").checked = false
   listaCanvasConfeti.forEach(x => x.clear())
 }
 function agregarConfeti(w) {
-  listaCanvasConfeti = qsarrd("#podios canvas").map(x => new ConfettiGenerator({ target: x }))
+  listaCanvasConfeti = qsarr("#podios canvas").map(x => new ConfettiGenerator({ target: x }))
   listaCanvasConfeti.forEach(x => x.render())
   setTimeout(q => quitarConfeti(), 10000)
 }

@@ -9,70 +9,73 @@ beforeEach(() => {
   // cy.viewport(1366, 570)
 })
 
+let testear = (m, ...params) => () => {
+  let { promise, resolve } = Promise.withResolvers()
+  m(resolve, params)
+  promise.then(s => expect(s).to.be.true).catch(err => console.log(err))
+}
+
 try {
   describe('validaciones antes de guardar', () => {
-    // it("Verifica tablas vacías", async () => {
-    //   abrirConfig(e => cy.get('#filasycolumnasdesactivar').check())
-    //   cy.get(".grupotabs tab-label label").click('topRight')
-    //   cy.get(".swal2-confirm").click()
-    //   cy.contains("No se puede borrar, debe haber al menos un camión")
-    //   cy.get(".swal2-confirm").click()
-    //   compararPeticion(tablas.tablaNormal)
-    // })
+    it("Verifica tablas vacías", async () => {
+      abrirConfig(e => cy.get('#filasycolumnasdesactivar').check())
+      cy.get(".grupotabs tab-label label").click('topRight')
+      cy.get(".swal2-confirm").click()
+      cy.contains("No se puede borrar, debe haber al menos un camión")
+      cy.get(".swal2-confirm").click()
+      compararPeticion(tablas.tablaNormal)
+    })
 
 
-    // it("Verifica tablas totalmente vacías", async () => {
-    //   cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(1) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}")
-    //   cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(1) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}")
-    //   cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(2) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}")
-    //   cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(2) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}")
-    //   cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(3) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}")
-    //   cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(3) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}")
-    //   cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(4) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}")
-    //   cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(4) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}")
-    //   cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(5) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}")
-    //   cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(5) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}")
-    //   cy.get('#guardar').click()
-    //   cy.get('.swal2-confirm').click()
-    //   cy.contains("No se puede borrar, debe haber al menos un camión")
-    //   cy.get('.swal2-confirm').click()
-    // })
+    it("Verifica tablas totalmente vacías", async () => {
+      cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(1) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}")
+      cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(1) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}")
+      cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(2) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}")
+      cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(2) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}")
+      cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(3) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}")
+      cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(3) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}")
+      cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(4) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}")
+      cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(4) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}")
+      cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(5) > td:nth-child(3)').type("{backspace}{backspace}{backspace}{backspace}")
+      cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(5) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}")
+      cy.get('#guardar').click()
+      cy.get('.swal2-confirm').click()
+      cy.contains("No se puede borrar, debe haber al menos un camión")
+      cy.get('.swal2-confirm').click()
+    })
 
-    // describe(("Valida que los productos esten llenos"), () => {
-    //   it("Valida un solo producto una vez", testear(validarUnSoloProducto, 0))
-    //   it("Valida un solo producto varias veces", testear(validarUnSoloProducto, 4))
-    //   it("Valida varios productos una vez", testear(validarVariosProductos, 0))
-    //   it("Valida varios productos varias veces", testear(validarVariosProductos, 4))
-    // })
+    describe(("Valida que los productos esten llenos"), () => {
+      it("Valida un solo producto una vez", testear(validarUnSoloProducto, 0))
+      it("Valida un solo producto varias veces", testear(validarUnSoloProducto, 4))
+      it("Valida varios productos una vez", testear(validarVariosProductos, 0))
+      it("Valida varios productos varias veces", testear(validarVariosProductos, 4))
+    })
 
-    // describe(("Valida que los precios esten llenos"), () => {
-    //   it("Valida un solo precio una vez", testear(validarUnSoloPrecio, 0))
-    //   it("Valida varios precios una vez", testear(validarVariosPrecios, 0))
-    //   it("Valida un solo precio varias veces", testear(validarUnSoloPrecio, 4))
-    //   it("Valida varios precios varias veces", testear(validarVariosPrecios, 4))
-    // })
+    describe(("Valida que los precios esten llenos"), () => {
+      it("Valida un solo precio una vez", testear(validarUnSoloPrecio, 0))
+      it("Valida varios precios una vez", testear(validarVariosPrecios, 0))
+      it("Valida un solo precio varias veces", testear(validarUnSoloPrecio, 4))
+      it("Valida varios precios varias veces", testear(validarVariosPrecios, 4))
+    })
 
+    describe("Mezcla validar productos y validar precios", () => {
+      it("Valida productos y precios una vez", testear(validarPreciosYProductosUnaVez))
+      it("Valida productos y precios varias veces", testear(validarPreciosYProductosVariasVeces))
+    })
 
+    it("Añade ceros", testear(añadeCeros))
+    it("Entra mas de lo que sale", testear(entraMasDeLoQueSale))
 
-
-    // describe("Mezcla validar productos y validar precios", () => {
-    //   it("Valida productos y precios una vez", testear(validarPreciosYProductosUnaVez))
-    //   it("Valida productos y precios varias veces", testear(validarPreciosYProductosVariasVeces))
-    // })
-
-    // it("Añade ceros", testear(añadeCeros))
-    // it("Entra mas de lo que sale", testear(entraMasDeLoQueSale))
-
-    // describe("Borra filas vacias", () => {
-    //   it("Borra algunas filas", testear(borrarFilasVacias))
-    // })
+    describe("Borra filas vacias", () => {
+      it("Borra algunas filas", testear(borrarFilasVacias))
+    })
   })
 
-  // describe("configuraciones", () => {
-  //   it("muestra x en filas y columnas", testear(filasycolumnaspresionarx))
-  //   it("esconde x en filas y columnas1", testear(filasycolumnasdesactivar))
-  //   it("esconde x en filas y columnas2", testear(filasycolumnaspresionar1segundo))
-  // })
+  describe("configuraciones", () => {
+    it("muestra x en filas y columnas", testear(filasycolumnaspresionarx))
+    it("esconde x en filas y columnas1", testear(filasycolumnasdesactivar))
+    it("esconde x en filas y columnas2", testear(filasycolumnaspresionar1segundo))
+  })
 
   describe('añadir producto y viajes', () => {
     it("añade producto", testear(añadirProducto))
@@ -311,13 +314,4 @@ function seVeSimbolo(resolve, x) {
 
 function compararPeticion(resolve, JSONtabla) {
   cy.intercept('/registrarventas/guardar', req => resolve(JSON.stringify(req.body).includes(JSONtabla)))
-}
-
-function testear(m, ...params) {
-  return async function () {
-    let { promise, resolve } = Promise.withResolvers()
-    m(resolve, params)
-    let s = await promise
-    expect(s).to.be.true
-  }
 }

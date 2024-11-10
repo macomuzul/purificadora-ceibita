@@ -39,7 +39,7 @@ class botonExcel extends HTMLElement {
         this.innerHTML = `Ocurrió un error`
       }
     }
-    setTimeout(() => this.innerHTML = this.htmlOriginal, 2000)
+    setTimeout(q => this.innerHTML = this.htmlOriginal, 2000)
   }
 
   ajustesCeldasExcel(cell) {

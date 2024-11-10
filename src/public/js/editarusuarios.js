@@ -1,35 +1,30 @@
 let trim = x => x.value = x.value.trim()
 let mostrarError = err => Swal.fire("Error", err, "error")
-let enviar = (atributos, texto) => q => {
-  let contraseñaVerificacion = qsd("#verificacionIdentidad").value
-  hazPost('', JSON.stringify({ ...atributos, contraseñaVerificacion }), q => swalExito(texto))
-}
-
-bodyOnClick('.dropdown-item', function () { anterior(this.closest(".dropdown-menu")).innerText = this.innerText })
+let enviar = (atributos, texto) => q => hazPost('', JSON.stringify({ ...atributos, contraseñaVerificacion: qs("#verificacionIdentidad").value }), q => swalExito(texto))
 
 bodyOnClick("#cambiarUsuario", q => {
-  let usuario = trim(qsd("#usuario"))
+  let usuario = trim(qs("#usuario"))
   if (!usuario) return mostrarError("El campo de usuario está vacío")
   modalAutenticacion.mostrar(enviar({ usuario }, "Se ha cambiado el nombre de usuario correctamente"))
 })
 
-qsclickd("#cambiarContraseña", function () {
-  let contraseña = trim(qsd("#contraseña"))
-  let confirmarContraseña = trim(qsd("#confirmarContraseña"))
+qsclick("#cambiarContraseña", q => {
+  let contraseña = trim(qs("#contraseña"))
+  let confirmarContraseña = trim(qs("#confirmarContraseña"))
   if (!contraseña || !confirmarContraseña) return mostrarError("Error contraseñas vacías")
   if (contraseña !== confirmarContraseña) return mostrarError("Las contraseñas no coinciden")
   modalAutenticacion.mostrar(enviar({ contraseña }, "Se ha cambiado la contraseña correctamente"))
 })
 
-qsclickd("#cambiarRol", q => {
-  rol = qsd("#rol").innerText
+qsclick("#cambiarRol", q => {
+  rol = qs("#rol").innerText
   if (rol === "Escoge un rol") return mostrarError("No se ha escogido ningún rol para el usuario")
   modalAutenticacion.mostrar(enviar({ rol }, "Se ha cambiado el rol correctamente"))
 })
 
-let c = qsd("#correo")
-qsclickd("#cambiarCorreo", q => {
-  let correo = trim(qsd("#correo"))
+let c = qs("#correo")
+qsclick("#cambiarCorreo", q => {
+  let correo = trim(qs("#correo"))
   validarCorreo()
   if (!c.checkValidity()) return c.reportValidity()
   modalAutenticacion.mostrar(enviar({ correo }, "Se ha cambiado el correo correctamente"))

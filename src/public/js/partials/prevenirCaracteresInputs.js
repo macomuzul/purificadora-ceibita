@@ -1,10 +1,10 @@
-body.on("beforeinput", "input", function (e) {
-  let letra = e.originalEvent.data ?? ''
+bodyOn("beforeinput", "input", (c, e) => {
+  let letra = e.data ?? ''
   if (letra === '"' || letra == "\\") {
     e.preventDefault()
-    this.setCustomValidity('Caracter inválido, no se permiten comillas (") ni barra invertida (\\)')
-    this.reportValidity()
+    c.setCustomValidity('Caracter inválido, no se permiten comillas (") ni barra invertida (\\)')
+    c.reportValidity()
   } else {
-    this.setCustomValidity("")
+    c.setCustomValidity("")
   }
 })

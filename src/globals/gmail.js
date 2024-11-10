@@ -36,7 +36,7 @@ global.mandarCorreoRegVentas = tcgoogle(async (motivo, usuario, f1, f2) => {
 let mandarCorreoDev = async (subject, html, to = miCorreo) => await mandarCorreo(subject, html, to)
 let mandarCorreoConLogo = async (subject, html, to = correoPrincipal) => await mandarCorreo(subject, html + `<br>${urlLogo}`, to)
 
-global.mandarCorreoError = enDesarrollo ? function () { console.log("putitos") } : tcgoogle(mandarCorreoDev, "gmail mandarCorreoError")
+global.mandarCorreoError = enDesarrollo ? q => console.log("ocurrio un error mi pana") : tcgoogle(mandarCorreoDev, "gmail mandarCorreoError")
 global.mandarCorreoVerificacion = tcgoogle(mandarCorreoConLogo, "gmail mandarCorreoVerificacion")
 
 async function mandarCorreo(subject, html, to = correoPrincipal) {

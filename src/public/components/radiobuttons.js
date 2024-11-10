@@ -1,12 +1,11 @@
-class radiogroup extends HTMLElement {
-  connectedCallback() {
-    qsaforeach(this, 'custom-radiobutton', x => {
-      let { id, checked } = x.dataset
+class radiogroup extends Componente {
+  alConectar() {
+    this.qsafor('custom-radiobutton', x => {
+      let { checked } = x.dataset
       x.className = "form-check form-check-inline"
-      x.innerHTML = `<input class="form-check-input" type="radio" id="${id}" ${checked ? "checked" : ""}>
-      <label class="form-check-label" for="${id}">${x.innerHTML}</label>`
+      x.innerHTML = `<label class="form-check-label"><input class="form-check-input" type="radio" ${checked ? "checked" : ""}> ${x.innerHTML}</label>`
     })
-    qsaforeach(this, 'input', x => x.setAttribute('name', this.id))
+    this.qsafor('input', x => x.setAttribute('name', this.id))
   }
 }
 

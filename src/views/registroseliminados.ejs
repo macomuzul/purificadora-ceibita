@@ -4,7 +4,7 @@
   <title>Mostrar registros eliminados</title>
   <%- include("layouts/global") %>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
-  <link rel="stylesheet" href="/mostrarregistroseliminados.min.css">
+  <link rel="stylesheet" href="/registroseliminados.min.css">
 
   <script>
     let pag = parseInt(`<%= pagina %>`);
@@ -13,6 +13,7 @@
   <script defer src="/spanFechas.js"></script>
   <script defer src="/tabs.js"></script>
   <script defer src="/botonazul.js"></script>
+  <script defer src="/svgeliminar.js"></script>
   <script defer src="/botontitulo2.js"></script>
   <script defer src="/accionesRegistrosEliminados.js"></script>
   <script defer src="/registroseliminados.js"></script>
@@ -25,32 +26,25 @@
   <button id="back-to-top-btn"><i class="fas fa-angle-double-up"></i></button>
   <main>
     <div class="contenedorsuperior">
-      <botonazul-flechaizquierda data-url="/respaldos/registroseliminados">Volver al menú de respaldos</botonazul-flechaizquierda>
-      <boton-titulo2>Restaura o elimina definitivamente tablas borradas</boton-titulo2>
-      <div></div><div></div>
+      <botonazul-flechaizquierda data-url="/respaldos/registroseliminados">Volver al menú</botonazul-flechaizquierda>
+      <boton-titulo2>Restaura o elimina definitivamente las tablas borradas</boton-titulo2>
     </div>
 
     <div class="contenedoreliminarseleccionados">
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="seleccionarTodos">
-        <label class="form-check-label" for="seleccionarTodos">Seleccionar todos los registros en la página</label>
-      </div>
+      <div class="form-check"><label class="form-check-label"><input class="form-check-input" type="checkbox" id="seleccionarTodos"> Seleccionar todos los registros en la página</label></div>
       <div class="contenedorbotones contenedoreliminar eliminartodos">
-        <div class="contenedoreliminarinterior">
-          <svg width="30" height="30" fill="white" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" /><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" /></svg>
-          <span class="textoeliminar"><div>Eliminar todos los</div><div>registros seleccionados</div></span>
-        </div>
+        <div class="contenedoreliminarinterior"><svg-eliminar blanco></svg-eliminar> <span class="textoeliminar"><div>Eliminar todos los</div><div>registros seleccionados</div></span></div>
       </div>
     </div>
     <%_ datostablas.forEach((reg,i)=> { let {registro, borradoEl} = reg; _%>
     <hr>
     <article name="<%=reg._id%>">
-      <contenedor-acciones data-id="check<%=i%>"></contenedor-acciones>
+      <contenedor-acciones></contenedor-acciones>
       <h2 class="fechaMover">Fecha del registro: <span-fechas data-fecha="<%=registro._id%>" data-sinhora="true"></span-fechas></h2>
       <custom-tabs>
         <%_ let tablas = registro.tablas _%>
         <div class="tabs"><% tablas.forEach((_, j) => {%><tab-label>Camión <%= (j+1) %></tab-label><% }) %></div>
-        <div class="content"><% tablas.forEach((tabla, j) => {%><tab-content><%- include("layouts/tablas", {j, tabla}) %></tab-content><% }); %></div>
+        <div class="content"><% tablas.forEach((tabla, j) => {%><tab-content hidden><%- include("layouts/tablas", {j, tabla}) %></tab-content><% }); %></div>
       </custom-tabs>
      <div class="tabSeccionAbajo">
       <div class="fechaeliminacion">Se eliminó el <span-fechas data-fecha="<%=borradoEl%>"></span-fechas></div>

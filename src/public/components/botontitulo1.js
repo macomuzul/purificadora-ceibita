@@ -15,6 +15,7 @@ añadirCSS(`.botontitulo {
   position: relative;
   display: inline-block;
   overflow: hidden;
+  justify-self: center;
 
   span {
     position: absolute;
@@ -105,7 +106,7 @@ añadirCSS(`.botontitulo {
 
 class cBotonTitulo1 extends HTMLElement {
   connectedCallback() {
-    this.outerHTML = `<div class="divbotontitulo"><span></span><span></span><span></span><span></span><input class="botontitulo" type="button" value="${this.innerHTML}"></div>`
+    this.outerHTML = `<div class="divbotontitulo"><span></span><span></span><span></span><span></span><button class="botontitulo">${this.innerHTML}</button></div>`
   }
 }
 

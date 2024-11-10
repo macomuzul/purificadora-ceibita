@@ -1,16 +1,16 @@
-body.on("keydown", "td", function (e) {
+bodyOn('keydown', 'td', (c, e) => {
   let k = e.which
-  let cellindex = indice(this)
-  let filas = this.closest("tbody").rows
-  let { atStart, atEnd } = k == 37 || k == 39 ? getSelectionTextInfo(this) : {}
+  let cellindex = c.indice()
+  let filas = c.closest("tbody").rows
+  let { atStart, atEnd } = k == 37 || k == 39 ? getSelectionTextInfo(c) : {}
   if (k == 37 && atStart) //flecha izquierda
-    enfocarCelda(anterior(this), e)
+    enfocarCelda(c.ant(), e)
   else if (k == 39 && atEnd) //flecha derecha
-    enfocarCelda(siguiente(this), e)
+    enfocarCelda(c.sig(), e)
   else if (k == 38) //flecha arriba
-    indice(padre(this)) === 0 ? enfocarCelda([...filas].at(-1).cells[cellindex - 1], e) : enfocarCelda(anterior(this.closest("tr")).cells[cellindex], e)
+    c.padre().indice() === 0 ? enfocarCelda([...filas].at(-1).cells[cellindex - 1], e) : enfocarCelda(c.closest("tr").ant().cells[cellindex], e)
   else if (k === 13 || k == 40) //enter y flecha abajo
-    this.closest("tr").rowIndex <= filas.length ? enfocarCelda(siguiente(this.closest("tr")).cells[cellindex], e) : enfocarCelda(filas[0].cells[cellindex + 1], e)
+    c.closest("tr").rowIndex <= filas.length ? enfocarCelda(c.closest("tr").sig().cells[cellindex], e) : enfocarCelda(filas[0].cells[cellindex + 1], e)
 })
 
 let mostrarOffscreen = x => {
@@ -37,34 +37,32 @@ function irAlFinalDelTexto(elem) {
   sel.addRange(range)
 }
 
-body.on("beforeinput", "td", function (e) {
-  let letra = e.originalEvent.data ?? ''
-  let colindex = indice(this)
+bodyOn('beforeinput', 'td', (c, e) => {
+  let letra = e.data ?? ''
+  let colindex = c.indice()
   if (letra === '"' || letra == '\\' || letra == "'") e.preventDefault()
   if (isNaN(letra) && colindex != 0 && colindex != 1) e.preventDefault()
   if (colindex !== 0 && letra === " ") e.preventDefault()
 
-  let texto = this.innerText
+  let texto = c.innerText
   if (colindex == 1) {
-    let [, decimales] = texto.split('.')
-    if (isNaN(letra) && letra !== '.') e.preventDefault()
-    if (letra === '.' && (texto.indexOf('.') > -1 || texto.length - getSelection().baseOffset > 2)) e.preventDefault()
-    if (decimales?.length >= 2 && letra != '') e.preventDefault()
+    if (isNaN(letra) && letra !== ".") e.preventDefault()
+    let p = texto.indexOf(".")
+    if (p > -1 && (letra === "." || (getSelection().baseOffset > p && texto.length - p >= 3 && letra != ""))) e.preventDefault()
   }
-
-  if (texto === "0") this.innerText = ''
+  if (texto === '0') c.innerText = ''
 })
 
 
-body.on('beforeinput', 'input', e => {
+bodyOn('beforeinput', 'input', (c, e) => {
   let k = e.data ?? ''
   if (k === '"' || k == '\\') e.preventDefault()
 })
 
 
-body.on('keydown', 'input', e => {
+bodyOn('keydown', 'input', (c, e) => {
   if (e.which === 13) {
-    let x = qs(e.target.closest('tab-content'), 'td')
+    let x = e.target.closest('tab-content').qs('td')
     x.focus()
     irAlFinalDelTexto(x)
     e.preventDefault()

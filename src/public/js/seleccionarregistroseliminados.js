@@ -1,12 +1,12 @@
 let urlPag = location.pathname + "/"
 let mostrarError = (titulo, texto) => Swal.fire(titulo, texto, "error")
 let crearDatePicker = idDatePicker => $(`#${idDatePicker}`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" }).on("show", q => {
-  let x = qsd(".datepicker")
+  let x = qs(".datepicker")
   let rect = x.getBoundingClientRect()
   if ((rect.x + rect.width) > innerWidth || (rect.y + rect.height) > innerHeight) x.scrollIntoView()
 })
 
-qsd('custom-dropdown').metododropdown = (option, menu) => {
+qs('custom-dropdown').metododropdown = (option, menu) => {
   if (menu.id === "fechasdropdown") {
     let fechaEntre = option.innerText === "Fecha entre"
     $("#datepickerEntre").css("display", fechaEntre ? "flex" : "none")
@@ -22,10 +22,10 @@ document.addEventListener('eventoDP', q => {
 bodyOnClick("#btnMasReciente", q => location = `${urlPag}masrecientes&pag=1`)
 bodyOnClick("#btnMasAntiguo", q => location = `${urlPag}masantiguos&pag=1`)
 
-bodyOnClick("#btnbuscar", () => {
-  let buscarpor = qsd("#buscarpor").innerText
-  let rango = qsd("#rangofecha").innerText
-  let formatear = x => qsd(x)?.value?.replaceAll("/", "-")
+bodyOnClick("#btnbuscar", q => {
+  let buscarpor = qs("#buscarpor").innerText
+  let rango = qs("#rangofecha").innerText
+  let formatear = x => qs(x)?.value?.replaceAll("/", "-")
   let fecha = formatear("#calendario")
   let fecha1 = formatear("#calendario1")
   let fecha2 = formatear("#calendario2")
@@ -51,4 +51,4 @@ bodyOnClick("#btnbuscar", () => {
   location = `${urlPag}${buscarpor}&${rango}&${rango === "entre" ? `${fecha1}y${fecha2}` : fecha}&pag=1`;
 })
 
-bodyOnClick(".input-group-append", e => anterior(e.currentTarget).focus())
+bodyOnClick(".input-group-append", c => c.ant().focus())

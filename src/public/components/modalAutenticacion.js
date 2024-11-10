@@ -64,11 +64,6 @@ añadirCSS(`i {
   &:hover {
     background: #a80101;
   }
-}
-
-input::-ms-reveal,
-input::-ms-clear {
-  display: none;
 }`)
 let modalAutenticacion
 class customModal extends HTMLElement {
@@ -86,7 +81,7 @@ class customModal extends HTMLElement {
       <div class="modal-content">
         <div class="modal-header">
           <div class="modal-title headerModal">Verificación de identidad</div>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <div class="cuerpoModal1">Demuestra que de verdad eres tú quien intenta realizar esta acción</div>
@@ -95,8 +90,8 @@ class customModal extends HTMLElement {
           <div class="cuerpoModal3"><input-password id="verificacionIdentidad" data-focus="1"></input-password></div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-success margenbotonswal botonconfirm" id="enviarVerificacion">Confirmar</button>
-          <button type="button" class="btn btn-danger margenbotonswal botoncancel" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn btn-success margenbotonswal botonconfirm" id="enviarVerificacion">Confirmar</button>
+          <button class="btn btn-danger margenbotonswal botoncancel" data-bs-dismiss="modal">Cancelar</button>
         </div>
       </div>
     </div>`
@@ -104,15 +99,15 @@ class customModal extends HTMLElement {
     setTimeout(() => {
       modalAutenticacion = this
       this.btModal = new bootstrap.Modal(this)
-      this.input = qs(this, "input")
+      this.input = this.qs('input')
       $(this).on("hide.bs.modal", q => {
-        this.input.value = ""
-        this.input.type === "text" ? qs(this, "input-password").clickOjo(0) : ''
+        this.input.value = ''
+        this.input.type === "text" ? this.qs("input-password").clickOjo(0) : ''
       })
 
-      elOnClick(this, '#enviarVerificacion', q => {
+      this.elclick('#enviarVerificacion', q => {
         let { input } = this
-        if (input.value === "") {
+        if (input.value === '') {
           input.setCustomValidity('Por favor escribe una contraseña')
           input.reportValidity()
         }
@@ -137,18 +132,16 @@ class inputPass extends HTMLElement {
     let { id, innerHTML: label } = this
     let { focus } = this.dataset
 
-    this.innerHTML = `${label ? `<label for="${id}">${label}</label>` : ""}
-    <input ${label ? `class="form-control"` : ""} type="password" id="${id}" ${focus ? "autofocus" : ""}>
-    <i class="fa-sharp fa-solid fa-eye" style="display: none;"></i>
-    <i class="fa-sharp fa-solid fa-eye-slash"></i>`
+    this.innerHTML = `<label>${label ?? ''}<input ${label ? `class="form-control"` : ''} type="password" id="${id}" ${focus ? "autofocus" : ''}></label>
+    <i class="fa-sharp fa-solid fa-eye" hidden></i><i class="fa-sharp fa-solid fa-eye-slash"></i>`
 
-    elOnClick(this, ".fa-eye", q => this.clickOjo(0))
-    elOnClick(this, ".fa-eye-slash", q => this.clickOjo(1))
+    this.elclick(".fa-eye", q => this.clickOjo(0))
+    this.elclick(".fa-eye-slash", q => this.clickOjo(1))
   }
 
   clickOjo(texto) {
-    alternar(qs(this, "i"))
-    qs(this, "input").setAttribute('type', texto ? 'text' : 'password')
+    this.qsafor('i', x => x.alternar())
+    this.qs('input').setAttribute('type', texto ? 'text' : 'password')
   }
 }
 

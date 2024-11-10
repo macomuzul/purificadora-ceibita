@@ -152,8 +152,8 @@ let escogido = " escogid" + (masculino ? "o" : "a")
 let UTSingularGeneroEscogido = UTSingularGenero + escogido
 let UTPluralGeneroEscogido = `${UTPluralGenero}${escogido}s`
 
-cambiarHTML(qsd("#cargando"), '')
-qsd("resumen-datos").agregarCantidad()
+qs("#cargando").html('')
+qs("resumen-datos").agregarCantidad()
 
 let devuelveTop3 = (data, indices) => [data, indices.sort((a, b) => data[b] - data[a]).slice(0, 3)]
 
@@ -175,19 +175,19 @@ function crearPodio() {
   html += `${podio("Fechas en la que se generaron más ingresos", ...primeros3.map(i => fechasStr[i]), ...primeros3.map(i => data[i]?.aQuetzales()))}
     </div>${checkbox("Animación", 1, "checkboxPodio")}`
 
-  qsd("#podios").innerHTML = html
+  qs("#podios").innerHTML = html
   agregarConfeti()
-  bodyOnClick(".checkboxPodio", e => qs(e.currentTarget, "input").checked ? agregarConfeti() : quitarConfeti())
+  bodyOnClick(".checkboxPodio", c => c.qs("input").checked ? agregarConfeti() : quitarConfeti())
 }
 crearPodio()
 
 
 //labels, datasets, titulo, label, agrupadoPorFecha, sonIngresos, esCamionero
-qsd("#chartVendidosAgrupadosPorFecha").crearGrafico(fechasStr, datasetVendidosAgrupadosPorFecha, `Cantidad de productos vendidos agrupados por ${UTSingular}`, `total vendidos durante ${UTSingularGenero}`, 1, 0, 0)
-qsd("#chartIngresosAgrupadosPorFecha").crearGrafico(fechasStr, datasetIngresosAgrupadosPorFecha, `Ingresos generados agrupados por ${UTSingular}`, `total ingresos durante ${UTSingularGenero}`, 1, 1, 0)
-qsd("#chartVendidosAgrupadosPorProducto").crearGrafico(productosDesnormalizados, datasetVendidosAgrupadosPorProducto, "Cantidad de productos vendidos agrupados por producto", "vendidos", 0, 0, 0)
-qsd("#chartIngresosAgrupadosPorProducto").crearGrafico(productosDesnormalizados, datasetIngresosAgrupadosPorProducto, "Ingresos generados agrupados por producto", "ingresos", 0, 1, 0)
-qsd("#chartVendidosCamionAgrupadosPorFecha").crearGrafico(fechasStr, datasetVendidosCamionAgrupadosPorFecha, `Cantidad de productos vendidos agrupados por ${UTSingular}`, `total vendidos durante ${UTSingularGenero}`, 1, 0, 1)
-qsd("#chartIngresosCamionAgrupadosPorFecha").crearGrafico(fechasStr, datasetIngresosCamionAgrupadosPorFecha, `Ingresos generados agrupados por ${UTSingular}`, `total ingresos durante ${UTSingularGenero}`, 1, 1, 1)
-qsd("#chartVendidosAgrupadosPorCamion").crearGrafico(camionerosDesnormalizados, datasetVendidosAgrupadosPorCamion, "Cantidad de productos vendidos agrupados por camionero", "vendidos", 0, 0, 1)
-qsd("#chartIngresosAgrupadosPorCamion").crearGrafico(camionerosDesnormalizados, datasetIngresosAgrupadosPorCamion, "Ingresos generados agrupados por camionero", "ingresos", 0, 1, 1)
+qs("#chartVendidosAgrupadosPorFecha").crearGrafico(fechasStr, datasetVendidosAgrupadosPorFecha, `Cantidad de productos vendidos agrupados por ${UTSingular}`, `total vendidos durante ${UTSingularGenero}`, 1, 0, 0)
+qs("#chartIngresosAgrupadosPorFecha").crearGrafico(fechasStr, datasetIngresosAgrupadosPorFecha, `Ingresos generados agrupados por ${UTSingular}`, `total ingresos durante ${UTSingularGenero}`, 1, 1, 0)
+qs("#chartVendidosAgrupadosPorProducto").crearGrafico(productosDesnormalizados, datasetVendidosAgrupadosPorProducto, "Cantidad de productos vendidos agrupados por producto", "vendidos", 0, 0, 0)
+qs("#chartIngresosAgrupadosPorProducto").crearGrafico(productosDesnormalizados, datasetIngresosAgrupadosPorProducto, "Ingresos generados agrupados por producto", "ingresos", 0, 1, 0)
+qs("#chartVendidosCamionAgrupadosPorFecha").crearGrafico(fechasStr, datasetVendidosCamionAgrupadosPorFecha, `Cantidad de productos vendidos agrupados por ${UTSingular}`, `total vendidos durante ${UTSingularGenero}`, 1, 0, 1)
+qs("#chartIngresosCamionAgrupadosPorFecha").crearGrafico(fechasStr, datasetIngresosCamionAgrupadosPorFecha, `Ingresos generados agrupados por ${UTSingular}`, `total ingresos durante ${UTSingularGenero}`, 1, 1, 1)
+qs("#chartVendidosAgrupadosPorCamion").crearGrafico(camionerosDesnormalizados, datasetVendidosAgrupadosPorCamion, "Cantidad de productos vendidos agrupados por camionero", "vendidos", 0, 0, 1)
+qs("#chartIngresosAgrupadosPorCamion").crearGrafico(camionerosDesnormalizados, datasetIngresosAgrupadosPorCamion, "Ingresos generados agrupados por camionero", "ingresos", 0, 1, 1)

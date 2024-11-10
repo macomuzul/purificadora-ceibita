@@ -8,16 +8,9 @@ main {
 }
 
 .filasuperior {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  margin-top: 5px;
-}
-
-.divbotontitulo {
-  transform: translateX(-70px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 5px 0 30px;
 }
 
 form {
@@ -26,12 +19,6 @@ form {
 
 .botontitulo {
   width: 330px;
-}
-
-@media (width <= 1200px) {
-  .divbotontitulo {
-    transform: translateX(10px);
-  }
 }
 
 .modal-dialog.modal-lg {
@@ -46,16 +33,17 @@ form {
   margin-top: 25px;
 }
 
-.divinput{
-  width: 300px;
-  position: relative;
-  .fa-eye-slash{
-    transform: translateX(2px);
+.divinput {
+  width: 800px;
+  .fa-eye {
+    translate: 9px 5px;
+  }
+
+  .fa-eye-slash {
+    translate: 8px 5px;
   }
 }
 
-form i {
-  position: absolute;
-  right: -38px;
-  top: 55%;
+.divinput input {
+  width: 300px;
 }

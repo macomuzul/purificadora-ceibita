@@ -22,4 +22,4 @@ ${pag < totalPags - (cantNumsMitad - 1) && totalPags > cantNums ? `<li class="do
 ${totalPags > 1 ? `<li class="numb ${pag === totalPags ? "active" : "last"}" onclick="irAPagina(${totalPags})"><span>${totalPags}</span></li>` : ""}
 ${pag < totalPags ? `<li class="btn next" onclick="irAPagina(${pag + 1})"><span>Sig${svgPaginacion("rotado")}</span></li>` : ""}`
 
-cambiarHTML(qsd(".pagination ul"), liTag)
+qs(".pagination ul").html(liTag)

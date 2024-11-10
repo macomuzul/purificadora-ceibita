@@ -5,6 +5,7 @@
   <%- include("layouts/global") %>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.3/toastr.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
   <script defer src="/botonazul.js"></script>
   <script defer src="/botontitulo1.js"></script>
   <script defer src="/modalAutenticacion.js"></script>
@@ -22,18 +23,13 @@
       <div class="filasuperior">
         <botonazul-flechaizquierda data-url="/empleados/usuarios">Volver al menú de usuarios</botonazul-flechaizquierda>
         <boton-titulo1>Desde aquí puedes editar los usuarios</boton-titulo1>
-        <div></div><div></div>
       </div>
-      <br>
-        <div class="usuarioSeleccionado">Usuario Seleccionado: <%=usuario%></div>
+      <div class="usuarioSeleccionado">Usuario Seleccionado: <%=usuario%></div>
       <form>
         <hr>
         <div class="formulario">
           <div class="fila">
-            <div class="divinput">
-              <label for="usuario">Nombre</label>
-              <input class="form-control" type="text" id="usuario" autocomplete="off" value="<%=usuario%>">
-            </div>
+            <div class="divinput"><label>Nombre <input class="form-control" type="text" id="usuario" autocomplete="off" value="<%=usuario%>"></label></div>
             <input-azul class="botonenviar" id="cambiarUsuario">Cambiar nombre</input-azul>
           </div>
           <hr>
@@ -51,10 +47,7 @@
           </div>
           <hr>
           <div class="fila">
-            <div class="divinput">
-              <label for="correo">Correo</label>
-              <input class="form-control" type="email" id="correo" autocomplete="off" required value="<%=correo%>">
-            </div>
+            <div class="divinput"><label>Correo <input class="form-control" type="email" id="correo" autocomplete="off" required value="<%=correo%>"></label></div>
             <input-azul class="botonenviar" id="cambiarCorreo">Cambiar correo</input-azul>
           </div>
           <hr>

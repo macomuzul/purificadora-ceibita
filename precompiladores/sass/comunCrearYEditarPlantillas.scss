@@ -50,17 +50,9 @@ td {
 }
 
 .filasuperior {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  margin-top: 5px;
-}
-
-.filasuperior > *{
-  flex-grow: 1;
-  width: fit-content;
-  max-width: fit-content;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 5px 0 20px;
 }
 
 .swal2-actions {

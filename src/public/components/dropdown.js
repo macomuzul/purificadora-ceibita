@@ -5,7 +5,7 @@ document.addEventListener('click', e => {
 
 añadirCSS(`custom-dropdown {
   display: block;
-  width: fit-content;
+  width: 400px;
   position: relative;
 }
 
@@ -105,6 +105,8 @@ añadirCSS(`custom-dropdown {
   user-select: none;
 }`)
 
+let cambiarClase = (el, x, i) => i === 0 ? el.alternarClase(x) : el.quitarClase(x)
+
 class customDropdown extends HTMLElement {
   connectedCallback() {
     let { idmenu, idseleccionado, textopordefecto } = this.dataset
@@ -113,17 +115,16 @@ class customDropdown extends HTMLElement {
     <ul class="menu" id="${idmenu}">${this.innerHTML}</ul>
   </div>`
 
-    this.menu = qs(this, '.menu')
+    this.menu = this.qs('.menu')
     let estaActivo = 0
 
     this.cambiarEstado = i => {
       if (!estaActivo && i === -1) return
       estaActivo = i === 0
-      cambiarClase(qs(this, '.select'), 'select-clicked', i)
-      cambiarClase(qs(this, '.caret'), 'caret-rotate', i)
+      cambiarClase(this.qs('.select'), 'select-clicked', i)
+      cambiarClase(this.qs('.caret'), 'caret-rotate', i)
       cambiarClase(this.menu, 'menu-open', i)
     }
-    let cambiarClase = (x, clase, i) => i === 0 ? alternarClase(x, clase) : quitarClase(x, clase)
   }
 }
 
@@ -135,11 +136,11 @@ bodyOnClick('custom-dropdown', c => {
 
 bodyOnClick('custom-dropdown li', (c, e) => {
   let o = c.closest('custom-dropdown')
-  qs(o, '.selected').innerText = c.innerText
+  o.qs('.selected').innerText = c.innerText
   o.cambiarEstado(-1)
-  let a = qs(o, '.active')
-  if (a) quitarClase(a, 'active')
-  añadirClase(c, 'active')
+  let a = o.qs('.active')
+  if (a) a.quitarClase('active')
+  c.añadirClase('active')
   o.metododropdown(c, o.menu)
 })
 

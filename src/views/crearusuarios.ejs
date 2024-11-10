@@ -21,18 +21,14 @@
       <div class="filasuperior">
         <botonazul-flechaizquierda data-url="/empleados/usuarios">Volver al menú de usuarios</botonazul-flechaizquierda>
         <boton-titulo1>Desde aquí puedes crear nuevos usuarios</boton-titulo1>
-        <div></div><div></div>
       </div>
-      <br>
-
       <form>
-        <i class="fa-sharp fa-solid fa-eye-slash"></i>
         <div class="formulario">
-          <div><label for="usuario">Nombre de usuario</label><input class="form-control" type="text" id="usuario"></div>
+          <div class="divinput"><label>Nombre de usuario <input class="form-control" type="text" id="usuario"></label></div>
           <div class="divinput"><input-password id="contraseña">Contraseña</input-password></div>
           <div class="divinput"><input-password id="confirmarContraseña">Confirmar contraseña</input-password></div>
           <div><dropdown-roles></dropdown-roles></div>
-          <div><label for="correo">Correo (Opcional)</label><input class="form-control" type="email" id="correo" autocomplete="off" required></div>
+          <div class="divinput"><label>Correo (Opcional) <input class="form-control" type="email" id="correo" autocomplete="off" required></label></div>
         </div>
 
         <div class="contenedorinferior"><input-azul id="guardar">Crear usuario</input-azul></div>

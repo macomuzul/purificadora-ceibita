@@ -35,25 +35,14 @@ customElements.define("botonazul-flechaderecha", cBotonAzulFlechaDerecha)
 class cBotonAzulFlechaIzquierda extends HTMLElement { connectedCallback() { tipoBotonAzul(this, svgFlechaIzquierda, 0) } }
 customElements.define("botonazul-flechaizquierda", cBotonAzulFlechaIzquierda)
 
-class cBotonAzulFlechaDerechaSinUrl extends HTMLElement { connectedCallback() { tipoBotonAzulSinUrl(this, svgFlechaDerecha, 1) } }
-customElements.define("botonazul-flechaderechasinurl", cBotonAzulFlechaDerechaSinUrl)
-
-class cBotonAzulFlechaIzquierdaSinUrl extends HTMLElement { connectedCallback() { tipoBotonAzulSinUrl(this, svgFlechaIzquierda, 0) } }
-customElements.define("botonazul-flechaizquierdasinurl", cBotonAzulFlechaIzquierdaSinUrl)
-
-
 function tipoBotonAzul(boton, svg, esLadoDerecho) {
   let url = boton.dataset.url
-  let contenido = svg ? esLadoDerecho ? boton.innerHTML + '' + svg : svg + '' + boton.innerHTML : boton.innerHTML
-  boton.outerHTML = `<a href="${url}"><button ${contenidoBotonAzul(boton)}>${contenido}</button></a>`
-}
-
-function tipoBotonAzulSinUrl(boton, svg, esLadoDerecho) {
-  let contenido = svg ? esLadoDerecho ? boton.innerHTML + '' + svg : svg + '' + boton.innerHTML : boton.innerHTML
-  boton.outerHTML = `<button ${contenidoBotonAzul(boton)}>${contenido}</button>`
+  let contenido = `<button ${contenidoBotonAzul(boton)}>${svg ? esLadoDerecho ? boton.innerHTML + '' + svg : svg + '' + boton.innerHTML : boton.innerHTML}</button>`
+  if (url) contenido = `<a href="${url}">${contenido}</a>`
+  boton.outerHTML = contenido
 }
 
 function contenidoBotonAzul(boton) {
-  let { dataset, className, id, style } = boton
+  let { className, id, style } = boton
   return `class="btn btn-primary botonazul ${className ?? ''}" type="button" style="${style.cssText}" id="${id}"`
 }

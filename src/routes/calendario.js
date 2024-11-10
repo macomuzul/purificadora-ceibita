@@ -6,7 +6,7 @@ const Camioneros = require("../models/camioneros")
 let devuelveMes = (fecha, dias) => ({ _id: fecha, dias: dias.map(({ _id, tablas, usuario, ultimocambio }) => ({ _id, camioneros: tablas.map(x => x.trabajador), usuario, ultimocambio })) })
 let datosMes = async fecha => await RegistroVentas.where("_id").gte(fecha.startOf("month")).lte(fecha.endOf("month")).select("tablas.trabajador usuario ultimocambio").lean()
 
-router.route('/calendario').get(async (req, res) => {
+router.route('/').get(async (req, res) => {
   let fecha = DateTime.now().setZone("America/Guatemala")
   let dias = await datosMes(DateTime.fromISO(fecha.toISODate()))
   let camioneros = await Camioneros.encontrar()
@@ -19,5 +19,4 @@ router.route('/calendario').get(async (req, res) => {
 }, "Hubo un error"))
 
 
-router.get('/logout', (req, res, next) => req.logout(err => err ? next(err) : res.redirect('/')))
 module.exports = router

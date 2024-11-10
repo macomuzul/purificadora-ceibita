@@ -1,54 +1,47 @@
 let head = document.head
-let $body = document.body
-let body = $($body)
+let body = document.body
 
-let qs = (el, x) => el.querySelector(x)
-let qsa = (el, x) => el.querySelectorAll(x)
-let qsaforeach = (el, x, metodo) => qsa(el, x).forEach(metodo)
-
-let qsd = x => qs($body, x)
-let qsad = x => qsa($body, x)
-let qsaforeachd = (x, metodo) => qsaforeach($body, x, metodo)
-let qsclickd = (el, m) => qsd(el).onclick = m
-
-let qsarr = (el, x) => [...el.querySelectorAll(x)]
-let qsarrd = x => qsarr($body, x)
+let qs = x => body.querySelector(x)
+let qsa = x => body.querySelectorAll(x)
+let qsafor = (x, m) => [...qsa(x)].forEach(m)
+let qsclick = (x, m) => qs(x).onclick = m
+let qsarr = x => [...qsa(x)]
 
 let añadirCSS = x => head.innerHTML += `<style>${x}</style>`
 let añadirJS = src => new Promise((res, rej) => head.appendChild(Object.assign(document.createElement('script'), { src, onload: res, onerror: rej })))
+Object.assign(HTMLElement.prototype, {
+  qs(x) { return this.querySelector(x) },
+  qsa(x) { return this.querySelectorAll(x) },
+  qsarr(x) { return [...this.querySelectorAll(x)] },
+  qsafor(x, m) { return this.qsa(x).forEach(m) },
+  añadirClase(x) { return this.classList.add(x) },
+  quitarClase(x) { return this.classList.remove(x) },
+  alternarClase(x, y) { return this.classList.toggle(x, y) },
+  tieneClase(x) { return this.classList.contains(x) },
+  ant() { return this.previousElementSibling },
+  sig() { return this.nextElementSibling },
+  // primero() { return this.firstElementChild },
+  // ultimo() { return this.lastElementChild },
+  padre() { return this.parentElement },
+  indice() { return [...this.parentNode.children].indexOf(this) },
+  mostrar() { return this.hidden = false },
+  esconder() { return this.hidden = true },
+  alternar() { return this.hidden = !this.hidden },
+  clonar() { return this.cloneNode(true) },
+  añadirHTML(x) { this.insertAdjacentHTML('beforeend', x) },
+  html(x) { this.innerHTML = x },
+  elclick(el, m) { elOn(this, 'click', el, m) }
+})
 
-let añadirClase = (el, x) => el.classList.add(x)
-let quitarClase = (el, x) => el.classList.remove(x)
-let alternarClase = (el, x, y) => el.classList.toggle(x, y)
-let tieneClase = (el, x) => el.classList.contains(x)
 
-let anterior = el => el.previousElementSibling
-let siguiente = el => el.nextElementSibling
-let primero = el => el.firstElementChild
-let ultimo = el => el.lastElementChild
-let padre = el => el.parentElement
-let indice = el => [...el.parentNode.children].indexOf(el)
-
-let antes = (el, x) => el.insertAdjacentHTML('beforebegin', x)
-
-let mostrar = el => el.hidden = false
-let esconder = el => el.hidden = true
-let alternar = el => el.hidden = !el.hidden
-let visibilidad = (el, x) => el.hidden = !x
-
-let clonar = x => x.cloneNode(true)
-let añadirHTML = (el, x) => el.insertAdjacentHTML('beforeend', x)
-let cambiarHTML = (el, x) => el.innerHTML = x
-
-let elOn = (orig, ev, el, m) => orig.addEventListener(ev, function (e) {
+let elOn = (orig, ev, el, m) => orig.addEventListener(ev, e => {
   let c = e.target.closest(el)
   if (c) m(c, e)
 })
-let elOnClick = (orig, el, m) => elOn(orig, 'click', el, m)
-let bodyOn = (ev, el, m) => elOn($body, ev, el, m)
+let bodyOn = (ev, el, m) => elOn(body, ev, el, m)
 let bodyOnClick = (el, m) => bodyOn('click', el, m)
 
-let alCargar = x => window.addEventListener('load', x)
+let alCargar = async x => await window.addEventListener('load', x)
 
 let estilosSwal = (confirmButton, cancelButton = '', denyButton = '') => Swal.mixin({ customClass: { confirmButton, cancelButton, denyButton }, buttonsStyling: false })
 let swalConfirmarYCancelar = estilosSwal('btn btn-success margenbotonswal', 'btn btn-danger margenbotonswal')
@@ -84,8 +77,19 @@ let esTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
 if (esTouch) $.getScript('/touch.js')
 
 
-String.prototype.aFloat = function () { return parseFloat(this) }
-String.prototype.aInt = function () { return parseInt(this) }
-String.prototype.normalizar = function () { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '') }
-String.prototype.normalizarPrecio = function () { return this.aFloat().toFixed(2).replace(/[.,]00$/, '') }
+Object.assign(String.prototype, {
+  aFloat() { return parseFloat(this) },
+  aInt() { return parseInt(this) },
+  normalizar() { return this.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '') },
+  normalizarPrecio() { return this.aFloat().toFixed(2).replace(/[.,]00$/, '') }
+})
 Number.prototype.normalizarPrecio = function () { return this.toFixed(2).replace(/[.,]00$/, '') }
+
+
+class Componente extends HTMLElement {
+  connectedCallback() {
+    if (this.conectado) return
+    this.conectado = true
+    this.alConectar()
+  }
+}

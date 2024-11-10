@@ -3,7 +3,7 @@ añadirCSS(`.dropdown-toggle {
   background: white !important;
   color: #212529 !important;
   position: relative;
-
+  width: 300px;
   &::after {
     position: absolute;
     top: 45%;
@@ -33,16 +33,15 @@ class dropdownRoles extends HTMLElement {
   connectedCallback() {
     let { seleccionado } = this.dataset
     this.innerHTML = `<div class="dropdown">
-    <label for="rol">Rol</label>
-    <button class="btn dropdown-toggle form-control" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="rol">${seleccionado ?? "Escoge un rol"}</button>
+    Rol<br><button class="btn dropdown-toggle form-control" data-bs-toggle="dropdown" aria-expanded="false" id="rol">${seleccionado ?? "Escoge un rol"}</button>
     <ul class="dropdown-menu">
-      <li><a class="dropdown-item">Administrador</a></li>
-      <li><a class="dropdown-item">Empleado</a></li>
+      <li class="dropdown-item">Administrador</li>
+      <li class="dropdown-item">Empleado</li>
     </ul>
   </div>`
   }
 }
 
-bodyOnClick('.dropdown-item', c => anterior(c.closest(".dropdown-menu")).innerText = c.innerText)
+bodyOnClick('.dropdown-item', c => { c.closest(".dropdown-menu").ant().innerText = c.innerText })
 
 customElements.define("dropdown-roles", dropdownRoles)

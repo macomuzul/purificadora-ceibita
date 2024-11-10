@@ -10,9 +10,9 @@ router.route('/').get(async (req, res) => {
   res.send()
 }, "Ha habido un error al momento de guardar"))
 
-router.route('/devuelvenombres').get(async (req, res) => {
+router.get('/nombres', tcaccion(async (req, res) => {
   let camioneros = (await Camioneros.encontrar()).map(x => x.nombre)
   res.send(camioneros)
-})
+}))
 
 module.exports = router

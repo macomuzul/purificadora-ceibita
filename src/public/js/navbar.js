@@ -5,7 +5,7 @@ function esconderNavbar() {
   navbar.removeClass("presionado")
 }
 
-qsclickd("#logoNav", e => {
+qsclick("#logoNav", (c, e) => {
   e.preventDefault()
   e.stopPropagation()
   navbar.hasClass("presionado") ? esconderNavbar() : navbar.addClass("presionado")
@@ -13,7 +13,7 @@ qsclickd("#logoNav", e => {
 
 bodyOnClick(".nav-item-compuesto", c => {
   navbar.addClass('presionado')
-  alternarClase(c, 'presionado')
+  c.alternarClase('presionado')
   $(c).find(".submenu").slideToggle()
 })
 

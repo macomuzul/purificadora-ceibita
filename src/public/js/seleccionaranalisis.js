@@ -1,12 +1,12 @@
-let unidadTiempo = 'dias', agruparPor = '', rango = '', analizar = ''
+let unidadTiempo = 'dias', agruparPor = 'dias', rango = 'mayor', analizar = 'ventas'
 
 let calendario = $('#calendario')
-let textoDatePicker = qsd('.textoDatePicker'), cambiarseleccionintercalada = qsd('.cambiarseleccionintercalada'), btnBorrarFechas = qsd('#borrarFechas')
+let textoDatePicker = qs('.textoDatePicker'), cambiarseleccionintercalada = qs('.cambiarseleccionintercalada'), btnBorrarFechas = qs('#borrarFechas')
 let filasIndice = [], listaFechas = []
 let datepicker, objMinView = { dias: 0, semanas: 0, meses: 1, años: 2 }
 moment.updateLocale('en', { week: { dow: 1 } })
 
-let devuelveCalendarios = (...calendarios) => calendarios.map(x => qsd('#' + x).value.replaceAll('/', '-'))
+let devuelveCalendarios = (...calendarios) => calendarios.map(x => qs('#' + x).value.replaceAll('/', '-'))
 let destruirCalendario = q => {
   borrarFechas()
   datepicker.off()
@@ -49,9 +49,10 @@ function mostarValores() {
 let display = q => filasIndice.forEach(i => $(`.datepicker-days tbody tr:nth-child(${i + 1})`).addClass('active'))
 
 let capturarFecha = e => {
-  if (e.target.matches('td.day')) {
-    alternarClase(e.target.closest('tr'), 'active')
-    let inicioSemana = moment(parseInt(e.target.dataset.date)).utc().startOf('week')._d.valueOf()
+  let x = e.target
+  if (x.matches('td.day')) {
+    x.closest('tr').alternarClase('active')
+    let inicioSemana = moment(parseInt(x.dataset.date)).utc().startOf('week')._d.valueOf()
     let index = listaFechas.indexOf(inicioSemana)
     index !== -1 ? listaFechas.splice(index, 1) : listaFechas.push(inicioSemana)
     mostarValores()
@@ -84,17 +85,18 @@ function crearDatPickerMultidate(UT) {
   }
 }
 
-qsd('[data-idseleccionado="analizar"]').metododropdown = opcion => analizar = opcion.dataset.analizar
-qsd('[data-idseleccionado="agrupar"]').metododropdown = opcion => agruparPor = opcion.dataset.agrupar
-qsd('[data-idseleccionado="rango"]').metododropdown = c => {
+let visibilidad = (el, x) => el.hidden = !x
+qs('[data-idseleccionado="analizar"]').metododropdown = opcion => analizar = opcion.dataset.analizar
+qs('[data-idseleccionado="agrupar"]').metododropdown = opcion => agruparPor = opcion.dataset.agrupar
+qs('[data-idseleccionado="rango"]').metododropdown = c => {
   let t = c.textContent
   let l = t.startsWith('Libre')
   rango = t.split(' ').at(0).toLowerCase()
   let entre = rango === 'entre'
   visibilidad(cambiarseleccionintercalada, l)
   visibilidad(textoDatePicker, l)
-  visibilidad(qsd('#datepickerNormal'), !entre)
-  visibilidad(qsd('#datepickerEntre'), entre)
+  visibilidad(qs('#datepickerNormal'), !entre)
+  visibilidad(qs('#datepickerEntre'), entre)
   btnBorrarFechas.innerText = l ? 'Borrar fechas seleccionadas' : 'Borrar fecha seleccionada'
   if (l) crearDatPickerMultidate(agruparPor)
   else {
@@ -102,7 +104,7 @@ qsd('[data-idseleccionado="rango"]').metododropdown = c => {
     crearDatePicker()
   }
 }
-qsd('[data-idseleccionado="intercalado"]').metododropdown = async c => {
+qs('[data-idseleccionado="intercalado"]').metododropdown = async c => {
   let UT = c.dataset.intercalar
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     title: `Estás seguro que deseas seleccionar las fechas por ${UT}`,

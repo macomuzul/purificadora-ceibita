@@ -11,21 +11,20 @@ String.prototype.aUTC = function () {
 String.prototype.fechaGuatemala = function () { return new Intl.DateTimeFormat('es', { timeZone: "America/Guatemala" }).format(this.aUTC()) }
 let camioneros = {}
 camionerosEJS.forEach(x => camioneros[x.nombre] = x.color)
-qsad(".camionero").forEach(x => qs(x, ".color").style.background = camioneros[qs(x, ".nombreCamionero").innerText])
+qsafor(".camionero", x => x.qs(".color").style.background = camioneros[x.qs(".nombreCamionero").innerText])
 
 let eventosCalendario = []
 diasEJS.forEach(({ camioneros: cam, _id, ultimocambio, usuario }) => cam.forEach((c, i) => eventosCalendario.push({ name: `Camión ${(i + 1)}`, description: `Conductor: ${c}`, date: _id.aUTC().toDateString(), type: i + "", ultimocambio, usuario, color: camioneros[c] })))
 
-toastr.options = {
-  "closeButton": true,
-  "progressBar": true,
-  "positionClass": "toast-bottom-full-width",
-  "preventDuplicates": true,
-  "timeOut": "100000",
-  "extendedTimeOut": "100000"
-}
-
-onload = function () {
+alCargar(q => {
+  toastr.options = {
+    "closeButton": true,
+    "progressBar": true,
+    "positionClass": "toast-bottom-full-width",
+    "preventDuplicates": true,
+    "timeOut": "100000",
+    "extendedTimeOut": "100000"
+  }
   $("#demoEvoCalendar").evoCalendar({
     format: "D M dd yyyy",
     titleFormat: "MM",
@@ -34,4 +33,4 @@ onload = function () {
     calendarEvents: eventosCalendario
   })
   $("#demoEvoCalendar").evoCalendar("setTheme", "Midnight Blue")
-}
+})

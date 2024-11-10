@@ -40,22 +40,20 @@ tab-content{
   border-bottom: 2px solid #009578;
 }`)
 
-class tabLabel extends HTMLElement {
-  connectedCallback() {
-    if (this.innerHTML.startsWith('<input')) return
+class tabLabel extends Componente {
+  alConectar() {
     this.innerHTML = `<input type="radio" class="tabRadio"><label class="tabLabel">${this.innerHTML}</label>`
-    this.cambiarTexto = t => cambiarHTML(qs(this, 'label'), t)
   }
 }
 customElements.define("tab-label", tabLabel)
 
-let devuelveTabContent = (el, i) => qs(el, `tab-content:nth-child(${i + 1})`)
+let devuelveTabContent = (el, i) => el.qs(`tab-content:nth-child(${i + 1})`)
 let cambiarChecked = (el, c) => el.checked = c
-class customTabs extends HTMLElement {
-  connectedCallback() {
+class customTabs extends Componente {
+  alConectar() {
     setTimeout(q => {
-      cambiarChecked(qs(this, 'input'), true)
-      mostrar(qs(this, 'tab-content'))
+      cambiarChecked(this.qs('input'), true)
+      this.qs('tab-content').mostrar()
     })
   }
 }
@@ -63,13 +61,13 @@ customElements.define("custom-tabs", customTabs)
 
 bodyOnClick('tab-label', c => {
   let p = c.closest('custom-tabs')
-  let input = qs(c, 'input')
-  let checkeado = qs(p, 'input:checked')
+  let input = c.qs('input')
+  let checkeado = p.qs('input:checked')
   if (input === checkeado) return
   if (checkeado) {
     cambiarChecked(checkeado, false)
-    esconder(devuelveTabContent(p, indice(padre(checkeado))))
+    devuelveTabContent(p, checkeado.padre().indice()).esconder()
   }
   cambiarChecked(input, true)
-  mostrar(devuelveTabContent(p, indice(c)))
+  devuelveTabContent(p, c.indice()).mostrar()
 })
