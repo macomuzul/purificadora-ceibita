@@ -8,23 +8,21 @@ let crearDatePicker = idDatePicker => $(`#${idDatePicker}`).datepicker({ weekSta
 
 qs('custom-dropdown').metododropdown = (option, menu) => {
   if (menu.id === "fechasdropdown") {
-    let fechaEntre = option.innerText === "Fecha entre"
+    let fechaEntre = option.textContent === "Fecha entre"
     $("#datepickerEntre").css("display", fechaEntre ? "flex" : "none")
     $("#datepickerNormal").css("display", fechaEntre ? "none" : "flex")
   }
 }
 
-document.addEventListener('eventoDP', q => {
-  crearDatePicker("datepickerNormal")
-  crearDatePicker("datepickerEntre")
-})
+crearDatePicker("datepickerNormal")
+crearDatePicker("datepickerEntre")
 
 bodyOnClick("#btnMasReciente", q => location = `${urlPag}masrecientes&pag=1`)
 bodyOnClick("#btnMasAntiguo", q => location = `${urlPag}masantiguos&pag=1`)
 
 bodyOnClick("#btnbuscar", q => {
-  let buscarpor = qs("#buscarpor").innerText
-  let rango = qs("#rangofecha").innerText
+  let buscarpor = qs("#buscarpor").textContent
+  let rango = qs("#rangofecha").textContent
   let formatear = x => qs(x)?.value?.replaceAll("/", "-")
   let fecha = formatear("#calendario")
   let fecha1 = formatear("#calendario1")

@@ -8,6 +8,8 @@ añadirCSS(`#datepickerNormal{
   font-size: 20px;
 }`)
 
+let moverRegFecha, moverRegURL
+
 async function moverReg(fecha, url) {
   await Swal.fire({
     title: "Escoge la fecha a donde quieres mover el registro",
@@ -15,25 +17,26 @@ async function moverReg(fecha, url) {
     showConfirmButton: false,
     html: 'Cargando',
     willOpen: async q => {
+      moverRegFecha = fecha, moverRegURL = url
       if (!cargaronLibsDP) {
-        await añadirJS("/bootstrapdatepicker.js")
+        await añadirJS("/calendarioDPDinamico.js")
         cargaronLibsDP = true
-      }
+      } else mostrarDP()
     },
     didOpen: async q => {
       Swal.showLoading()
-      cargaronLibsDP ? mostrarDP(fecha, url) : document.addEventListener('eventoDP', q => mostrarDP(fecha, url))
     }
   })
 }
 
-function mostrarDP(fecha, url) {
+document.addEventListener('eventoDP', mostrarDP)
+function mostrarDP() {
   Swal.hideLoading()
   qs('#swal2-html-container').html(`<div style="display: flex; height: 400px; justify-content: center;"><div><calendario-simple></calendario-simple><div class="invalid-feedback">Por favor escoge una fecha</div></div></div>
   <button id="continuarCal" class="btn btn-success margenbotonswal">Continuar</button><button id="cancelarCal" class="btn btn-danger margenbotonswal">Cancelar</button>`)
   let dp = $(`#calendario`)
   let validacion = (c, a) => {
-    $('.input-group-text').css('border-color', c)
+    qs('.input-group-text').style.borderColor = c
     dp.css('border-color', c)
     qs('.invalid-feedback')[a]()
   }
@@ -43,14 +46,15 @@ function mostrarDP(fecha, url) {
   qsclick('#continuarCal', q => {
     let input = dp[0]
     if (input.value === '') return validacion('red', 'mostrar')
-    moverRegistro(fecha, parseDate(input.value).valueOf(), 0, url)
+    moverRegistro(moverRegFecha, parseDate(input.value).valueOf(), 0, moverRegURL)
   })
   qsclick('#cancelarCal', q => Swal.close())
-  setTimeout(q => dp.datepicker('show'), cargaronLibsDP ? 150 : 0)
+  dp.datepicker('show')
 }
 
 function moverRegistro(de, a, sobreescribir, url) {
-  hazPost(url, JSON.stringify({ de, a, sobreescribir }), async r => {
+  hazPost(url, JSON.stringify({ de, a, sobreescribir }), async res => {
+    let r = await res.text()
     if (r === '') return await preguntarSiQuiereRedireccionar(a)
     let html = `<custom-tabs><div class="tabs">
     ${r.map((_, i) => `<tab-label name="swal" data-id="swal${i}">Camión ${i + 1}</tab-label>`).join('')}

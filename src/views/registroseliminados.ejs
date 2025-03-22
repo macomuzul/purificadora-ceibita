@@ -11,7 +11,7 @@
     let totalPags = parseInt(`<%= totalPaginas %>`);
   </script>
   <script defer src="/spanFechas.js"></script>
-  <script defer src="/tabs.js"></script>
+  <%- include('layouts/tabs.ejs') %>
   <script defer src="/botonazul.js"></script>
   <script defer src="/svgeliminar.js"></script>
   <script defer src="/botontitulo2.js"></script>
@@ -38,13 +38,13 @@
     </div>
     <%_ datostablas.forEach((reg,i)=> { let {registro, borradoEl} = reg; _%>
     <hr>
-    <article name="<%=reg._id%>">
+    <article name="<%=reg._id%>" style="width: auto;">
       <contenedor-acciones></contenedor-acciones>
       <h2 class="fechaMover">Fecha del registro: <span-fechas data-fecha="<%=registro._id%>" data-sinhora="true"></span-fechas></h2>
       <custom-tabs>
         <%_ let tablas = registro.tablas _%>
         <div class="tabs"><% tablas.forEach((_, j) => {%><tab-label>Camión <%= (j+1) %></tab-label><% }) %></div>
-        <div class="content"><% tablas.forEach((tabla, j) => {%><tab-content hidden><%- include("layouts/tablas", {j, tabla}) %></tab-content><% }); %></div>
+        <div class="content"><% tablas.forEach((tabla, j) => {%><tab-content><%- include("layouts/tablas", {j, tabla}) %></tab-content><% }); %></div>
       </custom-tabs>
      <div class="tabSeccionAbajo">
       <div class="fechaeliminacion">Se eliminó el <span-fechas data-fecha="<%=borradoEl%>"></span-fechas></div>

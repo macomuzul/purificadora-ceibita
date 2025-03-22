@@ -12,14 +12,16 @@ beforeEach(() => {
 let testear = (m, ...params) => () => {
   let { promise, resolve } = Promise.withResolvers()
   m(resolve, params)
-  promise.then(s => expect(s).to.be.true).catch(err => console.log(err))
+  promise.then(s => {
+    if (!s) throw new Error('ese no es el json que se esperaba')
+  })
 }
 
 try {
   describe('validaciones antes de guardar', () => {
     it("Verifica tablas vacías", async () => {
       abrirConfig(e => cy.get('#filasycolumnasdesactivar').check())
-      cy.get(".grupotabs tab-label label").click('topRight')
+      cy.get(".grupotabs .tab-label label").click('topRight')
       cy.get(".swal2-confirm").click()
       cy.contains("No se puede borrar, debe haber al menos un camión")
       cy.get(".swal2-confirm").click()
@@ -94,20 +96,20 @@ function comparar(t1, t2) {
   return (t1 === t2)
 }
 
-async function filasycolumnasdesactivar(resolve) {
-  abrirConfig(e => cy.get('#filasycolumnasdesactivar').check())
-  seVeSimbolo(resolve, 'none')
-}
-
 async function filasycolumnaspresionar1segundo(resolve) {
-  abrirConfig(e => cy.get('#filasycolumnaspresionar1segundo').check())
+  abrirConfig(e => cy.get('#borrarfilasycolumnas custom-radiobutton:nth-child(1) input').check())
   await seVeSimbolo(resolve, 'none')
 }
 
 async function filasycolumnaspresionarx(resolve) {
-  abrirConfig(e => cy.get('#filasycolumnaspresionarx').check())
+  abrirConfig(e => cy.get('#borrarfilasycolumnas custom-radiobutton:nth-child(2) input').check())
   cy.get('.contenidotabs').should("have.class", "cerrarconboton")
   await seVeSimbolo(resolve, '"❌"')
+}
+
+async function filasycolumnasdesactivar(resolve) {
+  abrirConfig(e => cy.get('#borrarfilasycolumnas custom-radiobutton:nth-child(3) input').check())
+  seVeSimbolo(resolve, 'none')
 }
 
 function borrarFilasVacias(resolve) {
@@ -120,7 +122,7 @@ function borrarFilasVacias(resolve) {
   cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(5) > td:nth-child(4)').type("{backspace}{backspace}{backspace}{backspace}")
   cy.get('#guardar').click()
   cy.contains("Se han detectado filas vacias en la tabla")
-  cy.get('#swal2-html-container tab-label:nth-child(2)').click()
+  cy.get('#swal2-html-container .tab-label:nth-child(2)').click()
   cy.get('#swal2-html-container tab-content:nth-child(2) table').then(tabla => {
     let resultado = comparar(tabla.get(0).outerHTML, tablas.tablaBorrarFilasVacias2)
     expect(resultado).to.be.true
@@ -222,21 +224,6 @@ function añadirViaje(resolve) {
     resolve(resultado)
   })
 }
-
-// async function validarUnSoloProducto(numIteraciones) {
-//   return new Promise(resolve => {
-//     compararPeticion(resolve, json.tablaValidarProductos)
-//     cy.get('tab-content:nth-child(1) > table > .cuerpo > tr:nth-child(1) > td:nth-child(1)').clear()
-//     cy.get('#guardar').click()
-//     cy.contains("Se ha detectado valores vacíos en la columna productos")
-//     for (let i = 0; i < numIteraciones; i++) {
-//       cy.get('.swal2-confirm').click()
-//       cy.contains("Se ha detectado valores vacíos en la columna productos")
-//     }
-//     cy.get('.enfocar').type("aguitas")
-//     cy.get('.swal2-confirm').click()
-//   })
-// }
 
 async function validarUnSoloProducto(resolve, numIteraciones) {
   compararPeticion(resolve, json.tablaValidarProductos)

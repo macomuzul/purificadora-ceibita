@@ -15,11 +15,10 @@ require('./db')
 const express = require('express')
 const app = express()
 const path = require('path')
-const engine = require('ejs')
 const flash = require('connect-flash')
 const session = require('express-session')
 const passport = require('passport')
-const RedisStore = require('connect-redis')
+const RedisStore = require('connect-redis').RedisStore
 const redis = require('./redis')
 const { LogsGraves } = require('./models/loggers')
 require('./globals/globals')
@@ -58,7 +57,7 @@ app.use(session({
   resave: true,
   saveUninitialized: false,
   rolling: true,
-  store: new RedisStore.default({
+  store: new RedisStore({
     client: redis,
     prefix: 'cookiesceibita:',
     disableTouch: false,

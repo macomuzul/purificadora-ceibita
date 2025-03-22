@@ -17,7 +17,7 @@ bodyOnClick('.fave', c => {
 
 bodyOnClick('.svgeliminar', async c => {
   let filaborrar = c.closest("tr")
-  let plantillaborrar = filaborrar.cells[0].innerText
+  let plantillaborrar = filaborrar.cells[0].textContent
   let { isConfirmed } = await swalConfirmarYCancelar.fire({
     icon: "warning",
     text: `Estas seguro que deseas borrar la plantilla ${plantillaborrar}?`,
@@ -43,7 +43,7 @@ qsafor(".svgver", e => {
     async onShow(instance) {
       if (instance._isFetching || instance._src) return
       instance._isFetching = true
-      let r = await fetch(`/plantillas/devuelveplantilla/${e.closest("tr").cells[0].innerText}`)
+      let r = await fetch(`/plantillas/devuelveplantilla/${e.closest("tr").cells[0].textContent}`)
       if (r.ok) {
         let p = await r.json()
         plantilla = `<table>
@@ -64,10 +64,10 @@ qsafor(".svgver", e => {
 
 qsclick('#guardar', q => {
   let data = JSON.stringify({
-    nombreDefault: favorito.closest('tr').cells[0].innerText,
-    nombrePlantillas: qsarr('tbody td:first-child').map(x => x.innerText)
+    nombreDefault: favorito.closest('tr').cells[0].textContent,
+    nombrePlantillas: qsarr('tbody td:first-child').map(x => x.textContent)
   })
   hazPatch('', data, q => swalExito("Se ha guardado el nuevo orden exitosamente"))
 })
 
-bodyOnClick('.svgeditar', c => location = "/plantillas/editar/" + c.closest("tr").cells[0].innerText)
+bodyOnClick('.svgeditar', c => location = "/plantillas/editar/" + c.closest("tr").cells[0].textContent)

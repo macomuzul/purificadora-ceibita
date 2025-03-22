@@ -7,8 +7,8 @@ qsclick('#guardar', async q => {
     fechaultimaedicion: Date.now(),
     orden: 1,
     productos: qsarr("tbody tr").map(fila => ({
-      producto: fila.cells[0].innerText.trim(),
-      precio: fila.cells[1].innerText.trim().aFloat()
+      producto: fila.cells[0].textContent.trim(),
+      precio: fila.cells[1].textContent.trim().aFloat()
     }))
   })
   hazPost('', data, q => swalExito('La plantilla se ha creado exitosamente'))

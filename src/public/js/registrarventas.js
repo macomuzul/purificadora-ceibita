@@ -13,9 +13,8 @@ let $contents = $grupotabs.qs('.contenidotabs')
 let inicioTabSortable
 let antes = (el, x) => el.insertAdjacentHTML('beforebegin', x)
 
-let $tabContents = [...$contents.children]
-let $idTab = q => $tabContents.findIndex(x => !x.hidden)
-let $tabla = q => $tabContents.find(x => !x.hidden).qs('table')
+let $idTab = q => [...$contents.children].findIndex(x => x.style.display != 'none')
+let $tabla = q => [...$contents.children].find(x => x.style.display != 'none').qs('table')
 let $tablas = q => $contents.qsarr(`table`)
 let $cuerpo = q => $tabla().qs('.cuerpo')
 let $filas = q => [...$cuerpo().rows]
@@ -50,7 +49,7 @@ let borrarEnfocarPreciosYProductos = t => t.qsafor('.cuerpo tr', x => $(x.cells)
 alCargar(cambiosConfig)
 
 $contents.qsafor('.cuerpo td:last-child', x => x.añadirClase('borrarfilas'))
-$tabs.qsafor('tab-label', x => x.añadirClase('borrarcamiones'))
+setTimeout(q => $tabs.qsafor('.tab-label', x => x.añadirClase('borrarcamiones')), 5)
 
 bodyOnClick('.fecha', q => qsafor('.fecha', x => x.alternar()))
 let _borrarFilasYColumnas = -1
@@ -63,14 +62,14 @@ let _ordenarOrdenAlfabetico = -1
 
 let tabsTexto = (tablaOriginal, tablaNueva, texto) => `<custom-tabs class="swalTab">
   <div class="tabs"><tab-label>${texto}</tab-label><tab-label>Vista previa del resultado</tab-label></div>
-  <div><tab-content>${tablaOriginal.outerHTML}</tab-content><tab-content hidden>${tablaNueva.outerHTML}</tab-content></div>
+  <div><tab-content>${tablaOriginal.outerHTML}</tab-content><tab-content>${tablaNueva.outerHTML}</tab-content></div>
 </custom-tabs>`
 
 bodyOnClick('.restaurarplantilla', q => {
   let tabla = $tabla()
   let cuerpo = tabla.qs('.cuerpo')
   let id = $idTab()
-  cuerpo.innerHTML = restaurarOrdenPlantilla(objReordenarPlantillas[id], cuerpo)
+  cuerpo.html(restaurarOrdenPlantilla(objReordenarPlantillas[id], cuerpo))
   borrarListaOrdenarPlantillas(tabla, id)
 })
 
@@ -84,7 +83,7 @@ function borrarListaOrdenarPlantillas(tabla, id) {
 function restaurarOrdenPlantilla(ordenAnterior, cuerpo) {
   let filas = [...cuerpo.rows]
   let formatoTablaLlena = ''
-  let ordenNuevo = filas.map(x => x.cells[0].innerText.normalizar())
+  let ordenNuevo = filas.map(x => x.cells[0].textContent.normalizar())
   ordenAnterior.forEach(producto => {
     let i = ordenNuevo.findIndex(x => x === producto)
     if (i >= 0) formatoTablaLlena += filas[i].outerHTML
@@ -102,11 +101,10 @@ async function guardarValoresConfig() {
 
   $('.tabs').sortable({
     axis: 'x',
-    items: 'tab-label',
+    items: '.tab-label',
     disabled: !_reordenarCamiones,
     start: e => { inicioTabSortable = e.toElement.padre().indice() },
     stop: e => {
-      debugger
       let tabContent = i => $contents.qs(`tab-content:nth-child(${i + 1})`)
       let finTabSortable = e.toElement.padre().indice()
       tabContent(finTabSortable)[finTabSortable < inicioTabSortable ? 'before' : 'after'](tabContent(inicioTabSortable))
@@ -171,14 +169,14 @@ bodyOnClick('.grupotabs th:not([colspan="2"]), #tablaresumen th', c => {
     let listaIdentifObjValores = []
     let listaReordenarPlantillasHelper = []
     let indiceColumna = c.cellIndex
-    let nombreColumna = c.innerText
+    let nombreColumna = c.textContent
 
     if (nombreColumna === 'Vendidos') indiceColumna = cuerpo.rows[0].cells.length - 2
     else if (nombreColumna === 'Ingresos') indiceColumna = cuerpo.rows[0].cells.length - 1
     else if (nombreColumna === 'Sale' || nombreColumna === 'Entra') indiceColumna += colsinicio
     cuerpo.qsafor('tr', (fila, indice) => {
-      listaReordenarPlantillasHelper.push(fila.cells[0].innerText.normalizar())
-      let textoCelda = fila.cells[indiceColumna].innerText.toUpperCase()
+      listaReordenarPlantillasHelper.push(fila.cells[0].textContent.normalizar())
+      let textoCelda = fila.cells[indiceColumna].textContent.toUpperCase()
       if (esResumen && nombreColumna !== 'Productos') textoCelda = textoCelda.replace(/[^0-9.]/g, '')
       objValores[textoCelda + separador + indice] = fila.outerHTML.replace(/(\t)|(\n)/g, '')
       listaIdentifObjValores.push(textoCelda + separador + indice)
@@ -188,13 +186,13 @@ bodyOnClick('.grupotabs th:not([colspan="2"]), #tablaresumen th', c => {
     if (!esResumen && !objReordenarPlantillas[index]) objReordenarPlantillas[index] = listaReordenarPlantillasHelper
 
     let listaElementosColumna = cuerpo.qsarr(`td:nth-child(${indiceColumna + 1})`)
-    let todosSonNumeros = esResumen && nombreColumna !== 'Productos' ? true : listaElementosColumna.every(x => !isNaN(x.innerText.aFloat()))
+    let todosSonNumeros = esResumen && nombreColumna !== 'Productos' ? true : listaElementosColumna.every(x => !isNaN(x.textContent.aFloat()))
 
     if (todosSonNumeros) {
       listaIdentifObjValores.sort((a, b) => {
         let aa = a.split(separador)
         let bb = b.split(separador)
-        return aa[0] != bb[0] ? aa[0] - bb[0] : cuerpo.rows[aa[1].aInt()].cells[0].innerText.localeCompare(cuerpo.rows[bb[1].aInt()].cells[0].innerText)
+        return aa[0] != bb[0] ? aa[0] - bb[0] : cuerpo.rows[aa[1].aInt()].cells[0].textContent.localeCompare(cuerpo.rows[bb[1].aInt()].cells[0].textContent)
       })
     } else listaIdentifObjValores.sort()
 
@@ -203,7 +201,7 @@ bodyOnClick('.grupotabs th:not([colspan="2"]), #tablaresumen th', c => {
 
     tabla.qs('.activo')?.classList.remove('activo')
     c.añadirClase('activo')
-    cuerpo.innerHTML = listaIdentifObjValores.map(key => objValores[key]).join('')
+    cuerpo.html(listaIdentifObjValores.map(key => objValores[key]).join(''))
   }
 })
 
@@ -225,25 +223,25 @@ function calcularvendidoseingresos({ cells }) {
   let y = colsinicio
   let hayunnumero = false
   for (; y < cells.length - colsfinal; y++) {
-    let valor = cells[y].innerText.aInt()
+    let valor = cells[y].textContent.aInt()
     if (!isNaN(valor)) {
       hayunnumero = true
       sumafila += y % 2 === 0 ? valor : -valor
     }
   }
-  cells[y++].innerText = sumafila === 0 && !hayunnumero ? '' : sumafila
-  let totalingresos = sumafila * cells[1].innerText.aFloat()
-  cells[y].innerText = isNaN(totalingresos) || (sumafila === 0 && !hayunnumero) ? '' : totalingresos.normalizarPrecio()
+  cells[y++].textContent = sumafila === 0 && !hayunnumero ? '' : sumafila
+  let totalingresos = sumafila * cells[1].textContent.aFloat()
+  cells[y].textContent = isNaN(totalingresos) || (sumafila === 0 && !hayunnumero) ? '' : totalingresos.normalizarPrecio()
 }
 
 function calcularvendidoseingresostotal(cuerpo) {
   let sumaVendidos = 0, sumaIngresos = 0, hayUnNumero = false
   cuerpo.qsafor('td:nth-last-child(2)', x => {
-    let texto = x.innerText.aFloat()
+    let texto = x.textContent.aFloat()
     if (!isNaN(texto)) sumaVendidos += texto
   })
   cuerpo.qsafor('td:nth-last-child(1)', x => {
-    let texto = x.innerText.aFloat()
+    let texto = x.textContent.aFloat()
     if (!isNaN(texto)) {
       hayUnNumero = true
       sumaIngresos += texto
@@ -251,8 +249,8 @@ function calcularvendidoseingresostotal(cuerpo) {
   })
 
   let [_, t1, t2] = cuerpo.padre().qsa('tfoot td')
-  if (!isNaN(sumaVendidos)) t1.innerText = sumaVendidos === 0 && !hayUnNumero ? '' : sumaVendidos
-  if (!isNaN(sumaIngresos)) t2.innerText = sumaIngresos === 0 && !hayUnNumero ? '' : sumaIngresos.normalizarPrecio()
+  if (!isNaN(sumaVendidos)) t1.textContent = sumaVendidos === 0 && !hayUnNumero ? '' : sumaVendidos
+  if (!isNaN(sumaIngresos)) t2.textContent = sumaIngresos === 0 && !hayUnNumero ? '' : sumaIngresos.normalizarPrecio()
 }
 
 qsclick('#añadirProducto', q => $cuerpo().añadirHTML(`<tr>${[...Array($cantidadSaleYEntra() - 2)].map(_ => `<td contenteditable="true"></td>`).join('')}<td></td><td class="borrarfilas"></td></tr>`))
@@ -329,7 +327,7 @@ qsclick('#diaanterior', q => location = `/registrarventas/${hoy.subtract('1', 'd
 qsclick('#diasiguiente', q => location = `/registrarventas/${hoy.add('1', 'day').format('D-M-YYYY')}`)
 
 function añadirceros(cuerpo) {
-  cuerpo.qsafor('td:not(:nth-child(1),:nth-child(2))', celda => (celda.innerText ||= 0))
+  cuerpo.qsafor('td:not(:nth-child(1),:nth-child(2))', celda => (celda.textContent ||= 0))
   calcularvendidoseingresostotal(cuerpo)
 }
 
@@ -355,13 +353,13 @@ qsclick('#guardar', async q => {
       trabajador: tabla.closest('tab-content').qs('.trabajador').value,
       productos: tabla.qsarr('.cuerpo tr').map(fila => ({
         nombre: fila.cells[0].textContent,
-        precio: fila.cells[1].innerText.aFloat(),
-        viajes: [...Array(tabla.qsa('.pintarcolumnas>*').length * 2)].map((_, j) => fila.cells[j + colsinicio].innerText.aInt()),
-        vendidos: fila.qs('td:nth-last-child(2)').innerText.aInt(),
-        ingresos: fila.qs('td:nth-last-child(1)').innerText.aFloat(),
+        precio: fila.cells[1].textContent.aFloat(),
+        viajes: [...Array(tabla.qsa('.pintarcolumnas>*').length * 2)].map((_, j) => fila.cells[j + colsinicio].textContent.aInt()),
+        vendidos: fila.qs('td:nth-last-child(2)').textContent.aInt(),
+        ingresos: fila.qs('td:nth-last-child(1)').textContent.aFloat(),
       })),
-      totalvendidos: tabla.qs('tfoot tr').cells[1].innerText.aInt(),
-      totalingresos: tabla.qs('tfoot tr').cells[2].innerText.aFloat(),
+      totalvendidos: tabla.qs('tfoot tr').cells[1].textContent.aInt(),
+      totalingresos: tabla.qs('tfoot tr').cells[2].textContent.aFloat(),
     })),
   })
   console.log(data)
@@ -370,8 +368,8 @@ qsclick('#guardar', async q => {
 })
 
 function formatearCeldas({ cells: [, prod, prec] }) {
-  prod.innerText = prod.innerText.cantidadFormateada()
-  prec.innerText = prec.innerText.aQuetzales()
+  prod.textContent = prod.textContent.cantidadFormateada()
+  prec.textContent = prec.textContent.aQuetzales()
 }
 
 qsclick('#resumen', async q => {
@@ -380,7 +378,7 @@ qsclick('#resumen', async q => {
     let productos = tabla.qsarr('.cuerpo td:first-child')
     let vendidos = tabla.qsarr('.cuerpo td:nth-last-child(2)')
     let ingresos = tabla.qsarr('.cuerpo td:nth-last-child(1)')
-    return productos.map((_, i) => ({ producto: productos[i].innerText.normalizar(), vendidos: vendidos[i].innerText.aInt() || 0, ingresos: ingresos[i].innerText.aFloat() || 0, productoDesnormalizado: productos[i].innerText }))
+    return productos.map((_, i) => ({ producto: productos[i].textContent.normalizar(), vendidos: vendidos[i].textContent.aInt() || 0, ingresos: ingresos[i].textContent.aFloat() || 0, productoDesnormalizado: productos[i].textContent }))
   })
 
   let p = {}
@@ -454,7 +452,7 @@ async function borrarFilasVacias(tabla, numtabla) {
   let filasCopia = tablaCopia.qsarr('.cuerpo tr')
   let filasQueNoEstanVacias = filasCopia.filter(fila => {
     let celdasEspecificas = [...fila.cells].slice(colsinicio, -colsfinal)
-    let res = celdasEspecificas.every(celda => celda.innerText === '0' || celda.innerText === '')
+    let res = celdasEspecificas.every(celda => celda.textContent === '0' || celda.textContent === '')
     if (res) resaltarCeldas(fila)
     return !res
   })
@@ -484,7 +482,7 @@ async function borrarFilasVacias(tabla, numtabla) {
   if (opcionSwal === 'borrarFilasVacias') {
     if (filasQueNoEstanVacias.length === 0) return mostrarError('Error', `No se puede guardar la tabla ${numtabla} porque está vacía`)
     let filasVacias = [...tablaCopia.qs('.cuerpo').rows].filter(fila => {
-      let res = [...fila.cells].slice(colsinicio, -colsfinal).every(celda => celda.innerText === '0' || celda.innerText === '')
+      let res = [...fila.cells].slice(colsinicio, -colsfinal).every(celda => celda.textContent === '0' || celda.textContent === '')
       if (res) resaltarCeldas(fila)
       return res
     })
@@ -511,7 +509,7 @@ async function entraMasDeLoQueSale(tabla, numtabla) {
     for (let j = colsinicio; j < cells.length - colsfinal; j += 2) {
       let entra = fila.cells[j]
       let sale = fila.cells[j + 1]
-      let invalido = sale.innerText.aInt() > entra.innerText.aInt()
+      let invalido = sale.textContent.aInt() > entra.textContent.aInt()
       sale.alternarClase('enfocar', invalido)
       entra.alternarClase('enfocar', invalido)
       if (invalido) valido = false
@@ -584,7 +582,7 @@ async function validarQueLosPreciosNoTenganPuntoAlFinal(tabla, numtabla) {
   let tablaCopia = tabla.clonar()
   let hayTerminaConPunto = false
   tablaCopia.qsafor('.cuerpo td:nth-child(2)', x => {
-    if (x.innerText.endsWith('.')) {
+    if (x.textContent.endsWith('.')) {
       resaltarCelda(x)
       hayTerminaConPunto = true
     }
@@ -606,7 +604,7 @@ async function validarQueLosPreciosNoTenganPuntoAlFinal(tabla, numtabla) {
   })
   if (result.isConfirmed) {
     tabla.qsafor('.cuerpo td:nth-child(2)', x => {
-      let precio = x.innerText
+      let precio = x.textContent
       if (precio.endsWith('.')) x.textContent = precio.replace('.', '')
     })
     return clonaValores(tabla, tablaCopia)
@@ -621,7 +619,7 @@ async function validarQueLosPreciosNoSeanMenorAUno(tabla, numtabla) {
   let tablaCopia = tabla.clonar()
   let hayEmpiezaConPunto = false
   tablaCopia.qsafor('.cuerpo td:nth-child(2)', x => {
-    if (x.innerText.startsWith('0.')) {
+    if (x.textContent.startsWith('0.')) {
       resaltarCelda(x)
       hayEmpiezaConPunto = true
     }
@@ -647,7 +645,7 @@ async function validarQueLosPreciosNoSeanMenorAUno(tabla, numtabla) {
   })
   if (opcionSwal === 'removerCeroPunto') {
     tabla.qsafor('.cuerpo td:nth-child(2)', x => {
-      let precio = x.innerText
+      let precio = x.textContent
       if (precio.startsWith('0.')) x.textContent = precio.replace('0.', '')
     })
     return true
@@ -661,8 +659,8 @@ async function validarQueLosPreciosNoSeanMenorAUno(tabla, numtabla) {
 
 async function validarProductosYPrecios(tabla, numtabla) {
   tabla.qsafor('.cuerpo tr', ({ cells: [producto, precio] }) => {
-    let p = precio.innerText
-    producto.textContent = producto.innerText.trim()
+    let p = precio.textContent
+    producto.textContent = producto.textContent.trim()
     if (p === '.') precio.textContent = ''
     else if (!p.endsWith('.')) {
       let precioNormalizado = p.normalizarPrecio()
@@ -707,7 +705,7 @@ async function validarProductosYPrecios(tabla, numtabla) {
 
 async function borrarTablasVacias() {
   let tablas = $contents.qsarr('table')
-  let tablasVacias = tablas.filter(tabla => tabla.qs('tfoot td:nth-child(3)').innerText === '')
+  let tablasVacias = tablas.filter(tabla => tabla.qs('tfoot td:nth-child(3)').textContent === '')
 
   if (tablasVacias.length === 0) return true
 
@@ -764,8 +762,8 @@ async function borrarCamiones(label, e) {
 }
 
 function reacomodarCamiones() {
-  $tabs.qsafor('tab-label', (tab, i) => tab.qs('label').html(`Camión ${i + 1}`))
-  if (!$tabs.qs('tab-label input:checked')) $tabs.qs('tab-label:first-child label').click()
+  $tabs.qsafor('.tab-label', (tab, i) => tab.qs('label').html(`Camión ${i + 1}`))
+  if (!$tabs.qs('.tab-label input:checked')) $tabs.qs('.tab-label:first-child label').click()
 }
 
 async function validarCamioneros(textbox, numerotabla) {
@@ -801,12 +799,12 @@ async function validarDatosTabla(tabla, numtabla) {
 }
 
 function clonaValores(tabla, tablaCopia) {
-  tabla.innerHTML = tablaCopia.innerHTML
-  tablaParaValidacion.innerHTML = tablaCopia.innerHTML
+  tabla.html(tablaCopia.innerHTML)
+  tablaParaValidacion.html(tablaCopia.innerHTML)
   return true
 }
 
-let añadidoNombre = o => o === 0 ? ' solo ' + $tabs.qs('.tabRadio:checked + label').innerText.toLowerCase() : ''
+let añadidoNombre = o => o === 0 ? ' solo ' + $tabs.qs('.tabRadio:checked + label').textContent.toLowerCase() : ''
 qs('#exportarexcel').inicializar(function () {
   let nombre = `registro ventas ${fechastr}${añadidoNombre(_exportarExcel)}.xlsx`
   let workbook = XLSX.utils.book_new()
@@ -925,7 +923,7 @@ async function mezclarHandler(sinEliminar, ordenTabla) {
   let tabla = $tabla()
   let tablaCopia = tabla.clonar()
   let cuerpoCopia = tablaCopia.qs('.cuerpo')
-  cuerpoCopia.innerHTML = formatoTablaLlena
+  cuerpoCopia.html(formatoTablaLlena)
   calcularvendidoseingresostotal(cuerpoCopia)
 
   let result = await swalConfirmarYCancelar.fire({
@@ -946,7 +944,7 @@ async function mezclarHandler(sinEliminar, ordenTabla) {
 function mezclarOrden(productos, sinEliminar, ordenTabla) {
   let filas = $filas()
   let formatoTablaLlena = ''
-  let pTabla = filas.map(x => x.cells[0].innerText.normalizar())
+  let pTabla = filas.map(x => x.cells[0].textContent.normalizar())
   let pSeleccionada = productos.map(x => x.producto.normalizar())
   let devuelveProductoVacio = producto => `<tr><td contenteditable="true">${producto.producto}</td><td contenteditable="true">${producto.precio.normalizarPrecio()}</td>${[...Array($cantidadSaleYEntra() - 4)].map(_ => `<td contenteditable="true"></td>`).join('')} <td></td><td class="borrarfilas"></td></tr>`
   let agregaProducto = (i, j) => {
@@ -996,12 +994,12 @@ let creaTablaVacia = plantilla => `<table class="tablacompleta">
 bodyOnClick('.añadirCamion', async q => {
   let cantidadTabs = $contents.children.length
   antes(qs('.añadirCamion'), `<tab-label class="borrarcamiones">Camión ${cantidadTabs + 1}</tab-label>`)
-  $contents.añadirHTML(`<tab-content hidden><div class="contenedor-trabajador"><label class="label-trabajador">Nombre del conductor:</label><dropdown-camioneros></dropdown-camioneros><custom-popover data-alineacion="middle">${qs('.contenedor-trabajador svg').dataset.bsContent}</custom-popover></div>${creaTablaVacia(await pidePlantilla(plantillaDefault))}</tab-content>`)
+  $contents.añadirHTML(`<tab-content><div class="contenedor-trabajador"><label class="label-trabajador">Nombre del conductor:</label><dropdown-camioneros></dropdown-camioneros><custom-popover data-alineacion="middle">${qs('.contenedor-trabajador svg').dataset.bsContent}</custom-popover></div>${creaTablaVacia(await pidePlantilla(plantillaDefault))}</tab-content>`)
   new bootstrap.Popover($contents.qs('tab-content:last-child [data-bs-toggle="popover"]'), { html: true })
   tablasSortable()
 })
 
-bodyOnClick('.grupotabs .dropdown-item', c => { c.closest('tab-content').qs('.trabajador').value = c.innerText })
+bodyOnClick('.grupotabs .dropdown-item', c => { c.closest('tab-content').qs('.trabajador').value = c.textContent })
 bodyOn('hide.bs.dropdown', '#dropdowncamionero', c => { c.closest('.swal2-html-container').style.minHeight = '68.2px' })
 bodyOnClick('.swal2-html-container .dropdown-toggle', c => c.closest('.swal2-html-container').style.minHeight = `${(c.sig().children.length - 4) * 30 + 135}px`)
 

@@ -2,7 +2,7 @@ String.prototype.normalizar = function () { return this.toLowerCase().trim().nor
 let tbody = qs('tbody')
 
 function mostrarErrorHTML(html, title) {
-  html.qsafor('td:last-child', x => x.remove())
+  html.qsafor('tr>:last-child', x => x.remove())
   html.qsafor('td', x => x.contentEditable = false)
   Swal.fire({
     title,
@@ -20,7 +20,7 @@ function validarCamioneros() {
     swalError('Error, la tabla está vacía, por favor agrega un camionero')
     return false
   }
-  nombres.forEach(x => x.textContent = x.innerText.trim())
+  nombres.forEach(x => x.textContent = x.textContent.trim())
 
   let tablaCopia = qs('table').clonar()
   let camionerosCopia = tablaCopia.qsarr('tbody td:nth-child(1)')
@@ -62,7 +62,7 @@ qsclick('#guardar', async q => {
 })
 
 bodyOnClick('.botoneliminar', async c => {
-  if (qs('#switchModoSeguro').checked && await swalSíNo('Estás seguro que deseas borrar a este camionero?', `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${c.closest('tr').cells[0].innerText}</span>`, innerWidth / 2)) c.closest('tr').remove()
+  if (qs('#switchModoSeguro').checked && await swalSíNo('Estás seguro que deseas borrar a este camionero?', `<span style="font-size: 30px; font-weight: 500; color: #8b8b8b;">${c.closest('tr').cells[0].textContent}</span>`, innerWidth / 2)) c.closest('tr').remove()
 })
 
 bodyOn('input', '[type="color"]', c => c.padre().ant().textContent = c.value)

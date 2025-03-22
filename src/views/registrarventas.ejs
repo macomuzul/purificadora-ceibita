@@ -19,7 +19,7 @@
   <script defer src="/popover.js"></script>
   <script defer src="/moverRegistro.js"></script>
   <script defer src="/registrarventas.js"></script>
-  <script defer src="/tabs.js"></script>
+  <%- include('layouts/tabs.ejs') %>
   <script defer src="/dropdown.js"></script>
   <script defer src="/dropdowncamioneros.js"></script>
 </head>
@@ -64,7 +64,7 @@
             <div class="contenidotabs">
               <%_ for (let j = 0; j < (registro?.tablas.length ?? 1); j++){ _%>
               <%_ let tabla = registro?.tablas[j] _%>
-              <tab-content hidden>
+              <tab-content>
                 <div class="contenedor-trabajador">
                   <label class="label-trabajador">Nombre del conductor:</label>
                   <dropdown-camioneros data-valor="<%= registro ? tabla.trabajador : '' %>"></dropdown-camioneros>
@@ -179,6 +179,6 @@
     </div>
   </div>
   <custom-modal></custom-modal>
-  <div id="medirTabla" style="position: absolute; visibility: hidden">Aqui estoy por la reputisima madre</div>
+  <div id="medirTabla" style="position: absolute; visibility: hidden"></div>
 </body>
 </html>

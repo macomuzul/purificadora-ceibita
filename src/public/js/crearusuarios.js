@@ -17,7 +17,7 @@ function mostrarError(error) {
 let c = qs("#correo")
 bodyOnClick('#guardar', async q => {
   [usuario, contraseña, confirmarContraseña, correo] = ["#usuario", "#contraseña", "#confirmarContraseña", "#correo"].map(id => $(id).val((_, x) => x = x.trim()).val())
-  rol = qs("#rol").innerText
+  rol = qs("#rol").textContent
   if (!await validarDatos()) return
   if (correo) {
     validarCorreo()

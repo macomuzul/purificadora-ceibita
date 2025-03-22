@@ -70,7 +70,6 @@ añadirCSS(`.gridUnidadTiempo {
   padding: 10px 20px;
   height: 55px;
   position: absolute;
-  top: 20px;
   left: 15px;
 }
 .flecharotada {
@@ -87,34 +86,33 @@ añadirCSS(`.gridUnidadTiempo {
 
 .contenidoOpciones{
   position: relative;
-  margin-top: 10px;
+  margin-top: 30px;
   height: 400px;
 }`)
 
 let contador = 0, seleccionado, cal, opcionCalendario
 let crearCal = c => cal.html(`<botonazul-flechaizquierda class="botonvolver">Volver</botonazul-flechaizquierda>${c}`)
+
 bodyOnClick("#btnMayor", q => {
   seleccionado.cal = "mayores o iguales que"
   crearCal('<calendario-simple></calendario-simple>')
   $(`.divdatepicker`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" })
-  $(`.divdatepicker`).datepicker("show")
 })
 bodyOnClick("#btnMenor", q => {
   seleccionado.cal = "menores o iguales que"
   crearCal('<calendario-simple></calendario-simple>')
   $(`.divdatepicker`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" })
-  $(`.divdatepicker`).datepicker("show")
 })
 
 bodyOnClick("#btnLibre", q => {
   seleccionado.cal = ""
   crearCal("<calendario-simple></calendario-simple>")
   $(`.divdatepicker`).datepicker({ weekStart: 1, language: "es", autoclose: false, maxViewMode: 2, multidate: true, multidateSeparator: ", ", todayHighlight: true, format: "dd/mm/yyyy" })
-  $(`.divdatepicker`).datepicker("show")
 })
 bodyOnClick("#btnEntre", q => {
   seleccionado.cal = "entre el"
-  crearCal("Entre")
+  crearCal('<calendario-multiple data-id="datepickerEntre"></calendario-multiple>')
+  $(`.divdatepicker`).datepicker({ weekStart: 1, language: "es", autoclose: true, maxViewMode: 2, todayHighlight: true, format: "dd/mm/yyyy" })
 })
 
 bodyOnClick(".tituloregistro custom-checkbox", c => c.closest("cuadro-respaldos").qs("custom-input input").disabled = !c.qs("input").checked)
@@ -244,7 +242,7 @@ class cuadroRespaldos extends HTMLElement {
     this.elclick(".opcionesextra", q => {
       if (!this.qs(".tituloregistro input").checked) return Swal.fire("Atención", "El registro a guardar está deshabilitado. Por favor habilítalo para seleccionar qué información mandar", "warning")
       seleccionado = this
-      cal = $(seleccionado).find(".contenidoOpciones")
+      cal = seleccionado.qs('.contenidoOpciones')
       modal.show()
     })
   }

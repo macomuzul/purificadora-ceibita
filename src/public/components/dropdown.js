@@ -136,7 +136,7 @@ bodyOnClick('custom-dropdown', c => {
 
 bodyOnClick('custom-dropdown li', (c, e) => {
   let o = c.closest('custom-dropdown')
-  o.qs('.selected').innerText = c.innerText
+  o.qs('.selected').textContent = c.textContent
   o.cambiarEstado(-1)
   let a = o.qs('.active')
   if (a) a.quitarClase('active')

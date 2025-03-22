@@ -1,5 +1,5 @@
-const RegistroVentas = require("../models/registroventas");
-const ResumenDia = require("../models/resumenDia");
+const RegistroVentas = require("../models/registroventas")
+const ResumenDia = require("../models/resumenDia")
 const sumaResumenDias = require("../utilities/sumaResumenDias")
 
 async function calcularTodosLosResumenesPorDia() {

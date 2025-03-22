@@ -100,6 +100,7 @@ async function devuelveFolderMes(años, year, meses, month, func = buscarOCrearF
   return folder
 }
 
+//TODO importante ver esta mierda
 global.guardarRespaldoDiario = async function (creadosOModificados, tipo, borrados = []) {
   let creadoEl = DateTime.now().minus({ days: 1 }).toFormat("d/M/y")
   let años = {}, meses = {}
@@ -132,7 +133,7 @@ global.guardarRespaldoDiario = async function (creadosOModificados, tipo, borrad
 }
 
 
-
+//TODO preguntar si debe ir find().sort("_id").lean() or lo puedo poner find().lean().sort("_id") no se si importa el orden
 global.guardarDias = async function () {
   let ventas = await RegistroVentas.find().sort("_id").lean()
   // let ventas = await RegistroVentas.where("_id").gte(DateTime.now().startOf("month")).lean()

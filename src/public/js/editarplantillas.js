@@ -19,7 +19,7 @@ bodyOnClick("#guardar", async q => {
   if (!await validarPlantillas()) return
   let nombre = qs("#nombreplantilla").value
 
-  hazPatch('', JSON.stringify({ nombre, productos: [...tbody.rows].map(x => ({ producto: x.cells[0].innerText, precio: x.cells[1].innerText.aFloat() })) }), async q => {
+  hazPatch('', JSON.stringify({ nombre, productos: [...tbody.rows].map(x => ({ producto: x.cells[0].textContent, precio: x.cells[1].textContent.aFloat() })) }), async q => {
     await Swal.fire("Se ha guardado exitosamente", "El archivo se ha almacenado en la base de datos", "success")
     if (nombrePlantillaURL !== nombre) location = "/plantillas/editar/" + nombre
   })

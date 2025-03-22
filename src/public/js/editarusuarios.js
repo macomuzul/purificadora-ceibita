@@ -17,7 +17,7 @@ qsclick("#cambiarContraseña", q => {
 })
 
 qsclick("#cambiarRol", q => {
-  rol = qs("#rol").innerText
+  rol = qs("#rol").textContent
   if (rol === "Escoge un rol") return mostrarError("No se ha escogido ningún rol para el usuario")
   modalAutenticacion.mostrar(enviar({ rol }, "Se ha cambiado el rol correctamente"))
 })

@@ -48,7 +48,7 @@ class tablaGastos extends HTMLElement {
 
 customElements.define('tabla-gastos', tablaGastos)
 
-bodyOnClick('.divtablagastos tr td:last-child', async c => {
+bodyOnClick('.divtablagastos tr td:last-child', async (c, e) => {
   if (c.clientWidth - e.offsetX <= 21 && e.offsetY <= 21) {
     let fila = c.closest('tr')
     let html = `<div class="divtablagastos"><table class="mx-auto"><tbody style="background: #0f0d35;">${fila.clonar().outerHTML}</tbody></table></div>`

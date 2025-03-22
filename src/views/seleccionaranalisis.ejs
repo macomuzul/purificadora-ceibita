@@ -8,7 +8,7 @@
   <%- include("layouts/global") %>
   <script defer src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
   <script defer src="/dropdown.js"></script>
-  <script defer src="/bootstrapdatepicker.js"></script>
+  <%- include('layouts/calendarioDP') %>
   <script defer src="/botontitulo2.js"></script>
   <script defer src="/botonazul.js"></script>
   <script defer src="/seleccionaranalisis.js"></script>
@@ -45,7 +45,7 @@
           <h3 class="borde">Escoge una fecha para buscar: </h3>
           <div class="contenedorentre">
             <calendario-simple data-id="datepickerNormal"></calendario-simple>
-            <calendario-multiple data-id="datepickerEntre"></calendario-multiple>
+            <calendario-multiple data-id="datepickerEntre" hidden></calendario-multiple>
           </div>
           <input-azul id="btnbuscar">Analizar datos</input-azul>
         </section>

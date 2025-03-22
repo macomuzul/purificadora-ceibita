@@ -6,9 +6,9 @@ qsclick('#añadirproducto', q => tbody.innerHTML += `<tr><td contenteditable="tr
 
 async function validarPlantillas() {
   nombreplantilla.value = nombreplantilla.value.trim()
-  tbody.qsafor('td:nth-child(1)', x => x.textContent = x.innerText.trim())
+  tbody.qsafor('td:nth-child(1)', x => x.textContent = x.textContent.trim())
   tbody.qsafor('td:nth-child(2)', x => {
-    let precio = x.innerText
+    let precio = x.textContent
     if (precio === '.') x.textContent = ''
     let p = precio.aFloat()
     if (!isNaN(p)) x.textContent = p.normalizarPrecio()
@@ -26,11 +26,11 @@ async function validarPlantillas() {
     productosCopia.forEach(x => x.textContent === '' && x.añadirClase('enfocar'))
     return mostrarErrorHTML(tablaCopia, 'Hay productos sin nombre en la tabla')
   }
-  if (precios.some(x => x.innerText === '')) {
+  if (precios.some(x => x.textContent === '')) {
     preciosCopia.forEach(x => x.textContent === '' && x.añadirClase('enfocar'))
     return mostrarErrorHTML(tablaCopia, 'Hay precios vacíos')
   }
-  if (precios.some(x => x.innerText === '0')) {
+  if (precios.some(x => x.textContent === '0')) {
     preciosCopia.forEach(x => x.textContent === '0' && x.añadirClase('enfocar'))
     return mostrarErrorHTML(tablaCopia, 'Hay precios con valor igual a 0')
   }
@@ -58,7 +58,7 @@ function colorAleatorio() {
 }
 
 function mostrarErrorHTML(html, title) {
-  html.qsafor('td:last-child', x => x.remove())
+  html.qsafor('tr>:last-child', x => x.remove())
   html.qsafor('td', x => x.contentEditable = false)
   Swal.fire({
     title,

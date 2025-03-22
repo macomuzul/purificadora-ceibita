@@ -1,4 +1,5 @@
 @use "./partials/swal";
+@use "./partials/tablassimples";
 
 body {
   background: #191d31;
@@ -270,7 +271,7 @@ custom-graficos {
   margin-bottom: 5px;
 }
 
-.convertira {
+.convertira.botonazul {
   font-size: 17px;
   width: 210px;
   height: 58px;

@@ -1,8 +1,9 @@
 let contador = 0
 let sumar = x => x.reduce((p, c) => p + c)
+let opcionChequeada = x => [...x.qsa('input')].findIndex(x => x.checked)
 class graficos extends HTMLElement {
   devuelveSonIngresos = q => (this.sonIngresos ? 'ingresos' : 'ventas')
-  radiobutton = (id, label, checked) => `<custom-radiobutton ${checked ? `data-checked="1"` : ''}>${label}</custom-radiobutton>`
+  radiobutton = (label, checked, esconder) => `<custom-radiobutton ${esconder ? 'hidden' : ''} ${checked ? `data-checked="1"` : ''}>${label}</custom-radiobutton>`
   acordeonItem = (html, id, titulo) => `<custom-acordeonitem data-id="${id}${contador}" data-titulo="${titulo}">${html}</custom-acordeonitem>`
   devuelveCantidadFormateada = context => (this.sonIngresos ? context.raw.aQuetzales() : context.formattedValue)
   chartVisible = true
@@ -64,8 +65,8 @@ class graficos extends HTMLElement {
         }
     })
     this.elclick('.dropdown-item', c => {
-      let texto = c.innerText
-      c.closest('.dropdown-menu').ant().innerText = texto
+      let texto = c.textContent
+      c.closest('.dropdown-menu').ant().textContent = texto
       const graficos = {
         'De barra': 'bar',
         'Circular 1': 'doughnut',
@@ -102,7 +103,8 @@ class graficos extends HTMLElement {
       let tabla = that.qs('table')
       let ws = XLSX.utils.table_to_sheet(tabla, { raw: true })
       var range = XLSX.utils.decode_range(ws['!ref'])
-      ws['!cols'] = that.multiple ? [that.agrupadoPorFecha ? { wch: Math.max(...tabla.qsarr('tbody td:first-child').map(x => x.textContent.length)) } : { width: 24 }, ...[...tabla.rows[1].cells].map(x => (that.agrupadoPorFecha ? { width: 18 } : { wch: x.textContent.length })), { width: 19 }] : [...[...tabla.rows[2].cells].map(x => (that.agrupadoPorFecha ? { wch: x.textContent.length } : { width: 18 })), { width: 20 }]
+      // ws['!cols'] = that.multiple ? [that.agrupadoPorFecha ? { wch: Math.max(...tabla.qsarr('tbody td:first-child').map(x => x.textContent.length)) } : { width: 24 }, ...[...tabla.rows[1].cells].map(x => (that.agrupadoPorFecha ? { width: 18 } : { wch: x.textContent.length })), { width: 19 }] : [...[...tabla.rows[2].cells].map(x => (that.agrupadoPorFecha ? { wch: x.textContent.length } : { width: 18 })), { width: 20 }]
+      ws['!cols'] = [{ wch: Math.max(...tabla.qsarr('tbody td:first-child').map(x => x.textContent.length)) + 10 }, ]
       ws['!rows'] = [{ hpt: 35 }, ...[...Array(range.e.r - range.s.r)].map(x => ({ hpt: 24 }))]
       for (let i = range.s.r; i <= range.e.r; i++) {
         for (let j = range.s.c; j <= range.e.c; j++) {
@@ -160,7 +162,7 @@ class graficos extends HTMLElement {
     if (this.multiple) {
       let totalDerecha = datasets.map(x => sumar(x.data))
       this.qsafor('tbody td:last-child', (x, i) => (x.textContent = totalDerecha[i]))
-      this.qs('tfoot td:last-child').innerText = sumar(totalDerecha)
+      this.qs('tfoot td:last-child').textContent = sumar(totalDerecha)
       this.qsarr('tfoot td').slice(1, -1).forEach((x, i) => (x.textContent = datasets.reduce((p, c) => p + c.data[i], 0)))
       this.normalizarCeldas(this.qsarr('tbody td:not(:first-child)'))
       this.normalizarCeldas(this.qsarr('tfoot td:not(:first-child)'))
@@ -181,16 +183,16 @@ class graficos extends HTMLElement {
     let labels = UTDiaOSemana && agrupadoPorFecha ? fechas.filter((_, i) => checkboxesExternos[i]) : this.labels.filter((_, i) => checkboxesExternos[i])
     let datasets = structuredClone(this.datasets)
 
-    if (this.chartVisible) this.chart.options.scales.y.type = this.qs('.escalaOpcion input:checked').id.includes('linear') ? 'linear' : 'logarithmic'
+    if (this.chartVisible) this.chart.options.scales.y.type = opcionChequeada(this.qs('.escalaOpcion')) === 0 ? 'linear' : 'logarithmic'
 
-    let coloresOpcion = this.qs('.coloresOpcion input:checked')?.id
+    let coloresOpcion = opcionChequeada(this.qs('.coloresOpcion'))
     if (coloresOpcion) datasets = datasets.filter((_, i) => checkboxesInternos[i])
     datasets.forEach(el => (el.data = el.data.filter((_, i) => checkboxesExternos[i])))
-    coloresOpcion?.includes('color1') ? this.colocarColores(this.graficoDias, checkboxesInternos, datasets) : this.colocarColores(this.graficoProductos, checkboxesExternos, datasets)
+    coloresOpcion === 0 ? this.colocarColores(this.graficoDias, checkboxesInternos, datasets) : this.colocarColores(this.graficoProductos, checkboxesExternos, datasets)
 
     if (UTDiaOSemana) {
-      let fechaOpcion = this.graficoFechaOpcion.qs('input:checked')?.id
-      let opcion = fechaOpcion.includes('fecha1') ? 'full' : fechaOpcion.includes('fecha2') ? 'long' : 'short'
+      let fechaOpcion = opcionChequeada(this.graficoFechaOpcion)
+      let opcion = fechaOpcion === 0 ? 'full' : fechaOpcion === 1 ? 'long' : 'short'
       this.fechaOpcion = opcion
       if (UTDia) {
         if (agrupadoPorFecha) labels = labels.map(x => formatearFecha(opcion, x))
@@ -209,22 +211,22 @@ class graficos extends HTMLElement {
       datasets = nuevoDataset
     }
 
-    let ordenarOpcion = this.qs('.ordenarOpcion input:checked').id
-    if (!ordenarOpcion.includes('default')) {
-      const funcionesOrdenar = {
-        ordenar1: (a, b) => labels[a].localeCompare(labels[b]),
-        ordenar2: (a, b) => labels[b].localeCompare(labels[a]),
-        ordenar3: (a, b) => datasets[0].data[b] - datasets[0].data[a],
-        ordenar4: (a, b) => datasets[0].data[a] - datasets[0].data[b],
-        ordenar5: (a, b) => fechas[b] - fechas[a],
-        ordenar6: (a, b) => fechas[a] - fechas[b],
-      }
-      let [nombre, funcionOrdenar] = Object.entries(funcionesOrdenar).find(([key]) => ordenarOpcion.includes(key))
+    let ordenarOpcion = opcionChequeada(this.qs('.ordenarOpcion'))
+    if (ordenarOpcion != 6) {
+      const funcionesOrdenar = [
+        (a, b) => labels[a].localeCompare(labels[b]),
+        (a, b) => labels[b].localeCompare(labels[a]),
+        (a, b) => fechas[b] - fechas[a],
+        (a, b) => fechas[a] - fechas[b],
+        (a, b) => datasets[0].data[b] - datasets[0].data[a],
+        (a, b) => datasets[0].data[a] - datasets[0].data[b],
+      ]
+      let funcionOrdenar = funcionesOrdenar[ordenarOpcion]
       let indices = [...datasets[0].data.keys()]
-      if (multiple && nombre.includes('ordenar3')) {
+      if (multiple && funcionOrdenar === 2) {
         let data = labels.map((_, i) => parseFloat(datasets.reduce((acc, curr) => acc + curr.data[i], 0).normalizarPrecio()))
         indices.sort((a, b) => data[b] - data[a])
-      } else if (multiple && nombre.includes('ordenar4')) {
+      } else if (multiple && funcionOrdenar === 3) {
         let data = labels.map((_, i) => parseFloat(datasets.reduce((acc, curr) => acc + curr.data[i], 0).normalizarPrecio()))
         indices.sort((a, b) => data[a] - data[b])
       } else indices.sort(funcionOrdenar)
@@ -273,6 +275,7 @@ class graficos extends HTMLElement {
     <custom-acordeon id="acordeonsegundonivel${contador}">
     ${acordeonItem(this.opcionHTMLColores(this.datasets, 1), `acordeondias`, this.devuelveFechaOProducto(0))}
     ${acordeonItem(this.opcionHTMLColores(this.labels, 0), `acordeonproductos`, this.devuelveFechaOProducto(1))}`
+    let f = this.agrupadoPorFecha
 
     let htmlOtrasOpciones = `<div class="contenedorotrasopciones">
     <div class="contenedorColoresDeLosGrafios">
@@ -280,36 +283,36 @@ class graficos extends HTMLElement {
     <hr>
     <div class="contenedoropcion">
     <custom-radiogroup class="coloresOpcion" id="coloresRadioButton${contador}">
-      ${this.radiobutton('color1', `Utilizar los colores de ${UTPluralGenero}`, 1)}
-      ${this.radiobutton('color2', 'Utilizar colores de los productos')}
+      ${this.radiobutton(`Utilizar los colores de ${UTPluralGenero}`, 1)}
+      ${this.radiobutton('Utilizar colores de los productos')}
     </custom-radiogroup></div>
     </div>
 
     ${UTDiaOSemana ? `<div class="tituloopciones">Cambiar formato de la fecha</div>
     <hr><div class="contenedoropcion"><custom-radiogroup class="graficoFechaOpcion" id="fechaRadioButton${contador}">
-    ${this.radiobutton('fecha1', 'Usar formato: "Lunes, 1 de enero de 2023"') + this.radiobutton('fecha2', 'Usar formato: "1 de enero de 2023"', 1) + this.radiobutton('fecha3', 'Usar formato: "1/1/2023"')}
-    </custom-radiogroup></div>` : '' }
+    ${this.radiobutton('Usar formato: "Lunes, 1 de enero de 2023"') + this.radiobutton('Usar formato: "1 de enero de 2023"', 1) + this.radiobutton('Usar formato: "1/1/2023"')}
+    </custom-radiogroup></div>` : ''}
 
     <div class="tituloopciones">Ordenar los datos por ${popover(`Las opciones de ordenar por ${this.devuelveSonIngresos()} de mayor a menor y  ${this.devuelveSonIngresos()} de menor a mayor suma todos los datos y luego los ordena de mayor a menor`)}</div>
     <hr><div class="contenedoropcion"><custom-radiogroup class="ordenarOpcion" id="ordenarRadioButton${contador}">
-    ${!this.agrupadoPorFecha ? this.radiobutton('ordenar1', 'Ordenar productos por orden alfabético ascendentemente A-Z') + this.radiobutton('ordenar2', 'Ordenar productos por orden alfabético descendentemente Z-A') : ''}
-    ${this.agrupadoPorFecha ? this.radiobutton('ordenar5', `Ordenar por fecha de mayor a menor`) + this.radiobutton('ordenar6', `Ordenar por fecha de menor a mayor`) : ''}
-    ${this.radiobutton('ordenar3', `Ordenar por ${this.devuelveSonIngresos()} de mayor a menor`) + this.radiobutton('ordenar4', `Ordenar por ${this.devuelveSonIngresos()} de menor a mayor`)}
-    ${this.radiobutton('ordenardefault', 'Restaurar orden original', 1)}
+    ${this.radiobutton('Ordenar productos por orden alfabético ascendentemente A-Z', null, f) + this.radiobutton('Ordenar productos por orden alfabético descendentemente Z-A', null, f)}
+    ${this.radiobutton(`Ordenar por fecha de mayor a menor`, null, !f) + this.radiobutton(`Ordenar por fecha de menor a mayor`, null, !f)}
+    ${this.radiobutton(`Ordenar por ${this.devuelveSonIngresos()} de mayor a menor`) + this.radiobutton(`Ordenar por ${this.devuelveSonIngresos()} de menor a mayor`)}
+    ${this.radiobutton('Restaurar orden original', 1)}
     </custom-radiogroup></div>
 
     <div class="contenedorEscalas">
     <hr>
     <div class="tituloopciones">Escalas ${popover('Permite cambiar cómo se visualiza la data y dar mayor visibilidad a los datos pequeños (solo funciona en gráficos de barra y lineal)')}</div>
     <hr><div class="contenedoropcion"><custom-radiogroup class="escalaOpcion" id="escalaRadioButton${contador}">
-    ${this.radiobutton('linear', 'Escala lineal (normal)', 1) + this.radiobutton('logaritmica', 'Escala logarítmica')}
+    ${this.radiobutton('Escala lineal (normal)', 1) + this.radiobutton('Escala logarítmica')}
     </custom-radiogroup></div></div>
     </div>`
 
     html += `${acordeonItem(htmlOtrasOpciones, `acordeonotrasopciones`, 'Otras opciones')}
     <div class="contenedorabajo"><boton-azul class="actualizarGrafico">Actualizar gráfico</boton-azul></div>
     </custom-acordeon></custom-acordeonitem></custom-acordeon>`
-    this.html = html
+    this.innerHTML = html
   }
 
   metodosOpcionesGrafico() {
@@ -472,7 +475,7 @@ bodyOnClick('.btnTamaño.disminuir', c => {
   if (longitud <= 1679) g.restaurarTamaño.esconder()
 })
 
-bodyOnClick('.convertira', q => {
+bodyOnClick('.convertira', c => {
   let g = graficoCercano(c)
   g.qs('.articleGrafico').alternar()
   g.qs('.articleTabla').alternar()
@@ -482,14 +485,14 @@ bodyOnClick('.convertira', q => {
   g.qs('.contenedorColoresDeLosGrafios').alternar()
   if (g.chartVisible) {
     g.actualizarTabla(g.datasetsActuales, g.labelsActuales)
-    g.qs('.actualizarGrafico').innerText = 'Actualizar tabla'
-    g.qs('.acordeonPrincipal > .headeracordeon .tituloProductos').innerText = 'Opciones de la tabla'
-    g.qs('.camioneros label').innerText = 'Poner en la tabla'
+    g.qs('.actualizarGrafico').textContent = 'Actualizar tabla'
+    g.qs('.acordeonPrincipal > .headeracordeon .tituloProductos').textContent = 'Opciones de la tabla'
+    g.qs('.camioneros label').textContent = 'Poner en la tabla'
   } else {
     g.actualizarChart(g.datasetsActuales, g.labelsActuales)
-    g.qs('.actualizarGrafico').innerText = 'Actualizar gráfico'
-    g.qs('.acordeonPrincipal > .headeracordeon .tituloProductos').innerText = 'Opciones del gráfico'
-    g.qs('.camioneros label').innerText = 'Poner en el gráfico'
+    g.qs('.actualizarGrafico').textContent = 'Actualizar gráfico'
+    g.qs('.acordeonPrincipal > .headeracordeon .tituloProductos').textContent = 'Opciones del gráfico'
+    g.qs('.camioneros label').textContent = 'Poner en el gráfico'
   }
   g.qsa('.convertira')[g.chartVisible ? 1 : 0].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
   g.chartVisible = !g.chartVisible

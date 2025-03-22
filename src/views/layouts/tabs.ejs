@@ -1,0 +1,47 @@
+<style>
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  font-family: sans-serif;
+  margin-top: 10px;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.tabLabel, .añadirCamion {
+  padding: 12px 20px;
+  cursor: pointer;
+  background-color: #0f0924;
+  font-size: 15px;
+  color: white;
+  height: 50px;
+  display: grid;
+  align-items: center;
+  transition: font-size 200ms;
+}
+
+html, body, main {
+  width: fit-content;
+}
+
+.tabRadio {
+  display: none;
+}
+
+tab-content{
+  display: block;
+  width: 100%;
+}
+
+.tabRadio:checked + .tabLabel {
+  font-weight: bold;
+  color: white;
+  background-color: #009578;
+  border-bottom: 2px solid #009578;
+}
+
+tab-content:not(:first-child){
+  display: none;
+}
+</style>
+<script defer src="/tabs.js"></script>

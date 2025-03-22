@@ -45,15 +45,15 @@ let mostrarCalculadora = qs('#mostrarcalculadora')
 $(calculadora).draggable(esTouch ? { handle: '.movercalcu' } : {})
 
 pantallacalcu = qs('.pantallacalcu')
-$(document).on('click', '.botoncalcu', e => {
+bodyOnClick('.botoncalcu', c => {
   let eventos = {
     C: q => '',
-    '<-': q => pantallacalcu.innerText.slice(0, -1),
-    '=': q => { try { return eval(pantallacalcu.innerText) } catch { return 'Operación no válida' } },
+    '<-': q => pantallacalcu.textContent.slice(0, -1),
+    '=': q => { try { return eval(pantallacalcu.textContent) } catch { return 'Operación no válida' } },
   }
-  let tecla = e.currentTarget.textContent
-  let texto = eventos[tecla]?.() ?? pantallacalcu.innerText + tecla
-  pantallacalcu.innerText = texto
+  let tecla = c.textContent
+  let texto = eventos[tecla]?.() ?? pantallacalcu.textContent + tecla
+  pantallacalcu.textContent = texto
 })
 
 qs('#gastosfijos').inicializar(datos.fijos, 'Tabla de gastos fijos', 'tablagastosfijos', false)
@@ -66,8 +66,13 @@ let inicioMes = moment(fechaUrl, 'DD-MM-YYYY').format('DD-MM-YYYY')
 let finMes = moment(fechaUrl, 'DD-MM-YYYY').endOf('month').format('DD-MM-YYYY')
 let esMesActual = moment().isSame(moment(fechaUrl, 'DD-MM-YYYY'), 'month')
 
-let convierteDatePicker = dp => dp.datepicker({ weekStart: 1, language: 'es', autoclose: true, todayHighlight: true, format: 'dd/mm/yyyy', maxViewMode: 0, startDate: inicioMes, endDate: finMes })
-document.addEventListener('eventoDP', q => convierteDatePicker($(`.divdatepicker`)))
+let convierteDatePicker = dp => {
+  dp.datepicker({ weekStart: 1, language: 'es', autoclose: true, todayHighlight: true, format: 'dd/mm/yyyy', maxViewMode: 0, startDate: inicioMes, endDate: finMes })
+  dp.datepicker().on('changeDate', a => enfocarCelda(a.currentTarget.padre().sig()))
+}
+setTimeout(() => {
+  convierteDatePicker($(`.divdatepicker`))
+}, 200);
 
 mostrarcalculadora.onclick = e => {
   if (!calculadora.hidden) esconderCalculadora()
@@ -94,68 +99,66 @@ bodyOn('keydown', 'td', (c, e) => {
   let { atStart, atEnd } = k == 37 || k == 39 ? getSelectionTextInfo(c) : {}
   if (k == 37 && atStart) //flecha izquierda
     enfocarCelda(c.ant(), e)
-  else if (k == 39 && atEnd) //flecha derecha
-    enfocarCelda(c.sig(), e)
+  else if ((k == 39 && atEnd) || k === 13) //flecha derecha
+  {
+    if (cellindex === 0) {
+      e.preventDefault()
+      $(c.sig().children[0]).datepicker('show')
+      c.blur()
+    }
+    else enfocarCelda(c.sig(), e)
+  }
   else if (k == 38) //flecha arriba
     c.padre().indice() === 0 ? enfocarCelda([...filas].at(-1).cells[cellindex - 1], e) : enfocarCelda(c.closest("tr").ant().cells[cellindex], e)
-  else if (k === 13 || k == 40) //enter y flecha abajo
+  else if (k == 40) //enter y flecha abajo
     c.closest("tr").rowIndex < filas.length ? enfocarCelda(c.closest("tr").sig().cells[cellindex], e) : enfocarCelda(filas[0].cells[cellindex + 1], e)
 })
 
-let mostrarOffscreen = x => {
-  let rect = x.getBoundingClientRect()
-  if (rect.x + rect.width > innerWidth || rect.y + rect.height > innerHeight) x.scrollIntoView()
-}
-
 
 function enfocarCelda(x, e) {
-  e.preventDefault()
+  e?.preventDefault()
   if (x !== undefined && x.contentEditable) {
     x.focus()
-    irAlFinalDelTexto(x)
-    mostrarOffscreen(x)
+    let range = document.createRange()
+    let sel = getSelection()
+    if (x.textContent == '') return
+    range.setStart(x.childNodes[0], x.textContent.length)
+    range.collapse(false)
+
+    sel.removeAllRanges()
+    sel.addRange(range)
+
+    let rect = x.getBoundingClientRect()
+    if (rect.x + rect.width > innerWidth || rect.y + rect.height > innerHeight) x.scrollIntoView()
   } else if (x.qsa('input').length > 0) x.qs('input').focus()
 }
 
-bodyOn('keyup', '.tablagastosproductos td', (c, e) => {
+bodyOn('keyup', '.tablagastosproductos td', c => {
   if (c.cellIndex === 2 || c.cellIndex === 3) {
     let celdaGasto = c.closest('tr').qs('td:nth-child(5)')
     let resultado = celdaGasto.ant().textContent.aFloat() * celdaGasto.ant().ant().textContent.aFloat()
-    celdaGasto.text(!isNaN(resultado) ? resultado : '')
+    celdaGasto.textContent = !isNaN(resultado) ? resultado.normalizarPrecio() : ''
   }
 })
-
-function irAlFinalDelTexto(elem) {
-  let range = document.createRange()
-  let sel = getSelection()
-  if (elem.innerText == '') return
-  range.setStart(elem.childNodes[0], elem.innerText.length)
-  range.collapse(false)
-
-  sel.removeAllRanges()
-  sel.addRange(range)
-}
 
 bodyOn('beforeinput', 'td', (c, e) => {
   let letra = e.data ?? ''
   let colindex = c.indice()
-  let texto = c.innerText
+  let texto = c.textContent
   let celdas = [...c.padre().cells]
-  let permiteDecimales = c === celdas[3]
+  let permiteDecimales = c === celdas[2]
   let esUltimaCelda = c === celdas.at(-1)
   if (letra === '"' || letra === '\\' || letra === "'") e.preventDefault()
   if (isNaN(letra) && colindex != 0 && !permiteDecimales && !esUltimaCelda) e.preventDefault()
   if (colindex !== 0 && letra === ' ' && !esUltimaCelda) e.preventDefault()
 
   if (permiteDecimales) {
-    let [, decimales] = texto.split('.')
-    if (isNaN(letra) && letra !== '.') e.preventDefault()
-    let dotPos = texto.indexOf('.')
-    if (dotPos > -1 && letra === '.') e.preventDefault()
-    if (decimales?.length >= 2 && letra != '') e.preventDefault()
+    if (isNaN(letra) && letra !== ".") e.preventDefault()
+    let p = texto.indexOf(".")
+    if (p > -1 && (letra === "." || (getSelection().baseOffset > p && texto.length - p >= 3 && letra != ""))) e.preventDefault()
   }
 
-  if (texto === '0') c.innerText = ''
+  if (texto === '0') c.textContent = ''
 })
 
 function getSelectionTextInfo(x) {
@@ -178,7 +181,7 @@ function getSelectionTextInfo(x) {
 }
 
 let mostrarError = async (e, titulo = 'Error') => (await Swal.fire(titulo, e, 'error'), false)
-bodyOnClick('#guardarcambios', 'click', async q => {
+bodyOnClick('#guardarcambios', async q => {
   esValido = false
   if (!await validarDatos()) return
   let data = { ultimocambio: Date.now() }
@@ -195,7 +198,7 @@ async function validarDatos() {
     let tabla = x.qs('.divtablagastos')
     let tablaCopia = tabla.clonar()
     let hayDatosVacios = false
-    tablaCopia.qs('tbody tr').forEach(async fila => {
+    tablaCopia.qsafor('tbody tr', async fila => {
       [...fila.cells].forEach((x, i) => {
         if (((i === 1 && x.qs('input').value === '') || (i !== 1 && x.textContent === '')) && !$(x).is(':last-child')) {
           hayDatosVacios = true
@@ -240,7 +243,7 @@ async function validarDatos() {
   return false
 }
 
-let convertirDatepickerATexto = tablaClon => tablaClon.qsafor('input', (x, i) => x.closest('td').innerText = x.value)
+let convertirDatepickerATexto = tablaClon => tablaClon.qsafor('input', (x, i) => x.closest('td').textContent = x.value)
 
 let botonpdf = qs('boton-pdf')
 botonpdf.inicializar(() => {
@@ -298,25 +301,25 @@ qs('boton-excel').inicializar(function () {
 
 function calculargastos(cuerpo) {
   let sumaGastos = 0, hayUnNumero = false
-  cuerpo.qsfor('td:nth-last-child(1)', x => {
-    let texto = x.innerText.aFloat()
+  cuerpo.qsafor('td:nth-last-child(1)', x => {
+    let texto = x.textContent.aFloat()
     if (!isNaN(texto)) {
       hayUnNumero = true
       sumaGastos += texto
     }
   })
 
-  if (!isNaN(sumaGastos)) cuerpo.padre().qsa('tfoot td')[1].innerText = sumaGastos === 0 && !hayUnNumero ? '0' : sumaGastos.normalizarPrecio()
+  if (!isNaN(sumaGastos)) cuerpo.padre().qsa('tfoot td')[1].textContent = sumaGastos === 0 && !hayUnNumero ? '0' : sumaGastos.normalizarPrecio()
   return sumaGastos
 }
 
-let formatearCeldas = ({ cells: [, gasto] }) => gasto.innerText = gasto.innerText.aQuetzales()
+let formatearCeldas = ({ cells: [, gasto] }) => gasto.textContent = gasto.textContent.aQuetzales()
 
 bodyOnClick('#resumengastos', async q => {
   let listaTablasValores = qsarr('table').map(tabla => {
     let productos = tabla.qsarr('tbody td:first-child')
     let gastos = tabla.qsarr('tbody td:nth-last-child(2)')
-    return productos.map((p, i) => ({ producto: p.innerText.normalizar(), gastos: gastos[i].innerText.aFloat() || 0, productoDesnormalizado: p.innerText }))
+    return productos.map((p, i) => ({ producto: p.textContent.normalizar(), gastos: gastos[i].textContent.aFloat() || 0, productoDesnormalizado: p.textContent }))
   })
 
   let p = {}
@@ -350,7 +353,7 @@ bodyOnClick('#resumengastos', async q => {
         ;[...cuerpo.rows].forEach(x => formatearCeldas(x))
       formatearCeldas(qs('#tablaresumen tfoot tr'))
       let dividir = esMesActual ? moment().format('D') : moment(fechaUrl, 'DD-MM-YYYY').endOf('month').format('D') ?? 0
-      qs('.cambiarfecha').innerText = (sumaGastos / dividir).normalizarPrecio().aQuetzales()
+      qs('.cambiarfecha').textContent = (sumaGastos / dividir).normalizarPrecio().aQuetzales()
 
       qs('#exportarAPDFResumen').inicializar(() => {
         let tabla = qs('#tablaresumen')
@@ -416,14 +419,14 @@ bodyOnClick('#tablaresumen th', function () {
   let listaIdentifObjValores = []
   let listaReordenarPlantillasHelper = []
   let indiceColumna = this.cellIndex
-  let nombreColumna = this.innerText
+  let nombreColumna = this.textContent
 
   if (nombreColumna === 'Vendidos') indiceColumna = cuerpo.rows[0].cells.length - 2
   else if (nombreColumna === 'Ingresos') indiceColumna = cuerpo.rows[0].cells.length - 1
   else if (nombreColumna === 'Sale' || nombreColumna === 'Entra') indiceColumna += colsinicio
   cuerpo.querySelectorAll('tr').forEach((fila, indice) => {
-    listaReordenarPlantillasHelper.push(fila.cells[0].innerText.normalizar())
-    let textoCelda = fila.cells[indiceColumna].innerText.toUpperCase()
+    listaReordenarPlantillasHelper.push(fila.cells[0].textContent.normalizar())
+    let textoCelda = fila.cells[indiceColumna].textContent.toUpperCase()
     if (esResumen && nombreColumna !== 'Productos') textoCelda = textoCelda.replace(/[^0-9.]/g, '')
     objValores[textoCelda + separador + indice] = fila.outerHTML.replace(/(\t)|(\n)/g, '')
     listaIdentifObjValores.push(textoCelda + separador + indice)
@@ -432,13 +435,13 @@ bodyOnClick('#tablaresumen th', function () {
   if (!esResumen && !objReordenarPlantillas[tabla.closest('.tabContent').dataset.tabid]) objReordenarPlantillas[tabla.closest('.tabContent').dataset.tabid] = listaReordenarPlantillasHelper
 
   let listaElementosColumna = cuerpo.qsarr(`td:nth-child(${indiceColumna + 1})`)
-  let todosSonNumeros = esResumen && nombreColumna !== 'Productos' ? true : listaElementosColumna.every(x => !isNaN(x.innerText.aFloat()))
+  let todosSonNumeros = esResumen && nombreColumna !== 'Productos' ? true : listaElementosColumna.every(x => !isNaN(x.textContent.aFloat()))
 
   if (todosSonNumeros) {
     listaIdentifObjValores.sort((a, b) => {
       let aa = a.split(separador)
       let bb = b.split(separador)
-      return aa[0] != bb[0] ? aa[0] - bb[0] : cuerpo.rows[aa[1].aInt()].cells[0].innerText.localeCompare(cuerpo.rows[bb[1].aInt()].cells[0].innerText)
+      return aa[0] != bb[0] ? aa[0] - bb[0] : cuerpo.rows[aa[1].aInt()].cells[0].textContent.localeCompare(cuerpo.rows[bb[1].aInt()].cells[0].textContent)
     })
   } else listaIdentifObjValores.sort()
 

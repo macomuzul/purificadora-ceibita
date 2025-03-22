@@ -11,7 +11,7 @@ String.prototype.aUTC = function () {
 String.prototype.fechaGuatemala = function () { return new Intl.DateTimeFormat('es', { timeZone: "America/Guatemala" }).format(this.aUTC()) }
 let camioneros = {}
 camionerosEJS.forEach(x => camioneros[x.nombre] = x.color)
-qsafor(".camionero", x => x.qs(".color").style.background = camioneros[x.qs(".nombreCamionero").innerText])
+qsafor(".camionero", x => x.qs(".color").style.background = camioneros[x.qs(".nombreCamionero").textContent])
 
 let eventosCalendario = []
 diasEJS.forEach(({ camioneros: cam, _id, ultimocambio, usuario }) => cam.forEach((c, i) => eventosCalendario.push({ name: `Camión ${(i + 1)}`, description: `Conductor: ${c}`, date: _id.aUTC().toDateString(), type: i + "", ultimocambio, usuario, color: camioneros[c] })))

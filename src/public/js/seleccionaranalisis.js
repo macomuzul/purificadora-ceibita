@@ -15,7 +15,7 @@ let destruirCalendario = q => {
 }
 let borrarFechas = q => {
   datepicker.datepicker('clearDates')
-  textoDatePicker.innerText = ''
+  textoDatePicker.textContent = ''
   filasIndice = [], listaFechas = []
 }
 
@@ -25,7 +25,7 @@ function ordenar(e) {
     let indices = [...dates.keys()]
     indices.sort((a, b) => dates[a] - dates[b])
     let ordenado = dates.map((_, i) => format(indices[i])).join(', ')
-    textoDatePicker.innerText = ordenado
+    textoDatePicker.textContent = ordenado
     datepicker.find('input').val(ordenado)
   }
   let clase = { dias: 'day', semanas: 'week', meses: 'month', años: 'year' }[unidadTiempo]
@@ -44,7 +44,7 @@ function mostarValores() {
   listaFechas.sort((a, b) => a - b)
   let fechas = listaFechas.map(x => moment(x).day(1).format('DD/MM/YYYY') + '-' + moment(x).day(7).format('DD/MM/YYYY')).join(', ')
   calendario.val(fechas)
-  textoDatePicker.innerText = fechas
+  textoDatePicker.textContent = fechas
 }
 let display = q => filasIndice.forEach(i => $(`.datepicker-days tbody tr:nth-child(${i + 1})`).addClass('active'))
 
@@ -97,7 +97,7 @@ qs('[data-idseleccionado="rango"]').metododropdown = c => {
   visibilidad(textoDatePicker, l)
   visibilidad(qs('#datepickerNormal'), !entre)
   visibilidad(qs('#datepickerEntre'), entre)
-  btnBorrarFechas.innerText = l ? 'Borrar fechas seleccionadas' : 'Borrar fecha seleccionada'
+  btnBorrarFechas.textContent = l ? 'Borrar fechas seleccionadas' : 'Borrar fecha seleccionada'
   if (l) crearDatPickerMultidate(agruparPor)
   else {
     unidadTiempo = 'dias'
@@ -137,4 +137,4 @@ bodyOnClick('#btnbuscar', c => {
 })
 
 bodyOnClick('.btnBorrarFechas', borrarFechas)
-document.addEventListener('eventoDP', crearDatePicker)
+crearDatePicker()

@@ -29,10 +29,10 @@ function enfocarCelda(x, e) {
 
 
 function irAlFinalDelTexto(elem) {
-  if (elem.innerText == '') return
+  if (elem.textContent == '') return
   let range = document.createRange()
   let sel = getSelection()
-  range.setStart(elem.childNodes[0], elem.innerText.length)
+  range.setStart(elem.childNodes[0], elem.textContent.length)
   sel.removeAllRanges()
   sel.addRange(range)
 }
@@ -44,13 +44,13 @@ bodyOn('beforeinput', 'td', (c, e) => {
   if (isNaN(letra) && colindex != 0 && colindex != 1) e.preventDefault()
   if (colindex !== 0 && letra === " ") e.preventDefault()
 
-  let texto = c.innerText
+  let texto = c.textContent
   if (colindex == 1) {
     if (isNaN(letra) && letra !== ".") e.preventDefault()
     let p = texto.indexOf(".")
     if (p > -1 && (letra === "." || (getSelection().baseOffset > p && texto.length - p >= 3 && letra != ""))) e.preventDefault()
   }
-  if (texto === '0') c.innerText = ''
+  if (texto === '0') c.textContent = ''
 })
 
 
@@ -62,7 +62,7 @@ bodyOn('beforeinput', 'input', (c, e) => {
 
 bodyOn('keydown', 'input', (c, e) => {
   if (e.which === 13) {
-    let x = e.target.closest('tab-content').qs('td')
+    let x = e.target.closest('tab-content') ? e.target.closest('tab-content').qs('td') : qs('td')
     x.focus()
     irAlFinalDelTexto(x)
     e.preventDefault()

@@ -9,25 +9,8 @@
 // }
 
 
-.tabContent:not(:first-child) {
-  order: 1;
-  display: none;
-  width: 100%;
-}
-
-
 .mas {
   font-size: 35px;
   translate: 0 -10px;
   text-align: center;
-}
-
-.tabRadio:checked+.tabLabel+.tabContent {
-  display: initial;
-}
-
-.swalTab label{
-  margin-bottom: 10px;
-  width: 150px;
-  height: 56px;
 }

@@ -19,12 +19,10 @@ addEventListener('scroll', q => {
 })
 
 function devuelveTabla(article) {
-  let registro = article.qs('.content').clonar()
-  registro.qs('tab-content').esconder()
-  let html = `<custom-tabs><div class="tabs">
-  ${registro.qsarr('table').map((_, i) => `<tab-label>Camión ${i + 1}</tab-label>`).join('')}
-  </div> ${registro.outerHTML}</custom-tabs>`
-  return { html, fecha: article.qs(`.fecharegistro .spanFechaStr`).innerText, fechaDate: new Date(article.qs('span-fechas').dataset.fecha) }
+  let registro = article.qs('custom-tabs').clonar()
+  registro.qsafor('tab-content', x => x.style.display = 'none')
+  registro.qs('tab-content').style.display = 'block'
+  return { html: registro.outerHTML, fecha: article.qs(`.spanFechaStr`).textContent, fechaDate: new Date(article.qs('span-fechas').dataset.fecha) }
 }
 
 bodyOnClick('.btnrestaurar', async c => {
@@ -54,9 +52,9 @@ bodyOnClick('.btneliminar', async c => {
   if (await swalSíNo('Estás seguro que deseas borrar este registro?', html)) borrarRegistros(regs, `El registro con fecha: ${fecha} se ha borrado correctamente`)
 })
 
-$("body").on("click", ".restaurarsoloestatabla", async c => {
+bodyOnClick('.restaurarsoloestatabla', async c => {
   let registro = c.closest('article')
-  let tabla = registro.qsarr('tab-content').filter(x => !x.hidden)
+  let tabla = registro.qsarr('tab-content').filter(x => x.style.display != 'none')
   let fecha = registro.qs('.fecharegistro .spanFechaStr').textContent
   if (await swalSíNo("Estás seguro que deseas restaurar esta tabla?", tabla.outerHTML)) {
     if (await swalSíNo(`Si restauras vas a sobreescribir el registro con fecha ${fecha}`, tabla.outerHTML)) {

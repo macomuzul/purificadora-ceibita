@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const ResumenDia = require("../models/resumenDia")
 const { ResumenSemana, ResumenMes, ResumenAño } = require("../models/resumenes")
-const { DateTime } = require("luxon");
+const { DateTime } = require("luxon")
 const devuelveValoresSumados = require("../utilities/devuelveValoresSumados")
 
 router.get('/', async (req, res) => res.render('seleccionaranalisis', { esAdmin: esAdmin(req) }))
@@ -76,10 +76,11 @@ async function rangoEntreAños(fecha1, fecha2) {
   }
 }
 
-router.get("/:agruparPorP(agruparpor=(dias|semanas|meses|a%C3%B1os))&:rangoP(rango=(mayor|menor|libre|entre))&:fechaP", tcrutas(async (req, res) => {
+router.get("/:agruparPorP&:rangoP&:fechaP", tcrutas(async (req, res) => {
   let { rangoP, agruparPorP, fechaP } = req.params
+  if (!/^agruparpor=(dias|semanas|meses|años)$/.test(agruparPorP)) throw new Error()
+  if (!/^rango=(mayor|menor|libre|entre)$/.test(rangoP)) throw new Error()
   if (!/^(dias|semanas|meses|años)=.*/.test(fechaP)) throw new Error()
-
   let [, rango] = rangoP.split("=")
   let [, agruparPor] = agruparPorP.split("=")
   let [unidadTiempo, fecha] = fechaP.split("=")
