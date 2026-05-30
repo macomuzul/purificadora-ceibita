@@ -82,6 +82,23 @@ app.use('/empleados', require('./routes/empleados'))
 app.use('/configuraciones', require('./routes/configuraciones'))
 app.use('/analisis', require('./routes/analisis'))
 app.use('/gastos', require('./routes/gastos'))
-app.get('*', (req, res) => res.send('La página a la que deseas acceder no existe :('))
+app.get('*eso', (req, res) => res.send('La página a la que deseas acceder no existe :('))
 
 app.listen(app.get('port'), () => console.log('servidor funcionando en el puerto: ', app.get('port')))
+
+
+
+
+
+
+
+  // const calcularTodosLosResumenesPorDia = require("./utilities/crearresumenespordia");
+  // calcularTodosLosResumenesPorDia()
+
+  // const { ResumenSemana, ResumenMes } = require("./models/resumenes")
+  // const convertirRegistrosPorSemanaYMes = require("./utilities/crearresumenesporsemanaymes");
+  // convertirRegistrosPorSemanaYMes("week", ResumenSemana)
+  // convertirRegistrosPorSemanaYMes("month", ResumenMes)
+
+  // const calcularTodosLosResumenesPorAño = require("./utilities/crearresumenesporaño");
+  // calcularTodosLosResumenesPorAño()

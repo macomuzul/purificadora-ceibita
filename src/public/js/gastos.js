@@ -1,454 +1,627 @@
 let decodificarStr = s => s.replaceAll('&#34;', '"')
-let decodificado = decodificarStr(datosString), datos = JSON.parse(decodificado)
-let mb = qs('modal-body')
-
-let svgCalcu = `<svg fill="#FFF" width="20px" height="20px" viewBox="0 0 79.518 79.518" class="svgcalcu"><g><g><path d="M72.799,1.569L72.799,1.569C72.799,1.569,72.573,1.569,72.799,1.569C72.127,0.448,71.006,0,69.887,0l0,0H9.631l0,0    C7.614,0,6.047,1.569,6.047,3.584l0,0v3.137v11.647v6.496v11.648v6.494v11.648v6.496v11.646v3.137l0,0    c0,0.672,0.224,1.344,0.672,2.018l0,0l0,0c0.672,0.896,1.792,1.566,2.912,1.566l0,0h60.256l0,0c2.016,0,3.584-1.566,3.584-3.584    l0,0v-3.137V61.152v-6.495v-11.65v-6.494V24.865v-6.496V6.721V3.584l0,0C73.245,2.689,73.023,2.24,72.799,1.569z M28.895,68.32    c0,0.896-0.672,1.568-1.567,1.568h-8.287c-0.896,0-1.568-0.673-1.568-1.568v-3.584c0-0.896,0.672-1.567,1.568-1.567h8.287    c0.896,0,1.567,0.672,1.567,1.567V68.32z M28.895,56.225c0,0.896-0.672,1.567-1.567,1.567h-8.287    c-0.896,0-1.568-0.672-1.568-1.567v-3.584c0-0.896,0.672-1.567,1.568-1.567h8.287c0.896,0,1.567,0.672,1.567,1.567V56.225z     M28.895,44.354c0,0.896-0.672,1.565-1.567,1.565h-8.287c-0.896,0-1.568-0.672-1.568-1.565V40.77c0-0.896,0.672-1.568,1.568-1.568    h8.287c0.896,0,1.567,0.672,1.567,1.568V44.354z M45.245,68.32c0,0.896-0.672,1.568-1.565,1.568h-8.289    c-0.896,0-1.568-0.673-1.568-1.568v-3.584c0-0.896,0.673-1.567,1.568-1.567h8.289c0.896,0,1.565,0.672,1.565,1.567V68.32z     M45.245,56.225c0,0.896-0.672,1.567-1.565,1.567h-8.289c-0.896,0-1.568-0.672-1.568-1.567v-3.584    c0-0.896,0.673-1.567,1.568-1.567h8.289c0.896,0,1.565,0.672,1.565,1.567V56.225z M45.245,44.354c0,0.896-0.672,1.565-1.565,1.565    h-8.289c-0.896,0-1.568-0.672-1.568-1.565V40.77c0-0.896,0.673-1.568,1.568-1.568h8.289c0.896,0,1.565,0.672,1.565,1.568V44.354z     M61.822,68.32c0,0.896-0.672,1.568-1.567,1.568h-8.286c-0.896,0-1.568-0.673-1.568-1.568v-3.584c0-0.896,0.672-1.567,1.568-1.567    h8.286c0.896,0,1.567,0.672,1.567,1.567V68.32z M61.822,56.225c0,0.896-0.672,1.567-1.567,1.567h-8.286    c-0.896,0-1.568-0.672-1.568-1.567v-3.584c0-0.896,0.672-1.567,1.568-1.567h8.286c0.896,0,1.567,0.672,1.567,1.567V56.225z     M61.822,44.354c0,0.896-0.672,1.565-1.567,1.565h-8.286c-0.896,0-1.568-0.672-1.568-1.565V40.77c0-0.896,0.672-1.568,1.568-1.568    h8.286c0.896,0,1.567,0.672,1.567,1.568V44.354z M62.493,31.809L62.493,31.809c0,0.896-0.673,1.566-1.567,1.566H18.143    c-0.896,0-1.567-0.672-1.567-1.566V10.977c0-0.896,0.672-1.568,1.567-1.568h42.783c0.896,0,1.567,0.672,1.567,1.568V31.809z"/><path d="M28.447,19.712c-1.566-0.672-2.238-0.896-2.238-1.567c0-0.448,0.446-0.896,1.566-0.896c1.345,0,2.018,0.448,2.464,0.672    l0.448-2.016c-0.672-0.224-1.344-0.448-2.464-0.672v-1.568h-1.792v1.792c-1.792,0.448-2.912,1.568-2.912,3.136    c0,1.793,1.344,2.688,3.136,3.137c1.346,0.448,1.792,0.896,1.792,1.567s-0.672,1.121-1.792,1.121    c-1.119,0-2.238-0.448-2.911-0.672l-0.447,2.017c0.672,0.446,1.792,0.672,2.912,0.672v1.792h1.792v-2.018    c2.016-0.446,3.136-1.791,3.136-3.358C31.359,21.504,30.463,20.385,28.447,19.712z"/><path d="M40.543,19.712c-1.568-0.672-2.24-0.896-2.24-1.567c0-0.448,0.448-0.896,1.567-0.896c1.345,0,2.017,0.448,2.464,0.672    l0.448-2.016c-0.673-0.224-1.345-0.448-2.464-0.672v-1.568h-1.792v1.792c-1.792,0.448-2.912,1.568-2.912,3.136    c0,1.793,1.346,2.688,3.138,3.137c1.344,0.448,1.792,0.896,1.792,1.567s-0.673,1.121-1.792,1.121c-1.12,0-2.24-0.448-2.912-0.672    l-0.448,2.017c0.672,0.446,1.792,0.672,2.912,0.672v1.792h1.792v-2.018c2.016-0.446,3.137-1.791,3.137-3.358    C43.68,21.504,42.782,20.385,40.543,19.712z"/><path d="M52.863,19.712c-1.566-0.672-2.238-0.896-2.238-1.567c0-0.448,0.445-0.896,1.566-0.896c1.345,0,2.018,0.448,2.463,0.672    l0.449-2.016c-0.672-0.224-1.346-0.448-2.465-0.672v-1.568h-1.791v1.792c-1.793,0.448-2.912,1.568-2.912,3.136    c0,1.793,1.344,2.688,3.135,3.137c1.346,0.448,1.793,0.896,1.793,1.567s-0.672,1.121-1.793,1.121    c-1.118,0-2.239-0.448-2.911-0.672l-0.447,2.016c0.672,0.446,1.791,0.672,2.911,0.672v1.792h1.791v-2.018    c2.018-0.446,3.139-1.791,3.139-3.358C55.775,21.504,54.879,20.385,52.863,19.712z"/></g></g></svg>`
-
-String.prototype.aQuetzales = function () { return new Intl.NumberFormat('es-GT', { style: 'currency', currency: 'GTQ' }).format(this.aFloat()) }
-String.prototype.cantidadFormateada = function () { return new Intl.NumberFormat('es-GT').format(this.aFloat()) }
-let cerrarSwal = q => Swal.close()
-
-let switchGastosFijosExcel = -1
-let switchGastosMixtosExcel = -1
-let switchGastosPorProductoExcel = -1
-let switchGastosFijosPDF = -1
-let switchGastosMixtosPDF = -1
-let switchGastosPorProductoPDF = -1
-let fechastr = qs('#fechames').textContent.replace('del mes ', '')
-
-
-let alargar = x => {
-  if (x === '<-') return 'alargarancho'
-  if (x === '=') return 'alargaralto'
-  return ''
+let decodificado = decodificarStr(camionerosEJS)
+camionerosEJS = JSON.parse(decodificado)
+decodificado = decodificarStr(diasEJS)
+diasEJS = JSON.parse(decodificado)
+String.prototype.aUTC = function () {
+  const [datePart] = this.split('T')
+  const [year, month, day] = datePart.split('-').map(Number)
+  return new Date(year, month - 1, day)
 }
+String.prototype.fechaGuatemala = function () { return new Intl.DateTimeFormat('es', { timeZone: "America/Guatemala" }).format(this.aUTC()) }
+let camioneros = {}
+camionerosEJS.forEach(x => camioneros[x.nombre] = x.color)
+qsafor(".camionero", x => x.qs(".color").style.background = camioneros[x.qs(".nombreCamionero").textContent])
 
-let grid = [
-  [7, 8, 9, '<-'],
-  [4, 5, 6, '*', '/'],
-  [1, 2, 3, '-', '='],
-  ['C', 0, '.', '+'],
-]
+let eventosCalendario = []
+diasEJS.forEach(({ camioneros: cam, _id, ultimocambio, usuario }) => cam.forEach((c, i) => eventosCalendario.push({ name: `Camión ${(i + 1)}`, description: `Conductor: ${c}`, date: _id.aUTC().toDateString(), type: i + "", ultimocambio, usuario, color: camioneros[c] })))
 
-qs('main').añadirHTML(`<div class="calculadora" hidden>
-<div class="movercalcu">
-<div class="divcerrarcalcu"><div class="cerrarcalcu">❌</div></div>
-<div class="pantallacalcu"></div>
-</div>
-<div class="botonescalcu">${grid.map(x => `${x.map(y => `<button class="botoncalcu ${alargar(y)}">${y}</button>`).join('')}`).join('')}</div>
-</div>`)
+alCargar(q => $("#demoEvoCalendar").evoCalendar("setTheme", "Midnight Blue"))
 
 
-let pantallacalcu
-let calculadora = qs('.calculadora')
-let mostrarCalculadora = qs('#mostrarcalculadora')
-$(calculadora).draggable(esTouch ? { handle: '.movercalcu' } : {})
-
-pantallacalcu = qs('.pantallacalcu')
-bodyOnClick('.botoncalcu', c => {
-  let eventos = {
-    C: q => '',
-    '<-': q => pantallacalcu.textContent.slice(0, -1),
-    '=': q => { try { return eval(pantallacalcu.textContent) } catch { return 'Operación no válida' } },
-  }
-  let tecla = c.textContent
-  let texto = eventos[tecla]?.() ?? pantallacalcu.textContent + tecla
-  pantallacalcu.textContent = texto
-})
-
-qs('#gastosfijos').inicializar(datos.fijos, 'Tabla de gastos fijos', 'tablagastosfijos', false)
-qs('#gastosmixtos').inicializar(datos.mixtos, 'Tabla de gastos mixtos', 'tablagastosmixtos', false)
-qs('#gastosporproducto').inicializar(datos.productos, 'Tabla de gastos por compra de productos', 'tablagastosproductos', true)
-
-let url = '/gastos/'
-let [_, fechaUrl] = location.pathname.split(url)
-let inicioMes = moment(fechaUrl, 'DD-MM-YYYY').format('DD-MM-YYYY')
-let finMes = moment(fechaUrl, 'DD-MM-YYYY').endOf('month').format('DD-MM-YYYY')
-let esMesActual = moment().isSame(moment(fechaUrl, 'DD-MM-YYYY'), 'month')
-
-let convierteDatePicker = dp => {
-  dp.datepicker({ weekStart: 1, language: 'es', autoclose: true, todayHighlight: true, format: 'dd/mm/yyyy', maxViewMode: 0, startDate: inicioMes, endDate: finMes })
-  dp.datepicker().on('changeDate', a => enfocarCelda(a.currentTarget.padre().sig()))
-}
-setTimeout(() => {
-  convierteDatePicker($(`.divdatepicker`))
-}, 200);
-
-mostrarcalculadora.onclick = e => {
-  if (!calculadora.hidden) esconderCalculadora()
-  else {
-    calculadora.mostrar()
-    mostrarcalculadora.html(svgCalcu + ' Esconder calculadora')
-  }
-}
-
-bodyOnClick('.cerrarcalcu', esconderCalculadora)
-
-function esconderCalculadora() {
-  calculadora.esconder()
-  mostrarcalculadora.html(svgCalcu + ' Mostrar calculadora')
-}
-
-bodyOnClick('#mesanterior', q => location = url + moment(fechaUrl, 'DD-MM-YYYY').subtract(1, 'month').format('DD-MM-YYYY'))
-bodyOnClick('#messiguiente', q => location = url + moment(fechaUrl, 'DD-MM-YYYY').add(1, 'month').format('DD-MM-YYYY'))
-
-bodyOn('keydown', 'td', (c, e) => {
-  let k = e.which
-  let cellindex = c.indice()
-  let filas = c.closest("tbody").rows
-  let { atStart, atEnd } = k == 37 || k == 39 ? getSelectionTextInfo(c) : {}
-  if (k == 37 && atStart) //flecha izquierda
-    enfocarCelda(c.ant(), e)
-  else if ((k == 39 && atEnd) || k === 13) //flecha derecha
-  {
-    if (cellindex === 0) {
-      e.preventDefault()
-      $(c.sig().children[0]).datepicker('show')
-      c.blur()
-    }
-    else enfocarCelda(c.sig(), e)
-  }
-  else if (k == 38) //flecha arriba
-    c.padre().indice() === 0 ? enfocarCelda([...filas].at(-1).cells[cellindex - 1], e) : enfocarCelda(c.closest("tr").ant().cells[cellindex], e)
-  else if (k == 40) //enter y flecha abajo
-    c.closest("tr").rowIndex < filas.length ? enfocarCelda(c.closest("tr").sig().cells[cellindex], e) : enfocarCelda(filas[0].cells[cellindex + 1], e)
-})
 
 
-function enfocarCelda(x, e) {
-  e?.preventDefault()
-  if (x !== undefined && x.contentEditable) {
-    x.focus()
-    let range = document.createRange()
-    let sel = getSelection()
-    if (x.textContent == '') return
-    range.setStart(x.childNodes[0], x.textContent.length)
-    range.collapse(false)
+let fechaseleccionada
+let stringCheck = d => d.replace(/[^\w]/g, '\\$&')
+let devuelveFecha = dia => new Intl.DateTimeFormat('es', { dateStyle: 'full' }).format(new Date(dia.ultimocambio))
+let esFechaValida = d => new Date(d) && !isNaN(new Date(d).getTime())
 
-    sel.removeAllRanges()
-    sel.addRange(range)
+  ; (function (factory) {
+    'use strict';
+    if (typeof define === 'function' && define.amd)
+      define(['jquery'], factory)
+    else if (typeof exports !== 'undefined')
+      module.exports = factory(require('jquery'))
+    else
+      factory(jQuery)
 
-    let rect = x.getBoundingClientRect()
-    if (rect.x + rect.width > innerWidth || rect.y + rect.height > innerHeight) x.scrollIntoView()
-  } else if (x.qsa('input').length > 0) x.qs('input').focus()
-}
+  }(function ($) {
+    'use strict';
+    var EvoCalendar = EvoCalendar || {};
 
-bodyOn('keyup', '.tablagastosproductos td', c => {
-  if (c.cellIndex === 2 || c.cellIndex === 3) {
-    let celdaGasto = c.closest('tr').qs('td:nth-child(5)')
-    let resultado = celdaGasto.ant().textContent.aFloat() * celdaGasto.ant().ant().textContent.aFloat()
-    celdaGasto.textContent = !isNaN(resultado) ? resultado.normalizarPrecio() : ''
-  }
-})
+    EvoCalendar = (function () {
+      var instanceUid = 0;
+      function EvoCalendar(element, settings) {
+        var _ = this;
+        _.defaults = {
+          theme: null,
+          format: 'mm/dd/yyyy',
+          titleFormat: 'MM yyyy',
+          eventHeaderFormat: 'MM d, yyyy',
+          firstDayOfWeek: 0,
+          language: 'en',
+          todayHighlight: false,
+          sidebarDisplayDefault: true,
+          sidebarToggler: true,
+          eventDisplayDefault: true,
+          eventListToggler: true,
+          calendarEvents: null
+        };
+        _.options = $.extend({}, _.defaults, settings);
 
-bodyOn('beforeinput', 'td', (c, e) => {
-  let letra = e.data ?? ''
-  let colindex = c.indice()
-  let texto = c.textContent
-  let celdas = [...c.padre().cells]
-  let permiteDecimales = c === celdas[2]
-  let esUltimaCelda = c === celdas.at(-1)
-  if (letra === '"' || letra === '\\' || letra === "'") e.preventDefault()
-  if (isNaN(letra) && colindex != 0 && !permiteDecimales && !esUltimaCelda) e.preventDefault()
-  if (colindex !== 0 && letra === ' ' && !esUltimaCelda) e.preventDefault()
-
-  if (permiteDecimales) {
-    if (isNaN(letra) && letra !== ".") e.preventDefault()
-    let p = texto.indexOf(".")
-    if (p > -1 && (letra === "." || (getSelection().baseOffset > p && texto.length - p >= 3 && letra != ""))) e.preventDefault()
-  }
-
-  if (texto === '0') c.textContent = ''
-})
-
-function getSelectionTextInfo(x) {
-  let atStart = false, atEnd = false
-  let selRange, testRange
-  let sel = getSelection()
-  if (sel.rangeCount) {
-    selRange = sel.getRangeAt(0)
-    testRange = selRange.cloneRange()
-
-    testRange.selectNodeContents(x)
-    testRange.setEnd(selRange.startContainer, selRange.startOffset)
-    atStart = testRange.toString() == ''
-
-    testRange.selectNodeContents(x)
-    testRange.setStart(selRange.endContainer, selRange.endOffset)
-    atEnd = testRange.toString() == ''
-  }
-  return { atStart, atEnd }
-}
-
-let mostrarError = async (e, titulo = 'Error') => (await Swal.fire(titulo, e, 'error'), false)
-bodyOnClick('#guardarcambios', async q => {
-  esValido = false
-  if (!await validarDatos()) return
-  let data = { ultimocambio: Date.now() }
-  qsafor('tabla-gastos', x => (data[x.id.replace('tablagastos', '')] = x.qsarr('tbody tr').map(y => y.qsarr('td').map((z, i) => (i !== 1 ? z.textContent : z.qs('input').value)))))
-  hazPost('', JSON.stringify(data), q => swalExito('Se ha guardado el registro de los gastos exitosamente'))
-})
-
-let borrarEnfocarFilas = tabla => tabla.qs('.cuerpo td').quitarClase('enfocar')
-let esValido = false
-
-async function validarDatos() {
-  let valido = []
-  await Promise.all(qsarr('tabla-gastos').filter(x => x.qs('table')).map(async x => {
-    let tabla = x.qs('.divtablagastos')
-    let tablaCopia = tabla.clonar()
-    let hayDatosVacios = false
-    tablaCopia.qsafor('tbody tr', async fila => {
-      [...fila.cells].forEach((x, i) => {
-        if (((i === 1 && x.qs('input').value === '') || (i !== 1 && x.textContent === '')) && !$(x).is(':last-child')) {
-          hayDatosVacios = true
-          x.closest('tr').añadirClase('enfocar')
+        _.initials = {
+          default_class: $(element)[0].classList.value,
+          validParts: /dd?|DD?|mm?|MM?|yy(?:yy)?/g,
+          dates: {
+            en: {
+              days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+              daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+              daysMin: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+              months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+              monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+              noEventForToday: "No event for today.. so take a rest! :)",
+              noEventForThisDay: "No event for this day.. so take a rest! :)",
+              previousYearText: "Previous year",
+              nextYearText: "Next year",
+              closeSidebarText: "Close sidebar",
+              closeEventListText: "Close event list"
+            },
+            es: {
+              days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+              daysShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+              daysMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+              months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+              monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+              noEventForToday: "Aún no ha registrado los productos vendidos de hoy",
+              noEventForThisDay: "No existe ningún registro para este día",
+              previousYearText: "Año anterior",
+              nextYearText: "El próximo año",
+              closeSidebarText: "Cerrar la barra lateral",
+              closeEventListText: "Cerrar la lista de eventos"
+            },
+          }
         }
-      })
-    })
+        _.initials.weekends = { sun: _.initials.dates[_.options.language].daysShort[0], sat: _.initials.dates[_.options.language].daysShort[6] }
 
-    if (!hayDatosVacios) {
-      valido.push(true)
-      return true
+        // Format Calendar Events into selected format
+        if (_.options.calendarEvents != null) _.options.calendarEvents.forEach(x => esFechaValida(x.date) && (x.date = _.formatDate(x.date, _.options.format)))
+
+        // Global variables
+        _.startingDay = null
+        _.monthLength = null
+        _.windowW = $(window).width()
+
+        _.$current = {
+          month: (isNaN(this.month) || this.month == null) ? new Date().getMonth() : this.month,
+          year: (isNaN(this.year) || this.year == null) ? new Date().getFullYear() : this.year,
+          date: _.formatDate(_.initials.dates[_.defaults.language].months[new Date().getMonth()] + ' ' + new Date().getDate() + ' ' + new Date().getFullYear(), _.options.format)
+        }
+        _.$active = { month: _.$current.month, year: _.$current.year, date: _.$current.date, event_date: _.$current.date, events: [] }
+
+        // LABELS
+        _.$label = { days: [], months: _.initials.dates[_.defaults.language].months, days_in_month: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] }
+
+        // HTML Markups (template)
+        _.$markups = { calendarHTML: '', mainHTML: '', sidebarHTML: '', eventHTML: '' }
+        // HTML DOM elements
+        _.$elements = {
+          calendarEl: $(element), innerEl: null, sidebarEl: null, eventEl: null,
+          sidebarToggler: null, eventListToggler: null,
+          activeDayEl: null, activeMonthEl: null, activeYearEl: null
+        }
+        _.$breakpoints = { tablet: 768, mobile: 425 }
+        _.$UI = { hasSidebar: true, hasEvent: true }
+
+        _.formatDate = $.proxy(_.formatDate, _)
+        _.selectDate = $.proxy(_.selectDate, _)
+        _.selectMonth = $.proxy(_.selectMonth, _)
+        _.selectYear = $.proxy(_.selectYear, _)
+        _.selectEvent = $.proxy(_.selectEvent, _)
+        _.toggleSidebar = $.proxy(_.toggleSidebar, _)
+        _.toggleEventList = $.proxy(_.toggleEventList, _)
+
+        _.instanceUid = instanceUid++
+
+        _.init(true)
+      }
+
+      return EvoCalendar
+
+    }())
+
+    // v1.0.0 - Initialize plugin
+    EvoCalendar.prototype.init = function (init) {
+      var _ = this;
+
+      if (!$(_.$elements.calendarEl).hasClass('calendar-initialized')) {
+        $(_.$elements.calendarEl).addClass('evo-calendar calendar-initialized');
+        if (_.windowW <= _.$breakpoints.tablet) { // tablet/mobile
+          _.toggleSidebar(false)
+          _.toggleEventList(false)
+        } else {
+          _.options.sidebarDisplayDefault ? _.toggleSidebar(true) : _.toggleSidebar(false)
+          _.options.eventDisplayDefault ? _.toggleEventList(true) : _.toggleEventList(false)
+        }
+        if (_.options.theme) _.setTheme(_.options.theme); // set calendar theme
+        _.buildTheBones(); // start building the calendar components
+      }
     }
-    valido.push(false)
-    let { isConfirmed } = await swalConfirmarYCancelar.fire({
-      title: `<h3>Faltan datos en la ${tabla.closest('tabla-gastos').titulo.toLowerCase()}. Por favor llena la tabla antes de continuar</h3>`,
-      icon: 'error',
-      width: innerWidth * 3 / 4,
-      html: tablaCopia,
-      showCancelButton: true,
-      stopKeydownPropagation: false,
-      confirmButtonText: 'Ya lo arreglé',
-      cancelButtonText: 'Volver',
-      didOpen: q => convierteDatePicker(tablaCopia.qs(`.divdatepicker`))
-    })
 
-    if (!isConfirmed) return false
-    borrarEnfocarFilas(tablaCopia)
-    let filasCopia = tablaCopia.qs('tbody tr')
-    tabla.qsafor('tbody tr', (i, fila) => {
-      let filaCopia = filasCopia[i]
-        ;[...fila.cells].forEach((x, j) => j === 1 ? (x.qs('input').value = filaCopia.cells[j].qs('input').value) : (x.textContent = filaCopia.cells[j].textContent))
-    })
+    EvoCalendar.prototype.limitTitle = function (title, limit) {
+      var newTitle = []
+      limit = limit === undefined ? 18 : limit;
+      if ((title).split(' ').join('').length > limit) {
+        var t = title.split(' ');
+        for (var i = 0; i < t.length; i++) {
+          if (t[i].length + newTitle.join('').length <= limit) newTitle.push(t[i])
+        }
+        return newTitle.join(' ') + '...'
+      }
+      return title
+    }
 
-    return await validarDatos()
-  }))
+    EvoCalendar.prototype.parseFormat = function (format) {
+      var _ = this;
+      if (typeof format.toValue === 'function' && typeof format.toDisplay === 'function') return format
+      var separators = format.replace(_.initials.validParts, '\0').split('\0'), parts = format.match(_.initials.validParts)
+      return { separators, parts }
+    }
 
-  if (esValido) return true
-  if (valido.every(x => x)) {
-    esValido = true
-    return true
-  }
-  return false
-}
+    EvoCalendar.prototype.formatDate = function (date, format, language) {
+      var _ = this
+      if (!date) return ''
+      language = language ? language : _.defaults.language
+      if (typeof format === 'string') format = _.parseFormat(format)
+      if (format.toDisplay) return format.toDisplay(date, format, language)
 
-let convertirDatepickerATexto = tablaClon => tablaClon.qsafor('input', (x, i) => x.closest('td').textContent = x.value)
+      var ndate = new Date(date)
+      fechaseleccionada = ndate
+      var val = {
+        d: ndate.getDate(),
+        D: _.initials.dates[language].daysShort[ndate.getDay()],
+        DD: _.initials.dates[language].days[ndate.getDay()],
+        m: ndate.getMonth() + 1,
+        M: _.initials.dates[language].monthsShort[ndate.getMonth()],
+        MM: _.initials.dates[language].months[ndate.getMonth()],
+        yy: ndate.getFullYear().toString().substring(2),
+        yyyy: ndate.getFullYear()
+      };
 
-let botonpdf = qs('boton-pdf')
-botonpdf.inicializar(() => {
-  let tablas = qsa('table')
-  if (tablas.length === 0) {
-    mostrarError('No hay ninguna tabla para exportar')
-    setTimeout(() => botonpdf.innerHTML = botonpdf.htmlOriginal, 2000)
-    return
-  }
-  let opciones = qsa('.opcioncheckboxpdf input')
-  return [...tablas].map((x, i) => {
-    if (!opciones[i].checked) return ``
-    let tablaClon = x.clonar()
-    convertirDatepickerATexto(tablaClon)
-    let { tituloHoja, esGastoPorProducto } = x.closest('tabla-gastos')
-    return `<div class="tituloresumen" style="margin-left: ${x.offsetWidth / 2 + (esGastoPorProducto ? -80 : 0)}px; width: ${esGastoPorProducto ? 300 : 180}px;">${tituloHoja}</div><div class="divtablagastos" style="margin-left: ${x.offsetWidth / 2 + 55}px">${tablaClon.outerHTML}</div><br><br>`
-  }).join('')
-}, `Gastos del mes ${fechastr}`, 0.45, 20)
+      val.dd = (val.d < 10 ? '0' : '') + val.d;
+      val.mm = (val.m < 10 ? '0' : '') + val.m;
+      date = [];
+      var seps = $.extend([], format.separators);
+      for (var i = 0, cnt = format.parts.length; i <= cnt; i++) {
+        if (seps.length)
+          date.push(seps.shift());
+        date.push(val[format.parts[i]]);
+      }
+      return date.join('');
+    };
 
-qs('boton-excel').inicializar(function () {
-  let tablas = qsa('table')
-  if (tablas.length === 0) return mostrarError('No hay ninguna tabla para exportar')
+    // v1.0.0 - Get dates between two dates
+    EvoCalendar.prototype.getBetweenDates = function (dates) {
+      var _ = this, betweenDates = [];
+      for (var x = 0; x < _.monthLength; x++) {
+        var active_date = _.formatDate(`${_.$label.months[_.$active.month]} ${(x + 1)} ${_.$active.year}`, _.options.format);
+        if (_.isBetweenDates(active_date, dates))
+          betweenDates.push(active_date)
+      }
+      return betweenDates
+    }
 
-  let nombre = `Resumen de gastos del mes ${fechastr}.xlsx`
-  let workbook = XLSX.utils.book_new()
-  let opciones = qsa('.opcioncheckboxexcel input')
+    // v1.0.0 - Check if date is between the passed calendar date 
+    EvoCalendar.prototype.isBetweenDates = function (active_date, dates) {
+      var sd, ed;
+      if (dates instanceof Array) {
+        sd = new Date(dates[0])
+        ed = new Date(dates[1])
+      } else {
+        sd = new Date(dates)
+        ed = new Date(dates)
+      }
+      return sd <= new Date(active_date) && ed >= new Date(active_date)
+    }
 
-  tablas.forEach((x, i) => {
-    if (!opciones[i].checked) return ``
+    EvoCalendar.prototype.setTheme = function (themeName) {
+      var _ = this
+      var prevTheme = _.options.theme
+      _.options.theme = themeName.toLowerCase().split(' ').join('-')
 
-    let tablaClon = x.clonar()
-    convertirDatepickerATexto(tablaClon)
-    tablaClon.qsafor('td', x => { if (x.textContent === '') x.textContent = '\u00A0' })
-    let { tituloHoja, esGastoPorProducto } = x.closest('tabla-gastos')
+      if (_.options.theme) $(_.$elements.calendarEl).removeClass(prevTheme)
+      if (_.options.theme !== 'default') $(_.$elements.calendarEl).addClass(_.options.theme)
+    }
 
-    let ws = XLSX.utils.table_to_sheet(tablaClon, { raw: true, defval: 'hola' })
-    let range = XLSX.utils.decode_range(ws['!ref'])
-    ws['!cols'] = [{ width: 40 }, ...[...Array(esGastoPorProducto ? 4 : 2)].map(x => ({ width: 15 })), { width: 40 }]
-    ws['!rows'] = [{ hpt: 35 }, ...[...Array(range.e.r - range.s.r)].map(x => ({ hpt: 24 }))]
-    for (let i = range.s.r; i <= range.e.r; i++) {
-      for (let j = range.s.c; j <= range.e.c; j++) {
-        let cell_address = XLSX.utils.encode_cell({ r: i, c: j })
-        let cell = ws[cell_address]
-        if (cell) {
-          this.ajustesCeldasExcel(cell)
-          cell.s.fill = { fgColor: { rgb: i === 0 ? '192435' : '0f0d35' } }
+    EvoCalendar.prototype.resize = function () {
+      var _ = this
+      _.windowW = $(window).width()
+
+      if (_.windowW <= _.$breakpoints.tablet) { // tablet
+        _.toggleSidebar(false);
+        _.toggleEventList(false);
+        _.windowW <= _.$breakpoints.mobile ? $(window).off('click.evocalendar.evo-' + _.instanceUid) : $(window).on('click.evocalendar.evo-' + _.instanceUid, $.proxy(_.toggleOutside, _)) // mobile
+      } else {
+        !_.options.sidebarDisplayDefault ? _.toggleSidebar(false) : _.toggleSidebar(true)
+        !_.options.eventDisplayDefault ? _.toggleEventList(false) : _.toggleEventList(true)
+        $(window).off('click.evocalendar.evo-' + _.instanceUid);
+      }
+    }
+
+    // v1.0.0 - Initialize event listeners
+    EvoCalendar.prototype.initEventListener = function () {
+      var _ = this;
+
+      $(window).off('resize.evocalendar.evo-' + _.instanceUid).on('resize.evocalendar.evo-' + _.instanceUid, $.proxy(_.resize, _));
+
+      if (_.options.sidebarToggler) _.$elements.sidebarToggler.off('click.evocalendar').on('click.evocalendar', _.toggleSidebar)
+      if (_.options.eventListToggler) _.$elements.eventListToggler.off('click.evocalendar').on('click.evocalendar', _.toggleEventList)
+
+      _.$elements.sidebarEl.find('[data-month-val]').off('click.evocalendar').on('click.evocalendar', _.selectMonth)
+      _.$elements.sidebarEl.find('[data-year-val]').off('click.evocalendar').on('click.evocalendar', _.selectYear)
+      _.$elements.eventEl.find('[data-event-index]').off('click.evocalendar').on('click.evocalendar', _.selectEvent)
+    }
+
+    // v1.0.0 - Calculate days (incl. monthLength, startingDays based on :firstDayOfWeekName)
+    EvoCalendar.prototype.calculateDays = function () {
+      var _ = this, nameDays, weekStart, firstDay;
+      _.monthLength = _.$label.days_in_month[_.$active.month]; // find number of days in month
+      if (_.$active.month == 1) { // compensate for leap year - february only!
+        if ((_.$active.year % 4 == 0 && _.$active.year % 100 != 0) || _.$active.year % 400 == 0) {
+          _.monthLength = 29;
+        }
+      }
+      nameDays = _.initials.dates[_.options.language].daysShort;
+      weekStart = _.options.firstDayOfWeek;
+
+      while (_.$label.days.length < nameDays.length) {
+        if (weekStart == nameDays.length) {
+          weekStart = 0;
+        }
+        _.$label.days.push(nameDays[weekStart]);
+        weekStart++;
+      }
+      firstDay = new Date(_.$active.year, _.$active.month).getDay() - weekStart;
+      _.startingDay = firstDay < 0 ? (_.$label.days.length + firstDay) : firstDay;
+    }
+
+    // v1.0.0 - Build the bones! (incl. sidebar, inner, events), called once in every initialization
+    EvoCalendar.prototype.buildTheBones = function () {
+      var _ = this
+      _.calculateDays()
+
+      if (!_.$elements.calendarEl.html()) {
+        var markup = `<div class="calendar-sidebar">
+          <div class="calendar-year">
+          <button class="icon-button" role="button" data-year-val="prev" title="${_.initials.dates[_.options.language].previousYearText}">
+          <span class="chevron-arrow-left"></span>
+          </button>&nbsp;<p></p>&nbsp;
+          <button class="icon-button" role="button" data-year-val="next" title="${_.initials.dates[_.options.language].nextYearText}">
+          <span class="chevron-arrow-right"></span>
+          </button>
+          </div><div class="month-list">
+          <ul class="calendar-months">
+          ${_.$label.months.map((x, i) => `<li class="month" role="button" data-month-val="${i}">${_.initials.dates[_.options.language].months[i]}</li>`).join("")}
+          </ul></div></div>
+          <div class="calendar-inner">
+          <table class="calendar-table">
+          <tr><th colspan="7"></th></tr>
+          <tr class="calendar-header">
+          ${_.$label.days.map((x, i) => `<td class="${`calendar-header-day${_.$label.days[i] === _.initials.weekends.sat || _.$label.days[i] === _.initials.weekends.sun ? " --weekend" : ""}`}">${_.$label.days[i]}</td>`).join("")}
+          </tr></table></div>
+        <div class="calendar-events">
+          <div class="event-header"><p></p></div>
+          <div class="event-list"></div>
+          <div id="ultimaModificacion"></div>
+          <input class="boton" type="submit" id="irARegistrarVentas" onclick="irARegistrarVentas()" value="Crear nuevo registro"/>
+        </div>`
+
+        _.$elements.calendarEl.html(markup)
+
+        if (!_.$elements.sidebarEl) _.$elements.sidebarEl = $(_.$elements.calendarEl).find('.calendar-sidebar');
+        if (!_.$elements.innerEl) _.$elements.innerEl = $(_.$elements.calendarEl).find('.calendar-inner');
+        if (!_.$elements.eventEl) _.$elements.eventEl = $(_.$elements.calendarEl).find('.calendar-events');
+
+        if (_.options.sidebarToggler) {
+          $(_.$elements.sidebarEl).append('<span id="sidebarToggler" role="button" aria-pressed title="' + _.initials.dates[_.options.language].closeSidebarText + '"><button class="icon-button"><span class="bars"></span></button></span>');
+          if (!_.$elements.sidebarToggler) _.$elements.sidebarToggler = $(_.$elements.sidebarEl).find('span#sidebarToggler');
+        }
+        if (_.options.eventListToggler) {
+          $(_.$elements.calendarEl).append('<span id="eventListToggler" role="button" aria-pressed title="' + _.initials.dates[_.options.language].closeEventListText + '"><button class="icon-button"><span class="chevron-arrow-right"></span></button></span>');
+          if (!_.$elements.eventListToggler) _.$elements.eventListToggler = $(_.$elements.calendarEl).find('span#eventListToggler');
+        }
+      }
+      _.buildSidebarYear()
+      _.buildSidebarMonths()
+      _.buildCalendar()
+      _.buildEventList()
+      _.initEventListener()
+
+      _.resize()
+    }
+
+    EvoCalendar.prototype.buildEventList = function () {
+      var _ = this, hasEventToday = false
+      _.$active.events = []
+
+      var title = _.formatDate(_.$active.date, _.options.eventHeaderFormat, _.options.language)
+      _.$elements.eventEl.find('.event-header > p').text(title)
+      var eventListEl = _.$elements.eventEl.find('.event-list')
+      if (eventListEl.children().length > 0) eventListEl.empty()
+      if (_.options.calendarEvents) {
+        for (var i = 0; i < _.options.calendarEvents.length; i++) {
+          if (_.isBetweenDates(_.$active.date, _.options.calendarEvents[i].date)) {
+            eventAdder(_.options.calendarEvents[i])
+          }
+          else if (_.options.calendarEvents[i].everyYear) {
+            var d = new Date(_.$active.date).getMonth() + 1 + ' ' + new Date(_.$active.date).getDate();
+            var dd = new Date(_.options.calendarEvents[i].date).getMonth() + 1 + ' ' + new Date(_.options.calendarEvents[i].date).getDate();
+            // var dates = [_.formatDate(_.options.calendarEvents[i].date[0], 'mm/dd'), _.formatDate(_.options.calendarEvents[i].date[1], 'mm/dd')];
+
+            if (d == dd) eventAdder(_.options.calendarEvents[i])
+          }
+        }
+      }
+      function eventAdder(event) {
+        hasEventToday = true;
+        let dia = eventosCalendario.find(el => new Date(el.date).valueOf() === new Date(_.$active.date).valueOf())
+        $($).find("#ultimaModificacion").text(`Fecha de última modificación: ${devuelveFecha(dia)} por: ${dia.usuario}`)
+        $($).find("#irARegistrarVentas").val("Ir a registro")
+        _.addEventList(event)
+      }
+      if (!hasEventToday) {
+        $($).find("#ultimaModificacion").text("");
+        $($).find("#irARegistrarVentas").val("Crear nuevo registro")
+        eventListEl.append(`<div class="event-empty"><p>${_.initials.dates[_.options.language][_.$active.date === _.$current.date ? "noEventForToday" : "noEventForThisDay"]}</p></div>`)
+      }
+    }
+
+    async function pedirCamioneros(_) {
+      let fechaAPedir = _.$active.year + "/" + (_.$active.month + 1)
+      if (listaMeses[fechaAPedir]) return
+      fetch('/calendario', {method: 'POST', headers: { 'Content-Type': 'application/json' }, body: `{ "fecha": "${fechaAPedir}" }`}).then(r => r.json()).then(mes => {
+        listaMeses[fechaAPedir] = 1
+        let añadir = []
+        mes.dias?.forEach(d => { d.camioneros.forEach((c, i) => añadir.push({ name: `Camión ${(i + 1)}`, description: `Conductor: ${c}`, date: d._id.aUTC().toDateString(), type: i + "", ultimocambio: d.ultimocambio, usuario: d.usuario, color: camioneros[c] })) })
+        _.addCalendarEvent(añadir)
+      }).catch(e => toastr["error"](`Hubo un error al momento de pedir los camioneros por favor recarga la página`, "Alerta"))
+    }
+
+    // v1.0.0 - Add single event to event list
+    EvoCalendar.prototype.addEventList = function (event_data) {
+      var _ = this
+      var eventListEl = _.$elements.eventEl.find('.event-list');
+      if (eventListEl.find('[data-event-index]').length === 0) eventListEl.empty();
+      _.$active.events.push(event_data);
+      eventListEl.append(`<div class="event-container" role="button" data-event-index="${event_data.id}">
+      <div class="event-icon"><div class="event-bullet-${event_data.type}"${event_data.color ? `style="background-color:${event_data.color}"` : ""}></div></div>
+      <div class="event-info"><p class="event-title">${_.limitTitle(event_data.name)}${event_data.badge ? `<span>${event_data.badge}</span>` : ""}</p>${event_data.description ? `<p class="event-desc">${event_data.description}</p>` : ""}</div>
+      </div>`)
+
+      _.$elements.eventEl.find('[data-event-index="' + (event_data.id) + '"]').off('click.evocalendar').on('click.evocalendar', _.selectEvent);
+    }
+
+    // v1.0.0 - Build Sidebar: Year text
+    EvoCalendar.prototype.buildSidebarYear = function () {
+      this.$elements.sidebarEl.find('.calendar-year > p').text(this.$active.year)
+    }
+
+    // v1.0.0 - Build Sidebar: Months list text
+    EvoCalendar.prototype.buildSidebarMonths = function () {
+      this.$elements.sidebarEl.find('.calendar-months > [data-month-val]').removeClass('active-month')
+      this.$elements.sidebarEl.find(`.calendar-months > [data-month-val="${this.$active.month}"]`).addClass('active-month')
+    }
+
+    // v1.0.0 - Build Calendar: Title, Days
+    EvoCalendar.prototype.buildCalendar = function () {
+      let _ = this, markup, title
+      _.calculateDays()
+
+      title = _.formatDate(new Date(_.$label.months[_.$active.month] + ' 1 ' + _.$active.year), _.options.titleFormat, _.options.language)
+      _.$elements.innerEl.find('.calendar-table th').text(title)
+      _.$elements.innerEl.find('.calendar-body').remove()
+
+      markup = '<tr class="calendar-body">'
+      var day = 1;
+      for (var i = 0; i < 9; i++) { // this loop is for is weeks (rows)
+        for (var j = 0; j < _.$label.days.length; j++) { // this loop is for weekdays (cells)
+          if (day <= _.monthLength && (i > 0 || j >= _.startingDay)) {
+            // add '--weekend' to sat sun
+            markup += `<td class="calendar-day${_.$label.days[j] === _.initials.weekends.sat || _.$label.days[j] === _.initials.weekends.sun ? " --weekend" : ""}">
+            <div class="day" role="button" data-date-val="${_.formatDate(`${_.$label.months[_.$active.month]} ${day} ${_.$active.year}`, _.options.format)}">${day}</div>`
+            day++;
+          } else markup += '<td>'
+          markup += '</td>'
+        }
+        if (day > _.monthLength) break
+        else markup += '</tr><tr class="calendar-body">'
+      }
+      markup += '</tr>'
+      _.$elements.innerEl.find('.calendar-table').append(markup);
+      if (_.options.todayHighlight) _.$elements.innerEl.find(`[data-date-val="${_.$current.date}"]`).addClass('calendar-today')
+
+      // set event listener for each day
+      _.$elements.innerEl.find('.calendar-day').children().off('click.evocalendar').on('click.evocalendar', _.selectDate)
+      var selectedDate = _.$elements.innerEl.find(`[data-date-val="${_.$active.date}"]`)
+      if (selectedDate) {
+        // Remove active class to all
+        _.$elements.innerEl.children().removeClass('calendar-active')
+        // Add active class to selected date
+        selectedDate.addClass('calendar-active')
+      }
+      if (_.options.calendarEvents != null) { // For event indicator (dots)
+        _.$elements.innerEl.find('.calendar-day > day > .event-indicator').empty()
+        _.options.calendarEvents.forEach(x => _.addEventIndicator(x))
+      }
+    }
+
+    // v1.0.0 - Add event indicator/s (dots)
+    EvoCalendar.prototype.addEventIndicator = function (event) {
+      var _ = this, thisDate
+      var event_date = event.date
+      var type = stringCheck(event.type)
+
+      if (event_date instanceof Array) {
+        if (event.everyYear) {
+          for (var x = 0; x < event_f.length; x++) { event_date[x] = _.formatDate(new Date(event_date[x]).setFullYear(_.$active.year), _.options.format); }
+        }
+        var active_date = _.getBetweenDates(event_date);
+
+        for (var i = 0; i < active_date.length; i++) { appendDot(active_date[i]); }
+      } else {
+        if (event.everyYear) { event_date = _.formatDate(new Date(event_date).setFullYear(_.$active.year), _.options.format) }
+        appendDot(event_date)
+      }
+
+      function appendDot(date) {
+        thisDate = _.$elements.innerEl.find(`[data-date-val="${date}"]`)
+        if (thisDate.find('span.event-indicator').length === 0) thisDate.append('<span class="event-indicator"></span>')
+
+        if (thisDate.find('span.event-indicator > .type-bullet > .type-' + type).length === 0) {
+          thisDate.find('.event-indicator').append(`<div class="type-bullet"><div class="type-${event.type}"
+        ${event.color ? `style="background-color:${event.color}"` : ""}></div></div > `);
         }
       }
     }
-    XLSX.utils.book_append_sheet(workbook, ws, tituloHoja)
-  })
-  XLSX.writeFile(workbook, nombre)
-})
 
+    EvoCalendar.prototype.selectYear = function (event) {
+      var _ = this, el, yearVal
 
-function calculargastos(cuerpo) {
-  let sumaGastos = 0, hayUnNumero = false
-  cuerpo.qsafor('td:nth-last-child(1)', x => {
-    let texto = x.textContent.aFloat()
-    if (!isNaN(texto)) {
-      hayUnNumero = true
-      sumaGastos += texto
+      if (typeof event === 'string' || typeof event === 'number') {
+        if ((parseInt(event)).toString().length === 4)
+          yearVal = parseInt(event)
+      } else {
+        el = $(event.target).closest('[data-year-val]')
+        yearVal = $(el).data('yearVal')
+      }
+
+      if (yearVal == "prev") --_.$active.year
+      else if (yearVal == "next") ++_.$active.year
+      else if (typeof yearVal === 'number') _.$active.year = yearVal
+      pedirCamioneros(_)
+
+      if (_.windowW <= _.$breakpoints.mobile && _.$UI.hasSidebar) _.toggleSidebar(false)
+
+      $(_.$elements.calendarEl).trigger("selectYear", [_.$active.year])
+
+      _.buildSidebarYear()
+      _.buildCalendar()
     }
-  })
 
-  if (!isNaN(sumaGastos)) cuerpo.padre().qsa('tfoot td')[1].textContent = sumaGastos === 0 && !hayUnNumero ? '0' : sumaGastos.normalizarPrecio()
-  return sumaGastos
-}
+    // v1.0.0 - Select month
+    EvoCalendar.prototype.selectMonth = function (event) {
+      var _ = this;
+      if (typeof event === 'string' || typeof event === 'number') {
+        if (event >= 0 && event <= _.$label.months.length) { _.$active.month = (event).toString() }
+      } else { _.$active.month = $(event.currentTarget).data('monthVal') }
 
-let formatearCeldas = ({ cells: [, gasto] }) => gasto.textContent = gasto.textContent.aQuetzales()
+      pedirCamioneros(_)
+      _.buildSidebarMonths()
+      _.buildCalendar()
 
-bodyOnClick('#resumengastos', async q => {
-  let listaTablasValores = qsarr('table').map(tabla => {
-    let productos = tabla.qsarr('tbody td:first-child')
-    let gastos = tabla.qsarr('tbody td:nth-last-child(2)')
-    return productos.map((p, i) => ({ producto: p.textContent.normalizar(), gastos: gastos[i].textContent.aFloat() || 0, productoDesnormalizado: p.textContent }))
-  })
+      if (_.windowW <= _.$breakpoints.tablet && _.$UI.hasSidebar) _.toggleSidebar(false)
 
-  let p = {}
-  listaTablasValores.forEach(tabla => {
-    tabla.forEach(fila => p[fila.producto] ? p[fila.producto].gastos += fila.gastos : p[fila.producto] = { gastos: fila.gastos, productoDesnormalizado: fila.productoDesnormalizado })
-  })
-  Object.keys(p).forEach(x => (p[x].gastos = p[x].gastos.normalizarPrecio()))
+      $(_.$elements.calendarEl).trigger("selectMonth", [_.initials.dates[_.options.language].months[_.$active.month], _.$active.month])
+    }
 
-  let html = `<table id="tablaresumen" class="mx-auto"><thead><tr>
-    <th class="thresumengasto">Concepto de gasto</th>
-    <th class="thresumencosto">Gasto total</th>
-  </tr></thead><tbody class="cuerpo">
-  ${Object.keys(p).map(key => `<tr><td>${p[key].productoDesnormalizado}</td><td>${p[key].gastos || 0}</td></tr>`).join('')}
-  </tbody><tfoot><tr><td style="text-align: center">Total:</td><td class="totalresumen"></td></tr></tfoot></table>
-  <div class="gastopordia">${`Gasto por día${esMesActual ? ` en lo que va del mes` : ``}: <span class="cambiarfecha"></span>`}</div>
-  <div class="contenedorflex">
-    <button class="btn btn-primary margenbotonswal btncontinuar2" onclick="cerrarSwal()">Continuar</button>
-    <boton-pdf id="exportarAPDFResumen"></boton-pdf>
-    <boton-excel id="exportarAExcelResumen"></boton-excel>
-  </div>`
+    EvoCalendar.prototype.selectDate = function (event) {
+      var _ = this;
+      var oldDate = _.$active.date;
+      var date, year, month, activeDayEl, isSameDate;
+      if (typeof event === 'string' || typeof event === 'number' || event instanceof Date) {
+        date = _.formatDate(new Date(event), _.options.format)
+        year = new Date(date).getFullYear();
+        month = new Date(date).getMonth();
 
+        if (_.$active.year !== year) _.selectYear(year);
+        if (_.$active.month !== month) _.selectMonth(month);
+        activeDayEl = _.$elements.innerEl.find("[data-date-val='" + date + "']");
+      } else {
+        activeDayEl = $(event.currentTarget);
+        date = activeDayEl.data('dateVal')
+      }
+      isSameDate = _.$active.date === date;
+      _.$active.date = date;
+      _.$active.event_date = date;
+      _.$elements.innerEl.find('[data-date-val]').removeClass('calendar-active');
+      activeDayEl.addClass('calendar-active');
+      if (!isSameDate) _.buildEventList();
 
-  await swal.fire({
-    title: 'Resumen de lo que gastaste durante el mes ' + fechastr,
-    width: innerWidth * 0.6,
-    html,
-    showConfirmButton: false,
-    didOpen: () => {
-      let cuerpo = qs('#tablaresumen tbody')
-      let sumaGastos = calculargastos(cuerpo)
-        ;[...cuerpo.rows].forEach(x => formatearCeldas(x))
-      formatearCeldas(qs('#tablaresumen tfoot tr'))
-      let dividir = esMesActual ? moment().format('D') : moment(fechaUrl, 'DD-MM-YYYY').endOf('month').format('D') ?? 0
-      qs('.cambiarfecha').textContent = (sumaGastos / dividir).normalizarPrecio().aQuetzales()
+      $(_.$elements.calendarEl).trigger("selectDate", [_.$active.date, oldDate])
+    }
 
-      qs('#exportarAPDFResumen').inicializar(() => {
-        let tabla = qs('#tablaresumen')
-        let tablaClon = tabla.clonar()
-        tablaClon.id = 'tablaresumenclon'
-        return `<div class="tituloresumen" style="margin-left: ${tabla.clientWidth / 2 - 200}px; width: 380px">Resumen  &nbsp;de gastos ${fechastr}</div>${tablaClon.outerHTML}<br><br>`
-      }, `Resumen de gastos ${fechastr}`)
+    // v1.0.0 - Hide Sidebar/Event List if clicked outside
+    EvoCalendar.prototype.toggleOutside = function (event) {
+      var _ = this, isInnerClicked;
 
-      qs('#exportarAExcelResumen').inicializar(function () {
-        let nombre = `Resumen de ventas ${fechastr}.xlsx`
-        let workbook = XLSX.utils.book_new()
-        let ws = XLSX.utils.table_to_sheet(qs('#tablaresumen'), { raw: true })
-        let range = XLSX.utils.decode_range(ws['!ref'])
-        ws['!cols'] = [{ width: 30 }, { width: 18 }]
-        ws['!rows'] = [{ hpt: 35 }, ...[...Array(range.e.r - range.s.r)].map(x => ({ hpt: 24 }))]
-        for (let i = range.s.r; i <= range.e.r; i++) {
-          for (let j = range.s.c; j <= range.e.c; j++) {
-            let cell_address = XLSX.utils.encode_cell({ r: i, c: j })
-            let cell = ws[cell_address]
-            if (cell) {
-              this.ajustesCeldasExcel(cell)
-              cell.s.fill = { fgColor: { rgb: i === 0 ? '192435' : '0f0d35' } }
-            }
-          }
-        }
-        XLSX.utils.book_append_sheet(workbook, ws, `Gastos ${fechastr}`)
-        XLSX.writeFile(workbook, nombre)
-      })
-    },
-  })
-})
+      isInnerClicked = event.target === _.$elements.innerEl[0];
 
+      if (_.$UI.hasSidebar && isInnerClicked) _.toggleSidebar(false)
+      if (_.$UI.hasEvent && isInnerClicked) _.toggleEventList(false)
+    }
 
-bodyOnClick('.guardarconfig', async q => {
-  switchGastosFijosExcel = mb.qs('#switchGastosFijosExcel').checked
-  switchGastosMixtosExcel = mb.qs('#switchGastosMixtosExcel').checked
-  switchGastosPorProductoExcel = mb.qs('#switchGastosPorProductoExcel').checked
-  switchGastosFijosPDF = mb.qs('#switchGastosFijosPDF').checked
-  switchGastosMixtosPDF = mb.qs('#switchGastosMixtosPDF').checked
-  switchGastosPorProductoPDF = mb.qs('#switchGastosPorProductoPDF').checked
-})
+    // v1.0.0 - Toggle Sidebar
+    EvoCalendar.prototype.toggleSidebar = function (event) {
+      var _ = this;
 
-function reseteaValoresConfig() {
-  mb.qs('#switchGastosFijosExcel').checked = switchGastosFijosExcel
-  mb.qs('#switchGastosMixtosExcel').checked = switchGastosMixtosExcel
-  mb.qs('#switchGastosPorProductoExcel').checked = switchGastosPorProductoExcel
-  mb.qs('#switchGastosFijosPDF').checked = switchGastosFijosPDF
-  mb.qs('#switchGastosMixtosPDF').checked = switchGastosMixtosPDF
-  mb.qs('#switchGastosPorProductoPDF').checked = switchGastosPorProductoPDF
-}
+      if (event === undefined || event.originalEvent) {
+        $(_.$elements.calendarEl).toggleClass('sidebar-hide')
+        _.$UI.hasSidebar = !_.$UI.hasSidebar;
+      } else {
+        $(_.$elements.calendarEl).toggleClass('sidebar-hide', !event)
+        _.$UI.hasSidebar = event
+      }
 
-bodyOn('hidden.bs.modal', '#configs', reseteaValoresConfig)
+      if (_.windowW <= _.$breakpoints.tablet && _.$UI.hasSidebar && _.$UI.hasEvent) _.toggleEventList()
+    }
 
-bodyOnClick('#tablaresumen th', function () {
-  let tabla = this.closest('table')
-  let esResumen = tabla.id === 'tablaresumen'
-  if (!esResumen) $('.restaurarplantilla').css('display', 'initial')
-  let cuerpo = tabla.querySelector('.cuerpo')
-  let flecha = getComputedStyle(this, ':after').content
-  let order = flecha === '"↓"' ? 'asc' : 'desc'
-  let separador = '-----'
-  let objValores = {}
-  let listaIdentifObjValores = []
-  let listaReordenarPlantillasHelper = []
-  let indiceColumna = this.cellIndex
-  let nombreColumna = this.textContent
+    // v1.0.0 - Toggle Event list
+    EvoCalendar.prototype.toggleEventList = function (event) {
+      var _ = this
 
-  if (nombreColumna === 'Vendidos') indiceColumna = cuerpo.rows[0].cells.length - 2
-  else if (nombreColumna === 'Ingresos') indiceColumna = cuerpo.rows[0].cells.length - 1
-  else if (nombreColumna === 'Sale' || nombreColumna === 'Entra') indiceColumna += colsinicio
-  cuerpo.querySelectorAll('tr').forEach((fila, indice) => {
-    listaReordenarPlantillasHelper.push(fila.cells[0].textContent.normalizar())
-    let textoCelda = fila.cells[indiceColumna].textContent.toUpperCase()
-    if (esResumen && nombreColumna !== 'Productos') textoCelda = textoCelda.replace(/[^0-9.]/g, '')
-    objValores[textoCelda + separador + indice] = fila.outerHTML.replace(/(\t)|(\n)/g, '')
-    listaIdentifObjValores.push(textoCelda + separador + indice)
-  })
+      if (event === undefined || event.originalEvent) {
+        $(_.$elements.calendarEl).toggleClass('event-hide')
+        _.$UI.hasEvent = !_.$UI.hasEvent
+      } else {
+        $(_.$elements.calendarEl).toggleClass('event-hide', !event)
+        _.$UI.hasEvent = event
+      }
 
-  if (!esResumen && !objReordenarPlantillas[tabla.closest('.tabContent').dataset.tabid]) objReordenarPlantillas[tabla.closest('.tabContent').dataset.tabid] = listaReordenarPlantillasHelper
+      if (_.windowW <= _.$breakpoints.tablet && _.$UI.hasEvent && _.$UI.hasSidebar) _.toggleSidebar()
+    }
 
-  let listaElementosColumna = cuerpo.qsarr(`td:nth-child(${indiceColumna + 1})`)
-  let todosSonNumeros = esResumen && nombreColumna !== 'Productos' ? true : listaElementosColumna.every(x => !isNaN(x.textContent.aFloat()))
+    EvoCalendar.prototype.addCalendarEvent = function (arr) {
+      var _ = this
 
-  if (todosSonNumeros) {
-    listaIdentifObjValores.sort((a, b) => {
-      let aa = a.split(separador)
-      let bb = b.split(separador)
-      return aa[0] != bb[0] ? aa[0] - bb[0] : cuerpo.rows[aa[1].aInt()].cells[0].textContent.localeCompare(cuerpo.rows[bb[1].aInt()].cells[0].textContent)
-    })
-  } else listaIdentifObjValores.sort()
+      function addEvent(data) {
+        if (!_.options.calendarEvents) _.options.calendarEvents = []
+        _.options.calendarEvents.push(data)
+        _.addEventIndicator(data)
+        if (_.$active.event_date === data.date) _.addEventList(data)
+      }
+      if (arr instanceof Array) arr.forEach(x => addEvent(x))
+      else if (typeof arr === 'object') addEvent(arr)
+    }
 
-  if (order === 'desc') listaIdentifObjValores.reverse()
-  this.style.setProperty('--flecha', order === 'desc' ? '"↓"' : '"↑"')
+    $.fn.evoCalendar = function () {
+      var _ = this, opt = arguments[0], args = Array.prototype.slice.call(arguments, 1), l = _.length, i, ret
+      for (i = 0; i < l; i++) {
+        if (typeof opt == 'object' || typeof opt == 'undefined') _[i].evoCalendar = new EvoCalendar(_[i], opt)
+        else ret = _[i].evoCalendar[opt].apply(_[i].evoCalendar, args)
+        if (typeof ret != 'undefined') return ret
+      }
+      return _
+    }
 
-  tabla.qs('.activo').quitarClase('activo')
-  this.añadirClase('activo')
-  cuerpo.innerHTML = listaIdentifObjValores.map(key => objValores[key]).join('')
-})
+  }))
+
+let irARegistrarVentas = q => location = `/registrarventas/${fechaseleccionada.getDate()}-${(fechaseleccionada.getMonth() + 1)}-${fechaseleccionada.getFullYear()} `

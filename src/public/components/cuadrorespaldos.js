@@ -117,9 +117,9 @@ bodyOnClick("#btnEntre", q => {
 
 bodyOnClick(".tituloregistro custom-checkbox", c => c.closest("cuadro-respaldos").qs("custom-input input").disabled = !c.qs("input").checked)
 bodyOnClick(".botonvolver, .opcionesradiobutton custom-radiobutton input", c => {
-  if (qs('.modal-body custom-radiobutton:has(input:checked)').indice() === 0) cal.hide()
+  if (c.closest('custom-radiobutton')?.indice() === 0) cal.esconder()
   else {
-    if (cal.html() && !c.tieneClase("botonvolver")) cal.show()
+    if (cal.html() && !c.tieneClase("botonvolver")) cal.mostrar()
     else {
       ({
         Ventas: htmlCalendario,
@@ -222,7 +222,7 @@ class cuadroRespaldos extends HTMLElement {
           <div class="modal-footer">
             <div style="flex-grow: 1;"><button class="btn btn-primary btn-config botonazul restaurarconfig" data-bs-dismiss="modal">Restaurar los valores de default</button></div>
             <div style="flex-grow: 1; display: flex; justify-content: flex-end;">
-              <button style="margin-right: 5px;" class="btn btn-success btn-config guardarconfig" data-bs-dismiss="modal">Aceptar</button>
+              <button style="margin-right: 5px;" class="btn btn-success btn-config guardarconfig">Aceptar</button>
               <button class="btn btn-danger btn-config cerrarconfig" data-bs-dismiss="modal">Cancelar</button>
             </div>
           </div>
@@ -252,26 +252,27 @@ customElements.define("cuadro-respaldos", cuadroRespaldos)
 
 
 bodyOnClick('.guardarconfig', (c, e) => {
-  let s1 = seleccionado.qsarr(".opcionesarchivos input:checked").map(x => x.closest("custom-checkbox").indice())
+  let s1 = seleccionado.qsarr('.opcionesarchivos input:checked').map(x => x.closest('custom-checkbox').indice())
   if (!s1.length) {
     e.stopImmediatePropagation()
-    return Swal.fire("Atención", "Debe haber al menos un archivo qué guardar, selecciona archivo json, bson o ambos", "warning")
+    return Swal.fire('Atención', 'Debe haber al menos un tipo de archivo qué guardar, selecciona archivo json, bson o ambos', 'warning')
   }
 
-  let s2 = $(seleccionado).find(".opcionesradiobutton input:checked").closest("custom-radiobutton").index()
-  let v, iframe = $(seleccionado).find("iframe")[0]?.contentDocument, fechaEntre = seleccionado.cal === "entre el"
+  let s2 = seleccionado.qs('.opcionesradiobutton input:checked').closest('custom-radiobutton').indice()
+  let v, cal = seleccionado.qs('.divdatepicker'), fechaEntre = seleccionado.cal === 'entre el'
   if(s2){
-    v = iframe ? fechaEntre ? new Intl.ListFormat("es").format([...$(iframe).find("input")].map(x => x.value)) : $(iframe).find("input").val() : [...$(seleccionado).find(".contenidoOpciones input:checked")].map(x => $(x).next().text())
-    if (!v) {
+    v = cal ? fechaEntre ? new Intl.ListFormat('es').format(cal.qsarr('input').map(x => x.value)) : cal.qs('input').value : seleccionado.qsarr('.gridCheckbox input:checked').map(x => x.sig().textContent)
+    if (!v.length) {
       e.stopImmediatePropagation()
-      return Swal.fire("Atención", "No has escogido qué registros deseas guardar", "warning")
+      return Swal.fire('Atención', 'No has escogido qué registros deseas guardar', 'warning')
     }
   }
 
   Object.assign(seleccionado.opciones, {
-    archivos: s1.length === 2 ? "ambos" : s1[0] ? "bson" : "json",
-    guardar: s2 ? { rango: seleccionado.cal, valor: v } : "todos"
+    archivos: s1.length === 2 ? 'ambos' : s1[0] ? 'bson' : 'json',
+    guardar: s2 ? { rango: seleccionado.cal, valor: v } : 'todos'
   })
-  let li = [`Crear ${s1.length === 2 ? "ambos archivos" : `archivo ${s1[0] ? "bson" : "json"}`}`, `Guardar ${s2 ? iframe ? `fechas ${seleccionado.cal} ${v}` : new Intl.ListFormat("es").format(v) : "todos los registros"}`]
-  seleccionado.qs(".listaMensajes").html(li.map(x => `<li class="mensajeOpciones">${x}</li>`))
+  let li = [`Crear ${s1.length === 2 ? 'ambos archivos' : `archivo ${s1[0] ? 'bson' : 'json'}`}`, `Guardar ${s2 ? cal ? `fechas ${seleccionado.cal} ${v}` : new Intl.ListFormat('es').format(v) : 'todos los registros'}`]
+  seleccionado.qs('.listaMensajes').html(li.map(x => `<li class="mensajeOpciones">${x}</li>`))
+  bootstrap.Modal.getInstance(c.closest('.modal')).hide()
 })

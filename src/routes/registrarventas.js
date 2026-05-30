@@ -39,7 +39,7 @@ let devuelveFuncionMover = (Reg, msg) => tcaccion(async (req, res) => {
 router.post("/mover", devuelveFuncionMover(RegistroVentas, "Hubo un error al momento de mover el registro"))
 
 
-router.route('/:id([0-9]{1,2}-[0-9]{1,2}-[0-9]{4})').get(tcaccion(async (req, res) => {
+router.route('/:id').get(tcaccion(async (req, res) => {
   let fecha = DateTime.fromFormat(req.params.id, "d-M-y")
   let registro = await RegistroVentas.buscarPorID(fecha.toJSDate())
   let plantillas = await Plantilla.nombres()

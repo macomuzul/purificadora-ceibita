@@ -30,41 +30,41 @@ let mostrarPagina = tcrutas(async (req, res, Reg) => {
   res.render("registroseliminados", { datostablas, pagina, totalPaginas, DateTime, esAdmin: esAdmin(req) })
 }, "hubo un error al procesar la solicitud")
 
-router.get("/masrecientes&:pag", validarPagina, async (req, res) => masRecientesYMasAntiguos(req, res, 1))
-router.get("/masantiguos&:pag", validarPagina, async (req, res) => masRecientesYMasAntiguos(req, res, 0))
+// router.get("/masrecientes&:pag", validarPagina, async (req, res) => masRecientesYMasAntiguos(req, res, 1))
+// router.get("/masantiguos&:pag", validarPagina, async (req, res) => masRecientesYMasAntiguos(req, res, 0))
 
 async function masRecientesYMasAntiguos(req, res, rev) {
   let Reg = RegistrosEliminados.find().sort(`${rev ? "-" : ""}borradoEl`).lean()
   mostrarPagina(req, res, Reg)
 }
 
-router.get("/:buscarpor(fecha|fechaeliminacion)&:rango(igual|mayor|menor|entre)&:fechaP&:pag", validarPagina, tcrutas(async (req, res) => {
-  let { buscarpor, rango, fechaP } = req.params
-  let [fecha, fecha2] = fechaP.split("y")
-  let funcs
-  if (buscarpor === "fecha") {
-    let fechaiso = fecha.aFechaUTC()
-    buscarpor = "registro._id"
-    funcs = {
-      igual: q => regs.equals(fechaiso),
-      menor: q => regs.lte(fechaiso),
-      mayor: q => regs.gte(fechaiso),
-      entre: q => regs.gte(fechaiso).lte(fecha2.aFechaUTC())
-    }
-  } else {
-    let fechaiso = fecha.aFechaGuatemala()
-    buscarpor = "borradoEl"
-    funcs = {
-      igual: q => regs.gte(fechaiso).lte(fechaiso.endOf("day")),
-      menor: q => regs.lte(fechaiso.endOf("day")),
-      mayor: q => regs.gte(fechaiso),
-      entre: q => regs.gte(fechaiso).lte(fecha2.aFechaGuatemala().endOf("day"))
-    }
-  }
-  let regs = RegistrosEliminados.where(buscarpor).sort(`${rango === "menor" ? "-" : ""}${buscarpor}`).lean()
-  let Reg = funcs[rango]()
-  mostrarPagina(req, res, Reg)
-}, "búsqueda inválida"))
+// router.get("/:buscarpor(fecha|fechaeliminacion)&:rango(igual|mayor|menor|entre)&:fechaP&:pag", validarPagina, tcrutas(async (req, res) => {
+//   let { buscarpor, rango, fechaP } = req.params
+//   let [fecha, fecha2] = fechaP.split("y")
+//   let funcs
+//   if (buscarpor === "fecha") {
+//     let fechaiso = fecha.aFechaUTC()
+//     buscarpor = "registro._id"
+//     funcs = {
+//       igual: q => regs.equals(fechaiso),
+//       menor: q => regs.lte(fechaiso),
+//       mayor: q => regs.gte(fechaiso),
+//       entre: q => regs.gte(fechaiso).lte(fecha2.aFechaUTC())
+//     }
+//   } else {
+//     let fechaiso = fecha.aFechaGuatemala()
+//     buscarpor = "borradoEl"
+//     funcs = {
+//       igual: q => regs.gte(fechaiso).lte(fechaiso.endOf("day")),
+//       menor: q => regs.lte(fechaiso.endOf("day")),
+//       mayor: q => regs.gte(fechaiso),
+//       entre: q => regs.gte(fechaiso).lte(fecha2.aFechaGuatemala().endOf("day"))
+//     }
+//   }
+//   let regs = RegistrosEliminados.where(buscarpor).sort(`${rango === "menor" ? "-" : ""}${buscarpor}`).lean()
+//   let Reg = funcs[rango]()
+//   mostrarPagina(req, res, Reg)
+// }, "búsqueda inválida"))
 
 String.prototype.aFechaUTC = function () { return DateTime.fromFormat(this, "d-M-y") }
 String.prototype.aFechaGuatemala = function () { return DateTime.fromFormat(this, "d-M-y", { zone: "America/Guatemala" }) }

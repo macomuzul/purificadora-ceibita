@@ -416,9 +416,7 @@ let esFechaValida = d => new Date(d) && !isNaN(new Date(d).getTime())
             markup += `<td class="calendar-day${_.$label.days[j] === _.initials.weekends.sat || _.$label.days[j] === _.initials.weekends.sun ? " --weekend" : ""}">
             <div class="day" role="button" data-date-val="${_.formatDate(`${_.$label.months[_.$active.month]} ${day} ${_.$active.year}`, _.options.format)}">${day}</div>`
             day++;
-          } else {
-            markup += '<td>'
-          }
+          } else markup += '<td>'
           markup += '</td>'
         }
         if (day > _.monthLength) break
