@@ -49,7 +49,8 @@ let borrarEnfocarPreciosYProductos = t => t.qsafor('.cuerpo tr', x => $(x.cells)
 alCargar(cambiosConfig)
 
 $contents.qsafor('.cuerpo td:last-child', x => x.añadirClase('borrarfilas'))
-setTimeout(q => $tabs.qsafor('.tab-label', x => x.añadirClase('borrarcamiones')), 5)
+addEventListener("DOMContentLoaded", q => $tabs.qsafor('.tab-label', x => x.añadirClase('borrarcamiones')))
+//setTimeout(q => $tabs.qsafor('.tab-label', x => x.añadirClase('borrarcamiones')), 5)
 
 bodyOnClick('.fecha', q => qsafor('.fecha', x => x.alternar()))
 let _borrarFilasYColumnas = -1

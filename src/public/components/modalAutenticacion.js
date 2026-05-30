@@ -87,7 +87,7 @@ class customModal extends HTMLElement {
           <div class="cuerpoModal1">Demuestra que de verdad eres tú quien intenta realizar esta acción</div>
           <i class="fa-solid fa-lock"></i>
           <div class="cuerpoModal2">Ingresa la contraseña de tu usuario</div>
-          <div class="cuerpoModal3"><input-password id="verificacionIdentidad" data-focus="1"></input-password></div>
+          <div class="cuerpoModal3"><input-password data-focus="1"></input-password></div>
         </div>
         <div class="modal-footer">
           <button class="btn btn-success margenbotonswal botonconfirm" id="enviarVerificacion">Confirmar</button>
@@ -129,10 +129,10 @@ customElements.define("custom-modal", customModal)
 
 class inputPass extends HTMLElement {
   connectedCallback() {
-    let { id, innerHTML: label } = this
+    let { innerHTML: label } = this
     let { focus } = this.dataset
 
-    this.innerHTML = `<label>${label ?? ''}<input ${label ? `class="form-control"` : ''} type="password" id="${id}" ${focus ? "autofocus" : ''}></label>
+    this.innerHTML = `<label>${label ?? ''}<input ${label ? `class="form-control"` : ''} type="password" id="verificacionIdentidad" ${focus ? "autofocus" : ''}></label>
     <i class="fa-sharp fa-solid fa-eye" hidden></i><i class="fa-sharp fa-solid fa-eye-slash"></i>`
 
     this.elclick(".fa-eye", q => this.clickOjo(0))
